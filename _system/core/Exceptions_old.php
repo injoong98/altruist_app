@@ -6,12 +6,13 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2019, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2018, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -29,8 +30,8 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2019, British Columbia Institute of Technology (https://bcit.ca/)
- * @license	https://opensource.org/licenses/MIT	MIT License
+ * @copyright	Copyright (c) 2014 - 2018, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
  * @filesource
@@ -156,7 +157,6 @@ class CI_Exceptions {
 	 */
 	public function show_error($heading, $message, $template = 'error_general', $status_code = 500)
 	{
-		
 		$templates_path = config_item('error_views_path');
 		if (empty($templates_path))
 		{
@@ -181,7 +181,6 @@ class CI_Exceptions {
 		}
 		ob_start();
 		include($templates_path.$template.'.php');
-	
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		return $buffer;
@@ -191,51 +190,17 @@ class CI_Exceptions {
 
 	public function show_exception($exception)
 	{
-		$file ='';
-		$line ='';
-		$function ='';
-		$message = $exception->getMessage();
-		if (empty($message))
-		{
-			$message = '(null)';
-		}
-
-		$row = array(
-				"type" => get_class($exception)
-			);
-
-		foreach ($exception->getTrace() as $error){
-			if (isset($error['file']) && strpos($error['file'], realpath(BASEPATH)) !== 0) {
-				$file = $error['file']; 
-				$line= $error['line']; 
-				$function=  $error['function']; 
-			}
-		}
-
-		$result = array(
-				'row' => $row
-				,'status' => 500
-				,'message' => $message
-				,'file' => $file
-				,'function' => $function
-				,'line' => $line
-		);
-
-		if (ob_get_level() > $this->ob_level + 1)
-		{
-			ob_end_flush();
-		}
-		header("Content-Type: application/json; charset=UTF-8");
-		echo json_encode($result);
-
-	
-	/*
 		$templates_path = config_item('error_views_path');
 		if (empty($templates_path))
 		{
 			$templates_path = VIEWPATH.'errors'.DIRECTORY_SEPARATOR;
 		}
 
+		$message = $exception->getMessage();
+		if (empty($message))
+		{
+			$message = '(null)';
+		}
 
 		if (is_cli())
 		{
@@ -256,7 +221,6 @@ class CI_Exceptions {
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		echo $buffer;
-		echo $templates_path; */
 	}
 
 	// --------------------------------------------------------------------
@@ -270,31 +234,6 @@ class CI_Exceptions {
 	 * @param	int	$line		Line number
 	 * @return	void
 	 */
-
-	 //oracle 에러 포함
-	public function show_php_error($severity, $message, $filepath, $line)
-	{
-		$severity = isset($this->levels[$severity]) ? $this->levels[$severity] : $severity;
-		$row = array(
-			"result" => $severity
-		);
-		$result = array(
-				'row' => $row
-				,'status' => 5001
-				,'message' => $message
-			
-		);
-		
-		
-		if (ob_get_level() > $this->ob_level + 1)
-		{
-			ob_end_flush();
-		}
-		header("Content-Type: application/json; charset=UTF-8");
-		echo json_encode($result);
-		
-	}
-	/*  //oracle 에러 포함
 	public function show_php_error($severity, $message, $filepath, $line)
 	{
 		$templates_path = config_item('error_views_path');
@@ -322,9 +261,6 @@ class CI_Exceptions {
 			$template = 'cli'.DIRECTORY_SEPARATOR.'error_php';
 		}
 
-
-		
-
 		if (ob_get_level() > $this->ob_level + 1)
 		{
 			ob_end_flush();
@@ -334,10 +270,6 @@ class CI_Exceptions {
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		echo $buffer;
-		echo $filepath;
-		echo $severity;
-		echo $templates_path.$template;
-		echo 'show_php_error';
-	} */
+	}
 
 }
