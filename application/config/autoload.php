@@ -101,7 +101,7 @@ $autoload['drivers'] = array();
  *	기본적으로 autoload 되고 있는 헬퍼는 지우시면 안됩니다
  *	그러나 필요한 경우 새로운 헬퍼를 추가히시는 건 괜찮습니다
  */
-$autoload['helper'] = array('url', 'basic', 'thumbnail', 'cookie');
+$autoload['helper'] = array('url', 'basic', 'thumbnail', 'cookie', 'api');
 
 /*
 | -------------------------------------------------------------------
