@@ -4,6 +4,7 @@ import React from 'react';
 
 // SafeAreaView is the root element of the screen. This helps us to avoid drawing UI over the notches on physical devices.
 import {SafeAreaView} from 'react-native';
+import {View} from 'react-native';
 
 import {Button, Divider, Layout, TopNavigation} from '@ui-kitten/components';
 export const HomeScreen = ({navigation}) => {
@@ -13,13 +14,17 @@ export const HomeScreen = ({navigation}) => {
 //TopNavigation is the header of our application.
 //Layout includes the main content of the screen.
   return (
+    <>
     <SafeAreaView style={{flex: 1}}>
+      
       <TopNavigation title="Altruists Home" alignment="center" />
       <Divider />
       <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Button onPress={navigateDetails}>OPEN DETAILS</Button>
       </Layout>
     </SafeAreaView>
+    
+    </> 
   );
 };
 

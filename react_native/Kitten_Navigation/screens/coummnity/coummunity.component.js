@@ -25,7 +25,7 @@ export const CoummunityScreens = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <TopNavigation
-        title="Altruists Detail"
+        title="커뮤니티"
         alignment="center"
      
       />
