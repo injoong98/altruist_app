@@ -8,7 +8,7 @@ import {
   Layout,
   Text,
   TopNavigation,
-  TopNavigationAction,
+  TopNavigationAction,Button
 } from '@ui-kitten/components';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
@@ -32,6 +32,8 @@ export const CoummunityScreens = ({navigation}) => {
       <Divider />
       <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text category="h1">Coummunity Tab</Text>
+        <Button onPress ={() => navigation.navigate("search")}>search navigaate</Button>
+        <Button onPress ={() => navigation.push("search")}>search push</Button>
       </Layout>
     </SafeAreaView>
   );
