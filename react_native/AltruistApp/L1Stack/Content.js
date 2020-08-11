@@ -15,7 +15,6 @@ const defaultContent = ({navigation}) =>{
     
     return(
     <SafeAreaView style={{flex:1}}>
-        <TopNavigation title="글본문" alignment="center" accessoryLeft={BackAction}/> 
         <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
      <Text>글본문입니다</Text>
         </Layout>   

@@ -15,9 +15,9 @@ const defaultWrite = ({navigation}) =>{
     
     return(
     <SafeAreaView style={{flex:1}}>
-        <TopNavigation title="글작성" alignment="center" accessoryLeft={BackAction}/> 
+        <TopNavigation title="글작성" alignment="center" /> 
         <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
-     <Text>글작성 화면입니다.</Text>
+        <Text>글작성 화면입니다.</Text>
         </Layout>   
     </SafeAreaView>
 
