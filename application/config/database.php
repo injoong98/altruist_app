@@ -83,9 +83,9 @@ $query_builder = TRUE;
 */
 $db['default'] = array(
 	//'dsn'	=> 'mysql:host=localhost;dbname=yourdatabasenamehere',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => 'unydb2020',
+	'hostname' => 'dev.unyict.org',
+	'username' => 'altruists',
+	'password' => 'uny2020',
 	'database' => 'altruists',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => 'cb_',
