@@ -1,20 +1,112 @@
 import React from 'react';
-import {SafeAreaView} from 'react-native';
-import {Layout,Button,Text} from '@ui-kitten/components'
+import {SafeAreaView,View,StyleSheet} from 'react-native';
+import {Layout,Button,Text,ListItem,List, Divider,Card} from '@ui-kitten/components'
 
+
+const sample = [
+    {
+        title:"first title",
+        author:"Tune",
+        view:"3023",
+        up:"200",
+        comment:"+2"
+    },
+    {
+        title:"Second title",
+        author:"Edward",
+        view:"3023",
+        up:"200",
+        comment:"+2"
+    },
+    {
+        title:"third title",
+        author:"Roothyo",
+        view:"3023",
+        up:"200",
+        comment:"+2"
+    },
+    {
+        title:"third title",
+        author:"Roothyo",
+        view:"3023",
+        up:"200",
+        comment:"+2"
+    },
+    {
+        title:"third title",
+        author:"Roothyo",
+        view:"3023",
+        up:"200",
+        comment:"+2"
+    },
+    {
+        title:"third title",
+        author:"Roothyo",
+        view:"3023",
+        up:"200",
+        comment:"+2"
+    },
+    {
+        title:"third title",
+        author:"Roothyo",
+        view:"3023",
+        up:"200",
+        comment:"+2"
+    },
+    {
+        title:"third title",
+        author:"Roothyo",
+        view:"3023",
+        up:"200",
+        comment:"+2"
+    },
+    {
+        title:"third title",
+        author:"Roothyo",
+        view:"3023",
+        up:"200",
+        comment:"+2"
+    },
+    {
+        title:"third title",
+        author:"Roothyo",
+        view:"3023",
+        up:"200",
+        comment:"+2"
+    },
+    {
+        title:"third title",
+        author:"Roothyo",
+        view:"3023",
+        up:"200",
+        comment:"+2"
+    }
+]
 
 
 const GominScreen = ({navigation}) =>{
     
-    return(
-    <SafeAreaView style={{flex:1}}>
-        <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
-            <Text>고민있어요 화면입니다.</Text>
-            <Button onPress = {()=>{navigation.goBack()}}>뒤로가기</Button>
-        </Layout>   
-    </SafeAreaView>
+      const renderItem = ({ item, index }) => (
+        <Card>
+            
+        </Card>
+      );
 
-    )
+        
+        
+        return(
+        <SafeAreaView style={{flex:1}}>
+            <List
+            data ={sample}
+            ItemSeparatorComponent={Divider}
+            renderItem={renderItem} />
+            <View style ={{ width:"100%",bottom:30,position :"absolute",display :"flex", flexDirection:"row",justifyContent:"center", alignItems:"center"}}>
+                <Button onPress={()=>{navigation.navigate('Write')}} >글쓰기</Button>
+            </View>
+        </SafeAreaView>
+
+        )
+
     }
 
 export {GominScreen}
