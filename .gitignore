@@ -31,6 +31,4 @@ composer.lock
 /tests/results/
 
 
-#gradle
 node_modules
-react_native/Kitten_Navigation/android/gradle/wrapper/gradle-wrapper.properties
