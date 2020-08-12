@@ -31,7 +31,7 @@ const data = [
         payment : "40만원"
     }];
 
-export const AlbaScreen = () => {
+export const AlbaScreen = ({navigation}) => {
 
   // const renderItemHeader = (headerProps, info) => (
   //   <View {...headerProps}>
@@ -45,7 +45,7 @@ export const AlbaScreen = () => {
 
   const renderItem = (info) => (
       <Card
-      onPress={() => {alert('detail screen');}}
+      onPress={() => {navigation.navigate('Content');}}
       style={styles.item}
       status='basic'>
         <View style={{flexDirection : 'row'}}>
@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
 
   },
   contentContainer: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: 2,
+    paddingVertical: 2,
   },
   item: {
     marginVertical: 4,
@@ -94,7 +94,4 @@ const styles = StyleSheet.create({
     justifyContent : 'center',
     alignItems : 'center',
   },
-  button:{
-    width : 100,
-  }
 });
