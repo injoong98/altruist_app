@@ -24,8 +24,8 @@ const defaultContent = ({navigation}) =>{
     )
 }
 
-const MarketContent = ({navigation}) =>{
-    
+const MarketContent = ({route, navigation}) =>{
+
     const BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
     )
@@ -35,14 +35,14 @@ const MarketContent = ({navigation}) =>{
         <TopNavigation title="글작성" alignment="center" accessoryLeft={BackAction} />
         <View style={{flex:1}}>
             <View style={{height:394}}>
-                <Image source={require('../market/asset/market-image-1.jpg')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                <Image source={route.params.uri} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
             </View>
             <View style={{}}>
                 <Layout>
-                <Text category='h1'>Title</Text>
+                <Text category='h2'>{route.params.title}</Text>
                 </Layout>
                 <Layout>
-                <Text category='h4'>Price</Text>
+                <Text category='h4'>{route.params.price}</Text>
                 </Layout>
             </View>
             <Divider/>
@@ -51,12 +51,13 @@ const MarketContent = ({navigation}) =>{
                 <Image source={require('../market/asset/market-image-1.jpg')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                 </Layout>
                 <Layout style={{justifyContent:'center'}}>
-                <Text>User</Text>
+                <Text>{route.params.user}</Text>
                 </Layout>
             </Layout>
             <Divider/>
             <Layout style={{flex:1}}>
                 <Text>Details</Text>
+                <Text> ㅇPlace : {route.params.place}</Text>
             </Layout>
             <Divider/>
             <Layout>
