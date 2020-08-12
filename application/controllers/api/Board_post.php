@@ -117,9 +117,13 @@ class Board_post extends CB_Controller
 			'page_name' => $page_name,
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		$this->data = $view;
-		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		// $this->data = $view;
+		// $this->layout = element('layout_skin_file', element('layout', $view));
+		// $this->view = element('view_skin_file', element('layout', $view));
+		//json api output
+		response_result($view);
+
+		
 	}
 
 

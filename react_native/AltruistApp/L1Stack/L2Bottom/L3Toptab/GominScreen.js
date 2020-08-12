@@ -1,7 +1,7 @@
 import React from 'react';
 import {SafeAreaView,View,StyleSheet} from 'react-native';
 import { Icon,Layout,Button,Text,ListItem,List, Divider,Card} from '@ui-kitten/components'
-
+import axios from 'axios'
 
 const sample = [
     {
@@ -83,9 +83,7 @@ const sample = [
     }
 ]
 
-
-const GominScreen = ({navigation}) =>{
-    const EyeIcon = (props)=>(
+    const  EyeIcon = (props)=>(
         <Icon style={styles.icon} fill='#8F9BB3' name="eye"/>
     )
     const CommentIcon = (props)=>(
@@ -94,42 +92,65 @@ const GominScreen = ({navigation}) =>{
     const HeartIcon = (props)=>(
         <Icon style={styles.icon} fill='#8F9BB3' name="heart"/>
     )
+
+class GominScreen extends React.Component {
+    
+    constructor(props) {
+        super(props);
+        this.state={
+            isLoading : true,
+            lists:''
+        }
+    }
+
     
     
-    
-    const renderItem = ({ item, index }) => (
-        <Card onPress = {()=>{navigation.navigate('GominContent',{title:`${index+1}th`})}}>
-            <Text category="h6" numberOfLines={1} ellipsizeMode="tail">{item.title}</Text>
+    renderItem = ({ item, index }) => (
+        <Card onPress = {()=>{this.props.navigation.navigate('GominContent',{title:`${index+1}th`})}}>
+            <Text category="h6" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
             <View style={styles.subtitle}>
-                <Text category="s1">{item.author}</Text>
+                <Text category="s1">{item.post_nickname}</Text>
                 <View style={styles.infocontainer}>
                     <EyeIcon />
-                    <Text category="s1">{item.view}</Text>
+                    <Text category="s1">{item.post_hit}</Text>
                     <HeartIcon />
-                    <Text category="s1">{item.up}</Text>
+                    <Text category="s1">{item.post_like}</Text>
                     <CommentIcon />
-                    <Text category="s1">{item.comment}</Text>
+                    <Text category="s1">{item.post_comment_count}</Text>
                 </View>
 
             </View>
         </Card>
 
-      );
+    );
+    getPostList = () =>{
+        axios.get('http://10.0.2.2/api/board_post/lists/b-a-1')
+        .then((response)=>{
+            this.setState({lists:response.data.view.list.data.list,isLoading:false})
+        })
+        .catch((error)=>{
+            alert('error')
+        })
+    }
+    componentDidMount(){
+        this.getPostList();
+    }
 
-        
-        
+    render(){
         return(
+        this.state.isLoading ? <Text>Loading now...</Text>:
         <SafeAreaView style={{flex:1}}>
             <List
-            data ={sample}
+            data ={this.state.lists}
             ItemSeparatorComponent={Divider}
-            renderItem={renderItem} />
+            renderItem={this.renderItem} />
             <View style ={styles.buttoncontainer}>
-                <Button onPress={()=>{navigation.navigate('Write')}} >글쓰기</Button>
+                <Button onPress={()=>{this.props.navigation.navigate('Write')}} >글쓰기</Button>
             </View>
         </SafeAreaView>
 
         )
+        }
 
     }
 
