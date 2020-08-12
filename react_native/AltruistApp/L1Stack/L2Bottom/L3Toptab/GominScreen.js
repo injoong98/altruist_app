@@ -1,87 +1,8 @@
 import React from 'react';
 import {SafeAreaView,View,StyleSheet} from 'react-native';
-import { Icon,Layout,Button,Text,ListItem,List, Divider,Card} from '@ui-kitten/components'
+import { Icon,Layout,Button,Text,ListItem,List, Divider,Card,Spinner} from '@ui-kitten/components'
 import axios from 'axios'
 
-const sample = [
-    {
-        title:"first title 고민있어요 제목을 길게 써보면 어떻게 나올까요",
-        author:"Tune",
-        view:"3023",
-        up:"200",
-        comment:"+2"
-    },
-    {
-        title:"Second title",
-        author:"Edward",
-        view:"3023",
-        up:"200",
-        comment:"+2"
-    },
-    {
-        title:"third title",
-        author:"Roothyo",
-        view:"3023",
-        up:"200",
-        comment:"+2"
-    },
-    {
-        title:"third title",
-        author:"Roothyo",
-        view:"3023",
-        up:"200",
-        comment:"+2"
-    },
-    {
-        title:"third title",
-        author:"Roothyo",
-        view:"3023",
-        up:"200",
-        comment:"+2"
-    },
-    {
-        title:"third title",
-        author:"Roothyo",
-        view:"3023",
-        up:"200",
-        comment:"+2"
-    },
-    {
-        title:"third title",
-        author:"Roothyo",
-        view:"3023",
-        up:"200",
-        comment:"+2"
-    },
-    {
-        title:"third title",
-        author:"Roothyo",
-        view:"3023",
-        up:"200",
-        comment:"+2"
-    },
-    {
-        title:"third title",
-        author:"Roothyo",
-        view:"3023",
-        up:"200",
-        comment:"+2"
-    },
-    {
-        title:"third title",
-        author:"Roothyo",
-        view:"3023",
-        up:"200",
-        comment:"+2"
-    },
-    {
-        title:"third title",
-        author:"Roothyo",
-        view:"3023",
-        up:"200",
-        comment:"+2"
-    }
-]
 
     const  EyeIcon = (props)=>(
         <Icon style={styles.icon} fill='#8F9BB3' name="eye"/>
@@ -138,7 +59,12 @@ class GominScreen extends React.Component {
 
     render(){
         return(
-        this.state.isLoading ? <Text>Loading now...</Text>:
+        this.state.isLoading ? 
+        <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+            <Text>
+                <Spinner size="giant" />
+            </Text>
+        </View>:
         <SafeAreaView style={{flex:1}}>
             <List
             data ={this.state.lists}
