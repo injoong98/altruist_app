@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Image} from 'react-native';
-import { Card, List, Text, Divider} from '@ui-kitten/components';
+import { StyleSheet, View, Image, Layout} from 'react-native';
+import { Card, List, Text, Divider, Button} from '@ui-kitten/components';
 
 const data = [
     {
@@ -29,7 +29,35 @@ const data = [
         place : "서울시 용산구",
         period : "월",
         payment : "40만원"
-    }];
+    },
+    {
+        id : 4,
+        overLine : "마케팅관리",
+        companyName : "다음",
+        context : "다음은 카카오의 계열사 입니다. 다음와도 카카오에요.",
+        place : "서울시 용산구",
+        period : "월",
+        payment : "40만원"
+    },
+    {
+        id : 5,
+        overLine : "마케팅관리",
+        companyName : "다음",
+        context : "다음은 카카오의 계열사 입니다. 다음와도 카카오에요.",
+        place : "서울시 용산구",
+        period : "월",
+        payment : "40만원"
+    },
+    {
+        id : 6,
+        overLine : "마케팅관리",
+        companyName : "다음",
+        context : "다음은 카카오의 계열사 입니다. 다음와도 카카오에요.",
+        place : "서울시 용산구",
+        period : "월",
+        payment : "40만원"
+    }
+  ];
 
 export const AlbaScreen = ({navigation}) => {
 
@@ -45,7 +73,7 @@ export const AlbaScreen = ({navigation}) => {
 
   const renderItem = (info) => (
       <Card
-      onPress={() => {navigation.navigate('Content');}}
+      onPress={() => {navigation.navigate('AlbaContent');}}
       style={styles.item}
       status='basic'>
         <View style={{flexDirection : 'row'}}>
@@ -64,18 +92,24 @@ export const AlbaScreen = ({navigation}) => {
   );
 
   return (
-    <List
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      data={data}
-      renderItem={renderItem}
-    />
+    <View>
+      <List
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        data={data}
+        renderItem={renderItem}
+      />
+      <Button 
+      style={styles.bottom}
+      onPress={()=>{alert('Write')}}>
+        글쓰기
+      </Button>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-
   },
   contentContainer: {
     paddingHorizontal: 2,
@@ -93,5 +127,10 @@ const styles = StyleSheet.create({
     flex : 1,
     justifyContent : 'center',
     alignItems : 'center',
+  },
+  bottom: {
+    position : 'absolute',
+    bottom : 10,
+    left : 200,
   },
 });

@@ -2,7 +2,7 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {ComBottomNav} from './L2Bottom/ComBottomNav'
-import {defaultContent, MarketContent} from './Content'
+import {defaultContent, MarketContent, AlbaContent} from './Content'
 import {defaultWrite} from './Write'
 
 import {SafeAreaView} from 'react-native'
@@ -24,5 +24,6 @@ export const StackNav = () =>(
         <Screen name = "Write" component={defaultWrite}/>
         <Screen name = "Content" component={defaultContent}/>
         <Screen name = "MarketContent" component={MarketContent}/>
+        <Screen name = "AlbaContent" component={AlbaContent}/>
     </Navigator>
 )
