@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, SafeAreaView, View, StyleSheet} from 'react-native';
+import {Image, SafeAreaView, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction, Button, List, Card} from '@ui-kitten/components';
 
 
@@ -39,6 +39,13 @@ const data = new Array(
         user: 'Rimi',
         uri : require('../../../market/asset/market-image-5.jpg')
     },
+    {
+        title: '샤오미 전동퀵보드',
+        place: '서울 노원구',
+        price: '50,900',
+        user: 'Edward',
+        uri : require('../../../market/asset/market-image-1.jpg')
+    },
 );
 
 
@@ -49,12 +56,12 @@ const MarketScreen = ({navigation}) =>{
         
 
         return (
-            <View style={{flex:1, flexDirection:'row', height:100, margin:5}}>
+            <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('MarketContent')}>
                 <View style={{width:100}}>
                     <Image source={info.item.uri} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                 </View>
                 <Layout style={styles.textArea}>
-                    <Layout style={styles.listTop}>
+                    <Layout style={styles.textTop}>
                     <Text style={styles.text} category='s1'>
                         {info.item.title}   {/*info.item으로 데이터 road*/}
                     </Text>
@@ -64,7 +71,7 @@ const MarketScreen = ({navigation}) =>{
                         {info.item.place} 
                     </Text>
                     </Layout>
-                    <Layout style={styles.listBottom}>
+                    <Layout style={styles.textBottom}>
                     <Layout style={{flex:1, justifyContent:'center'}}>
                         <Text style={styles.text} category='h6'>
                             {info.item.price} 원 
@@ -77,7 +84,7 @@ const MarketScreen = ({navigation}) =>{
                     </Layout>
                     </Layout>
                 </Layout>
-            </View>
+            </TouchableOpacity>
         );
     };
       
@@ -93,32 +100,87 @@ const MarketScreen = ({navigation}) =>{
       );
 }
 
+const MarketContent = ({navigation}) => {
+  
+  
+    const navigateBack = () => {
+      navigation.goBack();
+    };
+    const BackAction = () => (
+      <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
+    );
+  
+    return (
+      <View style={{flex:1}}>
+        <View>
+          <TopNavigation     
+            accessoryLeft={BackAction} />
+        </View>
+        <View style={{height:394}}>
+          <Image source={require('../../../market/asset/market-image-1.jpg')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+        </View>
+        <View style={{}}>
+          <Layout>
+            <Text category='h1'>Title</Text>
+          </Layout>
+          <Layout>
+            <Text category='h4'>Price</Text>
+          </Layout>
+        </View>
+        <Divider/>
+        <Layout style={{height:50,flexDirection:'row'}}>
+          <Layout style={{width:50}}>
+            <Image source={require('../../../market/asset/market-image-1.jpg')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+          </Layout>
+          <Layout style={{justifyContent:'center'}}>
+            <Text>User</Text>
+          </Layout>
+        </Layout>
+        <Divider/>
+        <Layout style={{flex:1}}>
+          <Text>Details</Text>
+        </Layout>
+        <Divider/>
+        <Layout>
+          <Text>Comment</Text>
+        </Layout>
+  
+      </View>
+    );
+  
+  }
+
+
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: 'white'
     },
     contentContainer: {
-      paddingHorizontal: 8,
-      paddingVertical: 4,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
     },
     item: {
-      marginVertical: 4,
+        flex:1, 
+        flexDirection:'row', 
+        height:100, 
+        margin:5
     },
     textArea: {
         flex: 1,
         paddingHorizontal: 10,
         maxHeight: 100
     },
-    listTop: {
+    textTop: {
         flex: 1,
-      justifyContent: 'center'
+        justifyContent: 'center'
     },
-    listBottom: {
-      flexDirection: 'row'
+    textBottom: {
+        flexDirection: 'row'
     },
     text: {
         margin: 4,
     }
   });
 
-export {MarketScreen}
+export {MarketScreen, MarketContent}
