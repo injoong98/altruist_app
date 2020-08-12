@@ -98,7 +98,7 @@ const GominScreen = ({navigation}) =>{
     
     
     const renderItem = ({ item, index }) => (
-        <Card onPress = {()=>{navigation.navigate('GominContent')}} >
+        <Card onPress = {()=>{navigation.navigate('GominContent',{title:`${index+1}th`})}}>
             <Text category="h6" numberOfLines={1} ellipsizeMode="tail">{item.title}</Text>
             <View style={styles.subtitle}>
                 <Text category="s1">{item.author}</Text>
