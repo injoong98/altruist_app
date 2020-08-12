@@ -109,7 +109,7 @@ const AlbaContent = ({navigation, route}) => {
     const BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
     )
-    
+
     return(
     <SafeAreaView style={{flex:1}}>
         <TopNavigation title="채용정보" alignment="center" accessoryLeft={BackAction} /> 
