@@ -68,7 +68,7 @@ const MarketContent = ({route, navigation}) =>{
             <Divider/>
             <Layout style={{height:50,flexDirection:'row'}}>
                 <Layout style={{width:50}}>
-                <Image source={require('../market/asset/market-image-1.jpg')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                <Image source={require('../market/asset/basic_user.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                 </Layout>
                 <Layout style={{justifyContent:'center'}}>
                 <Text>{route.params.user}</Text>
