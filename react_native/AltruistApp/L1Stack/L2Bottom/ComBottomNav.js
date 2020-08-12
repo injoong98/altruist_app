@@ -1,6 +1,6 @@
-import React from'react';
+import React from 'react';
 import {createBottomTabNavigator}from '@react-navigation/bottom-tabs'
-import {ComToptanNav} from './L3Toptab/ComToptabNav'
+import {ComToptabNav} from './L3Toptab/ComToptabNav'
 
 import {SafeAreaView} from 'react-native'
 import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation} from '@ui-kitten/components'
@@ -35,7 +35,7 @@ export const ComBottomNav = () =>(
     <Navigator tabBar={props => <BottomTabBar {...props} />}>
         <Screen name = "Home" component={SpareScreen}/>
         <Screen name = "Alt" component={SpareScreen}/>
-        <Screen name = "Commu" component={ComToptanNav}/>
+        <Screen name = "Commu" component={ComToptabNav}/>
         <Screen name = "Meet" component={SpareScreen}/>
         <Screen name = "Prof" component={SpareScreen}/>
     </Navigator>

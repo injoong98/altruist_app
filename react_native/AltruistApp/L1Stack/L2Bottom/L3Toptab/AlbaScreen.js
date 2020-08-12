@@ -73,7 +73,7 @@ export const AlbaScreen = ({navigation}) => {
 
   const renderItem = (info) => (
       <Card
-      onPress={() => {navigation.navigate('AlbaContent');}}
+      onPress={() => {navigation.navigate('AlbaContent', info.item);}}
       style={styles.item}
       status='basic'>
         <View style={{flexDirection : 'row'}}>

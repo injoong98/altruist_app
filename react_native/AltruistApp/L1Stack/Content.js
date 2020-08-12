@@ -150,7 +150,7 @@ const MarketContent = ({route, navigation}) =>{
             <Divider/>
             <Layout style={{height:50,flexDirection:'row'}}>
                 <Layout style={{width:50}}>
-                <Image source={require('../market/asset/market-image-1.jpg')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                <Image source={require('../market/asset/basic_user.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                 </Layout>
                 <Layout style={{justifyContent:'center'}}>
                 <Text>{route.params.user}</Text>
@@ -159,7 +159,7 @@ const MarketContent = ({route, navigation}) =>{
             <Divider/>
             <Layout style={{height:200}}>
                 <Text>Details</Text>
-                <Text> ㅇPlace : {route.params.place}</Text>
+                <Text> Place : {route.params.place}</Text>
             </Layout>
             <Divider/>
             <Layout>
@@ -186,12 +186,12 @@ const MarketContent = ({route, navigation}) =>{
 }
 
 
-const AlbaContent = ({navigation}) => {
+const AlbaContent = ({navigation, route}) => {
 
     const BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
     )
-    
+
     return(
     <SafeAreaView style={{flex:1}}>
         <TopNavigation title="채용정보" alignment="center" accessoryLeft={BackAction} /> 
@@ -199,12 +199,12 @@ const AlbaContent = ({navigation}) => {
             <ScrollView>
                 <Card style={styles.item}>
                     <Text>2020-08-12 09:12</Text>
-                    <Text category='h3'>하루 1시간씩 내가 원할 때 하는 알바, 배민커넥트 모집</Text>
+                    <Text category='h3'>{route.params.context}{route.params.id}</Text>
                     <Layout style={{flexDirection:'row', marginBottom : 5}}>
                         <View style={{width : 100, height : 50, borderRightWidth : 0.3, justifyContent : 'center', alignItems : 'center'}}>
                             <Image style={{width : '90%', resizeMode:'contain'}} source={require('../assets/altruist_logo.png')}/>
                         </View>
-                        <Text style={{margin : 10}}>배민커넥트 성남점</Text>
+                        <Text style={{margin : 10}}>{route.params.companyName}</Text>
                     </Layout>
                     <Divider style={{borderWidth : 0.3}}/>
                     <Layout style={{flexDirection:'row', marginTop:10, marginLeft: 10}}>
@@ -214,7 +214,7 @@ const AlbaContent = ({navigation}) => {
                             fill='black'
                             name='star'
                         />
-                        <Text>1,880,000원</Text>
+                        <Text>{route.params.payment}</Text>
                         </View>
                         <View style={styles.icons}>
                         <Icon
@@ -265,7 +265,7 @@ const AlbaContent = ({navigation}) => {
                 </Card>
                 <Card style={styles.item}>
                     <Text style={styles.subhead}>근무지역</Text>
-                    <Text style={{margin : 5}}>전국 (도서산간지역, 일부지역 제외)</Text>
+                    <Text style={{margin : 5}}>{route.params.place}</Text>
                 </Card>
                 <Card style={styles.item}>
                     <Text style={styles.subhead}>근무조건</Text>
@@ -279,11 +279,11 @@ const AlbaContent = ({navigation}) => {
                             <Text style={styles.gathertext}>고용형태</Text>
                         </View>
                         <View style={{flex : 5}}>
-                            <Text style={styles.gather}>월급</Text>
+                            <Text style={styles.gather}>{route.params.payment}</Text>
                             <Text style={styles.gather}>1~3개월</Text>
                             <Text style={styles.gather}>월~금</Text>
                             <Text style={styles.gather}>09:00~18:00</Text>
-                            <Text style={styles.gather}>배달,택배 퀵서비스</Text>
+                            <Text style={styles.gather}>{route.params.overLine}</Text>
                             <Text style={styles.gather}>위촉직</Text>
                         </View>
                     </Layout>
