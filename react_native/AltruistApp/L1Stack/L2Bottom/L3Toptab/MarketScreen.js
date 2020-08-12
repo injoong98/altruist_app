@@ -90,12 +90,16 @@ const MarketScreen = ({navigation}) =>{
       
       return (
         <View>
-          <List
-            style={styles.container}
-            contentContainerStyle={styles.contentContainer}
-            data={data}
-            renderItem={renderItem}
-          />
+            <List
+                style={styles.container}
+                contentContainerStyle={styles.contentContainer}
+                data={data}
+                renderItem={renderItem}
+            />
+            <Button style={{position:'absolute', width:'20%', left:'40%', bottom:10}} 
+            onPress={()=>navigation.navigate('MarketWrite')}>
+                등록
+            </Button>
         </View>
       );
 }
