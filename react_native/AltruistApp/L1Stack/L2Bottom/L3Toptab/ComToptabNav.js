@@ -32,7 +32,7 @@ const TabNavigator = () => (
   </Navigator>
 );
 
-export const ComToptanNav= () => (
+export const ComToptabNav= () => (
   <>
     <TopNavigation title ="Community" alignment ='center'/>
     <TabNavigator/>
