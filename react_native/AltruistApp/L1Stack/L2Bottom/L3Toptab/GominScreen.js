@@ -85,23 +85,24 @@ const sample = [
 
 
 const GominScreen = ({navigation}) =>{
-    
     const EyeIcon = (props)=>(
-        <Icon style={{width: 24,height: 24,marginLeft:5}} fill='#8F9BB3' name="eye"/>
+        <Icon style={styles.icon} fill='#8F9BB3' name="eye"/>
     )
     const CommentIcon = (props)=>(
-        <Icon style={{width: 24,height: 24,marginLeft:5}} fill='#8F9BB3' name="message-circle"/>
+        <Icon style={styles.icon} fill='#8F9BB3' name="message-circle"/>
     )
     const HeartIcon = (props)=>(
-        <Icon style={{width: 24,height: 24,marginLeft:5}} fill='#8F9BB3' name="heart"/>
+        <Icon style={styles.icon} fill='#8F9BB3' name="heart"/>
     )
-        
+    
+    
+    
     const renderItem = ({ item, index }) => (
-        <Card>
+        <Card onPress = {()=>{navigation.navigate('GominContent')}} >
             <Text category="h6" numberOfLines={1} ellipsizeMode="tail">{item.title}</Text>
-            <View style={{marginTop:10, display:"flex",flexDirection:"row", justifyContent:"space-between"}}>
+            <View style={styles.subtitle}>
                 <Text category="s1">{item.author}</Text>
-                <View style={{display:"flex",flexDirection:"row"}}>
+                <View style={styles.infocontainer}>
                     <EyeIcon />
                     <Text category="s1">{item.view}</Text>
                     <HeartIcon />
@@ -141,5 +142,14 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         justifyContent:"center", 
         alignItems:"center"
+    },
+    icon:{
+        width: 24,height: 24,marginLeft:5
+    },
+    subtitle:{
+        marginTop:10, display:"flex",flexDirection:"row", justifyContent:"space-between"
+    },
+    infocontainer:{
+        display:"flex",flexDirection:"row"
     }
 })
