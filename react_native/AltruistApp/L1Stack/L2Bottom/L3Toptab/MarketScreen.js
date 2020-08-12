@@ -56,7 +56,7 @@ const MarketScreen = ({navigation}) =>{
         
 
         return (
-            <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('MarketContent')}>
+            <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('MarketContent', info.item)}>
                 <View style={{width:100}}>
                     <Image source={info.item.uri} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                 </View>
