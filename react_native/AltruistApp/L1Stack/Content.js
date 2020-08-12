@@ -20,8 +20,7 @@ const defaultContent = ({navigation}) =>{
             <Text>글본문입니다</Text>
         </Layout>   
     </SafeAreaView>
-
     )
-    }
+}
 
 export {defaultContent}
