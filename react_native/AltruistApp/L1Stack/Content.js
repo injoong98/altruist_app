@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView,} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List} from '@ui-kitten/components'
 import {CardItem} from 'native-base';
 const BackIcon =  (props) =>(
@@ -126,6 +126,12 @@ const MarketContent = ({route, navigation}) =>{
     const BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
     )
+
+    const UproadIcon = (props) => (
+        <TouchableOpacity>
+          <Icon {...props} name='arrow-circle-up'/>
+        </TouchableOpacity>
+    )
     
     const [value, setValue] = React.useState('');
 
@@ -164,18 +170,16 @@ const MarketContent = ({route, navigation}) =>{
             <Divider/>
             <Layout>
                 <Text>Comment</Text>
-                <Layout style={styles.commentBlock}>
                     <Input
-                        style={{flex:1}}
-                        placeholder='Place your Text'
+                        style={{flex:1, margin:15}}
+                        size='large'
+                        placeholder='댓글을 입력하세요.'
                         value={value}
                         multiline={true}
-                        clearButtonMode='always'
+                        accessoryRight={UproadIcon}
                         onChangeText={nextValue => setValue(nextValue)}
                     />
-                </Layout>
                 <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
-                    <Button style={{width:100}}>Submit</Button>
                 </Layout>
             </Layout>
             </ScrollView>
