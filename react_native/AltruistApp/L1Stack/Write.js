@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
-
+import WebView from 'react-native-webview';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -18,9 +18,18 @@ const defaultWrite = ({navigation}) =>{
     <SafeAreaView style={{flex:1}}>
         <TopNavigation title="글작성" alignment="center" accessoryLeft={BackAction} /> 
         <Divider />
-        <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
-            <Text>글작성 화면입니다.</Text>
-        </Layout>   
+        <Layout style={{flex:10}}>
+            <ScrollView>
+                <Text>This is Write</Text>
+            </ScrollView>
+        </Layout>
+        <View style={styles.bottomView}>
+            <Button 
+                style={styles.bottomButton}
+                onPress={()=>{navigation.goBack()}}>
+                    글쓰기 
+            </Button>
+        </View>    
     </SafeAreaView>
 
     )
@@ -110,16 +119,16 @@ const AlbaWrite = ({navigation}) =>{
         <Divider />
         <Layout style={{flex:10}}>
             <ScrollView>
-                <Text>This is Alba Write</Text>
+                <Text>This is Write</Text>
             </ScrollView>
         </Layout>
         <View style={styles.bottomView}>
-                <Button 
-                    style={styles.bottomButton}
-                    onPress={()=>{this.props.navigation.navigate('AlbaWrite');}}>
-                        글쓰기 
-                </Button>
-            </View>   
+            <Button 
+                style={styles.bottomButton}
+                onPress={()=>{navigation.goBack()}}>
+                    글쓰기 
+            </Button>
+        </View>   
     </SafeAreaView>
     )
 }
