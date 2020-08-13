@@ -73,7 +73,7 @@ class AlbaScreen extends React.Component {
       <View style={styles.bottomView}>
         <Button 
           style={styles.bottomButton}
-          onPress={()=>{alert('Write')}}>
+          onPress={()=>{this.props.navigation.navigate('AlbaWrite');}}>
             글쓰기 
           </Button>
       </View>

@@ -303,7 +303,7 @@ const AlbaContent = ({navigation, route}) => {
                         </View>
                     </Layout>
                 </Card>
-                <Card style={styles.item}>
+                <Card style={styles.item} onPress={()=>console.log(route.params.post_content)}>
                     <HTML html = {route.params.post_content} imagesMaxWidth={Dimensions.get('window').width}/>
                 </Card>
             </ScrollView>
