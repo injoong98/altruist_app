@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking,} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal} from '@ui-kitten/components'
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
@@ -232,7 +232,7 @@ const MarketContent = ({route, navigation}) =>{
 const AlbaContent = ({navigation, route}) => {
 
     const [visible, setVisible] = React.useState(false);
-
+    const phoneNumber = '01099999999';
     const BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
     )
@@ -320,19 +320,22 @@ const AlbaContent = ({navigation, route}) => {
                                 <View style={styles.modal_icons}>
                                     <Button
                                         appearance='ghost'
-                                        accessoryLeft={HeartIcon}/>
+                                        accessoryLeft={HeartIcon}
+                                        onPress={()=>{Linking.openURL(`tel:${phoneNumber}`)}}/>
                                     <Text>전화</Text>
                                 </View>
                                     <View style={styles.modal_icons}>
                                     <Button
                                         appearance='ghost'
-                                        accessoryLeft={HeartIcon}/>
+                                        accessoryLeft={CommentIcon}
+                                        onPress={()=>{Linking.openURL(`sms:${phoneNumber}`)}}/>
                                     <Text>메시지</Text>
                                 </View>
                                 <View style={styles.modal_icons}>
                                 <Button
                                         appearance='ghost'
-                                        accessoryLeft={CommentIcon}/>
+                                        accessoryLeft={HeartIcon}
+                                        onPress={()=>{Linking.openURL(`mailto:${route.params.post_email}`)}}/>
                                     <Text>이메일</Text>
                                 </View>
                             </Layout>
