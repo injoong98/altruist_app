@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {Image, SafeAreaView, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction, Button, List, Card} from '@ui-kitten/components';
-
+import axios from 'axios'
 
 const data = new Array(
     {
@@ -51,6 +51,34 @@ const data = new Array(
 
 const MarketScreen = ({navigation}) =>{
 
+    
+    const [isLoading, setIsLoading] = React.useState(true);
+    const [list, setList] = React.useState('');
+    
+    
+    // const getPostList = async() =>{
+    //   await axios.get('http://10.0.2.2/api/board_post/lists/b-a-1')
+    //   .then((response)=>{
+    //       setList(response.data.view.list.data.list);
+    //       setIsLoading(false);
+    //   })
+    //   .catch((error)=>{
+    //       alert('error')
+    //   })
+    // }
+
+    useEffect(() => {
+      const fetchData = async () => {
+      const response = await axios.get(
+        'http://10.0.2.2/api/board_post/lists/b-a-1'
+      );
+
+      setList(response.data.view.list.data.list);
+      setIsLoading(false);
+      };
+
+      fetchData();
+    }, []);
 
     const renderItem = (info) => {
         
@@ -58,7 +86,7 @@ const MarketScreen = ({navigation}) =>{
         return (
             <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('MarketContent', info.item)}>
                 <View style={{width:100}}>
-                    <Image source={info.item.uri} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                    <Image source={{uri : 'http://10.0.2.2'+info.item.origin_image_url}} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                 </View>
                 <Layout style={styles.textArea}>
                     <Layout style={styles.textTop}>
@@ -74,7 +102,7 @@ const MarketScreen = ({navigation}) =>{
                     <Layout style={styles.textBottom}>
                     <Layout style={{flex:1, justifyContent:'center'}}>
                         <Text style={styles.text} category='h6'>
-                            {info.item.price} 원 
+                            {info.item.post_content.replace(/(<([^>]+)>)/ig,"")} 원 
                         </Text>
                     </Layout>
                     <Layout style={{justifyContent: 'center'}}>
@@ -89,11 +117,11 @@ const MarketScreen = ({navigation}) =>{
     };
       
       return (
-        <View>
+        <View style={{flex:1}}>
             <List
                 style={styles.container}
                 contentContainerStyle={styles.contentContainer}
-                data={data}
+                data={list}
                 renderItem={renderItem}
             />
             <Button style={{position:'absolute', width:'20%', left:'40%', bottom:10}} 
@@ -106,14 +134,13 @@ const MarketScreen = ({navigation}) =>{
 
 const MarketContent = ({navigation}) => {
   
-  
     const navigateBack = () => {
       navigation.goBack();
     };
     const BackAction = () => (
       <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
     );
-  
+
     return (
       <View style={{flex:1}}>
         <View>
