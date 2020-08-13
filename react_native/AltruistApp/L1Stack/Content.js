@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView,TouchableOpacity} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner} from '@ui-kitten/components'
-import {CardItem} from 'native-base';
 import Axios from 'axios';
+//import {WebView} from 'react-native-webview';
+import HTML from 'react-native-render-html';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -239,15 +240,15 @@ const AlbaContent = ({navigation, route}) => {
     <SafeAreaView style={{flex:1}}>
         <TopNavigation title="채용정보" alignment="center" accessoryLeft={BackAction} /> 
         <Layout style={styles.container}>
-            <ScrollView>
+            <ScrollView style={{backgroundColor : 'lightgrey'}}>
                 <Card style={styles.item}>
                     <Text>{route.params.post_datetime}</Text>
-                    <Text category='h3'>{route.params.post_title}{route.params.post_id}</Text>
+                    <Text category='h3'>{route.params.post_title}</Text>
                     <Layout style={{flexDirection:'row', marginBottom : 5}}>
                         <View style={{width : 100, height : 50, borderRightWidth : 0.3, justifyContent : 'center', alignItems : 'center'}}>
                             <Image style={{width : '90%', resizeMode:'contain'}} source={require('../assets/altruist_logo.png')}/>
                         </View>
-                        <Text style={{margin : 10}}>{route.params.post_nickname}</Text>
+                        <Text style={{margin : 15}}>{route.params.post_nickname}</Text>
                     </Layout>
                     <Divider style={{borderWidth : 0.3}}/>
                     <Layout style={{flexDirection:'row', marginTop:10, marginLeft: 10}}>
@@ -257,78 +258,56 @@ const AlbaContent = ({navigation, route}) => {
                             fill='black'
                             name='star'
                         />
-                        <Text>{route.params.post_hit}</Text>
+                        <Text>route.params.alba_salary</Text>
                         </View>
                         <View style={styles.icons}>
                         <Icon
                             style={{width:32,height:32}}
                             fill='black'
-                            name='star'
+                            name='eye'
                         />
-                        <Text>{route.params.post_like}</Text>
+                        <Text>route.params.alba_type</Text>
                         </View>
-                        <View style={styles.icons}>
+                        <View style={{flex : 2, justifyContent : 'center', alignItems : 'center'}}>
                         <Icon
                             style={{width:32,height:32}}
                             fill='black'
-                            name='star'
+                            name='share-outline'
                         />
-                        <Text>{route.params.post_email}</Text>
+                        <Text>route.params.alba_location</Text>
                         </View>
                     </Layout>
                 </Card>
-                <Card style={styles.item}>
-                    <Text style={styles.subhead}>모집조건</Text>
-                    <Layout style = {{flexDirection : 'row'}}>
-                        <View style={{flex : 1, marginLeft : 5}}>
-                            <Text style={styles.gathertext}>모집마감</Text>
-                            <Text style={styles.gathertext}>모집인원</Text>
-                            <Text style={styles.gathertext}>성별</Text>
-                            <Text style={styles.gathertext}>연령</Text>
-                            <Text style={styles.gathertext}>학력</Text>
-                            <Text style={styles.gathertext}>기타사항</Text>
-                        </View>
-                        <View style={{flex : 5}}>
-                            <Text style={styles.gather}>상시모집</Text>
-                            <Text style={styles.gather}>00명</Text>
-                            <Text style={styles.gather}>성별무관</Text>
-                            <Text style={styles.gather}>20세~90세</Text>
-                            <Text style={styles.gather}>학력무관</Text>
-                            <Text style={styles.gather}>초보가능, 친구와 함께 근무가능</Text>
-                        </View>
-                    </Layout>
-                </Card>
+                
                 <Card style={styles.item}>
                     <Text style={styles.subhead}>근무지역</Text>
-                    <Text style={{margin : 5}}>{route.params.post_datetime}</Text>
+                    <Text style={{margin : 5}}>route.params.alba_location</Text>
                 </Card>
                 <Card style={styles.item}>
                     <Text style={styles.subhead}>근무조건</Text>
                     <Layout style = {{flexDirection : 'row'}}>
                         <View style={{flex : 1, marginLeft : 5}}>
                             <Text style={styles.gathertext}>급여</Text>
-                            <Text style={styles.gathertext}>근무기간</Text>
-                            <Text style={styles.gathertext}>근무요일</Text>
-                            <Text style={styles.gathertext}>근무시간</Text>
-                            <Text style={styles.gathertext}>업직종</Text>
-                            <Text style={styles.gathertext}>고용형태</Text>
                         </View>
                         <View style={{flex : 5}}>
-                            <Text style={styles.gather}>{route.params.post_hit}</Text>
-                            <Text style={styles.gather}>1~3개월</Text>
-                            <Text style={styles.gather}>월~금</Text>
-                            <Text style={styles.gather}>09:00~18:00</Text>
-                            <Text style={styles.gather}>{route.params.post_email}</Text>
-                            <Text style={styles.gather}>위촉직</Text>
+                            <Text style={styles.gather}>route.params.alba_salary_type route.params.alba_salary</Text>
+                        </View>
+                    </Layout>
+                    <Layout style = {{flexDirection : 'row'}}>
+                        <View style={{flex : 1, marginLeft : 5}}>
+                            <Text style={styles.gathertext}>근무기간</Text>
+                        </View>
+                        <View style={{flex : 5}}>
+                            <Text style={styles.gather}>route.params.alba_type</Text>
                         </View>
                     </Layout>
                 </Card>
                 <Card style={styles.item}>
-                    <Text>{route.params.post_content}</Text>
+                    <HTML html = {route.params.post_content} imagesMaxWidth={Dimensions.get('window').width}/>
                 </Card>
             </ScrollView>
             <View style={styles.bottom}>
-                <Button style={{width : '100%'}}onPress={()=>{alert('지원하기');}}>
+                <Button style={{width : '100%'}} onPress={()=>{console.log(route.params.post_content)}}>
                     지원하기
                 </Button>
             </View>
@@ -352,7 +331,7 @@ const styles = StyleSheet.create({
         flex : 1,
     },
     item : {
-        marginVertical : 20,
+        marginVertical : 5,
         paddingVertical : 10,
         paddingHorizontal : 10,
     },
