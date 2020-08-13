@@ -117,9 +117,13 @@ class Board_post extends CB_Controller
 			'page_name' => $page_name,
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		$this->data = $view;
-		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		// $this->data = $view;
+		// $this->layout = element('layout_skin_file', element('layout', $view));
+		// $this->view = element('view_skin_file', element('layout', $view));
+		//json api output
+		response_result($view);
+
+		
 	}
 
 
@@ -274,10 +278,12 @@ class Board_post extends CB_Controller
 						'page_title' => $page_title,
 					);
 					$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-					$this->data = $view;
-					$this->layout = element('layout_skin_file', element('layout', $view));
-					$this->view = element('view_skin_file', element('layout', $view));
-					return true;
+					// $this->data = $view;
+					// $this->layout = element('layout_skin_file', element('layout', $view));
+					// $this->view = element('view_skin_file', element('layout', $view));
+					// return true;
+					response_result($view);
+
 				}
 			}
 		}
@@ -855,24 +861,26 @@ class Board_post extends CB_Controller
 			);
 			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
 			$this->data = $view;
-			$this->layout = element('layout_skin_file', element('layout', $view));
-			if ($show_list_from_view) {
-				$list_skin_file = element('use_gallery_list', $board) ? 'gallerylist' : 'list';
-				$listskindir = ($this->cbconfig->get_device_view_type() === 'mobile')
-					? $mobile_skin_dir : $skin_dir;
-				if (empty($listskindir)) {
-					$listskindir
-						= ($this->cbconfig->get_device_view_type() === 'mobile')
-						? $this->cbconfig->item('mobile_skin_default')
-						: $this->cbconfig->item('skin_default');
-				}
-				$this->view = array(
-					element('view_skin_file', element('layout', $view)),
-					'board/' . $listskindir . '/' . $list_skin_file,
-				);
-			} else {
-				$this->view = element('view_skin_file', element('layout', $view));
-			}
+			// $this->layout = element('layout_skin_file', element('layout', $view));
+			// if ($show_list_from_view) {
+			// 	$list_skin_file = element('use_gallery_list', $board) ? 'gallerylist' : 'list';
+			// 	$listskindir = ($this->cbconfig->get_device_view_type() === 'mobile')
+			// 		? $mobile_skin_dir : $skin_dir;
+			// 	if (empty($listskindir)) {
+			// 		$listskindir
+			// 			= ($this->cbconfig->get_device_view_type() === 'mobile')
+			// 			? $this->cbconfig->item('mobile_skin_default')
+			// 			: $this->cbconfig->item('skin_default');
+			// 	}
+			// 	$this->view = array(
+			// 		element('view_skin_file', element('layout', $view)),
+			// 		'board/' . $listskindir . '/' . $list_skin_file,
+			// 	);
+			// } else {
+			// 	$this->view = element('view_skin_file', element('layout', $view));
+			// }
+			response_result($view);
+
 		} else {
 
 			// 이벤트가 존재하면 실행합니다
@@ -889,10 +897,10 @@ class Board_post extends CB_Controller
 				'page_title' => $page_title,
 			);
 			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-			$this->data = $view;
-			$this->layout = element('layout_skin_file', element('layout', $view));
-			$this->view = element('view_skin_file', element('layout', $view));
-
+			// $this->data = $view;
+			// $this->layout = element('layout_skin_file', element('layout', $view));
+			// $this->view = element('view_skin_file', element('layout', $view));
+			response_result($view);
 		}
 	}
 
