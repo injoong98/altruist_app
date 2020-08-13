@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input} from '@ui-kitten/components'
-import {Card, CardItem} from 'native-base';
+import HTML from 'react-native-render-html';
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -24,7 +24,7 @@ const defaultWrite = ({navigation}) =>{
     </SafeAreaView>
 
     )
-    }
+}
 
 const MarketWrite = ({route, navigation}) => {
 
@@ -98,6 +98,32 @@ const MarketWrite = ({route, navigation}) => {
     )
 }
 
+const AlbaWrite = ({navigation}) =>{
+    
+    const BackAction = () =>(
+        <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
+    )
+    
+    return(
+    <SafeAreaView style={{flex:1}}>
+        <TopNavigation title="글작성" alignment="center" accessoryLeft={BackAction} /> 
+        <Divider />
+        <Layout style={{flex:10}}>
+            <ScrollView>
+                <Text>This is Alba Write</Text>
+            </ScrollView>
+        </Layout>
+        <View style={styles.bottomView}>
+                <Button 
+                    style={styles.bottomButton}
+                    onPress={()=>{this.props.navigation.navigate('AlbaWrite');}}>
+                        글쓰기 
+                </Button>
+            </View>   
+    </SafeAreaView>
+    )
+}
+
 const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -119,8 +145,17 @@ const styles = StyleSheet.create({
         margin: 10, 
         borderWidth: 2,
         borderColor: 'grey'
-    }
+    },
+    bottomView: {
+        flex : 1,
+        justifyContent : 'center',
+        alignItems : 'center',
+        backgroundColor : 'lightgrey',
+    },
+    bottomButton: {
+        width : "95%",
+    },
 });
   
 
-export {defaultWrite, MarketWrite}
+export {defaultWrite, MarketWrite, AlbaWrite}
