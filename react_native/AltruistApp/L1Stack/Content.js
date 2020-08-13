@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,} from 'react-native';
-import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List} from '@ui-kitten/components'
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking,} from 'react-native';
+import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal} from '@ui-kitten/components'
 import Axios from 'axios';
-//import {WebView} from 'react-native-webview';
 import HTML from 'react-native-render-html';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -47,7 +46,32 @@ class GominContent extends React.Component{
      BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
-     renderCommentsList=({item,index})=>(
+    renderPostBody = (post)=>(
+        <View >
+            <View style={{paddingLeft:15}}>
+                <Text style={{marginBottom:10}} category="h5">{post.post_title}</Text>
+                <Divider/>
+            </View>
+            <View style={{paddingLeft:10}}>
+                <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
+                    <StarIcon /><Text>{`${post.post_nickname} | ${post.post_datetime}`} </Text>
+                </View>
+                <Divider/>
+            </View>
+            <View style={{padding:10}}>
+                <Text category="h6">
+                {post.post_content}
+                </Text>
+            </View>
+            <View style={{paddingRight:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
+                <HeartIcon />
+                <Text>{post.post_like}</Text>
+                <CommentIcon />
+                <Text>{post.post_comment_count}</Text>
+            </View>
+        </View>
+    )
+    renderCommentsList=({item,index})=>(
         <Card>
             <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <View style={{flexDirection:"row"}}>
@@ -99,43 +123,22 @@ class GominContent extends React.Component{
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
             <Text>is Loading now...</Text>
+            <Spinner size="giant"/>
         </View>
         :
          <SafeAreaView style={{flex:1}}>
              <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} /> 
-             <Layout style={{flex:1}}>
-                 <ScrollView >
-                     <View style={{paddingLeft:15}}>
-                         <Text style={{marginBottom:10}} category="h5">{post.post_title}</Text>
-                         <Divider/>
-                     </View>
-                     <View style={{paddingLeft:10}}>
-                         <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
-                             <StarIcon /><Text>{`${post.post_nickname} | ${post.post_datetime}`} </Text>
-                         </View>
-                         <Divider/>
-                     </View>
-                     <View style={{padding:10}}>
-                         <Text category="h6">
-                         {post.post_content}
-                         </Text>
-                     </View>
-                     <View style={{paddingRight:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
-                         <HeartIcon />
-                         <Text>{post.post_like}</Text>
-                         <CommentIcon />
-                         <Text>{post.post_comment_count}</Text>
-                     </View>
-                     <Layout>
-                         <Divider/>
-                         <List 
-                         data={comment}
-                         renderItem={this.renderCommentsList}
-                         />
-                     </Layout>
-                 </ScrollView>
-                 <Layout level="2">
-                     <Layout style={styles.commentBlock}>
+             <Layout  style={{flex:1}}>
+                <Layout style={{flex:8}}>
+                    <Divider/>
+                    <List 
+                    data={comment}
+                    ListHeaderComponent={this.renderPostBody(post)}
+                    renderItem={this.renderCommentsList}
+                    />
+                </Layout>
+                 <Layout level="2"  style={{flex:1,flexDirection:"row"}}>
+                     <Layout style={styles.commentBlock,{width:"80%"}}>
                          <Input
                              style={{flex:1}}
                              placeholder='Place your Text'
@@ -145,7 +148,7 @@ class GominContent extends React.Component{
                              onChangeText={nextValue => this.setState({value:nextValue})}
                          />
                      </Layout>
-                     <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
+                     <Layout style={{width:"15%"}}>
                          <Button style={{width:100}}>Submit</Button>
                      </Layout>
                  </Layout>
@@ -228,6 +231,8 @@ const MarketContent = ({route, navigation}) =>{
 
 const AlbaContent = ({navigation, route}) => {
 
+    const [visible, setVisible] = React.useState(false);
+    const phoneNumber = '01099999999';
     const BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
     )
@@ -303,9 +308,42 @@ const AlbaContent = ({navigation, route}) => {
                 </Card>
             </ScrollView>
             <View style={styles.bottom}>
-                <Button style={{width : '100%'}} onPress={()=>{console.log(route.params.post_content)}}>
+                <Button style={{width : '100%'}} onPress={()=>setVisible(true)}>
                     지원하기
                 </Button>
+                <Modal
+                    visible={visible}
+                    backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
+                    onBackdropPress={() => setVisible(false)}>
+                        <Card disabled={true}>
+                            <Layout style={{flexDirection:'row'}}>
+                                <View style={styles.modal_icons}>
+                                    <Button
+                                        appearance='ghost'
+                                        accessoryLeft={HeartIcon}
+                                        onPress={()=>{Linking.openURL(`tel:${phoneNumber}`)}}/>
+                                    <Text>전화</Text>
+                                </View>
+                                    <View style={styles.modal_icons}>
+                                    <Button
+                                        appearance='ghost'
+                                        accessoryLeft={CommentIcon}
+                                        onPress={()=>{Linking.openURL(`sms:${phoneNumber}`)}}/>
+                                    <Text>메시지</Text>
+                                </View>
+                                <View style={styles.modal_icons}>
+                                <Button
+                                        appearance='ghost'
+                                        accessoryLeft={HeartIcon}
+                                        onPress={()=>{Linking.openURL(`mailto:${route.params.post_email}`)}}/>
+                                    <Text>이메일</Text>
+                                </View>
+                            </Layout>
+                            <Button onPress={()=>setVisible(false)} appearance='ghost' >
+                                취소
+                            </Button>
+                        </Card>
+                </Modal>
             </View>
         </Layout>
     </SafeAreaView>
@@ -325,6 +363,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center', 
         alignItems: 'center',
         flex : 1,
+    },
+    modal_icons : {
+        justifyContent: 'center', 
+        alignItems: 'center',
+        margin : 10,
     },
     item : {
         marginVertical : 5,
