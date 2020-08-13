@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView,} from 'react-native';
-import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List} from '@ui-kitten/components'
+import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner} from '@ui-kitten/components'
 import {CardItem} from 'native-base';
 import Axios from 'axios';
 const BackIcon =  (props) =>(
@@ -46,7 +46,32 @@ class GominContent extends React.Component{
      BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
-     renderCommentsList=({item,index})=>(
+    renderPostBody = (post)=>(
+        <View >
+            <View style={{paddingLeft:15}}>
+                <Text style={{marginBottom:10}} category="h5">{post.post_title}</Text>
+                <Divider/>
+            </View>
+            <View style={{paddingLeft:10}}>
+                <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
+                    <StarIcon /><Text>{`${post.post_nickname} | ${post.post_datetime}`} </Text>
+                </View>
+                <Divider/>
+            </View>
+            <View style={{padding:10}}>
+                <Text category="h6">
+                {post.post_content}
+                </Text>
+            </View>
+            <View style={{paddingRight:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
+                <HeartIcon />
+                <Text>{post.post_like}</Text>
+                <CommentIcon />
+                <Text>{post.post_comment_count}</Text>
+            </View>
+        </View>
+    )
+    renderCommentsList=({item,index})=>(
         <Card>
             <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <View style={{flexDirection:"row"}}>
@@ -98,43 +123,22 @@ class GominContent extends React.Component{
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
             <Text>is Loading now...</Text>
+            <Spinner size="giant"/>
         </View>
         :
          <SafeAreaView style={{flex:1}}>
              <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} /> 
-             <Layout style={{flex:1}}>
-                 <ScrollView >
-                     <View style={{paddingLeft:15}}>
-                         <Text style={{marginBottom:10}} category="h5">{post.post_title}</Text>
-                         <Divider/>
-                     </View>
-                     <View style={{paddingLeft:10}}>
-                         <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
-                             <StarIcon /><Text>{`${post.post_nickname} | ${post.post_datetime}`} </Text>
-                         </View>
-                         <Divider/>
-                     </View>
-                     <View style={{padding:10}}>
-                         <Text category="h6">
-                         {post.post_content}
-                         </Text>
-                     </View>
-                     <View style={{paddingRight:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
-                         <HeartIcon />
-                         <Text>{post.post_like}</Text>
-                         <CommentIcon />
-                         <Text>{post.post_comment_count}</Text>
-                     </View>
-                     <Layout>
-                         <Divider/>
-                         <List 
-                         data={comment}
-                         renderItem={this.renderCommentsList}
-                         />
-                     </Layout>
-                 </ScrollView>
-                 <Layout level="2">
-                     <Layout style={styles.commentBlock}>
+             <Layout  style={{flex:1}}>
+                <Layout style={{flex:8}}>
+                    <Divider/>
+                    <List 
+                    data={comment}
+                    ListHeaderComponent={this.renderPostBody(post)}
+                    renderItem={this.renderCommentsList}
+                    />
+                </Layout>
+                 <Layout level="2"  style={{flex:1,flexDirection:"row"}}>
+                     <Layout style={styles.commentBlock,{width:"80%"}}>
                          <Input
                              style={{flex:1}}
                              placeholder='Place your Text'
@@ -144,7 +148,7 @@ class GominContent extends React.Component{
                              onChangeText={nextValue => this.setState({value:nextValue})}
                          />
                      </Layout>
-                     <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
+                     <Layout style={{width:"15%"}}>
                          <Button style={{width:100}}>Submit</Button>
                      </Layout>
                  </Layout>
