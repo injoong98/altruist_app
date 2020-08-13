@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView,} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView,TouchableOpacity} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner} from '@ui-kitten/components'
 import {CardItem} from 'native-base';
 import Axios from 'axios';
@@ -165,6 +165,12 @@ const MarketContent = ({route, navigation}) =>{
     const BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
     )
+
+    const UproadIcon = (props) => (
+        <TouchableWithoutFeedback>
+          <Icon {...props} name='arrow-circle-up'/>
+        </TouchableWithoutFeedback>
+    )
     
     const [value, setValue] = React.useState('');
 
@@ -203,18 +209,16 @@ const MarketContent = ({route, navigation}) =>{
             <Divider/>
             <Layout>
                 <Text>Comment</Text>
-                <Layout style={styles.commentBlock}>
                     <Input
-                        style={{flex:1}}
-                        placeholder='Place your Text'
+                        style={{flex:1, margin:15}}
+                        size='large'
+                        placeholder='댓글을 입력하세요.'
                         value={value}
                         multiline={true}
-                        clearButtonMode='always'
+                        accessoryRight={UproadIcon}
                         onChangeText={nextValue => setValue(nextValue)}
                     />
-                </Layout>
                 <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
-                    <Button style={{width:100}}>Submit</Button>
                 </Layout>
             </Layout>
             </ScrollView>
@@ -237,13 +241,13 @@ const AlbaContent = ({navigation, route}) => {
         <Layout style={styles.container}>
             <ScrollView>
                 <Card style={styles.item}>
-                    <Text>2020-08-12 09:12</Text>
-                    <Text category='h3'>{route.params.context}{route.params.id}</Text>
+                    <Text>{route.params.post_datetime}</Text>
+                    <Text category='h3'>{route.params.post_title}{route.params.post_id}</Text>
                     <Layout style={{flexDirection:'row', marginBottom : 5}}>
                         <View style={{width : 100, height : 50, borderRightWidth : 0.3, justifyContent : 'center', alignItems : 'center'}}>
                             <Image style={{width : '90%', resizeMode:'contain'}} source={require('../assets/altruist_logo.png')}/>
                         </View>
-                        <Text style={{margin : 10}}>{route.params.companyName}</Text>
+                        <Text style={{margin : 10}}>{route.params.post_nickname}</Text>
                     </Layout>
                     <Divider style={{borderWidth : 0.3}}/>
                     <Layout style={{flexDirection:'row', marginTop:10, marginLeft: 10}}>
@@ -253,7 +257,7 @@ const AlbaContent = ({navigation, route}) => {
                             fill='black'
                             name='star'
                         />
-                        <Text>{route.params.payment}</Text>
+                        <Text>{route.params.post_hit}</Text>
                         </View>
                         <View style={styles.icons}>
                         <Icon
@@ -261,7 +265,7 @@ const AlbaContent = ({navigation, route}) => {
                             fill='black'
                             name='star'
                         />
-                        <Text>1~3개월</Text>
+                        <Text>{route.params.post_like}</Text>
                         </View>
                         <View style={styles.icons}>
                         <Icon
@@ -269,15 +273,7 @@ const AlbaContent = ({navigation, route}) => {
                             fill='black'
                             name='star'
                         />
-                        <Text>월~금</Text>
-                        </View>
-                        <View style={styles.icons}>
-                        <Icon
-                            style={{width:32,height:32}}
-                            fill='black'
-                            name='star'
-                        />
-                        <Text>09:00~18:00</Text>
+                        <Text>{route.params.post_email}</Text>
                         </View>
                     </Layout>
                 </Card>
@@ -304,7 +300,7 @@ const AlbaContent = ({navigation, route}) => {
                 </Card>
                 <Card style={styles.item}>
                     <Text style={styles.subhead}>근무지역</Text>
-                    <Text style={{margin : 5}}>{route.params.place}</Text>
+                    <Text style={{margin : 5}}>{route.params.post_datetime}</Text>
                 </Card>
                 <Card style={styles.item}>
                     <Text style={styles.subhead}>근무조건</Text>
@@ -318,17 +314,17 @@ const AlbaContent = ({navigation, route}) => {
                             <Text style={styles.gathertext}>고용형태</Text>
                         </View>
                         <View style={{flex : 5}}>
-                            <Text style={styles.gather}>{route.params.payment}</Text>
+                            <Text style={styles.gather}>{route.params.post_hit}</Text>
                             <Text style={styles.gather}>1~3개월</Text>
                             <Text style={styles.gather}>월~금</Text>
                             <Text style={styles.gather}>09:00~18:00</Text>
-                            <Text style={styles.gather}>{route.params.overLine}</Text>
+                            <Text style={styles.gather}>{route.params.post_email}</Text>
                             <Text style={styles.gather}>위촉직</Text>
                         </View>
                     </Layout>
                 </Card>
                 <Card style={styles.item}>
-                    <Text>상세내용</Text>
+                    <Text>{route.params.post_content}</Text>
                 </Card>
             </ScrollView>
             <View style={styles.bottom}>
