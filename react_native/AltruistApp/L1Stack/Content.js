@@ -39,38 +39,51 @@ class GominContent extends React.Component{
             post:'',
             comment:'',
             value:'',
-            isLoading:true
+            isLoading:true,
+            refreshing:false
         }
     }
     
-     BackAction = () =>(
+    UproadIcon = (props) => (
+        <TouchableWithoutFeedback>
+          <Icon {...props} name='arrow-circle-up'/>
+        </TouchableWithoutFeedback>
+    )
+
+    BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
-    renderPostBody = (post)=>(
-        <View >
-            <View style={{paddingLeft:15}}>
-                <Text style={{marginBottom:10}} category="h5">{post.post_title}</Text>
-                <Divider/>
-            </View>
-            <View style={{paddingLeft:10}}>
-                <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
-                    <StarIcon /><Text>{`${post.post_nickname} | ${post.post_datetime}`} </Text>
+    renderPostBody = (post)=>{
+        
+        const regex = /(<([^>]+)>)|&nbsp;/ig;
+        const post_remove_tags = post.post_content.replace(regex, '\n');
+        return (
+            <View >
+                <View style={{paddingLeft:15}}>
+                    <Text style={{marginBottom:10}} category="h5">{post.post_title}</Text>
+                    <Divider/>
                 </View>
-                <Divider/>
+                <View style={{paddingLeft:10}}>
+                    <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
+                        <StarIcon /><Text>{`${post.post_nickname} | ${post.post_datetime}`} </Text>
+                    </View>
+                    <Divider/>
+                </View>
+                <View style={{padding:10}}>
+                    <Text category="h6">
+                    {post_remove_tags}
+                    </Text>
+                </View>
+                <View style={{paddingRight:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
+                    <HeartIcon />
+                    <Text>{post.post_like}</Text>
+                    <CommentIcon />
+                    <Text>{post.post_comment_count}</Text>
+                </View>
             </View>
-            <View style={{padding:10}}>
-                <Text category="h6">
-                {post.post_content}
-                </Text>
-            </View>
-            <View style={{paddingRight:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
-                <HeartIcon />
-                <Text>{post.post_like}</Text>
-                <CommentIcon />
-                <Text>{post.post_comment_count}</Text>
-            </View>
-        </View>
-    )
+        )
+    }
+
     renderCommentsList=({item,index})=>(
         <Card>
             <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
@@ -115,6 +128,11 @@ class GominContent extends React.Component{
         .then(()=>{this.setState({isLoading:false})})
 
     }
+     onRefresh=()=>{
+        const {post_id} = this.props.route.params
+        this.getCommentData(post_id)
+
+    }
 
      render(){
         const {navigation,route} =this.props
@@ -135,22 +153,22 @@ class GominContent extends React.Component{
                     data={comment}
                     ListHeaderComponent={this.renderPostBody(post)}
                     renderItem={this.renderCommentsList}
+                    onRefresh={this.onRefresh}
+                    refreshing={this.state.refreshing}
                     />
                 </Layout>
-                 <Layout level="2"  style={{flex:1,flexDirection:"row"}}>
-                     <Layout style={styles.commentBlock,{width:"80%"}}>
-                         <Input
-                             style={{flex:1}}
-                             placeholder='Place your Text'
-                             value={value}
-                             multiline={true}
-                             clearButtonMode='always'
-                             onChangeText={nextValue => this.setState({value:nextValue})}
-                         />
-                     </Layout>
-                     <Layout style={{width:"15%"}}>
-                         <Button style={{width:100}}>Submit</Button>
-                     </Layout>
+                 <Layout level="2"  style={{flex:1}}>
+                    <Layout style={styles.commentBlock}>
+                        <Input
+                            style={{flex:1, margin:15}}
+                            size='large'
+                            placeholder='댓글을 입력하세요.'
+                            value={value}
+                            multiline={true}
+                            accessoryRight={this.UproadIcon}
+                            onChangeText={nextValue => setValue(nextValue)}
+                        />
+                    </Layout>
                  </Layout>
                
              </Layout>
