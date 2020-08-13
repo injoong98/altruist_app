@@ -1,11 +1,20 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView,} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List} from '@ui-kitten/components'
 import {CardItem} from 'native-base';
+import Axios from 'axios';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
-
+const CommentIcon = (props)=>(
+    <Icon style={styles.icon} fill='#8F9BB3' name="message-circle"/>
+)
+const HeartIcon = (props)=>(
+    <Icon style={styles.icon} fill='#8F9BB3' name="heart"/>
+)
+const StarIcon = (props)=>(
+    <Icon style={styles.icon} fill='#8F9BB3' name="star" {...props} />
+)
 
 const defaultContent = ({navigation}) =>{
     
@@ -23,108 +32,140 @@ const defaultContent = ({navigation}) =>{
     )
 }
 
-const GominContent = ({navigation,route}) =>{
-    const [post,SetPost] =React.useState('');
-    const [value, setValue] = React.useState('');
-    const {title} =route.params
-    const CommentIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="message-circle"/>
+class GominContent extends React.Component{
+    constructor(props){
+        super(props);
+        this.state={
+            post:'',
+            comment:'',
+            value:'',
+            isLoading:true
+        }
+    }
+    
+     BackAction = () =>(
+        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
-    const HeartIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="heart"/>
-    )
-    const StarIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="star" {...props} />
-    )
-    const BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
-    )
-    const renderCommentsList=({item,index})=>(
+     renderCommentsList=({item,index})=>(
         <Card>
             <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <View style={{flexDirection:"row"}}>
                 <StarIcon />
-                <Text category="s2">{item.author+index}</Text>
+                <Text category="s2">{item.cmt_nickname}</Text>
                 </View>
                 <HeartIcon onPress={()=>{alert('좋아요누르겠습니다.')}} />
             </View>
             <View style={{padding:5}}>
-                <Text category="s1">{item.comment+index}</Text>
+                <Text category="s1">{item.content}</Text>
             </View>
             <View style={{display:"flex", justifyContent:"flex-start",flexDirection:"row",alignItems:"center"}}>
-                <Text category="s2">{item.date}</Text>
+                <Text category="s2">{item.cmt_datetime}</Text>
                 <HeartIcon style ={{width:10,heigth:10}} />
-                <Text>{item.like}</Text>
+                <Text>{item.cmt_like}</Text>
             </View>
         </Card>
     )
-    
-    const exdata = new Array(8).fill({
-        author:'user',
-        comment:'comment content...',
-        date:'2020-13-32',
-        like:40
-    })
-    return(
-    <SafeAreaView style={{flex:1}}>
-        <TopNavigation title="고민있어요" alignment="center" accessoryLeft={BackAction} /> 
-        <Layout style={{flex:1}}>
-            <ScrollView >
-                <View style={{paddingLeft:15}}>
-                    <Text style={{marginBottom:10}} category="h5">{`${title} post`}</Text>
-                    <Divider/>
-                </View>
-                <View style={{paddingLeft:10}}>
-                    <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
-                        <StarIcon /><Text>글쓴이, 날짜</Text>
-                    </View>
-                    <Divider/>
-                </View>
-                <View style={{padding:10}}>
-                    <Text category="h6">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                    </Text>
-                </View>
-                <View style={{paddingRight:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
-                    <HeartIcon />
-                    <Text>40</Text>
-                    <CommentIcon />
-                    <Text>8</Text>
-                </View>
-                <Layout>
-                    <Divider/>
-                    <List 
-                    data={exdata}
-                    renderItem={renderCommentsList}
-                    />
-                </Layout>
-            </ScrollView>
-            <Layout level="2">
-                <Layout style={styles.commentBlock}>
-                    <Input
-                        style={{flex:1}}
-                        placeholder='Place your Text'
-                        value={value}
-                        multiline={true}
-                        clearButtonMode='always'
-                        onChangeText={nextValue => setValue(nextValue)}
-                    />
-                </Layout>
-                <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
-                    <Button style={{width:100}}>Submit</Button>
-                </Layout>
-            </Layout>
-          
-        </Layout>
-        
-    </SafeAreaView>
-    )
+    getCommentData = async (post_id)=>{
+        await Axios.get(`http://10.0.2.2/api/comment_list/lists/${post_id}`)
+        .then((response)=>{
+            this.setState({comment:response.data.view.data.list})
+        })
+        .catch((error)=>{
+            alert('error')
+        })
+    }
+    getPostData = async (post_id)=>{
+        await Axios.get(`http://10.0.2.2/api/board_post/post/${post_id}`)
+        .then((response)=>{
+            this.setState({post:response.data.view.post})
+        })
+        .catch((error)=>{
+            alert('error')
+        })
+    }
+    async componentDidMount(){
+        const {post_id} = this.props.route.params
+        await this.getPostData(post_id)
+        .then(()=>this.getCommentData(post_id))
+        .then(()=>{this.setState({isLoading:false})})
+
+    }
+
+     render(){
+        const {navigation,route} =this.props
+        const {value,post,comment} = this.state
+         return(
+        this.state.isLoading ?
+        <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+            <Text>is Loading now...</Text>
+        </View>
+        :
+         <SafeAreaView style={{flex:1}}>
+             <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} /> 
+             <Layout style={{flex:1}}>
+                 <ScrollView >
+                     <View style={{paddingLeft:15}}>
+                         <Text style={{marginBottom:10}} category="h5">{post.post_title}</Text>
+                         <Divider/>
+                     </View>
+                     <View style={{paddingLeft:10}}>
+                         <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
+                             <StarIcon /><Text>{`${post.post_nickname} | ${post.post_datetime}`} </Text>
+                         </View>
+                         <Divider/>
+                     </View>
+                     <View style={{padding:10}}>
+                         <Text category="h6">
+                         {post.post_content}
+                         </Text>
+                     </View>
+                     <View style={{paddingRight:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
+                         <HeartIcon />
+                         <Text>{post.post_like}</Text>
+                         <CommentIcon />
+                         <Text>{post.post_comment_count}</Text>
+                     </View>
+                     <Layout>
+                         <Divider/>
+                         <List 
+                         data={comment}
+                         renderItem={this.renderCommentsList}
+                         />
+                     </Layout>
+                 </ScrollView>
+                 <Layout level="2">
+                     <Layout style={styles.commentBlock}>
+                         <Input
+                             style={{flex:1}}
+                             placeholder='Place your Text'
+                             value={value}
+                             multiline={true}
+                             clearButtonMode='always'
+                             onChangeText={nextValue => this.setState({value:nextValue})}
+                         />
+                     </Layout>
+                     <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
+                         <Button style={{width:100}}>Submit</Button>
+                     </Layout>
+                 </Layout>
+               
+             </Layout>
+             
+         </SafeAreaView>
+         )
+     }
 }
 
 const MarketContent = ({route, navigation}) =>{
 
     const BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
+    )
+
+    const UproadIcon = (props) => (
+        <TouchableWithoutFeedback>
+          <Icon {...props} name='arrow-circle-up'/>
+        </TouchableWithoutFeedback>
     )
     
     const [value, setValue] = React.useState('');
@@ -164,18 +205,16 @@ const MarketContent = ({route, navigation}) =>{
             <Divider/>
             <Layout>
                 <Text>Comment</Text>
-                <Layout style={styles.commentBlock}>
                     <Input
-                        style={{flex:1}}
-                        placeholder='Place your Text'
+                        style={{flex:1, margin:15}}
+                        size='large'
+                        placeholder='댓글을 입력하세요.'
                         value={value}
                         multiline={true}
-                        clearButtonMode='always'
+                        accessoryRight={UproadIcon}
                         onChangeText={nextValue => setValue(nextValue)}
                     />
-                </Layout>
                 <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
-                    <Button style={{width:100}}>Submit</Button>
                 </Layout>
             </Layout>
             </ScrollView>
