@@ -78,7 +78,7 @@ class GominScreen extends React.Component {
             onRefresh={this.onRefresh}
             refreshing={this.state.refreshing}/>
             <View style ={styles.buttoncontainer}>
-                <Button onPress={()=>{this.props.navigation.navigate('Write')}} >글쓰기</Button>
+                <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('Write')}} >글쓰기</Button>
             </View>
         </SafeAreaView>
         )
@@ -90,7 +90,7 @@ export {GominScreen}
 
 const styles = StyleSheet.create({
     buttoncontainer:{
-        width:"100%",bottom:30,position :"absolute",
+        width:"100%",bottom:0,position :"absolute",
         display :"flex", 
         flexDirection:"row",
         justifyContent:"center", 
