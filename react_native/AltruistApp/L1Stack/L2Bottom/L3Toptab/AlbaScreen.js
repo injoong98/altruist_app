@@ -2,62 +2,6 @@ import React from 'react';
 import { StyleSheet, View, Image, Layout} from 'react-native';
 import { Card, List, Text, Divider, Button, Spinner} from '@ui-kitten/components';
 import axios from 'axios';
-const data = [
-    {
-        id : 1,
-        overLine : "제조업",
-        companyName : "(주) 사랑",
-        context : "맥콜공장알바/누구나가능/전화지원",
-        place : "서울시 동작구",
-        period : "시",
-        payment : "8380원"
-    },
-    {
-        id : 2,
-        overLine : "IT 개발",
-        companyName : "카카오",
-        context : "카카오는 돈이 많습니다 여기로 오세요",
-        place : "경기도 가평군",
-        period : "일",
-        payment : "10만원"
-    },
-    {
-        id : 3,
-        overLine : "마케팅관리",
-        companyName : "다음",
-        context : "다음은 카카오의 계열사 입니다. 다음와도 카카오에요.",
-        place : "서울시 용산구",
-        period : "월",
-        payment : "40만원"
-    },
-    {
-        id : 4,
-        overLine : "마케팅관리",
-        companyName : "다음",
-        context : "다음은 카카오의 계열사 입니다. 다음와도 카카오에요.",
-        place : "서울시 용산구",
-        period : "월",
-        payment : "40만원"
-    },
-    {
-        id : 5,
-        overLine : "마케팅관리",
-        companyName : "다음",
-        context : "다음은 카카오의 계열사 입니다. 다음와도 카카오에요.",
-        place : "서울시 용산구",
-        period : "월",
-        payment : "40만원"
-    },
-    {
-        id : 6,
-        overLine : "마케팅관리",
-        companyName : "다음",
-        context : "다음은 카카오의 계열사 입니다. 다음와도 카카오에요.",
-        place : "서울시 용산구",
-        period : "월",
-        payment : "40만원"
-    }
-  ];
 
 class AlbaScreen extends React.Component {
 
@@ -102,7 +46,7 @@ class AlbaScreen extends React.Component {
                 <Text style={{fontSize : 20}}>{item.mem_nickname}</Text>
                 <Text style={{marginTop :5, marginBottom : 5}}>{item.title}</Text>
                 <Divider style={{borderWidth : 0.5}}/>
-                <Text>{item.post_hit} <Text style={{color : 'red'}}>{item.post_like}</Text> {item.post_datetime}</Text>
+                <Text>item.alba_location<Text style={{color : 'red'}}>item.alba_salary_type</Text> item.alba_salary</Text>
             </View>
             <View style={styles.image}>
                 <Image source={require('../../../assets/social_kakao.png')}/>
