@@ -7,9 +7,9 @@ export const CommentInput = () => {
     const [value, setValue] = React.useState('');
     
     const UproadIcon = (props) => (
-        <TouchableOpacity>   {/* 아이콘 클릭했을 때 실행되는 함수를 넣으려면 이 태그에 onPress를 삽입해주세요 */}
+        <TouchableWithoutFeedback>   {/* 아이콘 클릭했을 때 실행되는 함수를 넣으려면 이 태그에 onPress를 삽입해주세요 */}
           <Icon {...props} name='arrow-circle-up'/>
-        </TouchableOpacity>
+        </TouchableWithoutFeedback>
     )
 
     return (

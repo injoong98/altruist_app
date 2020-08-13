@@ -128,9 +128,9 @@ const MarketContent = ({route, navigation}) =>{
     )
 
     const UproadIcon = (props) => (
-        <TouchableOpacity>
+        <TouchableWithoutFeedback>
           <Icon {...props} name='arrow-circle-up'/>
-        </TouchableOpacity>
+        </TouchableWithoutFeedback>
     )
     
     const [value, setValue] = React.useState('');
