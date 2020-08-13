@@ -20,7 +20,8 @@ class GominScreen extends React.Component {
         super(props);
         this.state={
             isLoading : true,
-            lists:''
+            lists:'',
+            refreshing:false
         }
     }
 
@@ -56,6 +57,10 @@ class GominScreen extends React.Component {
     componentDidMount(){
         this.getPostList();
     }
+    
+    onRefresh= () =>{
+        this.getPostList();
+    }
 
     render(){
         return(
@@ -69,7 +74,9 @@ class GominScreen extends React.Component {
             <List
             data ={this.state.lists}
             ItemSeparatorComponent={Divider}
-            renderItem={this.renderItem} />
+            renderItem={this.renderItem} 
+            onRefresh={this.onRefresh}
+            refreshing={this.state.refreshing}/>
             <View style ={styles.buttoncontainer}>
                 <Button onPress={()=>{this.props.navigation.navigate('Write')}} >글쓰기</Button>
             </View>
