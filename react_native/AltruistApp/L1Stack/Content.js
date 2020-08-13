@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,} from 'react-native';
-import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner} from '@ui-kitten/components'
+import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal} from '@ui-kitten/components'
 import Axios from 'axios';
-//import {WebView} from 'react-native-webview';
 import HTML from 'react-native-render-html';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -232,6 +231,8 @@ const MarketContent = ({route, navigation}) =>{
 
 const AlbaContent = ({navigation, route}) => {
 
+    const [visible, setVisible] = React.useState(false);
+
     const BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
     )
@@ -307,9 +308,39 @@ const AlbaContent = ({navigation, route}) => {
                 </Card>
             </ScrollView>
             <View style={styles.bottom}>
-                <Button style={{width : '100%'}} onPress={()=>{console.log(route.params.post_content)}}>
+                <Button style={{width : '100%'}} onPress={()=>setVisible(true)}>
                     지원하기
                 </Button>
+                <Modal
+                    visible={visible}
+                    backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
+                    onBackdropPress={() => setVisible(false)}>
+                        <Card disabled={true}>
+                            <Layout style={{flexDirection:'row'}}>
+                                <View style={styles.modal_icons}>
+                                    <Button
+                                        appearance='ghost'
+                                        accessoryLeft={HeartIcon}/>
+                                    <Text>전화</Text>
+                                </View>
+                                    <View style={styles.modal_icons}>
+                                    <Button
+                                        appearance='ghost'
+                                        accessoryLeft={HeartIcon}/>
+                                    <Text>메시지</Text>
+                                </View>
+                                <View style={styles.modal_icons}>
+                                <Button
+                                        appearance='ghost'
+                                        accessoryLeft={CommentIcon}/>
+                                    <Text>이메일</Text>
+                                </View>
+                            </Layout>
+                            <Button onPress={()=>setVisible(false)} appearance='ghost' >
+                                취소
+                            </Button>
+                        </Card>
+                </Modal>
             </View>
         </Layout>
     </SafeAreaView>
@@ -329,6 +360,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center', 
         alignItems: 'center',
         flex : 1,
+    },
+    modal_icons : {
+        justifyContent: 'center', 
+        alignItems: 'center',
+        margin : 10,
     },
     item : {
         marginVertical : 5,
