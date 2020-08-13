@@ -27,7 +27,7 @@ class GominScreen extends React.Component {
     
     
     renderItem = ({ item, index }) => (
-        <Card onPress = {()=>{this.props.navigation.navigate('GominContent',{title:`${index+1}th`})}}>
+        <Card onPress = {()=>{this.props.navigation.navigate('GominContent',{title:`${index+1}th post_id=${item.post_id}`,post_id:item.post_id})}}>
             <Text category="h6" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
             <View style={styles.subtitle}>
                 <Text category="s1">{item.post_nickname}</Text>
@@ -44,8 +44,8 @@ class GominScreen extends React.Component {
         </Card>
 
     );
-    getPostList = () =>{
-        axios.get('http://10.0.2.2/api/board_post/lists/b-a-1')
+    getPostList = async() =>{
+        await axios.get('http://10.0.2.2/api/board_post/lists/b-a-1')
         .then((response)=>{
             this.setState({lists:response.data.view.list.data.list,isLoading:false})
         })
@@ -74,7 +74,6 @@ class GominScreen extends React.Component {
                 <Button onPress={()=>{this.props.navigation.navigate('Write')}} >글쓰기</Button>
             </View>
         </SafeAreaView>
-
         )
         }
 
