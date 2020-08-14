@@ -120,6 +120,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 								<input type="checkbox" name="post_receive_email" id="post_receive_email" value="1" <?php echo set_checkbox('post_receive_email', '1', (element('post_receive_email', element('post', $view)) ? true : false)); ?> /> 답변메일받기
 							</label>
 						<?php } ?>
+						<?php if (element('can_anoymous', element('post', $view))) { ?>
+							<label class="checkbox-inline" for="post_anoymous_yn">
+								<input type="checkbox" name="post_anoymous_yn" id="post_anoymous_yn" value="1" <?php echo set_checkbox('post_anoymous_yn', '1', (element('post_anoymous_yn', element('post', $view)) ? true : false)); ?> /> 익명글
+							</label>
+						<?php } ?>
 					</div>
 				</div>
 			<?php } ?>

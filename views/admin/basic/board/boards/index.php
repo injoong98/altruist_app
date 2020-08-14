@@ -33,6 +33,7 @@
 							<th>포인트(읽기/쓰기/댓글/다운)</th>
 							<th>검색사용</th>
 							<th><a href="<?php echo element('brd_order', element('sort', $view)); ?>">정렬순서</a></th>
+							<th><a href="<?php echo element('brd_anoymous_allow', element('sort', $view)); ?>">익명글허용</a></th>
 							<th>수정</th>
 							<th><input type="checkbox" name="chkall" id="chkall" /></th>
 						</tr>
@@ -94,6 +95,7 @@
 							</td>
 							<td><input type="checkbox" name="brd_search[<?php echo element(element('primary_key', $view), $result); ?>]" value="1" <?php echo set_checkbox('brd_search', '1', (element('brd_search', $result) ? true : false)); ?> /></td>
 							<td><input type="text" name="brd_order[<?php echo element(element('primary_key', $view), $result); ?>]" class="form-control" value="<?php echo html_escape(element('brd_order', $result)); ?>" style="width:50px;" /></td>
+							<td><input type="checkbox" name="brd_anoymous_allow[<?php echo element(element('primary_key', $view), $result); ?>]" value="1" <?php echo set_checkbox('brd_anoymous_allow', '1', (element('brd_anoymous_allow', $result) ? true : false)); ?> /></td>
 							<td><a href="<?php echo admin_url($this->pagedir); ?>/write/<?php echo element(element('primary_key', $view), $result); ?>?<?php echo $this->input->server('QUERY_STRING', null, ''); ?>" class="btn btn-outline btn-default btn-xs">수정</a></td>
 							<td><input type="checkbox" name="chk[]" class="list-chkbox" value="<?php echo element(element('primary_key', $view), $result); ?>" /></td>
 						</tr>
