@@ -290,6 +290,11 @@ class AlbaContent extends React.Component {
 
     render(){
         const {post} = this.state;
+        const defaultRenderer ={
+            renderers:{
+                img: (htmlAttribs, children, convertedCSSStyles, passProps) => <Image key={passProps.key} style={{width : '100%', height : Dimensions.get('window').height , resizeMode: 'contain', backgroundColor : 'black'}} source={{ uri: 'http://10.0.2.2'+htmlAttribs.src }}/>
+            }
+        }
         return(
             this.state.isLoading?
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -362,8 +367,11 @@ class AlbaContent extends React.Component {
                                 </View>
                             </Layout>
                         </Card>
-                        <Card style={styles.item} onPress={()=>console.log(post.post_content)}>    
-                            <HTML html = {post.post_content} imagesMaxWidth={Dimensions.get('window').width}/>
+                        <Card>    
+                            <HTML   
+                                html = {post.post_content}
+                                imagesMaxWidth={Dimensions.get('window').width}
+                                {...defaultRenderer}/>
                         </Card>
                     </ScrollView>
                     <View style={styles.bottom}>

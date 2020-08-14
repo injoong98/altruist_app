@@ -9,7 +9,8 @@ class AlbaScreen extends React.Component {
     super(props);
     this.state={
       isLoading : true,
-      lists : ''
+      lists : '',
+      image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
     }
   }
 
@@ -26,19 +27,22 @@ class AlbaScreen extends React.Component {
   getPostList = async() =>{
     await axios.get('http://10.0.2.2/api/board_post/lists/b-a-3')
     .then((response)=>{
-        this.setState({lists:response.data.view.list.data.list,isLoading:false});
+        this.setState({lists:response.data.view.list.data.list,isLoading:false})
     })
     .catch((error)=>{
         alert('error')
     })
   }
+
   componentDidMount(){
     this.getPostList();
   }
 
+
   renderItem = ({item, index}) => (
+      item.origin_image_url?
       <Card
-      onPress={() => {this.props.navigation.navigate('AlbaContent', item.post_id);}}
+      onPress={() => {this.props.navigation.navigate('AlbaContent', item.post_id)}}
       style={styles.carditem}
       status='basic'>
         <View style={{flexDirection : 'row'}}>
@@ -49,11 +53,28 @@ class AlbaScreen extends React.Component {
                 <Text>item.post_location<Text style={{color : 'red'}}>item.alba_salary_type</Text> item.alba_salary</Text>
             </View>
             <View style={styles.image}>
-                <Image source={{uri:'http://10.0.2.2'+item.origin_image_url}} style={{flex : 1, width : '100%', resizeMode:'contain'}}/>
+                <Image source={{uri:'http://10.0.2.2'+item.origin_image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
             </View>
         </View>
-    </Card>
+      </Card>
+      :<Card
+      onPress={() => {this.props.navigation.navigate('AlbaContent', item.post_id)}}
+      style={styles.carditem}
+      status='basic'>
+        <View style={{flexDirection : 'row'}}>
+            <View style={styles.Text}>
+                <Text style={{fontSize : 20}}>{item.post_nickname}</Text>
+                <Text style={{marginTop :5, marginBottom : 5}}>{item.title}</Text>
+                <Divider style={{borderWidth : 0.5}}/>
+                <Text>item.post_location<Text style={{color : 'red'}}>item.alba_salary_type</Text> item.alba_salary</Text>
+            </View>
+            <View style={styles.image}>
+                <Image source={{uri:'http://10.0.2.2'+this.state.image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
+            </View>
+        </View>
+      </Card>
   );
+  
 
   render(){
     return (
