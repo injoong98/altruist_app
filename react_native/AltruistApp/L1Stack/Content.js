@@ -200,14 +200,14 @@ const MarketContent = ({route, navigation}) =>{
         <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
             <ScrollView>
             <View style={{height:394}}>
-                <Image source={route.params.uri} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                <Image source={post.uri} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
             </View>
             <View style={{}}>
                 <Layout>
-                <Text category='h2'>{route.params.title}</Text>
+                <Text category='h2'>{post.title}</Text>
                 </Layout>
                 <Layout>
-                <Text category='h4'>{route.params.price}</Text>
+                <Text category='h4'>{post.price}</Text>
                 </Layout>
             </View>
             <Divider/>
@@ -216,13 +216,13 @@ const MarketContent = ({route, navigation}) =>{
                 <Image source={require('../market/asset/basic_user.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                 </Layout>
                 <Layout style={{justifyContent:'center'}}>
-                <Text>{route.params.user}</Text>
+                <Text>{post.user}</Text>
                 </Layout>
             </Layout>
             <Divider/>
             <Layout style={{height:200}}>
                 <Text>Details</Text>
-                <Text> Place : {route.params.place}</Text>
+                <Text> Place : {post.place}</Text>
             </Layout>
             <Divider/>
             <Layout>
@@ -247,125 +247,167 @@ const MarketContent = ({route, navigation}) =>{
 }
 
 
-const AlbaContent = ({navigation, route}) => {
+class AlbaContent extends React.Component {
 
-    const [visible, setVisible] = React.useState(false);
-    const phoneNumber = '01099999999';
-    const BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
+    constructor(props){
+        super(props);
+        this.state ={
+            visible : false,
+            post : {} ,
+            image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+            phoneNumber : '01099999999',
+            isLoading : true,
+        }
+    }
+
+    async componentDidMount(){
+        const post_id = this.props.route.params;
+        console.log(post_id);
+        await this.getPostData(post_id)
+        .then(()=>{this.setState({isLoading:false})})
+    }
+
+    getPostData = async(post_id)=>{
+        await Axios.get(`http://10.0.2.2/api/board_post/post/${post_id}`)
+        .then((response)=>{
+            this.setState({post:response.data.view.post})
+            if (response.data.view.file_image){
+                this.setState({image: response.data.view.file_image.shift().origin_image_url});
+            }
+        })
+        .catch((error)=>{
+            alert(error)
+        })
+    }
+    
+    setVisible(bool){
+        this.setState({visible : bool});
+    }
+
+    BackAction = () =>(
+        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
 
-    return(
-    <SafeAreaView style={{flex:1}}>
-        <TopNavigation title="채용정보" alignment="center" accessoryLeft={BackAction} /> 
-        <Layout style={styles.container}>
-            <ScrollView style={{backgroundColor : 'lightgrey'}}>
-                <Card style={styles.item}>
-                    <Text>{route.params.post_datetime}</Text>
-                    <Text category='h3'>{route.params.post_title}</Text>
-                    <Layout style={{flexDirection:'row', marginBottom : 5}}>
-                        <View style={{width : 100, height : 50, borderRightWidth : 0.3, justifyContent : 'center', alignItems : 'center'}}>
-                            <Image style={{width : '90%', resizeMode:'contain'}} source={require('../assets/altruist_logo.png')}/>
-                        </View>
-                        <Text style={{margin : 15}}>{route.params.post_nickname}</Text>
-                    </Layout>
-                    <Divider style={{borderWidth : 0.3}}/>
-                    <Layout style={{flexDirection:'row', marginTop:10, marginLeft: 10}}>
-                        <View style={styles.icons}>
-                        <Icon
-                            style={{width:32,height:32}}
-                            fill='black'
-                            name='star'
-                        />
-                        <Text>route.params.alba_salary</Text>
-                        </View>
-                        <View style={styles.icons}>
-                        <Icon
-                            style={{width:32,height:32}}
-                            fill='black'
-                            name='eye'
-                        />
-                        <Text>route.params.alba_type</Text>
-                        </View>
-                        <View style={{flex : 2, justifyContent : 'center', alignItems : 'center'}}>
-                        <Icon
-                            style={{width:32,height:32}}
-                            fill='black'
-                            name='share-outline'
-                        />
-                        <Text>route.params.alba_location</Text>
-                        </View>
-                    </Layout>
-                </Card>
-                
-                <Card style={styles.item}>
-                    <Text style={styles.subhead}>근무지역</Text>
-                    <Text style={{margin : 5}}>route.params.alba_location</Text>
-                </Card>
-                <Card style={styles.item}>
-                    <Text style={styles.subhead}>근무조건</Text>
-                    <Layout style = {{flexDirection : 'row'}}>
-                        <View style={{flex : 1, marginLeft : 5}}>
-                            <Text style={styles.gathertext}>급여</Text>
-                        </View>
-                        <View style={{flex : 5}}>
-                            <Text style={styles.gather}>route.params.alba_salary_type route.params.alba_salary</Text>
-                        </View>
-                    </Layout>
-                    <Layout style = {{flexDirection : 'row'}}>
-                        <View style={{flex : 1, marginLeft : 5}}>
-                            <Text style={styles.gathertext}>근무기간</Text>
-                        </View>
-                        <View style={{flex : 5}}>
-                            <Text style={styles.gather}>route.params.alba_type</Text>
-                        </View>
-                    </Layout>
-                </Card>
-                <Card style={styles.item} onPress={()=>console.log(route.params.post_content)}>
-                    <HTML html = {route.params.post_content} imagesMaxWidth={Dimensions.get('window').width}/>
-                </Card>
-            </ScrollView>
-            <View style={styles.bottom}>
-                <Button style={{width : '100%'}} onPress={()=>setVisible(true)}>
-                    지원하기
-                </Button>
-                <Modal
-                    visible={visible}
-                    backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
-                    onBackdropPress={() => setVisible(false)}>
-                        <Card disabled={true}>
-                            <Layout style={{flexDirection:'row'}}>
-                                <View style={styles.modal_icons}>
-                                    <Button
-                                        appearance='ghost'
-                                        accessoryLeft={HeartIcon}
-                                        onPress={()=>{Linking.openURL(`tel:${phoneNumber}`)}}/>
-                                    <Text>전화</Text>
+    render(){
+        const {post} = this.state;
+        return(
+            this.state.isLoading?
+            <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+                <Text>is Loading now...</Text>
+                <Spinner size="giant"/>
+            </View>
+            :
+            <SafeAreaView style={{flex:1}}>
+                <TopNavigation title="채용정보" alignment="center" accessoryLeft={this.BackAction} /> 
+                <Layout style={styles.container}>
+                    <ScrollView style={{backgroundColor : 'lightgrey'}}>
+                        <Card style={styles.item}>
+                            <Text>{post.post_datetime}</Text>
+                            <Text category='h3'>{post.post_title}</Text>
+                            <Layout style={{flexDirection:'row', marginBottom : 5}}>
+                                <View style={{width : 100, height : 50, borderRightWidth : 0.3, justifyContent : 'center', alignItems : 'center'}}>
+                                    <Image style={{flex:1, width : '100%', resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.image}}/>
                                 </View>
-                                    <View style={styles.modal_icons}>
-                                    <Button
-                                        appearance='ghost'
-                                        accessoryLeft={CommentIcon}
-                                        onPress={()=>{Linking.openURL(`sms:${phoneNumber}`)}}/>
-                                    <Text>메시지</Text>
+                                <Text style={{margin : 15}}>{post.post_nickname}</Text>
+                            </Layout>
+                            <Divider style={{borderWidth : 0.3}}/>
+                            <Layout style={{flexDirection:'row', marginTop:10}}>
+                                <View style={styles.icons}>
+                                <Icon
+                                    style={{width:32,height:32}}
+                                    fill='black'
+                                    name='star'
+                                />
+                                <Text>post.alba_salary</Text>
                                 </View>
-                                <View style={styles.modal_icons}>
-                                <Button
-                                        appearance='ghost'
-                                        accessoryLeft={HeartIcon}
-                                        onPress={()=>{Linking.openURL(`mailto:${route.params.post_email}`)}}/>
-                                    <Text>이메일</Text>
+                                <View style={styles.icons}>
+                                <Icon
+                                    style={{width:32,height:32}}
+                                    fill='black'
+                                    name='eye'
+                                />
+                                <Text>post.alba_type</Text>
+                                </View>
+                                <View style={{flex : 2, justifyContent : 'center', alignItems : 'center'}}>
+                                <Icon
+                                    style={{width:32,height:32}}
+                                    fill='black'
+                                    name='share-outline'
+                                />
+                                <Text>post.alba_location</Text>
                                 </View>
                             </Layout>
-                            <Button onPress={()=>setVisible(false)} appearance='ghost' >
-                                취소
-                            </Button>
                         </Card>
-                </Modal>
-            </View>
-        </Layout>
-    </SafeAreaView>
-    )
+                        
+                        <Card style={styles.item}>
+                            <Text style={styles.subhead}>근무지역</Text>
+                            <Text style={{margin : 5}}>post.alba_location</Text>
+                        </Card>
+                        <Card style={styles.item}>
+                            <Text style={styles.subhead}>근무조건</Text>
+                            <Layout style = {{flexDirection : 'row'}}>
+                                <View style={{flex : 1, marginLeft : 5}}>
+                                    <Text style={styles.gathertext}>급여</Text>
+                                </View>
+                                <View style={{flex : 5}}>
+                                    <Text style={styles.gather}>post.alba_salary_type post.alba_salary</Text>
+                                </View>
+                            </Layout>
+                            <Layout style = {{flexDirection : 'row'}}>
+                                <View style={{flex : 1, marginLeft : 5}}>
+                                    <Text style={styles.gathertext}>근무기간</Text>
+                                </View>
+                                <View style={{flex : 5}}>
+                                    <Text style={styles.gather}>post.alba_type</Text>
+                                </View>
+                            </Layout>
+                        </Card>
+                        <Card style={styles.item} onPress={()=>console.log(post.post_content)}>    
+                            <HTML html = {post.post_content} imagesMaxWidth={Dimensions.get('window').width}/>
+                        </Card>
+                    </ScrollView>
+                    <View style={styles.bottom}>
+                        <Button style={{width : '100%'}} onPress={()=>this.setVisible(true)}>
+                            지원하기
+                        </Button>
+                        <Modal
+                            visible={this.state.visible}
+                            backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
+                            onBackdropPress={() => this.setVisible(false)}>
+                                <Card disabled={true}>
+                                    <Layout style={{flexDirection:'row'}}>
+                                        <View style={styles.modal_icons}>
+                                            <Button
+                                                appearance='ghost'
+                                                accessoryLeft={HeartIcon}
+                                                onPress={()=>{Linking.openURL(`tel:${this.state.phoneNumber}`)}}/>
+                                            <Text>전화</Text>
+                                        </View>
+                                            <View style={styles.modal_icons}>
+                                            <Button
+                                                appearance='ghost'
+                                                accessoryLeft={CommentIcon}
+                                                onPress={()=>{Linking.openURL(`sms:${this.state.phoneNumber}`)}}/>
+                                            <Text>메시지</Text>
+                                        </View>
+                                        <View style={styles.modal_icons}>
+                                        <Button
+                                                appearance='ghost'
+                                                accessoryLeft={HeartIcon}
+                                                onPress={()=>{Linking.openURL(`mailto:${post.post_email}`)}}/>
+                                            <Text>이메일</Text>
+                                        </View>
+                                    </Layout>
+                                    <Button onPress={()=>this.setVisible(false)} appearance='ghost' >
+                                        취소
+                                    </Button>
+                                </Card>
+                        </Modal>
+                    </View>
+                </Layout>
+            </SafeAreaView>
+            )
+    }
 }
 
 const styles = StyleSheet.create({

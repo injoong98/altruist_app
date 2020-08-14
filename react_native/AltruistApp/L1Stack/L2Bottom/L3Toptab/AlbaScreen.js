@@ -38,12 +38,12 @@ class AlbaScreen extends React.Component {
 
   renderItem = ({item, index}) => (
       <Card
-      onPress={() => {this.props.navigation.navigate('AlbaContent', item);}}
+      onPress={() => {this.props.navigation.navigate('AlbaContent', item.post_id);}}
       style={styles.carditem}
       status='basic'>
         <View style={{flexDirection : 'row'}}>
             <View style={styles.Text}>
-                <Text style={{fontSize : 20}}>{item.mem_nickname}</Text>
+                <Text style={{fontSize : 20}}>{item.post_nickname}</Text>
                 <Text style={{marginTop :5, marginBottom : 5}}>{item.title}</Text>
                 <Divider style={{borderWidth : 0.5}}/>
                 <Text>item.post_location<Text style={{color : 'red'}}>item.alba_salary_type</Text> item.alba_salary</Text>
