@@ -11,6 +11,7 @@ class AlbaScreen extends React.Component {
       isLoading : true,
       lists : '',
       image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+      refreshing : false,
     }
   }
 
@@ -38,6 +39,9 @@ class AlbaScreen extends React.Component {
     this.getPostList();
   }
 
+  onRefresh = () => {
+    this.getPostList();
+  }
 
   renderItem = ({item, index}) => (
       item.origin_image_url?
@@ -90,8 +94,8 @@ class AlbaScreen extends React.Component {
           contentContainerStyle={styles.contentContainer}
           data={this.state.lists}
           renderItem={this.renderItem}
-          // refreshing={this.state.isLoading}
-          // onRefresh={this.getPostList()}
+          refreshing={this.state.refreshing}
+          onRefresh={this.onRefresh}
           />
       </View>
       <View style={styles.bottomView}>
