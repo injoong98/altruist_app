@@ -13,11 +13,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {StackNav} from "./L1Stack/StackNav";
+import { AppIconsPack } from './app-icons-pack';
 
  const App = () => {
   return (
   <>
-    <IconRegistry icons={EvaIconsPack} />
+    <IconRegistry icons={[EvaIconsPack,AppIconsPack]} />
     <ApplicationProvider {...eva} theme={eva.light}>
       <NavigationContainer>
         <StackNav />
