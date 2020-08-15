@@ -31,7 +31,7 @@ class GominScreen extends React.Component {
         <Card onPress = {()=>{this.props.navigation.navigate('GominContent',{title:`${index+1}th post_id=${item.post_id}`,post_id:item.post_id})}}>
             <Text category="h6" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
             <View style={styles.subtitle}>
-                <Text category="s1">{item.post_nickname}</Text>
+                <Text category="s1">{item.display_name}</Text>
                 <View style={styles.infocontainer}>
                     <EyeIcon />
                     <Text category="s1">{item.post_hit}</Text>
@@ -78,7 +78,7 @@ class GominScreen extends React.Component {
             onRefresh={this.onRefresh}
             refreshing={this.state.refreshing}/>
             <View style ={styles.buttoncontainer}>
-                <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('Write')}} >글쓰기</Button>
+                <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('GominWrite')}} >글쓰기</Button>
             </View>
         </SafeAreaView>
         )
@@ -90,7 +90,7 @@ export {GominScreen}
 
 const styles = StyleSheet.create({
     buttoncontainer:{
-        width:"100%",bottom:0,position :"absolute",
+        width:"100%",bottom:0,
         display :"flex", 
         flexDirection:"row",
         justifyContent:"center", 

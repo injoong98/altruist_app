@@ -3,6 +3,7 @@ import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedba
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal} from '@ui-kitten/components'
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
+
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -65,7 +66,7 @@ class GominContent extends React.Component{
                 </View>
                 <View style={{paddingLeft:10}}>
                     <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
-                        <StarIcon /><Text>{`${post.post_nickname} | ${post.post_datetime}`} </Text>
+                        <StarIcon /><Text>{`${post.display_name} | ${post.post_datetime}`} </Text>
                     </View>
                     <Divider/>
                 </View>
@@ -257,6 +258,7 @@ class AlbaContent extends React.Component {
             image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
             phoneNumber : '01099999999',
             isLoading : true,
+            image_height : 0,
         }
     }
 
@@ -288,13 +290,27 @@ class AlbaContent extends React.Component {
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
 
+    // getImageSize (uri, passProps) {
+    //     const img_url = "http://10.0.2.2"+uri;
+    //     const imagesMaxWidth = Dimensions.get('window').width;
+    //     Image.getSize(img_url,(originalWidth, originalHeight) => {
+    //             const optimalWidth = imagesMaxWidth <= originalWidth ? imagesMaxWidth : originalWidth;
+    //             const optimalHeight = (optimalWidth * originalHeight) / originalWidth;
+    //             this.setState({image_height:optimalHeight});
+    //             console.log(this.state.image_height, optimalHeight);
+    //         }
+    //     );
+    //     return <Image key={passProps.key} style={{width : '100%', height : this.state.image_height, resizeMode: 'contain'}} source={{ uri:img_url }}/>;
+    // }
+
     render(){
         const {post} = this.state;
-        const defaultRenderer ={
-            renderers:{
-                img: (htmlAttribs, children, convertedCSSStyles, passProps) => <Image key={passProps.key} style={{width : '100%', height : Dimensions.get('window').height , resizeMode: 'contain', backgroundColor : 'black'}} source={{ uri: 'http://10.0.2.2'+htmlAttribs.src }}/>
-            }
-        }
+        // const defaultRenderer ={
+        //     renderers:{
+        //         img : (htmlAttribs, children, convertedCSSStyles, passProps) => this.img_return(htmlAttribs, passProps)
+        //     }
+        // }
+        console.log(post.post_content);
         return(
             this.state.isLoading?
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -339,14 +355,14 @@ class AlbaContent extends React.Component {
                                     fill='black'
                                     name='share-outline'
                                 />
-                                <Text>post.alba_location</Text>
+                                <Text>post.post_location</Text>
                                 </View>
                             </Layout>
                         </Card>
                         
                         <Card style={styles.item}>
                             <Text style={styles.subhead}>근무지역</Text>
-                            <Text style={{margin : 5}}>post.alba_location</Text>
+                            <Text style={{margin : 5}}>post.post_location</Text>
                         </Card>
                         <Card style={styles.item}>
                             <Text style={styles.subhead}>근무조건</Text>
@@ -368,10 +384,11 @@ class AlbaContent extends React.Component {
                             </Layout>
                         </Card>
                         <Card>    
-                            <HTML   
+                            <HTML
                                 html = {post.post_content}
                                 imagesMaxWidth={Dimensions.get('window').width}
-                                {...defaultRenderer}/>
+                                imagesInitialDimensions={{width:400, height : 400}}
+                                />
                         </Card>
                     </ScrollView>
                     <View style={styles.bottom}>
