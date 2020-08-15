@@ -65,7 +65,7 @@ class GominContent extends React.Component{
                 </View>
                 <View style={{paddingLeft:10}}>
                     <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
-                        <StarIcon /><Text>{`${post.post_nickname} | ${post.post_datetime}`} </Text>
+                        <StarIcon /><Text>{`${post.display_name} | ${post.post_datetime}`} </Text>
                     </View>
                     <Divider/>
                 </View>
