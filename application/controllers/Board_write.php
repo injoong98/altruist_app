@@ -276,6 +276,8 @@ class Board_write extends CB_Controller
 		$view['view']['post']['can_post_notice'] = $can_post_notice = ($is_admin !== false) ? true : false;
 		$view['view']['post']['can_post_secret'] = $can_post_secret
 			= element('use_post_secret', $board) === '1' ? true : false;
+		$view['view']['post']['can_anoymous'] = $can_anoymous
+			= element('brd_anoymous_allow', $board) === '1' ? true : false;
 		$view['view']['post']['post_secret'] = element('use_post_secret_selected', $board) ? '1' : '';
 		$view['view']['post']['can_post_receive_email'] = $can_post_receive_email
 			= element('use_post_receive_email', $board) ? true : false;
@@ -811,6 +813,9 @@ class Board_write extends CB_Controller
 			}
 			if ($can_post_secret) {
 				$updatedata['post_secret'] = $this->input->post('post_secret') ? 1 : 0;
+			}
+			if ($can_anoymous) {
+				$updatedata['post_anoymous_yn'] = $this->input->post('post_anoymous_yn') ? 1 : 0;
 			}
 			if (element('use_post_secret', $board) === '2') {
 				$updatedata['post_secret'] = 1;
@@ -1529,6 +1534,7 @@ class Board_write extends CB_Controller
 		$view['view']['post']['can_post_notice'] = $can_post_notice = ($is_admin !== false) ? true : false;
 		$view['view']['post']['can_post_secret'] = $can_post_secret
 			= element('use_post_secret', $board) === '1' ? true : false;
+		$view['view']['post']['can_anoymous'] = $can_anoymous	= element('brd_anoymous_allow', $board) === '1' ? true : false;
 		$view['view']['post']['can_post_receive_email'] = $can_post_receive_email = element('use_post_receive_email', $board) ? true : false;
 
 		$primary_key = $this->Post_model->primary_key;
@@ -2017,6 +2023,9 @@ class Board_write extends CB_Controller
 			}
 			if ($can_post_secret) {
 				$updatedata['post_secret'] = $this->input->post('post_secret') ? 1 : 0;
+			}
+			if ($can_anoymous) {
+				$updatedata['post_anoymous_yn'] = $this->input->post('post_anoymous_yn') ? 1 : 0;
 			}
 			if (element('use_post_secret', $board) === '2') {
 				$updatedata['post_secret'] = 1;

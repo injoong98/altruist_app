@@ -259,6 +259,14 @@ if (element('brd_id', element('data', $view))) {
 				</div>
 			</div>
 			<div class="form-group">
+				<label class="col-sm-2 control-label">익명글허용여부</label>
+				<div class="col-sm-8">
+					<label for="brd_anoymous_allow" class="checkbox-inline">
+						<input type="checkbox" name="brd_anoymous_allow" id="brd_anoymous_allow" value="1" <?php echo set_checkbox('brd_anoymous_allow', '1', (element('brd_anoymous_allow', element('data', $view)) ? true : false)); ?> /> 사용합니다
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
 				<label class="col-sm-2 control-label">검색여부</label>
 				<div class="col-sm-8">
 					<label for="brd_search" class="checkbox-inline">
