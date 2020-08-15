@@ -1,10 +1,17 @@
 import React from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,} from 'react-native';
-import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input} from '@ui-kitten/components'
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, Alert,VirtualizedList,TouchableOpacity} from 'react-native';
+import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,CheckBox} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
 import WebView from 'react-native-webview';
+import Axios from 'axios';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
+)
+const CloseIcon =  (props) =>(
+    <Icon {...props} name = "close"/>
+)
+const UpIcon =  (props) =>(
+    <Icon {...props} name = "arrow-circle-up-outline"/>
 )
 
 
@@ -33,6 +40,94 @@ const defaultWrite = ({navigation}) =>{
     </SafeAreaView>
 
     )
+}
+class GominWrite extends React.Component {
+
+    constructor(props){
+        super(props);
+        this.state={
+            isLoading :true,
+            post_title:'',
+            post_content:'',
+            post_anoymous_yn:1,
+            post_category:1,
+            checked:true
+            
+        }
+    }
+    submitPost= () => {
+    const {post_title,post_content,post_anoymous_yn,post_category} = this.state;
+    // alert(`title: ${post_title}\n category: ${post_category}\n content: ${post_content}\n anontmous: ${post_anoymous_yn}`);
+    const config ={
+        url:"10.0.2.2/api/board_write/write/b-a-1",
+        data:{
+            post_title,
+            post_content,
+            post_anoymous_yn,
+            post_category
+            }
+        }
+    Alert.alert(
+        "게시글",
+        "게시글을 작성하시겠습니까?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => alert('취소했습니다.')
+          },
+          { text: "OK", onPress: async() =>
+          {
+            await Axios.post(config)
+            .then(reponse=>{
+                alert('성공했어요!')
+            })
+            .catch(error=>{
+                alert('You failed')
+            })
+          }
+        }
+        ],
+        { cancelable: false }
+      );
+    }
+    
+    SubmitButton = () =>(
+        <TopNavigationAction icon={UpIcon} onPress={() =>{this.submitPost()}}/>
+    )
+
+    CloseAction = () =>(
+        <TopNavigationAction icon={CloseIcon} onPress={() =>{this.props.navigation.goBack()}}/>
+    )
+    render(){
+        const {navigation} = this.props;
+        const {post_title,post_category,post_anoymous_yn,post_content,checked} =this.state;
+        return(
+
+            <SafeAreaView style={{flex:1}}>
+                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} /> 
+                <Divider />
+                <Input
+                    placeholder="Place your Post's Title"
+                    onChangeText={nextValue => this.setState({post_title:nextValue})}
+                />
+                <Divider />
+                <Input
+                    placeholder="Place your Post's content"
+                    onChangeText={nextValue => this.setState({post_content:nextValue})}
+                    multiline={true}
+                    textStyle={{minHeight:100}}
+                />            
+                <View style={{alignItems:"flex-end"}}>
+                    <CheckBox 
+                    checked={checked} 
+                    onChange={nextChecked=>this.setState({post_anoymous_yn: nextChecked? 1 : 0,checked:nextChecked })}>
+                    {`익명`}
+                    </CheckBox>
+                </View>
+            </SafeAreaView>
+    
+        )
+    }
 }
 
 const MarketWrite = ({route, navigation}) => {
@@ -167,4 +262,4 @@ const styles = StyleSheet.create({
 });
   
 
-export {defaultWrite, MarketWrite, AlbaWrite}
+export {defaultWrite, MarketWrite, AlbaWrite,GominWrite}

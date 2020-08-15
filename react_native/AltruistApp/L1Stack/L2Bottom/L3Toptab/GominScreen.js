@@ -90,7 +90,7 @@ export {GominScreen}
 
 const styles = StyleSheet.create({
     buttoncontainer:{
-        width:"100%",bottom:0,position :"absolute",
+        width:"100%",bottom:0,
         display :"flex", 
         flexDirection:"row",
         justifyContent:"center", 
