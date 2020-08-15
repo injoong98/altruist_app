@@ -3,19 +3,20 @@ import { Image, SafeAreaView, ListRenderItemInfo, StyleSheet, View, Dimensions }
 import { Button, Card, List, Layout,Text,Icon, StyleService} from '@ui-kitten/components'
 import { ImageOverlay } from '../../../components/image-overlay.component';
 import { HeartIcon, PlusIcon } from '../../../assets/icons/icons';
-import { IlbanPost } from './extra/data';
 
-const data: IlbanPost[] = [
-    IlbanPost.basketball(),
+import { IlbanPost } from './extra/jaupost';
+
+// const data: IlbanPost[] = [
+    // IlbanPost.basketball(),
     // Training.running(),
     // Training.workout(),
-  ];
+//   ];
 
   function JauHeader(){
     return (info: ListRenderItemInfo<IlbanPost>): React.ReactElement => (
         <Layout  {...info}>
             {/* 카테고리, 제목, 작성자, 시간, 공유 */}
-            <View style={styles.itemFooter}>
+            <View style={styles.itemHeaderTop}>
                 {/*     text-overflow: ellipsis; */}
                 <View>
                     <Text category='s2'>[카테고리]
@@ -30,9 +31,10 @@ const data: IlbanPost[] = [
                         accessoryLeft={ShareIcon} 
                         />
             </View>
-            <View style={styles.itemFooter}>
-                <Text category='s1'>작성자1</Text>
-                <Text category='s2'>2020-08-15 00:00</Text>
+            <View style={styles.itemHeaderBottom}>
+                <Text category='s2'>작성자1</Text>
+                <Text category='s2'> | 2020-08-15 00:00</Text>
+                <Text category='s2'> | 조회수 0</Text>
             </View>
         </Layout >
     );
@@ -159,6 +161,16 @@ const data: IlbanPost[] = [
     itemFooter: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+    },
+    itemHeaderTop: {
+        marginLeft : 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    itemHeaderBottom: {
+        marginRight : 10,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
     },
     itemReactionsContainer: {
         flexDirection: 'row',
