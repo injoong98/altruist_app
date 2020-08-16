@@ -56,30 +56,7 @@ class GominWrite extends React.Component {
             
         }
     }
-    fetchtest= async() =>{
-        const {post_title,post_content,post_anoymous_yn,post_category} =this.state
-        let formdata = new FormData();
-            formdata.append("post_title", "익명으로 보내봤습니다.");
-            formdata.append("post_content", "내용입니다 postman에서 보내는 22\n\n엔터 쳤어  요  ");
-            formdata.append("post_category", "1");
-            formdata.append("post_anoymous_yn", "1");
-       let url = 'http://10.0.2.2/api/board_write/write/b-a-1';
-        let options = {
-                    method: 'POST',
-                    body: formdata
-                };
-        await fetch(url, options)
-        .then((response)=>response.json())
-        .then((data)=>alert(data))
-        .catch((error)=>{
-            alert('fail')
-        });
-
-    }
-    aletstate=()=>{
-        const {post_title,post_content,post_anoymous_yn,post_category} =this.state
-        alert(`${post_title}\n${post_content}\n${post_anoymous_yn}\n${post_category}\n `)
-    }
+    
     axiosposttest= async()=>{
         const {post_title,post_content,post_anoymous_yn,post_category} =this.state
         let formdata = new FormData();
@@ -101,15 +78,14 @@ class GominWrite extends React.Component {
     }
     submitPost= () => {
     const {post_title,post_content,post_anoymous_yn,post_category} = this.state;
-    // alert(`title: ${post_title}\n category: ${post_category}\n content: ${post_content}\n anontmous: ${post_anoymous_yn}`);
+    let formdata = new FormData();
+        formdata.append("post_title", post_title);
+        formdata.append("post_content", post_content);
+        formdata.append("post_category", post_category);
+        formdata.append("post_anoymous_yn", post_anoymous_yn);
     const config ={
-        url:"10.0.2.2/api/board_write/write/b-a-1",
-        data:{
-            post_title,
-            post_content,
-            post_anoymous_yn,
-            post_category
-            }
+        url:'http://10.0.2.2/api/board_write/write/b-a-1',
+        data:formdata
         }
     Alert.alert(
         "게시글",
@@ -121,7 +97,7 @@ class GominWrite extends React.Component {
           },
           { text: "OK", onPress: async() =>
             {
-                await Axios.post(config)
+                await axios.post(config)
                 .then(reponse=>{
                     alert('성공했어요!')
                 })
