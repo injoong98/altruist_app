@@ -31,20 +31,20 @@ export const ToggleSimpleUsageShowcase = () => {
 
 
 // 핫게
-export const Ilban = () => {
-    return(
-    //그림자 주기
-    <View>
-        <View style={{flexDirection: 'row', justifyContent:'space-between'}}>
-            <ToggleSimpleUsageShowcase />
-            <Text style={styles.title}>더보기</Text>
-        </View>
-        <View>
-          <ListAccessoriesShowcase />
-        </View>
-    </View>
-    );
-}
+// export const Ilban = () => {
+//     return(
+//     //그림자 주기
+//     <View>
+//         <View style={{flexDirection: 'row', justifyContent:'space-between'}}>
+//             <ToggleSimpleUsageShowcase />
+//             <Text style={styles.title}>더보기</Text>
+//         </View>
+//         <View>
+//           <ListAccessoriesShowcase />
+//         </View>
+//     </View>
+//     );
+// }
 
     
 
@@ -53,8 +53,8 @@ const CommunityScreen = ({navigation}) =>{
     <SafeAreaView style={{flex:1}} {...eva} theme={eva.light}> 
         <Layout>
             <ScrollView>
-                <Ilban style={{alignItems:'auto'}}/>
-                {/* <Gomin />
+                {/*<Ilban style={{alignItems:'auto'}}/>
+                 <Gomin />
                 <Market />
                 <Alba /> */}
             <Text>커뮤니티 화면입니다.</Text>
