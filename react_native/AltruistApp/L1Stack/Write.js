@@ -1,9 +1,10 @@
 import React from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
 import WebView from 'react-native-webview';
 import { HeartIcon } from '../assets/icons/icons';
+import axios from 'axios';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -47,13 +48,56 @@ class GominWrite extends React.Component {
         super(props);
         this.state={
             isLoading :true,
-            post_title:'',
-            post_content:'',
+            post_title:'title from avd',
+            post_content:'content from avd 익명,카테고리 1',
             post_anoymous_yn:1,
             post_category:1,
             checked:true
             
         }
+    }
+    fetchtest= async() =>{
+        const {post_title,post_content,post_anoymous_yn,post_category} =this.state
+        let formdata = new FormData();
+            formdata.append("post_title", "익명으로 보내봤습니다.");
+            formdata.append("post_content", "내용입니다 postman에서 보내는 22\n\n엔터 쳤어  요  ");
+            formdata.append("post_category", "1");
+            formdata.append("post_anoymous_yn", "1");
+       let url = 'http://10.0.2.2/api/board_write/write/b-a-1';
+        let options = {
+                    method: 'POST',
+                    body: formdata
+                };
+        await fetch(url, options)
+        .then((response)=>response.json())
+        .then((data)=>alert(data))
+        .catch((error)=>{
+            alert('fail')
+        });
+
+    }
+    aletstate=()=>{
+        const {post_title,post_content,post_anoymous_yn,post_category} =this.state
+        alert(`${post_title}\n${post_content}\n${post_anoymous_yn}\n${post_category}\n `)
+    }
+    axiosposttest= async()=>{
+        const {post_title,post_content,post_anoymous_yn,post_category} =this.state
+        let formdata = new FormData();
+            formdata.append("post_title", post_title);
+            formdata.append("post_content", post_content);
+            formdata.append("post_category", post_category);
+            formdata.append("post_anoymous_yn", post_anoymous_yn);
+        await axios.post(
+            'http://10.0.2.2/api/board_write/write/b-a-1',
+            formdata
+            )
+        .then(response=>{
+            alert(`${JSON.stringify(response.data)}`)
+        })
+        .catch(error=>{
+            alert('BYE:(')
+        })    
+    
     }
     submitPost= () => {
     const {post_title,post_content,post_anoymous_yn,post_category} = this.state;
@@ -76,15 +120,15 @@ class GominWrite extends React.Component {
             onPress: () => alert('취소했습니다.')
           },
           { text: "OK", onPress: async() =>
-          {
-            await Axios.post(config)
-            .then(reponse=>{
-                alert('성공했어요!')
-            })
-            .catch(error=>{
-                alert('You failed')
-            })
-          }
+            {
+                await Axios.post(config)
+                .then(reponse=>{
+                    alert('성공했어요!')
+                })
+                .catch(error=>{
+                    alert('You failed')
+                })
+            }
         }
         ],
         { cancelable: false }
@@ -124,6 +168,10 @@ class GominWrite extends React.Component {
                     {`익명`}
                     </CheckBox>
                 </View>
+                <Button onPress={this.axiosposttest}>Axios TEST</Button>
+                <Button onPress={this.fetchtest}>fetchtest TEST</Button>
+                <Button onPress={this.aletstate}>aletstate</Button>
+
             </SafeAreaView>
     
         )
