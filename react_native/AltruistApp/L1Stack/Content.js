@@ -182,14 +182,14 @@ const MarketContent = ({route, navigation}) =>{
         <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
             <ScrollView>
             <View style={{height:394}}>
-                <Image source={route.params.uri} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                <Image source={{uri : 'http://10.0.2.2'+route.params.origin_image_url}} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
             </View>
             <View style={{}}>
                 <Layout>
                 <Text category='h2'>{route.params.title}</Text>
                 </Layout>
                 <Layout>
-                <Text category='h4'>{route.params.price}</Text>
+                <Text category='h4'>{route.params.post_content.replace(/(<([^>]+)>)/ig,"")}</Text>
                 </Layout>
             </View>
             <Divider/>

@@ -50,32 +50,21 @@ const data = new Array(
 
 
 const MarketScreen = ({navigation}) =>{
-
     
     const [isLoading, setIsLoading] = React.useState(true);
     const [list, setList] = React.useState('');
-    
-    
-    // const getPostList = async() =>{
-    //   await axios.get('http://10.0.2.2/api/board_post/lists/b-a-1')
-    //   .then((response)=>{
-    //       setList(response.data.view.list.data.list);
-    //       setIsLoading(false);
-    //   })
-    //   .catch((error)=>{
-    //       alert('error')
-    //   })
-    // }
 
     useEffect(() => {
       const fetchData = async () => {
-      const response = await axios.get(
-        'http://10.0.2.2/api/board_post/lists/b-a-1'
-      );
-
-      setList(response.data.view.list.data.list);
-      setIsLoading(false);
-      };
+      await axios.get('http://10.0.2.2/api/board_post/lists/b-a-2')
+      .then((response) => {
+        setList(response.data.view.list.data.list);
+        setIsLoading(false);
+      })
+        .catch((error)=>{
+            alert('error')
+        })
+      }
 
       fetchData();
     }, []);
