@@ -57,7 +57,7 @@ class GominWrite extends React.Component {
         }
     }
     
-    axiosposttest= async()=>{
+    submitPost= async()=>{
         const {post_title,post_content,post_anoymous_yn,post_category} =this.state
         let formdata = new FormData();
             formdata.append("post_title", post_title);
@@ -69,54 +69,51 @@ class GominWrite extends React.Component {
             formdata
             )
         .then(response=>{
-            alert(`${JSON.stringify(response.data)}`)
+            Alert.alert(
+                "게시글",
+                "게시글 작성 완료",
+                [
+                    { 
+                        text: "OK", 
+                        onPress: ()=> alert('Hi')
+                    }
+                ],
+                { cancelable: false }
+            );
         })
         .catch(error=>{
             alert('BYE:(')
         })    
     
     }
-    submitPost= () => {
-    const {post_title,post_content,post_anoymous_yn,post_category} = this.state;
-    let formdata = new FormData();
-        formdata.append("post_title", post_title);
-        formdata.append("post_content", post_content);
-        formdata.append("post_category", post_category);
-        formdata.append("post_anoymous_yn", post_anoymous_yn);
-    const config ={
-        url:'http://10.0.2.2/api/board_write/write/b-a-1',
-        data:formdata
-        }
-    Alert.alert(
-        "게시글",
-        "게시글을 작성하시겠습니까?",
-        [
-          {
-            text: "Cancel",
-            onPress: () => alert('취소했습니다.')
-          },
-          { text: "OK", onPress: async() =>
-            {
-                await axios.post(config)
-                .then(reponse=>{
-                    alert('성공했어요!')
-                })
-                .catch(error=>{
-                    alert('You failed')
-                })
-            }
-        }
-        ],
-        { cancelable: false }
-      );
+    submitAlert= () => {
+        Alert.alert(
+            "게시글",
+            "게시글을 작성하시겠습니까?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "OK", 
+                    onPress: ()=> this.submitPost()
+                }
+            ],
+            { cancelable: false }
+        );
     }
-    
+    gobackfunc = (str) =>{
+        const {navigation,route} = this.props;
+        navigation.goBack();
+        route.params.statefunction(`${str}`);
+    } 
     SubmitButton = () =>(
-        <TopNavigationAction icon={UpIcon} onPress={() =>{this.submitPost()}}/>
+        <TopNavigationAction icon={UpIcon} onPress={() =>{this.submitAlert()}}/>
     )
 
     CloseAction = () =>(
-        <TopNavigationAction icon={CloseIcon} onPress={() =>{this.props.navigation.goBack()}}/>
+        <TopNavigationAction icon={CloseIcon} onPress={() =>{this.gobackfunc(this.state.title)}}/>
     )
     render(){
         const {navigation} = this.props;
@@ -144,10 +141,6 @@ class GominWrite extends React.Component {
                     {`익명`}
                     </CheckBox>
                 </View>
-                <Button onPress={this.axiosposttest}>Axios TEST</Button>
-                <Button onPress={this.fetchtest}>fetchtest TEST</Button>
-                <Button onPress={this.aletstate}>aletstate</Button>
-
             </SafeAreaView>
     
         )
