@@ -20,7 +20,9 @@ class GominScreen extends React.Component {
         super(props);
         this.state={
             isLoading : true,
-            lists:''
+            lists:'',
+            refreshing:false,
+            dump:'true'
         }
     }
 
@@ -30,7 +32,7 @@ class GominScreen extends React.Component {
         <Card onPress = {()=>{this.props.navigation.navigate('GominContent',{title:`${index+1}th post_id=${item.post_id}`,post_id:item.post_id})}}>
             <Text category="h6" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
             <View style={styles.subtitle}>
-                <Text category="s1">{item.post_nickname}</Text>
+                <Text category="s1">{item.display_name}</Text>
                 <View style={styles.infocontainer}>
                     <EyeIcon />
                     <Text category="s1">{item.post_hit}</Text>
@@ -56,6 +58,13 @@ class GominScreen extends React.Component {
     componentDidMount(){
         this.getPostList();
     }
+    
+    onRefresh= () =>{
+        this.getPostList();
+    }
+    statefunction=(str)=>{
+        this.setState({isLoading:true});
+        this.componentDidMount()    }
 
     render(){
         return(
@@ -69,9 +78,13 @@ class GominScreen extends React.Component {
             <List
             data ={this.state.lists}
             ItemSeparatorComponent={Divider}
-            renderItem={this.renderItem} />
+            renderItem={this.renderItem} 
+            onRefresh={this.onRefresh}
+            refreshing={this.state.refreshing}/>
             <View style ={styles.buttoncontainer}>
-                <Button onPress={()=>{this.props.navigation.navigate('Write')}} >글쓰기</Button>
+                <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} >
+                    글쓰기{this.state.dump}
+                </Button>
             </View>
         </SafeAreaView>
         )
@@ -83,7 +96,7 @@ export {GominScreen}
 
 const styles = StyleSheet.create({
     buttoncontainer:{
-        width:"100%",bottom:30,position :"absolute",
+        width:"100%",bottom:0,
         display :"flex", 
         flexDirection:"row",
         justifyContent:"center", 

@@ -1,159 +1,192 @@
 import React from 'react';
-import { SafeAreaView, ListRenderItemInfo, StyleSheet, View } from 'react-native';
+import { Image, SafeAreaView, ListRenderItemInfo, StyleSheet, View, Dimensions } from 'react-native';
 import { Button, Card, List, Layout,Text,Icon, StyleService} from '@ui-kitten/components'
 import { ImageOverlay } from '../../../components/image-overlay.component';
-import { HeartIcon, PlusIcon, ShareIcon } from '../../../assets/icons/icons';
-import { Training } from './extra/data';
-const data: Training[] = [
-    Training.basketball(),
-    Training.running(),
-    Training.workout(),
-  ];
+import { HeartIcon, PlusIcon } from '../../../assets/icons/icons';
 
-//icon defines
+import { IlbanPost } from './extra/jaupost';
+
+// const data: IlbanPost[] = [
+    // IlbanPost.basketball(),
+    // Training.running(),
+    // Training.workout(),
+//   ];
+
+  function JauHeader(){
+    return (info: ListRenderItemInfo<IlbanPost>): React.ReactElement => (
+        <Layout  {...info}>
+            {/* 카테고리, 제목, 작성자, 시간, 공유 */}
+            <View style={styles.itemHeaderTop}>
+                {/*     text-overflow: ellipsis; */}
+                <View>
+                    <Text category='s2'>[카테고리]
+                    </Text>
+                    <Text category='h4'>{info.item.title}
+                    </Text>
+                </View>
+                <Button
+                        style={styles.iconButton}
+                        appearance='ghost'
+                        status='basic'
+                        accessoryLeft={ShareIcon} 
+                        />
+            </View>
+            <View style={styles.itemHeaderBottom}>
+                <Text category='s2'>작성자1</Text>
+                <Text category='s2'> | 2020-08-15 00:00</Text>
+                <Text category='s2'> | 조회수 0</Text>
+            </View>
+        </Layout >
+    );
+  }
+
+  function JauFooter(onDetailButtonPress: () => void) {
+      return (): React.ReactElement => (
+          <View style={styles.itemFooter}>
+              <View style={styles.itemReactionsContainer}>
+                  <Button
+                      style={styles.iconButton}
+                      appearance='ghost'
+                      status='basic'
+                      accessoryLeft={HeartIcon} />
+                  <Button
+                      style={styles.iconButton}
+                      appearance='ghost'
+                      status='danger'
+                      accessoryLeft={AltsIcon} />
+              </View>
+  
+              <Button
+                  style={styles.itemAddButton}
+                  appearance='ghost'
+                  onPress={onDetailButtonPress}
+                  accessoryLeft={ArrowIcon}>
+                              더보기
+  
+              </Button>
+          </View>
+      );
+  }
+  
+  function OneArticle(renderItemContent: (info: ListRenderItemInfo<IlbanPost>) => React.ReactElement, renderItemFooter: () => React.ReactElement) {
+      return (info: ListRenderItemInfo<IlbanPost>): React.ReactElement => (
+          <Card
+              style={styles.item}
+              header={() => renderItemContent(info)}
+              footer={renderItemFooter}>
+                <ImageOverlay
+                    style={styles.itemHeader}
+                    source={info.item.photo} />
+                    <Text
+                        style={styles.itemDescription}
+                        category='s1'>
+                        {info.item.description}
+                    </Text>
+          </Card>
+      );
+  }
+  
+  //하나의 카드
+  function JauView(renderItem: (info: ListRenderItemInfo<IlbanPost>) => React.ReactElement, onWriteButtonPress: () => void) {
+      const newLocal = (
+          <>
+              <View style={{ flex: 10 }}>
+                  <Layout style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                      <List
+                          style={styles.list}
+                          contentContainerStyle={styles.listContent}
+                          data={data}
+                          renderItem={renderItem} />
+                  </Layout>
+              </View>
+              <View style={{ flex: 1 }}>
+                  <Layout style={{ flex: 1, justifyContent: "center", padding: 16, marginBottom: 20, }}>
+                      <Button style={styles.followButton} onPress={onWriteButtonPress}>글작성</Button>
+                  </Layout>
+              </View>
+          </>
+      );
+      return newLocal;
+  }
+  
+  //icon defines
     const AltsIcon = (props) => <Icon {...props} name="star" />;
-    const ComuIcon = (props) => <Icon {...props} name="layout-outline" />;
-    const MesgIcon = (props) => <Icon {...props} name="flash-outline" />;
-    const MypgIcon = (props) => <Icon {...props} name="person-outline" />;
+    const ShareIcon = (props) => <Icon {...props} name="share-outline" />;
+    const ArrowIcon = (props) => <Icon {...props} name="arrow-forward-outline" />;
 
+      
+      //네비게이션 (이동방향)
     const JauScreen = ({navigation}) =>{
-
-        const onWriteButtonPress = (): void => {
-            navigation.navigate('Write');
+          
+          const onWriteButtonPress = (): void => {
+              navigation.navigate('Write');
           };
-        
-        const onDetailButtonPress = (): void => {
-            navigation.navigate('Content');
+          
+          const onDetailButtonPress = (): void => {
+              navigation.navigate('Content');
           };
-        
-        const renderItemHeader = (info: ListRenderItemInfo<Training>): React.ReactElement => (
-            <ImageOverlay
-            style={styles.itemHeader}
-            source={info.item.photo}>
-            <Text
-                style={styles.itemTitle}
-                category='h4'
-                status='control'>
-                {info.item.title}
-            </Text>
-            </ImageOverlay>
-        );
-        const renderItemFooter = (): React.ReactElement => (
-            <View style={styles.itemFooter}>
-            <View style={styles.itemReactionsContainer}>
-                <Button
-                style={styles.iconButton}
-                appearance='ghost'
-                status='basic'
-                icon={AltsIcon}
-                />
-                <Button
-                style={styles.iconButton}
-                appearance='ghost'
-                status='danger'
-                icon={AltsIcon}
-                />
-            </View>
-            
-            <Button
-                style={styles.itemAddButton}
-                appearance='ghost'
-                 onPress = {onDetailButtonPress}
-                icon={PlusIcon}>
-                View Detail
-                
-            </Button>
-            </View>
-        );
-        
-        const renderItem = (info: ListRenderItemInfo<Training>): React.ReactElement => (
-            <Card
-            style={styles.item}
-            header={() => renderItemHeader(info)}
-            footer={renderItemFooter}>
-            <Text
-                style={styles.itemDescription}
-                category='s1'>
-                {info.item.description}
-            </Text>
-            </Card>
-        );
+          
+          const renderItemHeader = JauHeader();
+        //   const renderItemContent = JauContent();
+          const renderItemFooter = JauFooter(onDetailButtonPress);
+          const renderItem = OneArticle(renderItemHeader, renderItemFooter);
+  
+          return JauView(renderItem, onWriteButtonPress);    
+  }
+  
+  
+  const styles = StyleSheet.create({
+    list: {
+        flex: 1,
+    },
+    listContent: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+    },
+    item: {
+        marginVertical: 8,
+    },
+    itemHeader: {
+        minHeight: 220,
+    },
 
-
-
-
-
-    return(
-    <>
-    <View style={{flex:10}} >
-        <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}} >
-            {/*   <Text>자유 화면입니다.</Text> */}
-            {/* <Button icon={AltsIcon} onPress = {()=>{navigation.goBack()}}>뒤로가기</Button> */}
-            
-            <List
-                style={styles.list}
-                contentContainerStyle={styles.listContent}
-                data={data}
-                renderItem={renderItem}
-            />
-        </Layout>
-     </View>
-    <View style={{flex:1}}>
-        <Layout style={{flex:1,justifyContent:"center", padding: 16, marginBottom: 20, }}>
-            <Button style={styles.followButton} onPress = {onWriteButtonPress}>글작성</Button>
-        </Layout>
-     </View>
-     </>
-    )
-    
-    
-}
-
-
-
-
-
-const styles = StyleSheet.create({
-list: {
-    flex: 1,
-},
-listContent: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-},
-item: {
-    marginVertical: 8,
-},
-itemHeader: {
-    minHeight: 220,
-},
-itemTitle: {
-    position: 'absolute',
-    left: 24,
-    bottom: 24,
-},
-itemDescription: {
-    marginHorizontal: -8,
-},
-itemFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-},
-itemReactionsContainer: {
-    flexDirection: 'row',
-},
-itemAddButton: {
-    flexDirection: 'row-reverse',
-    paddingHorizontal: 0,
-},
-iconButton: {
-    paddingHorizontal: 0,
-},
-followButton: {
-    marginTop: 24,
-  },
-});
-
-
-
+    itemTitle: {
+        position: 'absolute',
+        left: 24,
+        bottom: 24,
+    },
+    itemDescription: {
+        marginHorizontal: -8,
+    },
+    itemFooter: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    itemHeaderTop: {
+        marginLeft : 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    itemHeaderBottom: {
+        marginRight : 10,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+    },
+    itemReactionsContainer: {
+        flexDirection: 'row',
+    },
+    itemAddButton: {
+        flexDirection: 'row-reverse',
+        paddingHorizontal: 0,
+    },
+    iconButton: {
+        paddingHorizontal: 0,
+    },
+    followButton: {
+        marginTop: 24,
+        },
+    })
+  
 export {JauScreen}
+  
+

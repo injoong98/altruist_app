@@ -339,14 +339,20 @@ class Board_post extends CB_Controller
 			: element('view_date_style_manual', $board);
 
 		if (element('mem_id', $post) >= 0) {
-			$dbmember = $this->Member_model
-				->get_by_memid(element('mem_id', $post), 'mem_icon');
-			$view['view']['post']['display_name'] = display_username(
-				element('post_userid', $post),
-				element('post_nickname', $post),
-				($use_sideview_icon ? element('mem_icon', $dbmember) : ''),
-				($use_sideview ? 'Y' : 'N')
-			);
+			$dbmember = $this->Member_model->get_by_memid(element('mem_id', $post), 'mem_icon');
+
+			if(element('post_anoymous_yn', $view['view']['post'])) {// 익명글일경우에는 고민주의자로 표기
+				$view['view']['post']['display_name'] = '고민주의자';
+			}else {
+				$view['view']['post']['display_name'] = display_username(
+					element('post_userid', $post),
+					element('post_nickname', $post),
+					($use_sideview_icon ? element('mem_icon', $dbmember) : ''),
+					($use_sideview ? 'Y' : 'N')
+				);
+			}
+
+
 		} else {
 			$view['view']['post']['display_name'] = '익명사용자';
 		}
@@ -1142,12 +1148,20 @@ class Board_post extends CB_Controller
 				}
 
 				if (element('mem_id', $val) >= 0) {
-					$result['list'][$key]['display_name'] = display_username(
-						element('post_userid', $val),
-						element('post_nickname', $val),
-						($use_sideview_icon ? element('mem_icon', $val) : ''),
-						($use_sideview ? 'Y' : 'N')
-					);
+					
+					if(element('post_anoymous_yn', $val)) {// 익명글일경우에는 고민주의자로 표기
+						$result['list'][$key]['display_name'] = '고민주의자';
+					}else {
+						$result['list'][$key]['display_name'] = display_username(
+							element('post_userid', $val),
+							element('post_nickname', $val),
+							($use_sideview_icon ? element('mem_icon', $val) : ''),
+							($use_sideview ? 'Y' : 'N')
+						);
+						
+
+					}
+
 				} else {
 					$result['list'][$key]['display_name'] = '익명사용자';
 				}
