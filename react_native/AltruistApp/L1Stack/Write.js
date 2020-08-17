@@ -271,6 +271,7 @@ class AlbaWrite extends React.Component{
             alba_salary : '',
             _File : [],
             imagesource : {},
+            image : {},
             isTipVisible:false,
             isFollowUp:false,
         }
@@ -360,7 +361,7 @@ class AlbaWrite extends React.Component{
         };
 
         ImagePicker.showImagePicker(options, (response) =>{
-            console.log('Response = ', response);
+            console.log('Response = ', response.path);
 
             if (response.didCancel) {
                 console.log('User cancelled image picker');
@@ -370,12 +371,12 @@ class AlbaWrite extends React.Component{
                 console.log('User tapped custom button: ', response.customButton);
             } else {
                 const source = { uri: response.uri };
-
                 // You can also display the image using data:
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
                 this.setState({
                     imagesource : source,
+                    image : {width : response.width , height : response.height},
                 });
             }
         });
@@ -451,15 +452,23 @@ class AlbaWrite extends React.Component{
                         </View>
                     <Input
                         multiline={true}
-                        textStyle={{ minHeight: 500}}
+                        textStyle={{ minHeight: 300}}
                         placeholder='Input Context'
                         onChangeText ={(nextText) => {this.setState({post_content:nextText})}}
                     />
+                    <View style={{flex : 1, backgroundColor : 'black'}}>
+                        {this.state.imagesource?
+                            <Image source = {this.state.imagesource} style={{width : '100%', height : this.state.image.height, resizeMode : 'contain',}}/>
+                            :<Image style={{width : '100%', resizeMode : 'contain', }}/>
+                        }
+                    </View>
                     <Button onPress ={()=>{
                         this.get_Image_gallary();
                     }}>
                         사진추가
                     </Button>
+                    
+                    
                 </ScrollView>
                 </Layout>
                 <View style={styles.bottomView}>
