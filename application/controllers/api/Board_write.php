@@ -94,7 +94,7 @@ class Board_write extends CB_Controller
 	/**
 	 * 게시물 답변 페이지입니다
 	 */
-	public function reply($origin_id = 0)
+	public function reply()
 	{
 		// 이벤트 라이브러리를 로딩합니다
 		$eventname = 'event_board_write_reply';
@@ -106,7 +106,8 @@ class Board_write extends CB_Controller
 		/**
 		 * 프라이머리키에 숫자형이 입력되지 않으면 에러처리합니다
 		 */
-		$origin_id = (int) $origin_id;
+		$origin_id = $this->input->post('origin_id');
+		//$origin_id = (int) $origin_id;
 		if (empty($origin_id) OR $origin_id < 1) {
 			response_result($view,'Err','프라이머리키에 숫자형이 입력되지 않았습니다.');
 			//show_404();
@@ -143,12 +144,14 @@ class Board_write extends CB_Controller
 
 		if (element('post_del', $origin)) {
 			response_result($view,'Err','삭제된 글은 수정하실 수 없습니다.');
-			return;
+			//alert('삭제된 글은 수정하실 수 없습니다');
+			//return false;
 		}
 
 		if (strlen(element('post_reply', $origin)) >= 10) {
-			alert('더 이상 답변하실 수 없습니다.\\n답변은 10단계 까지만 가능합니다');
-			return;
+			response_result($view,'Err','더 이상 답변하실 수 없습니다.\\n답변은 10단계 까지만 가능합니다');
+			//alert('더 이상 답변하실 수 없습니다.\\n답변은 10단계 까지만 가능합니다');
+		//	return;
 		}
 
 		$reply_len = strlen(element('post_reply', $origin)) + 1;
@@ -182,7 +185,8 @@ class Board_write extends CB_Controller
 		if ( ! element('reply', $row)) {
 			$reply_char = $begin_reply_char;
 		} elseif (element('reply', $row) === $end_reply_char) { // A~Z은 26 입니다.
-			alert('더 이상 답변하실 수 없습니다.\\n답변은 26개 까지만 가능합니다');
+			response_result($view,'Err','더 이상 답변하실 수 없습니다.\\n답변은 26개 까지만 가능합니다.');
+			//alert('더 이상 답변하실 수 없습니다.\\n답변은 26개 까지만 가능합니다');
 		} else {
 			$reply_char = chr(ord(element('reply', $row)) + $reply_number);
 		}
@@ -1284,15 +1288,20 @@ class Board_write extends CB_Controller
 			// 이벤트가 존재하면 실행합니다
 			Events::trigger('common_after', $eventname);
 
+			
+			$redirecturl = post_url(element('brd_key', $board), $post_id);
 
+			$view['redirectinfo']['brd_key'] = element('brd_key', $board);
+			$view['redirectinfo']['post_id'] = $post_id;
+			$view['redirectinfo']['redirecturl'] = $redirecturl;
 
-
+			//불필요한 값 제거 
+			unset($view['view']);
 			response_result($view,'success','게시물이 정상적으로 입력되었습니다');
 
 			/**
 			 * 게시물의 신규입력 또는 수정작업이 끝난 후 뷰 페이지로 이동합니다
 			 */
-			//$redirecturl = post_url(element('brd_key', $board), $post_id);
 			//redirect($redirecturl);
 		}
 	}
@@ -1300,7 +1309,7 @@ class Board_write extends CB_Controller
 	/**
 	 * 게시물 수정 페이지입니다
 	 */
-	public function modify()
+	public function modify($post_id='')
 	{
 		// 이벤트 라이브러리를 로딩합니다
 		$eventname = 'event_board_write_modify';
@@ -2299,6 +2308,15 @@ class Board_write extends CB_Controller
 			/**
 			 * 게시물의 신규입력 또는 수정작업이 끝난 후 뷰 페이지로 이동합니다
 			 */
+			$redirecturl = post_url(element('brd_key', $board), $post_id);
+
+			$view['redirectinfo']['brd_key'] = element('brd_key', $board);
+			$view['redirectinfo']['post_id'] = $post_id;
+			$view['redirectinfo']['redirecturl'] = $redirecturl;
+
+			//불필요한 값 제거 
+			unset($view['view']);
+
 			response_result($view,'success','게시물이 정상적으로 수정되었습니다');
 
 			
