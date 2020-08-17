@@ -1,9 +1,10 @@
 import React from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
-import WebView from 'react-native-webview';
+import ImagePicker from 'react-native-image-picker';
 import { HeartIcon } from '../assets/icons/icons';
+import axios from 'axios';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -47,56 +48,72 @@ class GominWrite extends React.Component {
         super(props);
         this.state={
             isLoading :true,
-            post_title:'',
-            post_content:'',
+            post_title:'title from avd',
+            post_content:'content from avd 익명,카테고리 1',
             post_anoymous_yn:1,
             post_category:1,
             checked:true
             
         }
     }
-    submitPost= () => {
-    const {post_title,post_content,post_anoymous_yn,post_category} = this.state;
-    // alert(`title: ${post_title}\n category: ${post_category}\n content: ${post_content}\n anontmous: ${post_anoymous_yn}`);
-    const config ={
-        url:"10.0.2.2/api/board_write/write/b-a-1",
-        data:{
-            post_title,
-            post_content,
-            post_anoymous_yn,
-            post_category
-            }
-        }
-    Alert.alert(
-        "게시글",
-        "게시글을 작성하시겠습니까?",
-        [
-          {
-            text: "Cancel",
-            onPress: () => alert('취소했습니다.')
-          },
-          { text: "OK", onPress: async() =>
-          {
-            await Axios.post(config)
-            .then(reponse=>{
-                alert('성공했어요!')
-            })
-            .catch(error=>{
-                alert('You failed')
-            })
-          }
-        }
-        ],
-        { cancelable: false }
-      );
-    }
     
+    submitPost= async()=>{
+        const {post_title,post_content,post_anoymous_yn,post_category} =this.state
+        let formdata = new FormData();
+            formdata.append("post_title", post_title);
+            formdata.append("post_content", post_content);
+            formdata.append("post_category", post_category);
+            formdata.append("post_anoymous_yn", post_anoymous_yn);
+        await axios.post(
+            'http://10.0.2.2/api/board_write/write/b-a-1',
+            formdata
+            )
+        .then(response=>{
+            Alert.alert(
+                "게시글",
+                "게시글 작성 완료",
+                [
+                    { 
+                        text: "닫기", 
+                        onPress: ()=> this.gobackfunc()
+                    }
+                ],
+                { cancelable: false }
+            );
+        })
+        .catch(error=>{
+            alert('BYE:(')
+        })    
+    
+    }
+    submitAlert= () => {
+        Alert.alert(
+            "게시글",
+            "게시글을 작성하시겠습니까?",
+            [
+                {
+                    text: "취소",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "직성", 
+                    onPress: ()=> this.submitPost()
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+    gobackfunc = () =>{
+        const {navigation,route} = this.props;
+        navigation.goBack();
+        route.params.statefunction();
+    } 
     SubmitButton = () =>(
-        <TopNavigationAction icon={UpIcon} onPress={() =>{this.submitPost()}}/>
+        <TopNavigationAction icon={UpIcon} onPress={() =>{this.submitAlert()}}/>
     )
 
     CloseAction = () =>(
-        <TopNavigationAction icon={CloseIcon} onPress={() =>{this.props.navigation.goBack()}}/>
+        <TopNavigationAction icon={CloseIcon} onPress={() =>{this.props.navigation.goBack();}}/>
     )
     render(){
         const {navigation} = this.props;
@@ -130,89 +147,131 @@ class GominWrite extends React.Component {
     }
 }
 
-const MarketWrite = ({route, navigation}) => {
+class MarketWrite extends React.Component {
 
-    const DATA = [
-        require('../market/asset/market-image-1.jpg'),
-        require('../market/asset/image-plus.jpg'),
-    ];
-
-    const BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
-    )
-
-    const getItem = (data, index) => {
-        return {
-            id: Math.random().toString(12).substring(0),
-            title: `Item ${index+1}`,
-            uri: data[index]
+    constructor(props){
+        super(props);
+        this.state={
+            isLoading :true,
+            post_title:'',
+            post_content:'',
+            post_location:'',
+            deal_price:'',
+            deal_type:2, // 0: 직거래, 1: 배송, 2: 둘다가능
+            deal_status:1, // 0: 판매완료, 1: 판매중
         }
     }
-          
-    const getItemCount = (data) => {
-        return data.length;
-    }
-          
-    const Item = ({ uri })=> {
-        return (
-            <View style={styles.photo}>
-                <Image source={uri} style={{width:200, height:200}}/>
-            </View>
-        );
-    }
 
-    return(
-        <SafeAreaView style={{flex:1}}>
+    submitPost = async() => {
 
-            <TopNavigation title="글작성" alignment="center" accessoryLeft={BackAction} />
+        const Data = this.state
 
-            <Divider />
+        let formdata = new FormData();
+            formdata.append("post_title", Data.post_title);
+            formdata.append("post_content", Data.post_content);
+            formdata.append("post_location", Data.post_location);
+            formdata.append("deal_price", Data.deal_price);
+            formdata.append("deal_type", Data.deal_type);
+            formdata.append("deal_status", Data.deal_status);
             
-            <Layout>
-                <Text>상품명</Text>
-                <Input></Input>
-            </Layout>
-            <Layout style={{flexDirection:'row'}}>
-                <Layout style={{flex:1}}>
-                    <Text>판매가격</Text>
-                    <Input></Input>
-                </Layout>
-                <Layout style={{flex:1}}>
-                    <Text>지역</Text>
-                    <Input></Input>
-                </Layout>
-            </Layout>
-            <Layout>
-                <Text>사진</Text>
-                <VirtualizedList
-                    data={DATA}
-                    initialNumToRender={4}
-                    renderItem={({ item }) => <Item uri={item.uri} />}
-                    keyExtractor={item => item.id}
-                    getItemCount={getItemCount}
-                    getItem={getItem}
-                    horizontal={true}
-                />
-            </Layout>
-            <Layout>
-                <Text>상세정보</Text>
-                <Input></Input>
-            </Layout>
-        </SafeAreaView>
+        await axios.post(
+            'http://10.0.2.2/api/board_write/write/b-a-2',
+            formdata
+        )
+        .then(response=>{
+            Alert.alert(
+                "게시글",
+                "게시글 작성 완료",
+                [
+                    { 
+                        text: "OK", 
+                        onPress: ()=> alert('Hi')
+                    }
+                ],
+                { cancelable: false }
+            );
+        })
+        .catch(error=>{
+            alert('BYE:(')
+        })    
+    }
+
+    BackAction = () =>(
+        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
+
+    render() {
+        return(
+            <SafeAreaView style={{flex:1}}>
+    
+                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} />
+    
+                <Divider />
+                
+                <Layout>
+                    <Text>상품명</Text>
+                    <Input
+                        onChangeText={text => this.setState({post_title : text})}
+                        // value={itemName}
+                    />
+                </Layout>
+                <Layout style={{flexDirection:'row'}}>
+                    <Layout style={{flex:1}}>
+                        <Text>판매가격</Text>
+                        <Input
+                            onChangeText={text => this.setState({deal_price : text})}
+                            // value={price}
+                        />
+                    </Layout>
+                    <Layout style={{flex:1}}>
+                        <Text>지역</Text>
+                        <Input
+                            onChangeText={text => this.setState({post_location : text})}
+                            // value={loaction}
+                        />
+                    </Layout>
+                </Layout>
+                <Layout>
+                    <Text>사진</Text>
+                    {/* <VirtualizedList
+                        data={DATA}
+                        initialNumToRender={4}
+                        renderItem={({ item }) => <Item uri={item.uri} />}
+                        keyExtractor={item => item.id}
+                        getItemCount={getItemCount}
+                        getItem={getItem}
+                        horizontal={true}
+                    /> */}
+                </Layout>
+                <Layout>
+                    <Text>상세정보</Text>
+                    <Input
+                        onChangeText={text => this.setState({post_content : text})}
+                        // value={detail}
+                    />
+                </Layout>
+                <Button onPress={()=>this.submitPost()}>등 록</Button>
+            </SafeAreaView>
+        )
+    }
 }
+
+
 
 class AlbaWrite extends React.Component{
     
     constructor(props){
         super(props);
         this.state = {
-            title : '',
-            content : '',
+            post_title : '',
+            post_content : '',
             post_location : '',
             alba_type : 0,
-            alba_salary_type : new IndexPath(0),
+            alba_salary_type : 0,
             alba_salary : '',
+            _File : [],
+            imagesource : {},
+            image : {},
             isTipVisible:false,
             isFollowUp:false,
         }
@@ -233,9 +292,94 @@ class AlbaWrite extends React.Component{
         this.setState({isFollowUp:nextChecked});
         this.setState({alba_salary:'추후협의'});
     }
-    sendContext(){
+    submit_alba_post = async() => {
         console.log(this.state);
-        this.props.navigation.goBack();
+        const {post_title, post_content, post_location, alba_type, alba_salary_type, alba_salary} = this.state;
+        let formdata = new FormData();
+        formdata.append("brd_key", 'b-a-3');
+        formdata.append("post_title", post_title);
+        formdata.append("post_content", post_content);
+        formdata.append("post_nickname", 'roothyo');
+        formdata.append("post_email", 'roothyo@soongsil.ac.kr');
+        formdata.append("post_password", '1234');
+        // formdata.append("post_location", post_location);
+        // formdata.append("alba_type", alba_type);
+        // formdata.append("alba_salary_type", alba_salary_type);
+        // formdata.append("alba_salary", alba_salary);
+        console.log(formdata);
+        await axios.post('http://dev.unyict.org/api/board_write/write/b-a-3', formdata)
+        .then(response=>{
+            console.log(response);
+            Alert.alert(
+                "게시글",
+                "게시글 작성 완료",
+                [
+                    { 
+                        text: "OK", 
+                        onPress: ()=> {this.gobackfunc()}
+                    }
+                ],
+                { cancelable: false }
+            );
+        })
+        .catch(error=>{
+            alert(error);
+        })
+    }
+
+    submit_alba_Alert= () => {
+        Alert.alert(
+            "알바천일국",
+            "게시글을 작성하시겠습니까?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "OK", 
+                    onPress: ()=> this.submit_alba_post()
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+
+    gobackfunc = () =>{
+        const {navigation,route} = this.props;
+        navigation.goBack();
+        route.params.statefunction();
+    } 
+
+    get_Image_gallary = () =>{
+        const options = {
+            title : 'Select Images',
+            storageOptions : {
+                skipBackup : true,
+                path : 'images',
+            },
+        };
+
+        ImagePicker.showImagePicker(options, (response) =>{
+            console.log('Response = ', response.path);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                const source = { uri: response.uri };
+                // You can also display the image using data:
+                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                this.setState({
+                    imagesource : source,
+                    image : {width : response.width , height : response.height},
+                });
+            }
+        });
     }
 
     renderToggleButton = () => (
@@ -255,7 +399,7 @@ class AlbaWrite extends React.Component{
                         <Input
                             size='medium'
                             placeholder='Input Title'
-                            onChangeText ={(nextText) => {this.setState({title:nextText})}}
+                            onChangeText ={(nextText) => {this.setState({post_title:nextText})}}
                             />
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Input
@@ -308,16 +452,29 @@ class AlbaWrite extends React.Component{
                         </View>
                     <Input
                         multiline={true}
-                        textStyle={{ minHeight: 500}}
+                        textStyle={{ minHeight: 300}}
                         placeholder='Input Context'
-                        onChangeText ={(nextText) => {this.setState({content:nextText})}}
+                        onChangeText ={(nextText) => {this.setState({post_content:nextText})}}
                     />
-                    </ScrollView>
+                    <View style={{flex : 1, backgroundColor : 'black'}}>
+                        {this.state.imagesource?
+                            <Image source = {this.state.imagesource} style={{width : '100%', height : this.state.image.height, resizeMode : 'contain',}}/>
+                            :<Image style={{width : '100%', resizeMode : 'contain', }}/>
+                        }
+                    </View>
+                    <Button onPress ={()=>{
+                        this.get_Image_gallary();
+                    }}>
+                        사진추가
+                    </Button>
+                    
+                    
+                </ScrollView>
                 </Layout>
                 <View style={styles.bottomView}>
                     <Button 
                         style={styles.bottomButton}
-                        onPress={()=>{this.sendContext()}}>
+                        onPress={()=>{this.submit_alba_Alert()}}>
                             글쓰기 
                     </Button>
                 </View>   

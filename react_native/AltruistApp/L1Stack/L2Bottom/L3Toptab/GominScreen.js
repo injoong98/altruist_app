@@ -21,7 +21,8 @@ class GominScreen extends React.Component {
         this.state={
             isLoading : true,
             lists:'',
-            refreshing:false
+            refreshing:false,
+            dump:'true'
         }
     }
 
@@ -61,6 +62,9 @@ class GominScreen extends React.Component {
     onRefresh= () =>{
         this.getPostList();
     }
+    statefunction=(str)=>{
+        this.setState({isLoading:true});
+        this.componentDidMount()    }
 
     render(){
         return(
@@ -78,7 +82,9 @@ class GominScreen extends React.Component {
             onRefresh={this.onRefresh}
             refreshing={this.state.refreshing}/>
             <View style ={styles.buttoncontainer}>
-                <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('GominWrite')}} >글쓰기</Button>
+                <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} >
+                    글쓰기
+                </Button>
             </View>
         </SafeAreaView>
         )

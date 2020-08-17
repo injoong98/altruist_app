@@ -44,17 +44,23 @@ class Board_write extends CB_Controller
 		// 이벤트 라이브러리를 로딩합니다
 		$eventname = 'event_board_write_write';
 		$this->load->event($eventname);
+		
 
+		
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
-
+		
+		$brd_key = $this->input->post('brd_key');
+		
 		if (empty($brd_key)) {
-			show_404();
+			response_result($r,'Err','게시판 키(brd_key) 누락');
+			//show_404();
 		}
 
 		$board_id = $this->board->item_key('brd_id', $brd_key);
 		if (empty($board_id)) {
-			show_404();
+			response_result($r,'Err','게시판 키'.$brd_key.'로 게시판을 조회하지 못했습니다.');
+			//show_404();
 		}
 		$board = $this->board->item_all($board_id);
 
@@ -64,15 +70,13 @@ class Board_write extends CB_Controller
 			$board['is_use_captcha'] = true;
 		}
 
-		$alertmessage = $this->member->is_member()
-			? '회원님은 글을 작성할 수 있는 권한이 없습니다'
-			: '비회원은 글을 작성할 수 있는 권한이 없습니다.\\n\\n회원이시라면 로그인 후 이용해 보십시오';
+		$alertmessage = $this->member->is_member() ? '회원님은 글을 작성할 수 있는 권한이 없습니다' : '비회원은 글을 작성할 수 있는 권한이 없습니다.\\n\\n회원이시라면 로그인 후 이용해 보십시오';
 
 		$check = array(
 			'group_id' => element('bgr_id', $board),
 			'board_id' => element('brd_id', $board),
 		);
-		$this->accesslevel->check(
+		$this->accesslevel->check_json(
 			element('access_write', $board),
 			element('access_write_level', $board),
 			element('access_write_group', $board),
@@ -90,7 +94,7 @@ class Board_write extends CB_Controller
 	/**
 	 * 게시물 답변 페이지입니다
 	 */
-	public function reply($origin_id = 0)
+	public function reply()
 	{
 		// 이벤트 라이브러리를 로딩합니다
 		$eventname = 'event_board_write_reply';
@@ -102,20 +106,24 @@ class Board_write extends CB_Controller
 		/**
 		 * 프라이머리키에 숫자형이 입력되지 않으면 에러처리합니다
 		 */
-		$origin_id = (int) $origin_id;
+		$origin_id = $this->input->post('origin_id');
+		//$origin_id = (int) $origin_id;
 		if (empty($origin_id) OR $origin_id < 1) {
-			show_404();
+			response_result($view,'Err','프라이머리키에 숫자형이 입력되지 않았습니다.');
+			//show_404();
 		}
 
 		$origin = $this->Post_model->get_one($origin_id);
 
 		if ( ! element('post_id', $origin)) {
-			show_404();
+			response_result($view,'Err','post id 가 없습니다..');
+			//show_404();
 		}
 
 		$board = $this->board->item_all(element('brd_id', $origin));
 		if ( ! element('brd_id', $board)) {
-			show_404();
+			response_result($view,'Err','brd_id 가 없습니다..');
+			//show_404();
 		}
 
 		$alertmessage = $this->member->is_member()
@@ -135,13 +143,15 @@ class Board_write extends CB_Controller
 		);
 
 		if (element('post_del', $origin)) {
-			alert('삭제된 글에는 답변을 입력하실 수 없습니다');
-			return;
+			response_result($view,'Err','삭제된 글은 수정하실 수 없습니다.');
+			//alert('삭제된 글은 수정하실 수 없습니다');
+			//return false;
 		}
 
 		if (strlen(element('post_reply', $origin)) >= 10) {
-			alert('더 이상 답변하실 수 없습니다.\\n답변은 10단계 까지만 가능합니다');
-			return;
+			response_result($view,'Err','더 이상 답변하실 수 없습니다.\\n답변은 10단계 까지만 가능합니다');
+			//alert('더 이상 답변하실 수 없습니다.\\n답변은 10단계 까지만 가능합니다');
+		//	return;
 		}
 
 		$reply_len = strlen(element('post_reply', $origin)) + 1;
@@ -175,7 +185,8 @@ class Board_write extends CB_Controller
 		if ( ! element('reply', $row)) {
 			$reply_char = $begin_reply_char;
 		} elseif (element('reply', $row) === $end_reply_char) { // A~Z은 26 입니다.
-			alert('더 이상 답변하실 수 없습니다.\\n답변은 26개 까지만 가능합니다');
+			response_result($view,'Err','더 이상 답변하실 수 없습니다.\\n답변은 26개 까지만 가능합니다.');
+			//alert('더 이상 답변하실 수 없습니다.\\n답변은 26개 까지만 가능합니다');
 		} else {
 			$reply_char = chr(ord(element('reply', $row)) + $reply_number);
 		}
@@ -186,7 +197,7 @@ class Board_write extends CB_Controller
 
 		$this->_write_common($board, $origin, $reply);
 	}
-
+	
 
 	/**
 	 * 게시물 작성과 답변에 공통으로 쓰입니다
@@ -223,7 +234,8 @@ class Board_write extends CB_Controller
 		// 글 한개만 작성 가능
 		if (element('use_only_one_post', $board) && $is_admin === false) {
 			if ($this->member->is_member() === false) {
-				alert('비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
+				//alert('비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
+				response_result($view,'Err','비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
 			}
 			$mywhere = array(
 				'brd_id' => element('brd_id', $board),
@@ -231,33 +243,37 @@ class Board_write extends CB_Controller
 			);
 			$cnt = $this->Post_model->count_by($mywhere);
 			if ($cnt) {
-				alert('이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
+				//alert('이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
+				response_result($view,'Err','이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
 			}
 		}
 
 		// 글쓰기 기간제한
 		if (element('write_possible_days', $board) && $is_admin === false) {
 			if ($this->member->is_member() === false) {
-				alert('비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
+				//alert('비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
+				response_result($view,'Err','이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
 			}
 
 			if ((ctimestamp() - strtotime($this->member->item('mem_register_datetime'))) < element('write_possible_days', $board) * 86400 ) {
 				alert('이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
+				//	alert('이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
+					response_result($view,'Err','이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
 			}
 		}
 
 		if ($this->session->userdata('lastest_post_time') && $this->cbconfig->item('new_post_second')) {
 			if ($this->session->userdata('lastest_post_time') >= ( ctimestamp() - $this->cbconfig->item('new_post_second')) && $is_admin === false) {
-				alert('너무 빠른 시간내에 게시물을 연속해서 올릴 수 없습니다.\\n\\n' . ($this->cbconfig->item('new_post_second') - (ctimestamp() - $this->session->userdata('lastest_post_time'))) . '초 후 글쓰기가 가능합니다');
+				//alert('이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
+				response_result($view,'Err','이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
 			}
 		}
 
-		if (element('use_point', $board)
-			&& $this->cbconfig->item('block_write_zeropoint')
-			&& element('point_write', $board) < 0
+		if (element('use_point', $board) && $this->cbconfig->item('block_write_zeropoint') && element('point_write', $board) < 0
 			&& ($this->member->item('mem_point') + element('point_write', $board)) < 0 ) {
-			alert('회원님은 포인트가 부족하므로 글을 작성하실 수 없습니다. 글 작성시 ' . (element('point_write', $board) * -1) . ' 포인트가 차감됩니다');
-			return false;
+			//alert('회원님은 포인트가 부족하므로 글을 작성하실 수 없습니다. 글 작성시 ' . (element('point_write', $board) * -1) . ' 포인트가 차감됩니다');
+			//return false;
+			response_result($view,'Err','회원님은 포인트가 부족하므로 글을 작성하실 수 없습니다. 글 작성시 ' . (element('point_write', $board) * -1) . ' 포인트가 차감됩니다');
 		}
 
 		// 이벤트가 존재하면 실행합니다
@@ -327,7 +343,7 @@ class Board_write extends CB_Controller
 				}
 			}
 		}
-
+		//비회원 / 비로그인 
 		if ($is_post_name) {
 			$config[] = array(
 				'field' => 'post_nickname',
@@ -582,6 +598,10 @@ class Board_write extends CB_Controller
 			if ($file_error) {
 				$view['view']['message'] = $file_error;
 			}
+			$view['view']['form_validation'] = $form_validation;
+			if(!$form_validation) {
+				response_result($view,'Err',"유효성 검사(form_validation) 에 실패하였습니다. ");
+			}
 
 			/**
 			 * primary key 정보를 저장합니다
@@ -733,8 +753,9 @@ class Board_write extends CB_Controller
 			);
 			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
 			$this->data = $view;
-			$this->layout = element('layout_skin_file', element('layout', $view));
-			$this->view = element('view_skin_file', element('layout', $view));
+		//	$this->layout = element('layout_skin_file', element('layout', $view));
+		//	$this->view = element('view_skin_file', element('layout', $view));
+			response_result($view);
 
 		} else {
 
@@ -1267,18 +1288,28 @@ class Board_write extends CB_Controller
 			// 이벤트가 존재하면 실행합니다
 			Events::trigger('common_after', $eventname);
 
+			
+			$redirecturl = post_url(element('brd_key', $board), $post_id);
+
+			$view['redirectinfo']['brd_key'] = element('brd_key', $board);
+			$view['redirectinfo']['post_id'] = $post_id;
+			$view['redirectinfo']['redirecturl'] = $redirecturl;
+
+			//불필요한 값 제거 
+			unset($view['view']);
+			response_result($view,'success','게시물이 정상적으로 입력되었습니다');
+
 			/**
 			 * 게시물의 신규입력 또는 수정작업이 끝난 후 뷰 페이지로 이동합니다
 			 */
-			$redirecturl = post_url(element('brd_key', $board), $post_id);
-			redirect($redirecturl);
+			//redirect($redirecturl);
 		}
 	}
 
 	/**
 	 * 게시물 수정 페이지입니다
 	 */
-	public function modify($post_id = 0)
+	public function modify($post_id='')
 	{
 		// 이벤트 라이브러리를 로딩합니다
 		$eventname = 'event_board_write_modify';
@@ -1293,21 +1324,25 @@ class Board_write extends CB_Controller
 		/**
 		 * 프라이머리키에 숫자형이 입력되지 않으면 에러처리합니다
 		 */
-		$post_id = (int) $post_id;
+		$post_id = $this->input->post('post_id');
 		if (empty($post_id) OR $post_id < 1) {
-			show_404();
+			response_result($view,'Err','프라이머리키에 숫자형이 입력되지 않았습니다.');
+			//show_404();
 		}
-
+		
 		/**
 		 * 수정 페이지일 경우 기존 데이터를 가져옵니다
 		 */
 		$post = $this->Post_model->get_one($post_id);
 		if ( ! element('post_id', $post)) {
-			show_404();
+			response_result($view,'Err','post id 가 없습니다..');
+			//show_404();
 		}
 		if (element('post_del', $post)) {
-			alert('삭제된 글은 수정하실 수 없습니다');
-			return false;
+			
+			response_result($view,'Err','삭제된 글은 수정하실 수 없습니다.');
+			//alert('삭제된 글은 수정하실 수 없습니다');
+			//return false;
 		}
 
 		$post['extravars'] = $this->Post_extra_vars_model->get_all_meta($post_id);
@@ -1317,7 +1352,8 @@ class Board_write extends CB_Controller
 		$view['view']['post'] = $post;
 		$board = $this->board->item_all(element('brd_id', $post));
 		if ( ! element('brd_id', $board)) {
-			show_404();
+			response_result($view,'Err','brd_id 가 없습니다.');
+			//how_404();
 		}
 
 		$view['view']['board'] = $board;
@@ -1350,21 +1386,24 @@ class Board_write extends CB_Controller
 
 		if (element('protect_post_day', $board) > 0 && $is_admin === false) {
 			if (ctimestamp() - strtotime(element('post_datetime', $post)) >= element('protect_post_day', $board) * 86400) {
-				alert('이 게시판은 ' . element('protect_post_day', $board) . '일 이상된 게시글의 수정을 금지합니다');
-				return false;
+				response_result($view,'Err','이 게시판은 ' . element('protect_post_day', $board) . '일 이상된 게시글의 수정을 금지합니다.');
+			// 이벤트가	alert('이 게시판은 ' . element('protect_post_day', $board) . '일 이상된 게시글의 수정을 금지합니다');
+			//show_404	return false;
 			}
 		}
 		if (element('protect_comment_num', $board) > 0 && $is_admin === false) {
 			if (element('protect_comment_num', $board) <= element('post_comment_count', $post)) {
-				alert(element('protect_comment_num', $board) . '개 이상의 댓글이 달린 게시글은 수정할 수 없습니다');
-				return false;
+				response_result($view,'Err',element('protect_comment_num', $board) . '개 이상의 댓글이 달린 게시글은 수정할 수 없습니다');
+			/* 	alert(element('protect_comment_num', $board) . '개 이상의 댓글이 달린 게시글은 수정할 수 없습니다');
+				return false; */
 			}
 		}
 
 		if (element('mem_id', $post)) {
 			if ($is_admin === false && $mem_id !== abs(element('mem_id', $post))) {
-				alert('회원님은 이 글을 수정할 권한이 없습니다');
-				return false;
+				response_result($view,'Err','회원님은 이 글을 수정할 권한이 없습니다');
+			/* 	alert('회원님은 이 글을 수정할 권한이 없습니다');
+				return false; */
 			}
 		} else {
 			if ($is_admin !== false) {
@@ -1383,9 +1422,11 @@ class Board_write extends CB_Controller
 						'can_modify_' . element('post_id', $post),
 						'1'
 					);
-					redirect(current_url());
+					// 이부분을 어떻게 처리할지 몰라서 일단 주석.
+					//redirect(current_url());
 				} else {
-					$view['view']['message'] = '패스워드가 잘못 입력되었습니다';
+					response_result($view,'Err','패스워드가 잘못 입력되었습니다');
+					//$view['view']['message'] = '패스워드가 잘못 입력되었습니다';
 				}
 			}
 			if ( ! $this->session->userdata('can_modify_' . element('post_id', $post))) {
@@ -1418,9 +1459,11 @@ class Board_write extends CB_Controller
 				);
 				$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
 				$this->data = $view;
-				$this->layout = element('layout_skin_file', element('layout', $view));
+				
+				response_result($view,'success',$view['view']['info'] );
+				/* $this->layout = element('layout_skin_file', element('layout', $view));
 				$this->view = element('view_skin_file', element('layout', $view));
-				return true;
+				return true; */
 			}
 		}
 
@@ -1615,11 +1658,12 @@ class Board_write extends CB_Controller
 					'rules' => 'trim|required|callback__check_recaptcha',
 				);
 			} else {
-				$config[] = array(
+				//captcha 사용 안함 처리
+				/* $config[] = array(
 					'field' => 'captcha_key',
 					'label' => '자동등록방지문자',
 					'rules' => 'trim|required|callback__check_captcha',
-				);
+				); */
 			}
 		}
 		if ($use_subject_style) {
@@ -1812,7 +1856,9 @@ class Board_write extends CB_Controller
 			if ($file_error) {
 				$view['view']['message'] = $file_error;
 			}
-
+			if(!$form_validation) {
+				response_result($r,'Err',"유효성 검사(form_validation) 에 실패하였습니다. ");
+			}
 			if (element('use_post_tag', $board) && $can_tag_write) {
 				$this->load->model('Post_tag_model');
 				$view['view']['post']['post_tag'] = '';
@@ -1965,9 +2011,9 @@ class Board_write extends CB_Controller
 			);
 			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
 			$this->data = $view;
-			$this->layout = element('layout_skin_file', element('layout', $view));
-			$this->view = element('view_skin_file', element('layout', $view));
-
+		//	$this->layout = element('layout_skin_file', element('layout', $view));
+		//	$this->view = element('view_skin_file', element('layout', $view));
+			response_result($view);
 		} else {
 
 			/**
@@ -2262,10 +2308,24 @@ class Board_write extends CB_Controller
 			/**
 			 * 게시물의 신규입력 또는 수정작업이 끝난 후 뷰 페이지로 이동합니다
 			 */
+			$redirecturl = post_url(element('brd_key', $board), $post_id);
+
+			$view['redirectinfo']['brd_key'] = element('brd_key', $board);
+			$view['redirectinfo']['post_id'] = $post_id;
+			$view['redirectinfo']['redirecturl'] = $redirecturl;
+
+			//불필요한 값 제거 
+			unset($view['view']);
+
+			response_result($view,'success','게시물이 정상적으로 수정되었습니다');
+
+			
+			 /* 
+
 			$param =& $this->querystring;
 			$redirecturl = post_url(element('brd_key', $board), $post_id) . '?' . $param->output();
 
-			redirect($redirecturl);
+			redirect($redirecturl); */
 		}
 	}
 
@@ -2281,7 +2341,9 @@ class Board_write extends CB_Controller
 				'_mem_nickname_check',
 				'닉네임은 공백없이 한글, 영문, 숫자만 입력 가능합니다'
 			);
-			return false;
+
+			response_result($view,'Err','닉네임은 공백없이 한글, 영문, 숫자만 입력 가능합니다');
+		//	return false;
 		}
 
 		if (preg_match("/[\,]?{$str}/i", $this->cbconfig->item('denied_nickname_list'))) {
@@ -2289,7 +2351,8 @@ class Board_write extends CB_Controller
 				'_mem_nickname_check',
 				$str . ' 은(는) 예약어로 사용하실 수 없는 닉네임입니다'
 			);
-			return false;
+			//return false;
+			response_result($view,'Err',$str . ' 은(는) 예약어로 사용하실 수 없는 닉네임입니다');
 		}
 		return true;
 	}
@@ -2309,7 +2372,8 @@ class Board_write extends CB_Controller
 				'_mem_email_check',
 				$emaildomain . ' 은(는) 사용하실 수 없는 이메일입니다'
 			);
-			return false;
+			response_result($view,'Err',$emaildomain . ' 은(는) 사용하실 수 없는 이메일입니다');
+			//return false;
 		}
 		return true;
 	}
@@ -2329,7 +2393,8 @@ class Board_write extends CB_Controller
 				'_check_captcha',
 				'자동등록방지코드가 잘못되었습니다'
 			);
-			return false;
+			response_result($view,'Err','자동등록방지코드가 잘못되었습니다');
+			//return false;
 		}
 		return true;
 	}
@@ -2361,7 +2426,8 @@ class Board_write extends CB_Controller
 				'_check_recaptcha',
 				'자동등록방지코드가 잘못되었습니다'
 			);
-			return false;
+			response_result($view,'Err','자동등록방지코드가 잘못되었습니다');
+			//return false;
 		}
 
 		return true;
@@ -2400,7 +2466,8 @@ class Board_write extends CB_Controller
 				'_mem_password_check',
 				$description
 			);
-			return false;
+			response_result($view,'Err',	$description);
+			//return false;
 
 		}
 
