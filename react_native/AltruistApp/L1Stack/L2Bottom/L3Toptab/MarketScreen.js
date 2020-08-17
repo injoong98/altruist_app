@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {Image, SafeAreaView, View, StyleSheet, TouchableOpacity} from 'react-native';
-import {Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction, Button, List, Card} from '@ui-kitten/components';
+import {Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction, Button, List, Card, Spinner} from '@ui-kitten/components';
 import axios from 'axios'
 
 
@@ -69,17 +69,23 @@ class MarketScreen extends React.Component {
 
   render() {
     return (
+      this.state.isLoading ?
+      <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+          <Text>is Loading now...</Text>
+          <Spinner size="giant"/>
+      </View>
+      :
       <View style={{flex:1}}>
         <List
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
             data={this.state.list}
             renderItem={this.renderItem}
-            // refreshing={this.state.refreshing}
-            // onRefresh={this.onRefresh}
+            refreshing={this.state.refreshing}
+            onRefresh={this.onRefresh}
         />
         <Button style={{position:'absolute', width:'20%', left:'40%', bottom:10}} 
-        onPress={()=>navigation.navigate('MarketWrite')}>
+        onPress={()=>this.props.navigation.navigate('MarketWrite')}>
             등록
         </Button>
       </View>

@@ -223,17 +223,20 @@ class MarketWrite extends React.Component {
     
                 <Divider />
                 
-                <Layout>
+                <Layout style={{paddingVertical:10}}>
+                <Layout style={styles.container}>
                     <Text>상품명</Text>
                     <Input
+                        style={styles.input}
                         onChangeText={text => this.setState({post_title : text})}
                         // value={itemName}
                     />
                 </Layout>
-                <Layout style={{flexDirection:'row'}}>
+                <Layout style={{...styles.container, flexDirection:'row'}}>
                     <Layout style={{flex:1}}>
                         <Text>판매가격</Text>
                         <Input
+                            style={styles.input}   
                             onChangeText={text => this.setState({deal_price : text})}
                             // value={price}
                         />
@@ -241,24 +244,33 @@ class MarketWrite extends React.Component {
                     <Layout style={{flex:1}}>
                         <Text>지역</Text>
                         <Input
+                            style={styles.input}
                             onChangeText={text => this.setState({post_location : text})}
                             // value={loaction}
                         />
                     </Layout>
                 </Layout>
-                <Layout>
+                <Layout style={styles.container}>
                     <Text>사진</Text>
-                    {/* <VirtualizedList
-                        data={DATA}
-                        initialNumToRender={4}
-                        renderItem={({ item }) => <Item uri={item.uri} />}
-                        keyExtractor={item => item.id}
-                        getItemCount={getItemCount}
-                        getItem={getItem}
-                        horizontal={true}
-                    /> */}
+                    <ScrollView
+                        
+                    />
                 </Layout>
-                <Layout>
+                <Layout style={styles.container}>
+                    <Text>거래방법</Text>
+                    <Layout style={styles.deal_type}>
+                        <Layout style={styles.deal_box}>
+                            <Text>직거래</Text>
+                        </Layout>
+                        <Layout style={styles.deal_box}>
+                            <Text>배송</Text>
+                        </Layout>
+                        <Layout style={styles.deal_box}>
+                            <Text>둘다가능</Text>
+                        </Layout>
+                    </Layout>
+                </Layout>
+                <Layout style={styles.container}>
                     <Text>상세정보</Text>
                     <Input
                         onChangeText={text => this.setState({post_content : text})}
@@ -266,6 +278,7 @@ class MarketWrite extends React.Component {
                     />
                 </Layout>
                 <Button onPress={()=>this.submit_Market_Alert()}>등 록</Button>
+                </Layout>
             </SafeAreaView>
         )
     }
@@ -453,7 +466,8 @@ class AlbaWrite extends React.Component{
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
+      marginHorizontal : 5,
+      padding : 5
     },
     item: {
       backgroundColor: '#f9c2ff',
@@ -487,6 +501,20 @@ const styles = StyleSheet.create({
     bottomButton: {
         width : "95%",
     },
+    deal_type : {
+        flexDirection : 'row',
+        justifyContent : 'space-around',
+        alignItems : 'center',
+    },
+    deal_box : {
+        width : '25%',
+        height : 40,
+        justifyContent : 'center',
+        alignItems : 'center',
+        borderColor : 'gray',
+        borderRadius : 10,
+        borderWidth: 1,
+    }
 });
   
 

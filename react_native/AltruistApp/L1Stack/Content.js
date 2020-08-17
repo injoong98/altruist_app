@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking,} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal} from '@ui-kitten/components'
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
@@ -185,7 +185,7 @@ class MarketContent extends React.Component {
         super(props);
         this.state ={
             post : {} ,
-            image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+            image : [],
             isLoading : true,
             comment : '',
         }
@@ -202,7 +202,13 @@ class MarketContent extends React.Component {
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
-                this.setState({image: response.data.view.file_image.shift().origin_image_url});
+                this.setState({image: response.data.view.file_image.map(function(item){
+                    var image_info = {};
+                    image_info['id'] = item.pfi_id;
+                    image_info['title'] = item.pfi_originname;
+                    image_info['url'] = item.origin_image_url;
+                    return image_info;
+                })});
             }
         })
         .catch((error)=>{
@@ -220,55 +226,81 @@ class MarketContent extends React.Component {
         </TouchableWithoutFeedback>
     )
 
+    renderImage = ({item}) => {
+        return (
+        <Image source={{uri : 'http://10.0.2.2'+item.url}} style={{flex : 1, width:394, resizeMode:'cover'}}/>
+        );
+    }
+
+    getItem = (data, index) => {
+        return {
+            id : this.state.image[index].id,
+            title : this.state.image[index].title,
+            url : this.state.image[index].url,
+        }
+    }
+
     render(){
         const {post} = this.state;
         return(
+            this.state.isLoading ?
+            <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+                <Text>is Loading now...</Text>
+                <Spinner size="giant"/>
+            </View>
+            :
             <SafeAreaView style={{flex:1}}>
         
                 <TopNavigation title="수수마켓" alignment="center" accessoryLeft={this.BackAction} />
         
                 <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
                     <ScrollView>
-                    <View style={{height:394}}>
-                        <Image source={{uri : post.image}} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
-                    </View>
-                    <View style={{}}>
-                        <Layout>
-                        <Text category='h2'>{post.post_title}</Text>
-                        </Layout>
-                        <Layout>
-                        <Text category='h4'>{post.deal_price}</Text>
-                        </Layout>
-                    </View>
-                    <Divider/>
-                    <Layout style={{height:50,flexDirection:'row'}}>
-                        <Layout style={{width:50}}>
-                        <Image source={require('../market/asset/basic_user.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
-                        </Layout>
-                        <Layout style={{justifyContent:'center'}}>
-                        <Text>{post.post_username}</Text>
-                        </Layout>
-                    </Layout>
-                    <Divider/>
-                    <Layout style={{height:200}}>
-                        <Text>Details</Text>
-                        <Text> Place : {post.post_place}</Text>
-                    </Layout>
-                    <Divider/>
-                    <Layout>
-                        <Text>Comment</Text>
-                            <Input
-                                style={{flex:1, margin:15}}
-                                size='large'
-                                placeholder='댓글을 입력하세요.'
-                                value={this.state.comment}
-                                multiline={true}
-                                accessoryRight={this.UproadIcon}
-                                onChangeText={nextValue => this.setState({comment : nextValue})}
+                        <View style={{height:394}}>
+                            <VirtualizedList
+                                data={this.state.image}
+                                renderItem={this.renderImage}
+                                getItemCount={(data)=>data.length}
+                                getItem={this.getItem}
+                                horizontal={true}
                             />
-                        <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
+                        </View>
+                        <View style={{}}>
+                            <Layout>
+                            <Text category='h2'>{post.post_title}</Text>
+                            </Layout>
+                            <Layout>
+                            <Text category='h4'>{post.deal_price} 원</Text>
+                            </Layout>
+                        </View>
+                        <Divider/>
+                        <Layout style={{height:50,flexDirection:'row'}}>
+                            <Layout style={{width:50}}>
+                            <Image source={require('../market/asset/basic_user.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                            </Layout>
+                            <Layout style={{justifyContent:'center'}}>
+                            <Text>{post.post_username}</Text>
+                            </Layout>
                         </Layout>
-                    </Layout>
+                        <Divider/>
+                        <Layout style={{height:200}}>
+                            <Text>Details</Text>
+                            <Text> Place : {post.post_place}</Text>
+                        </Layout>
+                        <Divider/>
+                        <Layout>
+                            <Text>Comment</Text>
+                                <Input
+                                    style={{flex:1, margin:15}}
+                                    size='large'
+                                    placeholder='댓글을 입력하세요.'
+                                    value={this.state.comment}
+                                    multiline={true}
+                                    accessoryRight={this.UproadIcon}
+                                    onChangeText={nextValue => this.setState({comment : nextValue})}
+                                />
+                            <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
+                            </Layout>
+                        </Layout>
                     </ScrollView>
                 </KeyboardAvoidingView>
             </SafeAreaView>
