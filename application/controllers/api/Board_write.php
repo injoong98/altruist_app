@@ -44,17 +44,23 @@ class Board_write extends CB_Controller
 		// 이벤트 라이브러리를 로딩합니다
 		$eventname = 'event_board_write_write';
 		$this->load->event($eventname);
+		
 
+		
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
-
+		
+		$brd_key = $this->input->post('brd_key');
+		
 		if (empty($brd_key)) {
-			show_404();
+			response_result($r,'Err','게시판 키(brd_key) 누락');
+			//show_404();
 		}
 
 		$board_id = $this->board->item_key('brd_id', $brd_key);
 		if (empty($board_id)) {
-			show_404();
+			response_result($r,'Err','게시판 키'.$brd_key.'로 게시판을 조회하지 못했습니다.');
+			//show_404();
 		}
 		$board = $this->board->item_all($board_id);
 
@@ -64,15 +70,13 @@ class Board_write extends CB_Controller
 			$board['is_use_captcha'] = true;
 		}
 
-		$alertmessage = $this->member->is_member()
-			? '회원님은 글을 작성할 수 있는 권한이 없습니다'
-			: '비회원은 글을 작성할 수 있는 권한이 없습니다.\\n\\n회원이시라면 로그인 후 이용해 보십시오';
+		$alertmessage = $this->member->is_member() ? '회원님은 글을 작성할 수 있는 권한이 없습니다' : '비회원은 글을 작성할 수 있는 권한이 없습니다.\\n\\n회원이시라면 로그인 후 이용해 보십시오';
 
 		$check = array(
 			'group_id' => element('bgr_id', $board),
 			'board_id' => element('brd_id', $board),
 		);
-		$this->accesslevel->check(
+		$this->accesslevel->check_json(
 			element('access_write', $board),
 			element('access_write_level', $board),
 			element('access_write_group', $board),
@@ -186,7 +190,7 @@ class Board_write extends CB_Controller
 
 		$this->_write_common($board, $origin, $reply);
 	}
-
+	
 
 	/**
 	 * 게시물 작성과 답변에 공통으로 쓰입니다
@@ -223,7 +227,8 @@ class Board_write extends CB_Controller
 		// 글 한개만 작성 가능
 		if (element('use_only_one_post', $board) && $is_admin === false) {
 			if ($this->member->is_member() === false) {
-				alert('비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
+				//alert('비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
+				response_result($view,'Err','비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
 			}
 			$mywhere = array(
 				'brd_id' => element('brd_id', $board),
@@ -231,33 +236,37 @@ class Board_write extends CB_Controller
 			);
 			$cnt = $this->Post_model->count_by($mywhere);
 			if ($cnt) {
-				alert('이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
+				//alert('이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
+				response_result($view,'Err','이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
 			}
 		}
 
 		// 글쓰기 기간제한
 		if (element('write_possible_days', $board) && $is_admin === false) {
 			if ($this->member->is_member() === false) {
-				alert('비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
+				//alert('비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
+				response_result($view,'Err','이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
 			}
 
 			if ((ctimestamp() - strtotime($this->member->item('mem_register_datetime'))) < element('write_possible_days', $board) * 86400 ) {
 				alert('이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
+				//	alert('이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
+					response_result($view,'Err','이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
 			}
 		}
 
 		if ($this->session->userdata('lastest_post_time') && $this->cbconfig->item('new_post_second')) {
 			if ($this->session->userdata('lastest_post_time') >= ( ctimestamp() - $this->cbconfig->item('new_post_second')) && $is_admin === false) {
-				alert('너무 빠른 시간내에 게시물을 연속해서 올릴 수 없습니다.\\n\\n' . ($this->cbconfig->item('new_post_second') - (ctimestamp() - $this->session->userdata('lastest_post_time'))) . '초 후 글쓰기가 가능합니다');
+				//alert('이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
+				response_result($view,'Err','이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
 			}
 		}
 
-		if (element('use_point', $board)
-			&& $this->cbconfig->item('block_write_zeropoint')
-			&& element('point_write', $board) < 0
+		if (element('use_point', $board) && $this->cbconfig->item('block_write_zeropoint') && element('point_write', $board) < 0
 			&& ($this->member->item('mem_point') + element('point_write', $board)) < 0 ) {
-			alert('회원님은 포인트가 부족하므로 글을 작성하실 수 없습니다. 글 작성시 ' . (element('point_write', $board) * -1) . ' 포인트가 차감됩니다');
-			return false;
+			//alert('회원님은 포인트가 부족하므로 글을 작성하실 수 없습니다. 글 작성시 ' . (element('point_write', $board) * -1) . ' 포인트가 차감됩니다');
+			//return false;
+			response_result($view,'Err','회원님은 포인트가 부족하므로 글을 작성하실 수 없습니다. 글 작성시 ' . (element('point_write', $board) * -1) . ' 포인트가 차감됩니다');
 		}
 
 		// 이벤트가 존재하면 실행합니다
@@ -327,7 +336,7 @@ class Board_write extends CB_Controller
 				}
 			}
 		}
-
+		//비회원 / 비로그인 
 		if ($is_post_name) {
 			$config[] = array(
 				'field' => 'post_nickname',
@@ -582,6 +591,7 @@ class Board_write extends CB_Controller
 			if ($file_error) {
 				$view['view']['message'] = $file_error;
 			}
+			$view['view']['form_validation'] = $form_validation;
 
 			/**
 			 * primary key 정보를 저장합니다
@@ -733,8 +743,9 @@ class Board_write extends CB_Controller
 			);
 			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
 			$this->data = $view;
-			$this->layout = element('layout_skin_file', element('layout', $view));
-			$this->view = element('view_skin_file', element('layout', $view));
+		//	$this->layout = element('layout_skin_file', element('layout', $view));
+		//	$this->view = element('view_skin_file', element('layout', $view));
+			response_result($view);
 
 		} else {
 
@@ -1267,11 +1278,16 @@ class Board_write extends CB_Controller
 			// 이벤트가 존재하면 실행합니다
 			Events::trigger('common_after', $eventname);
 
+
+
+
+			response_result($view,'success','게시물이 정상적으로 입력되었습니다');
+
 			/**
 			 * 게시물의 신규입력 또는 수정작업이 끝난 후 뷰 페이지로 이동합니다
 			 */
-			$redirecturl = post_url(element('brd_key', $board), $post_id);
-			redirect($redirecturl);
+			//$redirecturl = post_url(element('brd_key', $board), $post_id);
+			//redirect($redirecturl);
 		}
 	}
 

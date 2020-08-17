@@ -347,12 +347,16 @@ class Board_post extends CB_Controller
 		if (element('mem_id', $post) >= 0) {
 			$dbmember = $this->Member_model
 				->get_by_memid(element('mem_id', $post), 'mem_icon');
-			$view['view']['post']['display_name'] = display_username(
-				element('post_userid', $post),
-				element('post_nickname', $post),
-				($use_sideview_icon ? element('mem_icon', $dbmember) : ''),
-				($use_sideview ? 'Y' : 'N')
-			);
+				if(element('post_anoymous_yn', $view['view']['post'])) {// 익명글일경우에는 고민주의자로 표기
+					$view['view']['post']['display_name'] = '고민주의자';
+				}else {
+					$view['view']['post']['display_name'] = display_username(
+						element('post_userid', $post),
+						element('post_nickname', $post),
+						($use_sideview_icon ? element('mem_icon', $dbmember) : ''),
+						($use_sideview ? 'Y' : 'N')
+					);
+				}
 		} else {
 			$view['view']['post']['display_name'] = '익명사용자';
 		}
@@ -927,7 +931,7 @@ class Board_post extends CB_Controller
 
 		$alertmessage = $this->member->is_member()
 			? '회원님은 이 게시판 목록을 볼 수 있는 권한이 없습니다'
-			: '비회원은 이 게시판에 접근할 권한이 없습니다.\\n\\n회원이시라면 로그인 후 이용해 보십시오';
+			: '비회원은 이 게시판에 접근할 권한이 없습니다.회원이시라면 로그인 후 이용해 보십시오';
 
 		$check = array(
 			'group_id' => element('bgr_id', $board),
@@ -1150,12 +1154,16 @@ class Board_post extends CB_Controller
 				}
 
 				if (element('mem_id', $val) >= 0) {
-					$result['list'][$key]['display_name'] = display_username(
-						element('post_userid', $val),
-						element('post_nickname', $val),
-						($use_sideview_icon ? element('mem_icon', $val) : ''),
-						($use_sideview ? 'Y' : 'N')
-					);
+					if(element('post_anoymous_yn', $val)) {// 익명글일경우에는 고민주의자로 표기
+						$result['list'][$key]['display_name'] = '고민주의자';
+					}else {
+						$result['list'][$key]['display_name'] = display_username(
+							element('post_userid', $val),
+							element('post_nickname', $val),
+							($use_sideview_icon ? element('mem_icon', $val) : ''),
+							($use_sideview ? 'Y' : 'N')
+						);
+					}
 				} else {
 					$result['list'][$key]['display_name'] = '익명사용자';
 				}

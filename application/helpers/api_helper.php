@@ -51,10 +51,20 @@ if ( ! function_exists('get_json_result')) {
     }	
 }
 
+
+
+
 if ( ! function_exists('response_result')) {
-    function response_result($r) {
+    /**
+     * result_code : 'Err' - 특별한 원인에 의해서 작업이 처리 되지 않았을경우
+     * result_msg  : 상태에 대한 메시지
+     * 에러일경우 상태는 500 ,   $return_result['message'] 에 result_msg 값을 넣어 준다.
+     * 
+     * 
+     * 
+     */
+    function response_result($r,$result_code='',$result_msg='') {
         $return_result = [];
-        $result_code ='';
         $return_result =$r;
         $result_json = get_json_result($return_result);
 
@@ -64,6 +74,8 @@ if ( ! function_exists('response_result')) {
             if($result_code !== "Err") {
                 $return_result['status'] ='200';
                 $return_result['message'] ='OK';
+                if($result_code =='success') $return_result['message'] =$result_msg;
+
             }else{
                 $return_result['status'] ='500';
                 $return_result['message'] = $result_msg;
@@ -75,11 +87,12 @@ if ( ! function_exists('response_result')) {
              $return_result['status'] ='950';
              $return_result['message'] =$result_json['msg'];
          }
-
+       
         //결과응답
 		header("Content-Type: application/json; charset=utf-8");
 		//header("Content-Type: text/html; charset=euc-kr");
-		echo json_encode($return_result ,JSON_UNESCAPED_UNICODE);
+        echo json_encode($return_result ,JSON_UNESCAPED_UNICODE);
+        exit;
     }
 }
 
@@ -116,7 +129,8 @@ if ( ! function_exists('response_error')) {
         //결과응답
 		header("Content-Type: application/json; charset=utf-8");
 		//header("Content-Type: text/html; charset=euc-kr");
-		echo json_encode($return_result ,JSON_UNESCAPED_UNICODE);
+        echo json_encode($return_result ,JSON_UNESCAPED_UNICODE);
+        exit;
     }
 }
 
