@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
 import WebView from 'react-native-webview';
@@ -147,114 +147,116 @@ class GominWrite extends React.Component {
     }
 }
 
-const MarketWrite = ({route, navigation}) => {
+class MarketWrite extends React.Component {
 
-    const [itemName, setItemName] = useState('');
-    const [price, setPrice] = useState('');
-    const [loaction, setLocation] = useState('');
-    const [detail, setDetail] = useState('');
-
-    const postData = {};
-
-    const InsertData = () => {
-
-        postData['itemName'] = itemName;
-        postData['price'] = price;
-        postData['loaction'] = loaction;
-        postData['detail'] = detail;
-
-        axios({
-            method: 'post',
-            url: 'http://10.0.2.2/api/Board_write/write',
-            data: {postData}
-        });
-
-        return alert('submit');
-    }
-
-    
-    const DATA = [
-        require('../market/asset/market-image-1.jpg'),
-        require('../market/asset/image-plus.jpg'),
-    ];
-
-    const BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
-    )
-
-    const getItem = (data, index) => {
-        return {
-            id: Math.random().toString(12).substring(0),
-            title: `Item ${index+1}`,
-            uri: data[index]
+    constructor(props){
+        super(props);
+        this.state={
+            isLoading :true,
+            post_title:'',
+            post_content:'',
+            post_location:'',
+            deal_price:'',
+            deal_type:2, // 0: 직거래, 1: 배송, 2: 둘다가능
+            deal_status:1, // 0: 판매완료, 1: 판매중
         }
     }
-          
-    const getItemCount = (data) => {
-        return data.length;
-    }
-          
-    const Item = ({ uri })=> {
-        return (
-            <View style={styles.photo}>
-                <Image source={uri} style={{width:200, height:200}}/>
-            </View>
-        );
-    }
 
-    return(
-        <SafeAreaView style={{flex:1}}>
+    submitPost = async() => {
 
-            <TopNavigation title="글작성" alignment="center" accessoryLeft={BackAction} />
+        const Data = this.state
 
-            <Divider />
+        let formdata = new FormData();
+            formdata.append("post_title", Data.post_title);
+            formdata.append("post_content", Data.post_content);
+            formdata.append("post_location", Data.post_location);
+            formdata.append("deal_price", Data.deal_price);
+            formdata.append("deal_type", Data.deal_type);
+            formdata.append("deal_status", Data.deal_status);
             
-            <Layout>
-                <Text>상품명</Text>
-                <Input
-                    onChangeText={text => setItemName(text)}
-                    value={itemName}
-                />
-            </Layout>
-            <Layout style={{flexDirection:'row'}}>
-                <Layout style={{flex:1}}>
-                    <Text>판매가격</Text>
-                    <Input
-                        onChangeText={text => setPrice(text)}
-                        value={price}
-                    />
-                </Layout>
-                <Layout style={{flex:1}}>
-                    <Text>지역</Text>
-                    <Input
-                        onChangeText={text => setLocation(text)}
-                        value={loaction}
-                    />
-                </Layout>
-            </Layout>
-            <Layout>
-                <Text>사진</Text>
-                <VirtualizedList
-                    data={DATA}
-                    initialNumToRender={4}
-                    renderItem={({ item }) => <Item uri={item.uri} />}
-                    keyExtractor={item => item.id}
-                    getItemCount={getItemCount}
-                    getItem={getItem}
-                    horizontal={true}
-                />
-            </Layout>
-            <Layout>
-                <Text>상세정보</Text>
-                <Input
-                    onChangeText={text => setDetail(text)}
-                    value={detail}
-                />
-            </Layout>
-            <Button onPress={()=>InsertData()}>등 록</Button>
-        </SafeAreaView>
+        await axios.post(
+            'http://10.0.2.2/api/board_write/write/b-a-2',
+            formdata
+        )
+        .then(response=>{
+            Alert.alert(
+                "게시글",
+                "게시글 작성 완료",
+                [
+                    { 
+                        text: "OK", 
+                        onPress: ()=> alert('Hi')
+                    }
+                ],
+                { cancelable: false }
+            );
+        })
+        .catch(error=>{
+            alert('BYE:(')
+        })    
+    }
+
+    BackAction = () =>(
+        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
+
+    render() {
+        return(
+            <SafeAreaView style={{flex:1}}>
+    
+                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} />
+    
+                <Divider />
+                
+                <Layout>
+                    <Text>상품명</Text>
+                    <Input
+                        onChangeText={text => this.setState({post_title : text})}
+                        // value={itemName}
+                    />
+                </Layout>
+                <Layout style={{flexDirection:'row'}}>
+                    <Layout style={{flex:1}}>
+                        <Text>판매가격</Text>
+                        <Input
+                            onChangeText={text => this.setState({deal_price : text})}
+                            // value={price}
+                        />
+                    </Layout>
+                    <Layout style={{flex:1}}>
+                        <Text>지역</Text>
+                        <Input
+                            onChangeText={text => this.setState({post_location : text})}
+                            // value={loaction}
+                        />
+                    </Layout>
+                </Layout>
+                <Layout>
+                    <Text>사진</Text>
+                    {/* <VirtualizedList
+                        data={DATA}
+                        initialNumToRender={4}
+                        renderItem={({ item }) => <Item uri={item.uri} />}
+                        keyExtractor={item => item.id}
+                        getItemCount={getItemCount}
+                        getItem={getItem}
+                        horizontal={true}
+                    /> */}
+                </Layout>
+                <Layout>
+                    <Text>상세정보</Text>
+                    <Input
+                        onChangeText={text => this.setState({post_content : text})}
+                        // value={detail}
+                    />
+                </Layout>
+                <Button onPress={()=>this.submitPost()}>등 록</Button>
+            </SafeAreaView>
+        )
+    }
 }
+
+
 
 class AlbaWrite extends React.Component{
     
