@@ -15,6 +15,29 @@ const UpIcon =  (props) =>(
     <Icon {...props} name = "arrow-circle-up-outline"/>
 )
 
+const filterSpamKeyword = async(title,content)=>
+{
+    var formdata =new FormData();
+    formdata.append("title", title);
+    formdata.append("content", content);
+    formdata.append("csrf_test_name", '');
+
+    axios.post('http://10.0.2.2/postact/filter_spam_keyword',formdata)
+    .then(response=>{
+        const {title,content} = response.data;
+        if(title){
+            alert(`제목에 금지단어 "${title}" 이(가) 포함되어 있습니다.`);
+            return false
+        }else if(content){
+            alert(`본문에 금지단어 "${content}" 이(가) 포함되어 있습니다.`)
+            return false
+        }
+    })
+    .catch(error=>{
+        alert(`금지단어 검사에 실패 했습니다. ${error.message}`)
+
+    })
+}
 
 const defaultWrite = ({navigation}) =>{
     
@@ -146,6 +169,10 @@ class GominWrite extends React.Component {
                     textStyle={{minHeight:100}}
                 />            
                 <View style={{alignItems:"flex-end"}}>
+                    <Button onPress={()=>filterSpamKeyword(post_title,post_content)}>
+                        validation
+                    </Button>
+
                     <CheckBox 
                     checked={checked} 
                     onChange={nextChecked=>this.setState({post_anoymous_yn: nextChecked? 1 : 0,checked:nextChecked })}>
