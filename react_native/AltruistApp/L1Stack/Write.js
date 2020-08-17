@@ -65,17 +65,19 @@ class GominWrite extends React.Component {
             formdata.append("post_content", post_content);
             formdata.append("post_category", post_category);
             formdata.append("post_anoymous_yn", post_anoymous_yn);
+            formdata.append("post_nickname", '임시nickname');
+            formdata.append("post_email", 'post_email@unyict.org');
+            formdata.append("post_password", 'post_password');
         await axios.post(
-            'http://10.0.2.2/api/board_write/write',
+            'http://dev.unyict.org/api/board_write/write',
             formdata
             )
         .then(response=>{
-            if(!response.data.view.form_validation){
-                var title = '유효하지 않는 글입니다.';
-                var message = '필수값이 누락됐거나 금지 단어가 존재합니다'
+            var message=response.data.message;
+            if(response.data.status!='200'){
+                var title = '실패 안내';
             }else{
                 var title = '게시글';
-                var message=response.data.message;
             }
             Alert.alert(
                 `${title}`,
@@ -83,7 +85,7 @@ class GominWrite extends React.Component {
                 [
                     { 
                         text: "확인", 
-                        onPress: ()=> {if(response.data.view.form_validation){this.gobackfunc();}else{return true}}
+                        onPress: ()=> {if(response.data.status=='200'){this.gobackfunc();}else{return true}}
                     }
                 ],
                 { cancelable: false }
