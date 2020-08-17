@@ -74,8 +74,8 @@ class GominWrite extends React.Component {
                 "게시글 작성 완료",
                 [
                     { 
-                        text: "OK", 
-                        onPress: ()=> alert('Hi')
+                        text: "닫기", 
+                        onPress: ()=> this.gobackfunc()
                     }
                 ],
                 { cancelable: false }
@@ -92,28 +92,28 @@ class GominWrite extends React.Component {
             "게시글을 작성하시겠습니까?",
             [
                 {
-                    text: "Cancel",
+                    text: "취소",
                     onPress: () => alert('취소했습니다.')
                 },
                 { 
-                    text: "OK", 
+                    text: "직성", 
                     onPress: ()=> this.submitPost()
                 }
             ],
             { cancelable: false }
         );
     }
-    gobackfunc = (str) =>{
+    gobackfunc = () =>{
         const {navigation,route} = this.props;
         navigation.goBack();
-        route.params.statefunction(`${str}`);
+        route.params.statefunction();
     } 
     SubmitButton = () =>(
         <TopNavigationAction icon={UpIcon} onPress={() =>{this.submitAlert()}}/>
     )
 
     CloseAction = () =>(
-        <TopNavigationAction icon={CloseIcon} onPress={() =>{this.gobackfunc(this.state.title)}}/>
+        <TopNavigationAction icon={CloseIcon} onPress={() =>{this.props.navigation.goBack();}}/>
     )
     render(){
         const {navigation} = this.props;
