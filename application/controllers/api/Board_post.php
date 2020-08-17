@@ -1157,17 +1157,6 @@ class Board_post extends CB_Controller
 				}
 
 				if (element('mem_id', $val) >= 0) {
-<<<<<<< HEAD
-					if(element('post_anoymous_yn', $val)) {// 익명글일경우에는 고민주의자로 표기
-						$result['list'][$key]['display_name'] = '고민주의자';
-					}else {
-						$result['list'][$key]['display_name'] = display_username(
-							element('post_userid', $val),
-							element('post_nickname', $val),
-							($use_sideview_icon ? element('mem_icon', $val) : ''),
-							($use_sideview ? 'Y' : 'N')
-						);
-=======
 					
 					if(element('post_anoymous_yn', $val)) {// 익명글일경우에는 고민주의자로 표기
 						$result['list'][$key]['display_name'] = '고민주의자';
@@ -1181,7 +1170,6 @@ class Board_post extends CB_Controller
 						// );
 						
 
->>>>>>> c197f4268904e2d51c1aaa81a16ae2506bb5e1da
 					}
 				} else {
 					$result['list'][$key]['display_name'] = '익명사용자';
