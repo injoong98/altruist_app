@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import {ComBottomNav} from './L2Bottom/ComBottomNav'
 import {defaultContent, GominContent, MarketContent, AlbaContent} from './Content'
-import {defaultWrite, MarketWrite, AlbaWrite,GominWrite} from './Write'
+import {defaultWrite, MarketWrite, AlbaWrite,GominWrite, IlbanWrite} from './Write'
 
 import {SafeAreaView} from 'react-native'
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
@@ -25,6 +25,7 @@ export const StackNav = () =>(
         <Screen name = "Content" component={defaultContent}/>
         <Screen name = "GominContent" component={GominContent}/>
         <Screen name = "MarketContent" component={MarketContent}/>
+        <Screen name = "IlbanWrite" component={IlbanWrite}/>
         <Screen name = "AlbaContent" component={AlbaContent}/>
         <Screen name = "MarketWrite" component={MarketWrite}/>
         <Screen name = "AlbaWrite" component={AlbaWrite}/>
