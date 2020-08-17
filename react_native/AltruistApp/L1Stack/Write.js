@@ -162,26 +162,23 @@ class MarketWrite extends React.Component {
         }
     }
 
-    submitPost = async() => {
+    submit_Market_Post = async() => {
 
-        const Data = this.state
+        const {post_title,post_content,post_location,deal_price,deal_type,deal_status}  = this.state
 
         let formdata = new FormData();
-            formdata.append("post_title", Data.post_title);
-            formdata.append("post_content", Data.post_content);
-            formdata.append("post_location", Data.post_location);
-            formdata.append("deal_price", Data.deal_price);
-            formdata.append("deal_type", Data.deal_type);
-            formdata.append("deal_status", Data.deal_status);
+            formdata.append("post_title", post_title);
+            formdata.append("post_content", post_content);
+            formdata.append("post_location", post_location);
+            formdata.append("deal_price", deal_price);
+            formdata.append("deal_type", deal_type);
+            formdata.append("deal_status", deal_status);
             
-        await axios.post(
-            'http://10.0.2.2/api/board_write/write/b-a-2',
-            formdata
-        )
+        await axios.post('http://10.0.2.2/api/board_write/write/b-a-2',formdata)
         .then(response=>{
             Alert.alert(
-                "게시글",
-                "게시글 작성 완료",
+                "상품등록",
+                "상품등록 완료",
                 [
                     { 
                         text: "OK", 
@@ -194,6 +191,24 @@ class MarketWrite extends React.Component {
         .catch(error=>{
             alert('BYE:(')
         })    
+    }
+
+    submit_Market_Alert= () => {
+        Alert.alert(
+            "상품등록",
+            "상품을 등록하시겠습니까?",
+            [
+                {
+                    text: "취소",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "등록", 
+                    onPress: ()=> this.submit_Market_Post()
+                }
+            ],
+            { cancelable: false }
+        );
     }
 
     BackAction = () =>(
@@ -250,7 +265,7 @@ class MarketWrite extends React.Component {
                         // value={detail}
                     />
                 </Layout>
-                <Button onPress={()=>this.submitPost()}>등 록</Button>
+                <Button onPress={()=>this.submit_Market_Alert()}>등 록</Button>
             </SafeAreaView>
         )
     }
