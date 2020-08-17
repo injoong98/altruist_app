@@ -1,6 +1,6 @@
 import { ImageSourcePropType } from 'react-native';
 
-export class Training {
+export class IlbanPost {
 
   constructor(readonly title: string,
               readonly description: string,
@@ -10,31 +10,11 @@ export class Training {
 
   }
 
-  static basketball(): Training {
-    return new Training(
+  static basketball(): IlbanPost {
+    return new IlbanPost(
       'Basketball',
       'Team sport in which two teams, most commonly of five players.',
       require('../../../../assets/images/image-training-1.jpg'),
-      16,
-      55,
-    );
-  }
-
-  static running(): Training {
-    return new Training(
-      'Running',
-      'Great way to get fit and even form new relationships with other runners.',
-      require('../../../../assets/images/image-training-2.jpg'),
-      2,
-      55,
-    );
-  }
-
-  static workout(): Training {
-    return new Training(
-      'Basketball',
-      'Workout of the Week: STYX! Our Ultimate cardio pyramid.',
-      require('../../../../assets/images/image-training-3.jpg'),
       16,
       55,
     );
