@@ -181,8 +181,8 @@ if ( ! function_exists('check_use_captcha'))
 			return false;
 		}
 
-		if( $member->is_member() === false ){	//비회원은 캡챠 사용
-			$use_captcha = true;
+		if( $member->is_member() === false ){	//비회원은 캡챠 사용 -> 제거 
+			$use_captcha = false;
 		}
 
 		if( element('board_use_captcha', $board) && $mode !== 'cu' ){ //글쓰기일때만
