@@ -48,8 +48,8 @@ class GominWrite extends React.Component {
         super(props);
         this.state={
             isLoading :true,
-            post_title:'title from avd',
-            post_content:'content from avd 익명,카테고리 1',
+            post_title:'',
+            post_content:'',
             post_anoymous_yn:1,
             post_category:1,
             checked:true
@@ -60,22 +60,32 @@ class GominWrite extends React.Component {
     submitPost= async()=>{
         const {post_title,post_content,post_anoymous_yn,post_category} =this.state
         let formdata = new FormData();
+            formdata.append("brd_key", 'b-a-1');
             formdata.append("post_title", post_title);
             formdata.append("post_content", post_content);
             formdata.append("post_category", post_category);
             formdata.append("post_anoymous_yn", post_anoymous_yn);
+            formdata.append("post_nickname", '임시nickname');
+            formdata.append("post_email", 'post_email@unyict.org');
+            formdata.append("post_password", 'post_password');
         await axios.post(
-            'http://10.0.2.2/api/board_write/write/b-a-1',
+            'http://dev.unyict.org/api/board_write/write',
             formdata
             )
         .then(response=>{
+            var message=response.data.message;
+            if(response.data.status!='200'){
+                var title = '실패 안내';
+            }else{
+                var title = '게시글';
+            }
             Alert.alert(
-                "게시글",
-                "게시글 작성 완료",
+                `${title}`,
+                `${message}`,
                 [
                     { 
-                        text: "닫기", 
-                        onPress: ()=> this.gobackfunc()
+                        text: "확인", 
+                        onPress: ()=> {if(response.data.status=='200'){this.gobackfunc();}else{return true}}
                     }
                 ],
                 { cancelable: false }
@@ -91,14 +101,15 @@ class GominWrite extends React.Component {
             "게시글",
             "게시글을 작성하시겠습니까?",
             [
+                { 
+                    text: "작성", 
+                    onPress: ()=> this.submitPost()
+                },
                 {
                     text: "취소",
                     onPress: () => alert('취소했습니다.')
-                },
-                { 
-                    text: "직성", 
-                    onPress: ()=> this.submitPost()
                 }
+                
             ],
             { cancelable: false }
         );
@@ -162,26 +173,23 @@ class MarketWrite extends React.Component {
         }
     }
 
-    submitPost = async() => {
+    submit_Market_Post = async() => {
 
-        const Data = this.state
+        const {post_title,post_content,post_location,deal_price,deal_type,deal_status}  = this.state
 
         let formdata = new FormData();
-            formdata.append("post_title", Data.post_title);
-            formdata.append("post_content", Data.post_content);
-            formdata.append("post_location", Data.post_location);
-            formdata.append("deal_price", Data.deal_price);
-            formdata.append("deal_type", Data.deal_type);
-            formdata.append("deal_status", Data.deal_status);
+            formdata.append("post_title", post_title);
+            formdata.append("post_content", post_content);
+            formdata.append("post_location", post_location);
+            formdata.append("deal_price", deal_price);
+            formdata.append("deal_type", deal_type);
+            formdata.append("deal_status", deal_status);
             
-        await axios.post(
-            'http://10.0.2.2/api/board_write/write/b-a-2',
-            formdata
-        )
+        await axios.post('http://10.0.2.2/api/board_write/write/b-a-2',formdata)
         .then(response=>{
             Alert.alert(
-                "게시글",
-                "게시글 작성 완료",
+                "상품등록",
+                "상품등록 완료",
                 [
                     { 
                         text: "OK", 
@@ -194,6 +202,24 @@ class MarketWrite extends React.Component {
         .catch(error=>{
             alert('BYE:(')
         })    
+    }
+
+    submit_Market_Alert= () => {
+        Alert.alert(
+            "상품등록",
+            "상품을 등록하시겠습니까?",
+            [
+                {
+                    text: "취소",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "등록", 
+                    onPress: ()=> this.submit_Market_Post()
+                }
+            ],
+            { cancelable: false }
+        );
     }
 
     BackAction = () =>(
@@ -250,7 +276,7 @@ class MarketWrite extends React.Component {
                         // value={detail}
                     />
                 </Layout>
-                <Button onPress={()=>this.submitPost()}>등 록</Button>
+                <Button onPress={()=>this.submit_Market_Alert()}>등 록</Button>
             </SafeAreaView>
         )
     }

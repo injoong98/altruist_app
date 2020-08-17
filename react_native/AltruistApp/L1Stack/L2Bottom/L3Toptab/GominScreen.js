@@ -83,7 +83,7 @@ class GominScreen extends React.Component {
             refreshing={this.state.refreshing}/>
             <View style ={styles.buttoncontainer}>
                 <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} >
-                    글쓰기{this.state.dump}
+                    글쓰기
                 </Button>
             </View>
         </SafeAreaView>
