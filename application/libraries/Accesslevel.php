@@ -149,4 +149,26 @@ class Accesslevel extends CI_Controller
 			return false;
 		}
 	}
+
+	/**
+	 * 접근권한이 없으면 alert 을 json 으로 반환
+	 */
+	public function check_json($access_type = '', $level = '', $group = '', $alertmessage = '', $check = array())
+	{
+		if (empty($alertmessage)) {
+			$alertmessage = '접근 권한이 없습니다';
+		}
+		$accessable = $this->is_accessable($access_type, $level, $group, $check);
+
+		if ($accessable) {
+			//response_result($r,'Err',$alertmessage);
+			return true;
+		} else {
+			response_result($r,'Err',$alertmessage);
+			
+			
+			//alert($alertmessage);
+			//return false;
+		}
+	}
 }
