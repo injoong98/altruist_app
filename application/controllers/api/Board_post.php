@@ -1157,7 +1157,6 @@ class Board_post extends CB_Controller
 				}
 
 				if (element('mem_id', $val) >= 0) {
-					
 					if(element('post_anoymous_yn', $val)) {// 익명글일경우에는 고민주의자로 표기
 						$result['list'][$key]['display_name'] = '고민주의자';
 					}else {
@@ -1168,8 +1167,6 @@ class Board_post extends CB_Controller
 						// 	($use_sideview_icon ? element('mem_icon', $val) : ''),
 						// 	($use_sideview ? 'Y' : 'N')
 						// );
-						
-
 					}
 				} else {
 					$result['list'][$key]['display_name'] = '익명사용자';
