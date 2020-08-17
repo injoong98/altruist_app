@@ -375,6 +375,126 @@ class Board extends CI_Controller
 
 		return true;
 	}
+	/**
+	 * 댓글 삭제시 삭제가능한 권한이 있는지 체크합니다
+	 */
+	public function delete_comment_check_api($cmt_id = 0, $password = '', $realdelete = false)
+	{
+		$cmt_id = (int) $cmt_id;
+		if (empty($cmt_id) OR $cmt_id < 1) {
+			response_result($r,'Err','올바르지 않은 접근입니다');
+		/* 	$result = array('error' => '올바르지 않은 접근입니다');
+			return json_encode($result); */
+		}
+
+		$this->CI->load->model( array('Post_model', 'Comment_model', 'Comment_meta_model'));
+
+		$comment = $this->CI->Comment_model->get_one($cmt_id);
+		$post = $this->CI->Post_model->get_one(element('post_id', $comment));
+		$board = $this->CI->board->item_all(element('brd_id', $post));
+
+		if ( ! $this->CI->session->userdata('post_id_' . element('post_id', $post))) {
+			response_result($r,'Err','해당 게시물에서만 접근 가능합니다');
+			/* $result = array('error' => '해당 게시물에서만 접근 가능합니다');
+			return json_encode($result); */
+		}
+
+		$is_admin = $this->CI->member->is_admin(
+			array(
+				'board_id' => element('brd_id', $board),
+				'group_id' => element('bgr_id', $board),
+			)
+		);
+		$can_delete_comment = false;
+
+		if (element('block_delete', $board) && $is_admin === false) {
+			response_result($r,'Err','이 게시판의 글은 관리자에 의해서만 삭제가 가능합니다');
+			//$result = array('error' => '이 게시판의 글은 관리자에 의해서만 삭제가 가능합니다');
+			return json_encode($result);
+		}
+
+		if ($is_admin === false) {
+			$count_comment_reply = $this->CI->Comment_model->count_reply_comment(
+					element('cmt_id', $comment),
+					element('post_id', $comment),
+					element('cmt_num', $comment),
+					element('cmt_reply', $comment)
+				);
+
+			if ($count_comment_reply > 0) {
+				response_result($r,'Err','이 댓글에 답변댓글이 있으므로 댓글을 삭제할 수 없습니다');
+				/* 	$result = array('error' => '이 댓글에 답변댓글이 있으므로 댓글을 삭제할 수 없습니다');
+				return json_encode($result); */
+			}
+		}
+		
+		if (element('protect_comment_day', $board) > 0 && $is_admin === false) {
+			if (ctimestamp() - strtotime(element('cmt_datetime', $comment)) >= element('protect_comment_day', $board) * 86400) {
+				
+				response_result($r,'Err','이 게시판은 ' . element('protect_comment_day', $board) . '일 이상된 댓글의 삭제를 금지합니다');
+			/* 	$result = array('error' => '이 게시판은 ' . element('protect_comment_day', $board) . '일 이상된 댓글의 삭제를 금지합니다');
+				return json_encode($result); */
+			}
+		}
+		if (element('mem_id', $comment)) {
+			if ($is_admin === false && (int) $this->CI->member->item('mem_id') !== abs(element('mem_id', $comment))) {
+				response_result($r,'Err','회원님은 이 글을 삭제할 권한이 없습니다');
+				/* $result = array('error' => '회원님은 이 글을 삭제할 권한이 없습니다');
+				return json_encode($result); */
+			}
+		} else {
+
+			$this->CI->session->keep_flashdata('can_delete_comment_' . element('cmt_id', $comment));
+			if ($is_admin) {
+				$this->CI->session->set_flashdata(
+					'can_delete_comment_' . element('cmt_id', $comment),
+					'1'
+				);
+			}
+			if ( ! $this->CI->session->flashdata('can_delete_comment_' . element('cmt_id', $comment)) && $password) {
+
+				if ( ! function_exists('password_hash')) {
+					$this->CI->load->helper('password');
+				}
+				if (password_verify($password, element('cmt_password', $comment))) {
+					$can_delete_comment = true;
+					$this->CI->session->set_flashdata(
+						'can_delete_comment_' . element('cmt_id', $comment),
+						'1'
+					);
+				} else {
+					response_result($r,'Err','패스워드가 잘못 입력되었습니다');
+				/* 	$result = array('error' => '패스워드가 잘못 입력되었습니다');
+					return json_encode($result); */
+				}
+			}
+		    // 이벤트가	if ( ! $this->CI->session->flashdata('can_delete_comment_' . element('cmt_id', $comment)) && $can_delete_comment === false) {
+			//	response_result($r,'Err','패스워드가 확인이 필요합니다');
+			/* 	$result = array('password' => '패스워드가 확인이 필요합니다');
+				return json_encode($result); */
+			//}
+		}
+
+		if (element('use_comment_delete_log', $board) && $realdelete === false) {
+			$updatedata = array(
+				'cmt_del' => 1,
+			);
+			$this->CI->Comment_model->update(element('cmt_id', $comment), $updatedata);
+			$metadata = array(
+				'delete_mem_id' => $this->CI->member->item('mem_id'),
+				'delete_mem_nickname' => $this->CI->member->item('mem_nickname'),
+				'delete_datetime' => cdate('Y-m-d H:i:s'),
+				'delete_ip' => $this->CI->input->ip_address(),
+			);
+			$this->CI->Comment_meta_model->save(element('cmt_id', $comment), $metadata);
+		} else {
+			$this->CI->board->delete_comment($cmt_id);
+		}
+		response_result($r,'success','댓글이 삭제되었습니다');
+		/* $result = array('success' => '댓글이 삭제되었습니다');
+		return json_encode($result); */
+	}
+
 
 
 	/**
