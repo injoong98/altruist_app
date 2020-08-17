@@ -48,8 +48,8 @@ class GominWrite extends React.Component {
         super(props);
         this.state={
             isLoading :true,
-            post_title:'title from avd',
-            post_content:'content from avd 익명,카테고리 1',
+            post_title:'',
+            post_content:'',
             post_anoymous_yn:1,
             post_category:1,
             checked:true
@@ -60,22 +60,30 @@ class GominWrite extends React.Component {
     submitPost= async()=>{
         const {post_title,post_content,post_anoymous_yn,post_category} =this.state
         let formdata = new FormData();
+            formdata.append("brd_key", 'b-a-1');
             formdata.append("post_title", post_title);
             formdata.append("post_content", post_content);
             formdata.append("post_category", post_category);
             formdata.append("post_anoymous_yn", post_anoymous_yn);
         await axios.post(
-            'http://10.0.2.2/api/board_write/write/b-a-1',
+            'http://10.0.2.2/api/board_write/write',
             formdata
             )
         .then(response=>{
+            if(!response.data.view.form_validation){
+                var title = '유효하지 않는 글입니다.';
+                var message = '필수값이 누락됐거나 금지 단어가 존재합니다'
+            }else{
+                var title = '게시글';
+                var message=response.data.message;
+            }
             Alert.alert(
-                "게시글",
-                "게시글 작성 완료",
+                `${title}`,
+                `${message}`,
                 [
                     { 
-                        text: "닫기", 
-                        onPress: ()=> this.gobackfunc()
+                        text: "확인", 
+                        onPress: ()=> {if(response.data.view.form_validation){this.gobackfunc();}else{return true}}
                     }
                 ],
                 { cancelable: false }
@@ -91,14 +99,15 @@ class GominWrite extends React.Component {
             "게시글",
             "게시글을 작성하시겠습니까?",
             [
+                { 
+                    text: "작성", 
+                    onPress: ()=> this.submitPost()
+                },
                 {
                     text: "취소",
                     onPress: () => alert('취소했습니다.')
-                },
-                { 
-                    text: "직성", 
-                    onPress: ()=> this.submitPost()
                 }
+                
             ],
             { cancelable: false }
         );
