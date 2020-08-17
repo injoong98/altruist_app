@@ -52,14 +52,16 @@ class Comment_write extends CB_Controller
 
 		if (empty($post_id) OR $post_id < 1) {
 			$result = array('error' => '잘못된 접근입니다');
-			exit(json_encode($result));
+		//	exit(json_encode($result));
+			response_result($view,'Err','올바른 post id 가 아닙니다.');
 		}
 
 		$post = $this->Post_model->get_one($post_id);
 
 		if ( ! element('post_id', $post)) {
 			$result = array('error' => '잘못된 접근입니다');
-			exit(json_encode($result));
+			//exit(json_encode($result));
+			response_result($view,'Err','올바른 post 가 아닙니다.');
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
@@ -71,22 +73,26 @@ class Comment_write extends CB_Controller
 			$cmt_id = (int) $this->input->post('cmt_id');
 			if (empty($cmt_id) OR $cmt_id < 1) {
 				$result = array('error' => '잘못된 접근입니다');
-				exit(json_encode($result));
-			}
+				//exit(json_encode($result));
+				response_result($view,'Err','잘못된 접근입니다');
+			}  
 			$comment = $this->Comment_model->get_one($cmt_id);
 			if ( ! element('cmt_id', $comment)) {
 				$result = array('error' => '잘못된 접근입니다');
-				exit(json_encode($result));
+				//exit(json_encode($result));
+				response_result($view,'Err','잘못된 접근입니다');
 			}
 			if (element('cmt_del', $comment)) {
 				$result = array('error' => '삭제된 글은 수정하실 수 없습니다');
-				exit(json_encode($result));
+				//exit(json_encode($result));
+				response_result($view,'Err','삭제된 글은 수정하실 수 없습니다.');
 			}
 		}
-
+		
 		if (element('notice_comment_block', $board) && element('post_notice', $post)) {
 			$result = array('error' => '공지사항 글에는 댓글을 입력하실 수 없습니다.');
-			exit(json_encode($result));
+			response_result($view,'Err','공지사항 글에는 댓글을 입력하실 수 없습니다.');
+			//exit(json_encode($result));
 		}
 
 		$check = array(
@@ -120,20 +126,24 @@ class Comment_write extends CB_Controller
 			$parent_id = (int) $this->input->post('cmt_id');
 			if (empty($parent_id) OR $parent_id < 1) {
 				$result = array('error' => '잘못된 접근입니다');
-				exit(json_encode($result));
+				//exit(json_encode($result));
+				response_result($view,'Err','잘못된 접근입니다');
 			}
 			$origin = $this->Comment_model->get_one($parent_id);
 			if ( ! element('cmt_id', $origin)) {
 				$result = array('error' => '잘못된 접근입니다');
-				exit(json_encode($result));
+				//exit(json_encode($result));
+				response_result($view,'Err','잘못된 접근입니다');
 			}
 			if (element('cmt_del', $origin)) {
 				$result = array('error' => '삭제된 글에는 답변을 입력하실 수 없습니다');
-				exit(json_encode($result));
+				response_result($view,'Err','삭제된 글에는 답변을 입력하실 수 없습니다.');
+				//	exit(json_encode($result));
 			}
 			if (strlen(element('cmt_reply', $origin)) >= 5) {
 				$result = array('error' => '더 이상 답변하실 수 없습니다.\\n답변은 5단계 까지만 가능합니다');
-				exit(json_encode($result));
+				response_result($view,'Err','더 이상 답변하실 수 없습니다.\\n답변은 5단계 까지만 가능합니다');
+				//exit(json_encode($result));
 			}
 
 			$reply_len = strlen(element('cmt_reply', $origin)) + 1;
@@ -153,7 +163,8 @@ class Comment_write extends CB_Controller
 				$reply_char = $begin_reply_char;
 			} elseif (element('reply', $row) === $end_reply_char) { // A~Z은 26 입니다.
 				$result = array('error' => '더 이상 답변하실 수 없습니다.\\n답변은 26개 까지만 가능합니다');
-				exit(json_encode($result));
+				//exit(json_encode($result));
+				response_result($view,'Err','더 이상 답변하실 수 없습니다.\\n답변은 26개 까지만 가능합니다');
 			} else {
 				$reply_char = chr(ord(element('reply', $row)) + $reply_number);
 			}
@@ -164,23 +175,27 @@ class Comment_write extends CB_Controller
 			if (element('protect_comment_day', $board) > 0 && $is_admin === false) {
 				if (ctimestamp() - strtotime(element('cmt_datetime', $comment)) >= element('protect_comment_day', $board) * 86400) {
 					$result = array('error' => '이 게시판은 ' . element('protect_comment_day', $board) . '일 이상된 댓글의 수정을 금지합니다');
-					exit(json_encode($result));
+					response_result($view,'Err','이 게시판은 ' . element('protect_comment_day', $board) . '일 이상된 댓글의 수정을 금지합니다');
+					//exit(json_encode($result));
 				}
 			}
-
+			
 			if ( ! $mem_id) {
 				$result = array('error' => '비회원은 수정 권한이 없습니다');
-				exit(json_encode($result));
+				response_result($view,'Err','비회원은 수정 권한이 없습니다');
+				//exit(json_encode($result));
 			}
 			if ( ! element('mem_id', $comment) && $is_admin === false) {
 				$result = array('error' => '비회원이 작성하신 글은 수정할 수 없습니다');
-				exit(json_encode($result));
+				response_result($view,'Err','비회원이 작성하신 글은 수정할 수 없습니다');
+				//				exit(json_encode($result));
 			}
 			if (element('mem_id', $comment)
-				&& abs(element('mem_id', $comment)) !== $mem_id
-				&& $is_admin === false) {
+			&& abs(element('mem_id', $comment)) !== $mem_id
+			&& $is_admin === false) {
 				$result = array('error' => '다른 회원님의 댓글은 수정할 수 없습니다');
-				exit(json_encode($result));
+				response_result($view,'Err','다른 회원님의 댓글은 수정할 수 없습니다');
+				//exit(json_encode($result));
 			}
 		}
 
@@ -190,14 +205,17 @@ class Comment_write extends CB_Controller
 			if ($this->session->userdata('lastest_post_time') >= ( ctimestamp() - $this->cbconfig->item('new_post_second')) && $is_admin === false) {
 				$result = array('error' => '너무 빠른 시간내에 게시물을 연속해서 올릴 수 없습니다.<br />'
 					. ($this->cbconfig->item('new_post_second') - (ctimestamp() - $this->session->userdata('lastest_post_time'))) . '초 후 글쓰기가 가능합니다');
-				exit(json_encode($result));
+					response_result($view,'Err', '너무 빠른 시간내에 게시물을 연속해서 올릴 수 없습니다.<br />'
+					. ($this->cbconfig->item('new_post_second') - (ctimestamp() - $this->session->userdata('lastest_post_time'))) . '초 후 글쓰기가 가능합니다');
+					//exit(json_encode($result));
 			}
 		}
 		if (element('comment_possible_day', $board) > 0 && $is_admin === false
 			&& $mode === 'c' && ! $this->input->post('cmt_id')) {
 			if (ctimestamp() - strtotime(element('post_datetime', $post)) >= element('comment_possible_day', $board) * 86400) {
 				$result = array('error' => '이 게시판은 ' . element('comment_possible_day', $board) . '일 이상된 게시글에 댓글 입력을 금지합니다');
-				exit(json_encode($result));
+				response_result($view,'Err','이 게시판은 ' . element('comment_possible_day', $board) . '일 이상된 게시글에 댓글 입력을 금지합니다');
+				//	exit(json_encode($result));
 			}
 		}
 
@@ -240,11 +258,11 @@ class Comment_write extends CB_Controller
 					'rules' => 'trim|required|callback__check_recaptcha',
 				);
 			} else {
-				$config[] = array(
+				/* $config[] = array(
 					'field' => 'captcha_key',
 					'label' => '자동등록방지문자',
 					'rules' => 'trim|required|callback__check_captcha',
-				);
+				); */
 			}
 		}
 		$this->form_validation->set_rules($config);
@@ -261,7 +279,10 @@ class Comment_write extends CB_Controller
 			Events::trigger('formrunfalse', $eventname);
 
 			$result = array('error' => validation_errors('<div class="alert alert-warning" role="alert">', '</div>'));
-			exit(json_encode($result));
+			response_result($view,'Err',validation_errors('', ''));
+			
+			
+			//exit(json_encode($result));
 
 		} else {
 			/**
@@ -332,7 +353,7 @@ class Comment_write extends CB_Controller
 
 				$updatedata['cmt_device'] = ($this->cbconfig->get_device_type() === 'mobile')
 					? 'mobile' : 'desktop';
-				$cmt_id = $this->Comment_model->insert($updatedata);
+				$cmt_id = $this->Comment_model->insert($updatedata); //코멘트 insert
 				$this->Post_model->comment_updated($post_id, cdate('Y-m-d H:i:s'));
 
 				if ($this->cbconfig->item('use_notification')
@@ -744,9 +765,13 @@ class Comment_write extends CB_Controller
 
 				// 이벤트가 존재하면 실행합니다
 				Events::trigger('after_insert', $eventname);
+				$view['redirectinfo']['brd_key'] = element('brd_key', $board);
+				$view['redirectinfo']['post_id'] = element('post_id', $post);
+				$view['redirectinfo']['cmt_id'] =  $cmt_id;
 
-				$result = array('success' => '댓글이 등록되었습니다');
-				exit(json_encode($result));
+				response_result($view,'success','댓글이 등록되었습니다.');
+				//$result = array('success' => '댓글이 등록되었습니다');
+				//exit(json_encode($result));
 
 			} else {
 
@@ -771,9 +796,12 @@ class Comment_write extends CB_Controller
 
 				// 이벤트가 존재하면 실행합니다
 				Events::trigger('after_update', $eventname);
-
-				$result = array('success' => '댓글이 수정되었습니다');
-				exit(json_encode($result));
+				$view['redirectinfo']['brd_key'] = element('brd_key', $board);
+				$view['redirectinfo']['post_id'] = element('post_id', $post);
+				$view['redirectinfo']['cmt_id'] =  $cmt_id;
+				response_result($view,'success','댓글이 수정되었습니다.');
+				//$result = array('success' => '댓글이 수정되었습니다');
+				//exit(json_encode($result));
 			}
 		}
 	}

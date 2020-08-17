@@ -43,6 +43,11 @@ class AlbaScreen extends React.Component {
     this.getPostList();
   }
 
+  statefunction=(str)=>{
+    this.setState({isLoading:true});
+    this.onRefresh()
+  }
+
   renderItem = ({item, index}) => (
       item.origin_image_url?
       <Card
@@ -101,7 +106,7 @@ class AlbaScreen extends React.Component {
       <View style={styles.bottomView}>
         <Button 
           style={styles.bottomButton}
-          onPress={()=>{this.props.navigation.navigate('AlbaWrite');}}>
+          onPress={()=>{this.props.navigation.navigate('AlbaWrite',{statefunction:this.statefunction});}}>
             글쓰기 
           </Button>
       </View>
