@@ -3061,7 +3061,7 @@ class Postact extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
 
-		$this->output->set_content_type('application/json');
+		//$this->output->set_content_type('application/json');
 
 		$title = strip_tags($this->input->post('title'));
 		$content = strip_tags($this->input->post('content'));
@@ -3092,14 +3092,19 @@ class Postact extends CB_Controller
 
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('after', $eventname);
-
 		$return = array(
 			'title' => $return_title,
 			'content' => $return_content,
 		);
-		$json = json_encode($return);
+		if($return_content) {
+			response_result($return,'Err','내용에 금지단어('.$return_content.')가 포함되어있습니다');
+		}else{
+			response_result($return);
+			
+		}
+		//$json = json_encode($return);
 
-		exit($json);
+		//exit($json);
 	}
 
 
