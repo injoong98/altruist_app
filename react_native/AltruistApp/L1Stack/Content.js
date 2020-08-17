@@ -179,73 +179,105 @@ class GominContent extends React.Component{
      }
 }
 
-const MarketContent = ({route, navigation}) =>{
+class MarketContent extends React.Component {
+    
+    constructor(props){
+        super(props);
+        this.state ={
+            post : {} ,
+            image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+            isLoading : true,
+            comment : '',
+        }
+    }
 
-    const BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() =>{navigation.goBack()}}/>
+    async componentDidMount(){
+        const post_id = this.props.route.params;
+        await this.getPostData(post_id)
+        .then(()=>{this.setState({isLoading:false})})
+    }
+
+    getPostData = async(post_id)=>{
+        await Axios.get(`http://10.0.2.2/api/board_post/post/${post_id}`)
+        .then((response)=>{
+            this.setState({post:response.data.view.post})
+            if (response.data.view.file_image){
+                this.setState({image: response.data.view.file_image.shift().origin_image_url});
+            }
+        })
+        .catch((error)=>{
+            alert(error)
+        })
+    }
+
+    BackAction = () =>(
+        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
 
-    const UproadIcon = (props) => (
+    UproadIcon = (props) => (
         <TouchableWithoutFeedback>
           <Icon {...props} name='arrow-circle-up'/>
         </TouchableWithoutFeedback>
     )
-    
-    const [value, setValue] = React.useState('');
 
-    return(
-    <SafeAreaView style={{flex:1}}>
+    render(){
+        const {post} = this.state;
+        return(
+            <SafeAreaView style={{flex:1}}>
+        
+                <TopNavigation title="수수마켓" alignment="center" accessoryLeft={this.BackAction} />
+        
+                <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
+                    <ScrollView>
+                    <View style={{height:394}}>
+                        <Image source={{uri : post.image}} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                    </View>
+                    <View style={{}}>
+                        <Layout>
+                        <Text category='h2'>{post.post_title}</Text>
+                        </Layout>
+                        <Layout>
+                        <Text category='h4'>{post.deal_price}</Text>
+                        </Layout>
+                    </View>
+                    <Divider/>
+                    <Layout style={{height:50,flexDirection:'row'}}>
+                        <Layout style={{width:50}}>
+                        <Image source={require('../market/asset/basic_user.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                        </Layout>
+                        <Layout style={{justifyContent:'center'}}>
+                        <Text>{post.post_username}</Text>
+                        </Layout>
+                    </Layout>
+                    <Divider/>
+                    <Layout style={{height:200}}>
+                        <Text>Details</Text>
+                        <Text> Place : {post.post_place}</Text>
+                    </Layout>
+                    <Divider/>
+                    <Layout>
+                        <Text>Comment</Text>
+                            <Input
+                                style={{flex:1, margin:15}}
+                                size='large'
+                                placeholder='댓글을 입력하세요.'
+                                value={this.state.comment}
+                                multiline={true}
+                                accessoryRight={this.UproadIcon}
+                                onChangeText={nextValue => this.setState({comment : nextValue})}
+                            />
+                        <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
+                        </Layout>
+                    </Layout>
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            </SafeAreaView>
+        
+            )
+    }
 
-        <TopNavigation title="수수마켓" alignment="center" accessoryLeft={BackAction} />
-
-        <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
-            <ScrollView>
-            <View style={{height:394}}>
-                <Image source={post.uri} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
-            </View>
-            <View style={{}}>
-                <Layout>
-                <Text category='h2'>{post.title}</Text>
-                </Layout>
-                <Layout>
-                <Text category='h4'>{post.price}</Text>
-                </Layout>
-            </View>
-            <Divider/>
-            <Layout style={{height:50,flexDirection:'row'}}>
-                <Layout style={{width:50}}>
-                <Image source={require('../market/asset/basic_user.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
-                </Layout>
-                <Layout style={{justifyContent:'center'}}>
-                <Text>{post.user}</Text>
-                </Layout>
-            </Layout>
-            <Divider/>
-            <Layout style={{height:200}}>
-                <Text>Details</Text>
-                <Text> Place : {post.place}</Text>
-            </Layout>
-            <Divider/>
-            <Layout>
-                <Text>Comment</Text>
-                    <Input
-                        style={{flex:1, margin:15}}
-                        size='large'
-                        placeholder='댓글을 입력하세요.'
-                        value={value}
-                        multiline={true}
-                        accessoryRight={UproadIcon}
-                        onChangeText={nextValue => setValue(nextValue)}
-                    />
-                <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
-                </Layout>
-            </Layout>
-            </ScrollView>
-        </KeyboardAvoidingView>
-    </SafeAreaView>
-
-    )
 }
+
 
 
 class AlbaContent extends React.Component {
