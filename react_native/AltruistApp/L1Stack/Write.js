@@ -483,6 +483,22 @@ class AlbaWrite extends React.Component{
     }
 }
 
+
+
+class IlbanWrite extends React.Component{
+    render(){
+        return(
+            <SafeAreaView style={{flex:1}}>
+            <View>
+                <Text>
+                    Hi!
+                </Text>
+            </View>
+            </SafeAreaView>
+        )
+    }
+}
+
 const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -522,4 +538,4 @@ const styles = StyleSheet.create({
 });
   
 
-export {defaultWrite, MarketWrite, AlbaWrite,GominWrite}
+export {defaultWrite, MarketWrite, AlbaWrite, GominWrite, IlbanWrite}
