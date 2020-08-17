@@ -224,12 +224,13 @@ class AlbaWrite extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            title : '',
-            content : '',
+            post_title : '',
+            post_content : '',
             post_location : '',
             alba_type : 0,
-            alba_salary_type : new IndexPath(0),
+            alba_salary_type : 0,
             alba_salary : '',
+            _File : [],
             isTipVisible:false,
             isFollowUp:false,
         }
@@ -250,9 +251,57 @@ class AlbaWrite extends React.Component{
         this.setState({isFollowUp:nextChecked});
         this.setState({alba_salary:'추후협의'});
     }
-    sendContext(){
+    submit_alba_post = async() => {
         console.log(this.state);
+        const {post_title, post_content, post_location, alba_type, alba_salary_type, alba_salary} = this.state;
+        let formdata = new FormData();
+            formdata.append("post_title", post_title);
+            formdata.append("post_content", post_content);
+            formdata.append("post_location", post_location);
+            formdata.append("alba_type", alba_type);
+            formdata.append("alba_salary_type", alba_salary_type);
+            formdata.append("alba_salary", alba_salary);
+        await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
+        .then(response=>{
+            Alert.alert(
+                "게시글",
+                "게시글 작성 완료",
+                [
+                    { 
+                        text: "OK", 
+                        onPress: ()=> alert('Hi')
+                    }
+                ],
+                { cancelable: false }
+            );
+        })
+        .catch(error=>{
+            alert('BYE:(')
+        })
+
         this.props.navigation.goBack();
+    }
+
+    submit_alba_Alert= () => {
+        Alert.alert(
+            "알바천일국",
+            "게시글을 작성하시겠습니까?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "OK", 
+                    onPress: ()=> this.submit_alba_post()
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+
+    get_Image_gallary = () =>{
+
     }
 
     renderToggleButton = () => (
@@ -272,7 +321,7 @@ class AlbaWrite extends React.Component{
                         <Input
                             size='medium'
                             placeholder='Input Title'
-                            onChangeText ={(nextText) => {this.setState({title:nextText})}}
+                            onChangeText ={(nextText) => {this.setState({post_title:nextText})}}
                             />
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Input
@@ -327,14 +376,19 @@ class AlbaWrite extends React.Component{
                         multiline={true}
                         textStyle={{ minHeight: 500}}
                         placeholder='Input Context'
-                        onChangeText ={(nextText) => {this.setState({content:nextText})}}
+                        onChangeText ={(nextText) => {this.setState({post_content:nextText})}}
                     />
-                    </ScrollView>
+                    <Button onPress ={()=>{
+                        this.get_Image_gallary();
+                    }}>
+                        사진추가
+                    </Button>
+                </ScrollView>
                 </Layout>
                 <View style={styles.bottomView}>
                     <Button 
                         style={styles.bottomButton}
-                        onPress={()=>{this.sendContext()}}>
+                        onPress={()=>{this.submit_alba_post()}}>
                             글쓰기 
                     </Button>
                 </View>   
