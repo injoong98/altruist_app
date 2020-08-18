@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules, TouchableOpacity} from 'react-native';
+import {StyleSheet,SafeAreaView, TouchableHighlight, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules, TouchableOpacity} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -191,15 +191,20 @@ class MarketWrite extends React.Component {
 
     submitPost = async() => {
 
-        const Data = this.state
+        console.log(this.state);
+        const {post_title, post_content, post_location, deal_price, deal_type} = this.state;
 
         let formdata = new FormData();
-            formdata.append("post_title", Data.post_title);
-            formdata.append("post_content", Data.post_content);
-            formdata.append("post_location", Data.post_location);
-            formdata.append("deal_price", Data.deal_price);
-            formdata.append("deal_type", Data.deal_type);
-            formdata.append("deal_status", Data.deal_status);
+            formdata.append("brd_key", 'b-a-2');
+            formdata.append("post_title", post_title);
+            formdata.append("post_content", post_content);
+            formdata.append("post_location", post_location);
+            formdata.append("post_nickname", 'Edward');
+            formdata.append("post_email", 'Edward@sogang.ac.kr');
+            formdata.append("post_password", '0000');
+            formdata.append("deal_price", deal_price);
+            formdata.append("deal_type", deal_type);
+            // formdata.append("deal_status", Data.deal_status);
             
         await axios.post(
             'http://10.0.2.2/api/board_write/write/b-a-2',
@@ -212,7 +217,7 @@ class MarketWrite extends React.Component {
                 [
                     { 
                         text: "OK", 
-                        onPress: ()=> alert('Hi')
+                        onPress: ()=> {this.gobackfunc()}
                     }
                 ],
                 { cancelable: false }
@@ -223,6 +228,7 @@ class MarketWrite extends React.Component {
         })    
     }
     
+    //등록버튼 클릭했을 때
     onClickAddImage() {
         const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
         ActionSheet.show(
@@ -244,6 +250,7 @@ class MarketWrite extends React.Component {
         )
     };
 
+    //카메라로 사진 찍기
     takePhotoFromCamera() {
         ImagePicker.openCamera({
             width: 300,
@@ -255,6 +262,7 @@ class MarketWrite extends React.Component {
           });
     }
 
+    //갤러리에서 사진 가져오기
     choosePhotoFromGallery() {
         ImagePicker.openPicker({
             multiple: true,
@@ -265,6 +273,7 @@ class MarketWrite extends React.Component {
         });
     }
 
+    //불러온 사진의 정보를 this.state에 저장
     onSelectedImage(image) {
         console.log(image);
         let newImages = this.state.images;
@@ -282,7 +291,7 @@ class MarketWrite extends React.Component {
         console.log(image);
         return (
             <View key={image.uri}>
-                <Image style={{marginLeft : 10, width: 100, height: 100, resizeMode: 'cover'}} source={image.url}/>
+                <Image style={styles.market_RenderImage} source={image.url}/>
             </View>
         )
     }
@@ -339,7 +348,7 @@ class MarketWrite extends React.Component {
                         </Layout>
                         <Layout style={styles.container}>
                             <Text>사진</Text>
-                            <ScrollView horizontal={true}>
+                            <ScrollView horizontal={true} style={styles.input}>
                                 <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
                                     <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
                                 </TouchableOpacity>
@@ -349,15 +358,21 @@ class MarketWrite extends React.Component {
                         <Layout style={styles.container}>
                             <Text>거래방법</Text>
                             <Layout style={styles.deal_type}>
-                                <Layout style={styles.deal_box}>
-                                    <Text>직거래</Text>
-                                </Layout>
-                                <Layout style={styles.deal_box}>
-                                    <Text>배송</Text>
-                                </Layout>
-                                <Layout style={styles.deal_box}>
-                                    <Text>둘다가능</Text>
-                                </Layout>
+                                <TouchableWithoutFeedback onPress={()=>this.setState({deal_type : 0})}>
+                                    <View style={this.state.deal_type==0? {...styles.deal_box, opacity:1.0}:styles.deal_box}>
+                                        <Text style={styles.deal_type_text}>직거래</Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                                <TouchableWithoutFeedback onPress={()=>this.setState({deal_type : 1})}>
+                                    <View style={this.state.deal_type==1? {...styles.deal_box, opacity:1.0}:styles.deal_box}>
+                                        <Text style={styles.deal_type_text}>배송</Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                                <TouchableWithoutFeedback onPress={()=>this.setState({deal_type : 2})}>
+                                    <View style={this.state.deal_type==2? {...styles.deal_box, opacity:1.0}:styles.deal_box}>
+                                        <Text style={styles.deal_type_text}>둘다가능</Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
                             </Layout>
                         </Layout>
                         <Layout style={styles.container}>
@@ -673,16 +688,28 @@ const styles = StyleSheet.create({
         flexDirection : 'row',
         justifyContent : 'space-around',
         alignItems : 'center',
+        marginTop : 10
     },
     deal_box : {
-        width : '25%',
-        height : 40,
+        width : '30%',
+        height : 50,
         justifyContent : 'center',
         alignItems : 'center',
+        backgroundColor : 'gray',
+        opacity : 0.5,
         borderColor : 'gray',
         borderRadius : 10,
         borderWidth: 1,
-    }
+    },
+    deal_type_text : {
+        color : 'white'
+    },
+    market_RenderImage : {
+        marginLeft : 10, 
+        width: 100, 
+        height: 100, 
+        resizeMode: 'cover',
+    },
 });
   
 
