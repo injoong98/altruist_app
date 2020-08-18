@@ -1,8 +1,9 @@
 import React from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
-import ImagePicker from 'react-native-image-picker';
+//import ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 import { HeartIcon } from '../assets/icons/icons';
 import axios from 'axios';
 const BackIcon =  (props) =>(
@@ -14,6 +15,7 @@ const CloseIcon =  (props) =>(
 const UpIcon =  (props) =>(
     <Icon {...props} name = "arrow-circle-up-outline"/>
 )
+
 
 
 const defaultWrite = ({navigation}) =>{
@@ -269,9 +271,10 @@ class AlbaWrite extends React.Component{
             alba_type : 0,
             alba_salary_type : 0,
             alba_salary : '',
-            _File : [],
+            post_image : [],
             imagesource : {},
-            image : {},
+            image : null,
+            images : null,
             isTipVisible:false,
             isFollowUp:false,
         }
@@ -351,35 +354,44 @@ class AlbaWrite extends React.Component{
         route.params.statefunction();
     } 
 
-    get_Image_gallary = () =>{
-        const options = {
-            title : 'Select Images',
-            storageOptions : {
-                skipBackup : true,
-                path : 'images',
-            },
-        };
-
-        ImagePicker.showImagePicker(options, (response) =>{
-            console.log('Response = ', response.path);
-
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-            } else {
-                const source = { uri: response.uri };
-                // You can also display the image using data:
-                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-                this.setState({
-                    imagesource : source,
-                    image : {width : response.width , height : response.height},
-                });
-            }
+    cleanupImages() {
+        ImagePicker.clean().then(() => {
+            // console.log('removed tmp images from tmp directory');
+            alert('Temporary images history cleared')
+        }).catch(e => {
+            alert(e);
         });
+    }
+
+    pickMultiple() {
+        ImagePicker.openPicker({
+            multiple: true,
+            includeExif: true,
+        }).then(images => {
+            this.setState({
+                image: null,
+                images: images.map(i => {
+                    console.log('received image', i);
+                    return {uri: i.path, width: i.width, height: i.height, mime: i.mime};
+                })
+            });
+        }).catch(e => alert(e));
+    }
+
+    scaledHeight(oldW, oldH, newW) {
+        return (oldH / oldW) * newW;
+    }
+
+    renderImage(image) {
+        return <Image style={{width: 200, height: 200, resizeMode: 'contain'}} source={image}/>
+    }
+
+    renderAsset(image) {
+        if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
+            return this.renderVideo(image);
+        }
+
+        return this.renderImage(image);
     }
 
     renderToggleButton = () => (
@@ -457,18 +469,16 @@ class AlbaWrite extends React.Component{
                         onChangeText ={(nextText) => {this.setState({post_content:nextText})}}
                     />
                     <View style={{flex : 1, backgroundColor : 'black'}}>
-                        {this.state.imagesource?
-                            <Image source = {this.state.imagesource} style={{width : '100%', height : this.state.image.height, resizeMode : 'contain',}}/>
-                            :<Image style={{width : '100%', resizeMode : 'contain', }}/>
-                        }
+                        <ScrollView horizontal>
+                            {this.state.image ? this.renderAsset(this.state.image) : null}
+                            {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
+                        </ScrollView>
                     </View>
                     <Button onPress ={()=>{
-                        this.get_Image_gallary();
+                        this.pickMultiple();
                     }}>
                         사진추가
                     </Button>
-                    
-                    
                 </ScrollView>
                 </Layout>
                 <View style={styles.bottomView}>
