@@ -528,10 +528,6 @@ class AlbaWrite extends React.Component{
         }).catch(e => alert(e));
     }
 
-    scaledHeight(oldW, oldH, newW) {
-        return (oldH / oldW) * newW;
-    }
-
     renderImage(image) {
         return <Image style={{width: 200, height: 200, resizeMode: 'contain'}} source={image}/>
     }
