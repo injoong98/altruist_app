@@ -4,6 +4,8 @@ import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider,
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
 import {ActionSheet, Root, Container} from 'native-base';
+import Slider from '../components/slider.component'
+
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -47,11 +49,10 @@ class GominContent extends React.Component{
             refreshing:false
         }
     }
-    commentValid =() =>{
-        
-    }
+    
     commentUpload= async()=>{
-        const {cmt_content,post}=this.state;var formdata = new FormData();
+        const {cmt_content,post}=this.state;
+        var formdata = new FormData();
         formdata.append("post_id",post.post_id);
         formdata.append("cmt_content",cmt_content);
 
@@ -72,9 +73,28 @@ class GominContent extends React.Component{
             alert(`등록 실패 ! ${error.message}`)
         })
     }
+    
+    commentValid =async() =>{
+        const {cmt_content} =this.state;
+        var formdata = new FormData();
+        formdata.append("content",cmt_content);
+        
+        await Axios.post('http://10.0.2.2/api/postact/filter_spam_keyword',formdata)
+        .then(response=>{
+            const {status,message} = response.data;
+            if(status=='500'){
+                alert(message);
+            }else if(status=="200"){
+                this.commentUpload();
+            }
+        })
+        .catch(error=>{
+            alert('error')
+        })
 
+    }
     UploadButton=(props)=>(
-        <TouchableOpacity onPress={()=>{this.commentUpload()}}>
+        <TouchableOpacity onPress={()=>{this.commentValid()}}>
             <UploadIcon {...props}/>
         </TouchableOpacity>
     )
@@ -201,6 +221,7 @@ class GominContent extends React.Component{
      }
 }
 
+
 class MarketContent extends React.Component {
     
     constructor(props){
@@ -208,14 +229,18 @@ class MarketContent extends React.Component {
         this.state ={
             post : {} ,
             image : [],
-            isLoading : true,
+            activeDot : 0,
             comment : '',
+            cmt_content : '',
+            isLoading : true,
+            refreshing : false,
         }
     }
 
     async componentDidMount(){
         const post_id = this.props.route.params;
         await this.getPostData(post_id)
+        .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
     }
 
@@ -235,6 +260,16 @@ class MarketContent extends React.Component {
         })
         .catch((error)=>{
             alert(error)
+        })
+    }
+    
+    getCommentData = async (post_id)=>{
+        await Axios.get(`http://10.0.2.2/api/comment_list/lists/${post_id}`)
+        .then((response)=>{
+            this.setState({comment:response.data.view.data.list})
+        })
+        .catch((error)=>{
+            alert('error')
         })
     }
 
@@ -262,8 +297,37 @@ class MarketContent extends React.Component {
         }
     }
 
+    
+    renderCommentsList=({item,index})=>(
+        <Card>
+            <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <View style={{flexDirection:"row"}}>
+                <StarIcon />
+                <Text category="s2">{item.cmt_nickname}</Text>
+                </View>
+                <HeartIcon onPress={()=>{alert('좋아요누르겠습니다.')}} />
+            </View>
+            <View style={{padding:5}}>
+                <Text category="s1">{item.content}</Text>
+            </View>
+            <View style={{display:"flex", justifyContent:"flex-start",flexDirection:"row",alignItems:"center"}}>
+                <Text category="s2">{item.cmt_datetime}</Text>
+                <HeartIcon style ={{width:10,heigth:10}} />
+                <Text>{item.cmt_like}</Text>
+            </View>
+        </Card>
+    )
+    
+    onRefresh=()=>{
+        const {post_id} = this.props.route.params
+        this.getCommentData(post_id)
+
+    }
+
     render(){
+
         const {post} = this.state;
+        
         return(
             this.state.isLoading ?
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -272,19 +336,11 @@ class MarketContent extends React.Component {
             </View>
             :
             <SafeAreaView style={{flex:1}}>
-        
                 <TopNavigation title="수수마켓" alignment="center" accessoryLeft={this.BackAction} />
-        
                 <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
                     <ScrollView>
-                        <View style={{height:394}}>
-                            <VirtualizedList
-                                data={this.state.image}
-                                renderItem={this.renderImage}
-                                getItemCount={(data)=>data.length}
-                                getItem={this.getItem}
-                                horizontal={true}
-                            />
+                        <View>
+                            <Slider image={this.state.image}/>
                         </View>
                         <View style={{}}>
                             <Layout>
@@ -311,15 +367,22 @@ class MarketContent extends React.Component {
                         <Divider/>
                         <Layout>
                             <Text>Comment</Text>
-                                <Input
-                                    style={{flex:1, margin:15}}
-                                    size='large'
-                                    placeholder='댓글을 입력하세요.'
-                                    value={this.state.comment}
-                                    multiline={true}
-                                    accessoryRight={this.UproadIcon}
-                                    onChangeText={nextValue => this.setState({comment : nextValue})}
-                                />
+                            <List
+                                ref={"pstcmtlist"} 
+                                data={this.state.comment}
+                                renderItem={this.renderCommentsList}
+                                onRefresh={this.onRefresh}
+                                refreshing={this.state.refreshing}
+                            />
+                            <Input
+                                style={{flex:1, margin:15}}
+                                size='large'
+                                placeholder='댓글을 입력하세요.'
+                                value={this.state.cmt_content}
+                                multiline={true}
+                                accessoryRight={this.UproadIcon}
+                                onChangeText={nextValue => this.setState({comment : nextValue})}
+                            />
                             <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
                             </Layout>
                         </Layout>
