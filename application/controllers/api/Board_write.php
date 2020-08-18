@@ -600,7 +600,8 @@ class Board_write extends CB_Controller
 			}
 			$view['view']['form_validation'] = $form_validation;
 			if(!$form_validation) {
-				response_result($view,'Err',"유효성 검사(form_validation) 에 실패하였습니다. ");
+				response_result($view,'Err',validation_errors('', ''));
+			//	response_result($view,'Err',"유효성 검사(form_validation) 에 실패하였습니다. ");
 			}
 
 			/**
@@ -1857,7 +1858,8 @@ class Board_write extends CB_Controller
 				$view['view']['message'] = $file_error;
 			}
 			if(!$form_validation) {
-				response_result($r,'Err',"유효성 검사(form_validation) 에 실패하였습니다. ");
+			//	response_result($r,'Err',"유효성 검사(form_validation) 에 실패하였습니다. ");
+				response_result($view,'Err',validation_errors('', ''));
 			}
 			if (element('use_post_tag', $board) && $can_tag_write) {
 				$this->load->model('Post_tag_model');

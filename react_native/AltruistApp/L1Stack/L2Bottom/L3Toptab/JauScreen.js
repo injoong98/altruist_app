@@ -1,9 +1,12 @@
 import React, { Fragment } from 'react';
-import { StyleSheet, View, Image} from 'react-native';
+import { StyleSheet, View, Image, Dimensions } from 'react-native';
 import { Button, Card, List, Layout, Text,Icon, StyleService, Spinner} from '@ui-kitten/components'
 import { HeartIcon, PlusIcon } from '../../../assets/icons/icons';
 import { getPostList } from "./extra/getPost";
 import axios from 'axios';
+import HTML from 'react-native-render-html';
+import { IGNORED_TAGS } from 'react-native-render-html/src/HTMLUtils';
+
 
 const AltsIcon = (props) => <Icon {...props} name="star" />;
 const ShareIcon = (props) => <Icon {...props} name="share-outline" />;
@@ -37,11 +40,6 @@ function JauHeader(props){
   )
 }
 
-function JauCard(){
-    //<Card header={header} footer={footer}>
-    //</Card>
-}
-
 function JauFooter(onDetailButtonPress) {
   return (
     <View style={styles.itemFooter}>
@@ -57,7 +55,6 @@ function JauFooter(onDetailButtonPress) {
                   status='danger'
                   accessoryLeft={AltsIcon} />
           </View>
-
           <Button
               style={styles.itemAddButton}
               appearance='ghost'
@@ -67,6 +64,15 @@ function JauFooter(onDetailButtonPress) {
 
           </Button>
       </View>
+  );
+}
+
+
+function JauCard(props){
+  return (
+    <Card header=  {() => JauHeader(props)}
+    footer={() => JauFooter()}>
+    </Card>
   );
 }
 
@@ -100,16 +106,30 @@ class JauScreen extends React.Component {
   } 
    
   renderItem = ({item, index}) => (
+    
      
-     <View>
-        <JauHeader 
-        category = {item.category.bca_value}
-        title={item.post_title} 
-        nickname={item.post_nickname} 
-        datetime={item.post_datetime} 
-        hit={item.post_hit} />
-        <JauFooter />
-      </View>
+    //  <View>
+    //    <JauCard props={item}></JauCard>
+       
+    //   </View>
+
+        <View>
+          <JauHeader 
+          category = {item.category.bca_value}
+          title={item.post_title} 
+          nickname={item.post_nickname} 
+          datetime={item.post_datetime} 
+          hit={item.post_hit} />
+            <HTML html = {item.post_content} 
+            ignoredTags={[ ...IGNORED_TAGS, 'span', 'br', 'img']}
+            ignoredStyles ={['lazyloaded']}
+            imagesMaxWidth={Dimensions.get("window").width}
+            />
+          <Text ellipsizeMode='tail'
+            numberOfLines = {1}>
+          </Text>
+          <JauFooter />
+        </View>
   );
   
 
@@ -129,7 +149,7 @@ class JauScreen extends React.Component {
       <View style={styles.bottomView}>
         <Button
           style={styles.bottomButton}
-          onPress={() => { this.props.navigation.navigate('AlbaWrite'); } }>
+          onPress={()=>{this.props.navigation.navigate('IlbanWrite')}}>
           글쓰기
         </Button>
       </View>
@@ -140,6 +160,9 @@ class JauScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
+  renderers: {
+
+  },
   list: {
       flex: 1,
   },
@@ -192,5 +215,3 @@ const styles = StyleSheet.create({
   })
 
 export {JauScreen} ;
-
-
