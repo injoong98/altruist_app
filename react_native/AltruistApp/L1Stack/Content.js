@@ -341,7 +341,8 @@ class AlbaContent extends React.Component {
         this.state ={
             visible : false,
             post : {} ,
-            image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+            thumb_image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+            file_images : null,
             phoneNumber : '01099999999',
             isLoading : true,
             image_height : 0,
@@ -360,12 +361,23 @@ class AlbaContent extends React.Component {
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
-                this.setState({image: response.data.view.file_image.shift().origin_image_url});
+                this.setState({thumb_image: response.data.view.file_image[0].origin_image_url});
+                this.setState({
+                    file_images : response.data.view.file_image.map(i => {
+                        console.log('received image', i);
+                        return {uri : 'http://10.0.2.2'+i.origin_image_url};
+                    })
+                })
+                console.log(this.state.file_images);
             }
         })
         .catch((error)=>{
             alert(error)
         })
+    }
+
+    renderImage(image) {
+        return <Image style={{width: '100%', height: Dimensions.get('window').width, resizeMode: 'contain'}} source={image}/>
     }
     
     setVisible(bool){
@@ -396,7 +408,6 @@ class AlbaContent extends React.Component {
         //         img : (htmlAttribs, children, convertedCSSStyles, passProps) => this.img_return(htmlAttribs, passProps)
         //     }
         // }
-        console.log(post.post_content);
         return(
             this.state.isLoading?
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -413,7 +424,7 @@ class AlbaContent extends React.Component {
                             <Text category='h3'>{post.post_title}</Text>
                             <Layout style={{flexDirection:'row', marginBottom : 5}}>
                                 <View style={{width : 100, height : 50, borderRightWidth : 0.3, justifyContent : 'center', alignItems : 'center'}}>
-                                    <Image style={{flex:1, width : '100%', resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.image}}/>
+                                    <Image style={{flex:1, width : '100%', resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.thumb_image}}/>
                                 </View>
                                 <Text style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
@@ -469,12 +480,13 @@ class AlbaContent extends React.Component {
                                 </View>
                             </Layout>
                         </Card>
-                        <Card>    
+                        <Card>
                             <HTML
                                 html = {post.post_content}
                                 imagesMaxWidth={Dimensions.get('window').width}
                                 imagesInitialDimensions={{width:400, height : 400}}
                                 />
+                            {this.state.file_images ? this.state.file_images.map(i => <View key={i.uri}>{this.renderImage(i)}</View>) : null} 
                         </Card>
                     </ScrollView>
                     <View style={styles.bottom}>
