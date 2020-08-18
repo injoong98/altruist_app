@@ -15,8 +15,6 @@ const UpIcon =  (props) =>(
     <Icon {...props} name = "arrow-circle-up-outline"/>
 )
 
-
-
 const defaultWrite = ({navigation}) =>{
     
     const BackAction = () =>(
@@ -87,22 +85,43 @@ class GominWrite extends React.Component {
         })    
     
     }
-    submitAlert= () => {
-        Alert.alert(
-            "게시글",
-            "게시글을 작성하시겠습니까?",
-            [
-                {
-                    text: "취소",
-                    onPress: () => alert('취소했습니다.')
-                },
-                { 
-                    text: "직성", 
-                    onPress: ()=> this.submitPost()
-                }
-            ],
-            { cancelable: false }
-        );
+    filterSpamKeyword= async() => {
+        const {post_title,post_content} =this.state;
+        
+        var formdata =new FormData();
+        formdata.append("title", post_title);
+        formdata.append("content", post_content);
+        formdata.append("csrf_test_name", '');
+        
+    
+        await axios.post('http://10.0.2.2/api/postact/filter_spam_keyword',formdata)
+        .then(response=>{
+            const {message,status}=response.data
+            if(status=='500'){
+                alert(message)
+            }else if(status=="200"){
+                Alert.alert(
+                    "게시글",
+                    "게시글을 작성하시겠습니까?",
+                    [
+                        { 
+                            text: "작성", 
+                            onPress: ()=> this.submitPost()
+                        },
+                        {
+                            text: "취소",
+                            onPress: () => alert('취소했습니다.')
+                        }
+                        
+                    ],
+                    { cancelable: false }
+                );
+            }
+
+        })
+        .catch(error=>{
+            alert(`금지단어 검사에 실패 했습니다. ${error.message}`)
+        })
     }
     gobackfunc = () =>{
         const {navigation,route} = this.props;
@@ -110,7 +129,7 @@ class GominWrite extends React.Component {
         route.params.statefunction();
     } 
     SubmitButton = () =>(
-        <TopNavigationAction icon={UpIcon} onPress={() =>{this.submitAlert()}}/>
+        <TopNavigationAction icon={UpIcon} onPress={() =>{this.filterSpamKeyword()}}/>
     )
 
     CloseAction = () =>(
@@ -136,6 +155,10 @@ class GominWrite extends React.Component {
                     textStyle={{minHeight:100}}
                 />            
                 <View style={{alignItems:"flex-end"}}>
+                    <Button onPress={()=>filterSpamKeyword(post_title,post_content)}>
+                        validation
+                    </Button>
+
                     <CheckBox 
                     checked={checked} 
                     onChange={nextChecked=>this.setState({post_anoymous_yn: nextChecked? 1 : 0,checked:nextChecked })}>
