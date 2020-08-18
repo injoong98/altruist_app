@@ -694,7 +694,8 @@ class IlbanWrite extends React.Component{
                     <Picker.Item label="Html" value="html" />
                 </Picker> */}
             </SafeAreaView>
-        )
+            )
+        }
     }
 }
 
