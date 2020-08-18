@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal} from '@ui-kitten/components'
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
@@ -17,6 +17,9 @@ const StarIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="star" {...props} />
 )
 
+const UploadIcon = (props) => (
+      <Icon {...props} name='arrow-circle-up'/>
+)
 const defaultContent = ({navigation}) =>{
     
     const BackAction = () =>(
@@ -39,21 +42,47 @@ class GominContent extends React.Component{
         this.state={
             post:'',
             comment:'',
-            value:'',
+            cmt_content:'',
             isLoading:true,
             refreshing:false
         }
     }
-    
-    UproadIcon = (props) => (
-        <TouchableWithoutFeedback>
-          <Icon {...props} name='arrow-circle-up'/>
-        </TouchableWithoutFeedback>
+    commentValid =() =>{
+        
+    }
+    commentUpload= async()=>{
+        const {cmt_content,post}=this.state;var formdata = new FormData();
+        formdata.append("post_id",post.post_id);
+        formdata.append("cmt_content",cmt_content);
+
+        await Axios.post('http://10.0.2.2/api/comment_write/update',formdata)
+        .then(response=>{
+            const {status,message}=response.data;
+            if(status=='200'){
+                alert(`성공 : ${message}`);
+                Keyboard.dismiss();
+                this.setState({cmt_content:''});
+                this.getCommentData(post.post_id);
+                this.refs.pstcmtlist.scrollToEnd();
+            }else if(status=="500"){
+                alert(`실패 : ${message}`)
+            }
+        })
+        .catch(error=>{
+            alert(`등록 실패 ! ${error.message}`)
+        })
+    }
+
+    UploadButton=(props)=>(
+        <TouchableOpacity onPress={()=>{this.commentUpload()}}>
+            <UploadIcon {...props}/>
+        </TouchableOpacity>
     )
 
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
+    
     renderPostBody = (post)=>{
         
         const regex = /(<([^>]+)>)|&nbsp;/ig;
@@ -137,7 +166,7 @@ class GominContent extends React.Component{
 
      render(){
         const {navigation,route} =this.props
-        const {value,post,comment} = this.state
+        const {cmt_content,post,comment} = this.state
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -145,36 +174,29 @@ class GominContent extends React.Component{
             <Spinner size="giant"/>
         </View>
         :
-         <SafeAreaView style={{flex:1}}>
-             <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} /> 
-             <Layout  style={{flex:1}}>
-                <Layout style={{flex:8}}>
-                    <Divider/>
-                    <List 
+        <SafeAreaView style={{flex:1}}>
+            <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} /> 
+            <Divider/>
+            <Layout style={{flex:1}}>
+                    <List
+                    ref={"pstcmtlist"} 
                     data={comment}
                     ListHeaderComponent={this.renderPostBody(post)}
                     renderItem={this.renderCommentsList}
                     onRefresh={this.onRefresh}
                     refreshing={this.state.refreshing}
                     />
-                </Layout>
-                 <Layout level="2"  style={{flex:1}}>
-                    <Layout style={styles.commentBlock}>
-                        <Input
-                            style={{flex:1, margin:15}}
-                            size='large'
-                            placeholder='댓글을 입력하세요.'
-                            value={value}
-                            multiline={true}
-                            accessoryRight={this.UproadIcon}
-                            onChangeText={nextValue => setValue(nextValue)}
-                        />
-                    </Layout>
-                 </Layout>
-               
-             </Layout>
-             
-         </SafeAreaView>
+            </Layout>
+            <Input
+                style={{margin:15,position:'relative',bottom:0}}
+                size='large'
+                placeholder='댓글을 입력하세요.'
+                value={cmt_content}
+                multiline={true}
+                accessoryRight={this.UploadButton}
+                onChangeText={nextValue => this.setState({cmt_content:nextValue})}
+            />
+        </SafeAreaView>
          )
      }
 }
@@ -319,7 +341,8 @@ class AlbaContent extends React.Component {
         this.state ={
             visible : false,
             post : {} ,
-            image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+            thumb_image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+            file_images : null,
             phoneNumber : '01099999999',
             isLoading : true,
             image_height : 0,
@@ -338,12 +361,23 @@ class AlbaContent extends React.Component {
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
-                this.setState({image: response.data.view.file_image.shift().origin_image_url});
+                this.setState({thumb_image: response.data.view.file_image[0].origin_image_url});
+                this.setState({
+                    file_images : response.data.view.file_image.map(i => {
+                        console.log('received image', i);
+                        return {uri : 'http://10.0.2.2'+i.origin_image_url};
+                    })
+                })
+                console.log(this.state.file_images);
             }
         })
         .catch((error)=>{
             alert(error)
         })
+    }
+
+    renderImage(image) {
+        return <Image style={{width: '100%', height: Dimensions.get('window').width, resizeMode: 'contain'}} source={image}/>
     }
     
     setVisible(bool){
@@ -374,7 +408,6 @@ class AlbaContent extends React.Component {
         //         img : (htmlAttribs, children, convertedCSSStyles, passProps) => this.img_return(htmlAttribs, passProps)
         //     }
         // }
-        console.log(post.post_content);
         return(
             this.state.isLoading?
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -391,7 +424,7 @@ class AlbaContent extends React.Component {
                             <Text category='h3'>{post.post_title}</Text>
                             <Layout style={{flexDirection:'row', marginBottom : 5}}>
                                 <View style={{width : 100, height : 50, borderRightWidth : 0.3, justifyContent : 'center', alignItems : 'center'}}>
-                                    <Image style={{flex:1, width : '100%', resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.image}}/>
+                                    <Image style={{flex:1, width : '100%', resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.thumb_image}}/>
                                 </View>
                                 <Text style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
@@ -447,12 +480,13 @@ class AlbaContent extends React.Component {
                                 </View>
                             </Layout>
                         </Card>
-                        <Card>    
+                        <Card>
                             <HTML
                                 html = {post.post_content}
                                 imagesMaxWidth={Dimensions.get('window').width}
                                 imagesInitialDimensions={{width:400, height : 400}}
                                 />
+                            {this.state.file_images ? this.state.file_images.map(i => <View key={i.uri}>{this.renderImage(i)}</View>) : null} 
                         </Card>
                     </ScrollView>
                     <View style={styles.bottom}>
