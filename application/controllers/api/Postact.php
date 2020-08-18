@@ -3102,9 +3102,11 @@ class Postact extends CB_Controller
 		);
 		if($return_content) {
 			response_result($return,'Err','내용에 금지단어('.$return_content.')가 포함되어있습니다');
-		}else{
+		}else if($return_title){
+			response_result($return,'Err','제목에 금지단어('.$return_title.')가 포함되어있습니다');
+		}
+		else{
 			response_result($return);
-			
 		}
 		//$json = json_encode($return);
 
