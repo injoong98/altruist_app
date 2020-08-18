@@ -1,10 +1,12 @@
 import React from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules, TouchableOpacity} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
 import ImagePicker from 'react-native-image-crop-picker';
 import { HeartIcon } from '../assets/icons/icons';
 import axios from 'axios';
+import {ActionSheet, Root} from 'native-base';
+
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -176,13 +178,14 @@ class MarketWrite extends React.Component {
     constructor(props){
         super(props);
         this.state={
-            isLoading :true,
-            post_title:'',
-            post_content:'',
-            post_location:'',
-            deal_price:'',
-            deal_type:2, // 0: 직거래, 1: 배송, 2: 둘다가능
-            deal_status:1, // 0: 판매완료, 1: 판매중
+            isLoading: true,
+            post_title: '',
+            post_content: '',
+            post_location: '',
+            deal_price: '',
+            deal_type: 2, // 0: 직거래, 1: 배송, 2: 둘다가능
+            deal_status: 1, // 0: 판매완료, 1: 판매중
+            images: [],
         }
     }
 
@@ -219,6 +222,79 @@ class MarketWrite extends React.Component {
             alert('BYE:(')
         })    
     }
+    
+    onClickAddImage() {
+        const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
+        ActionSheet.show(
+            {options: buttons,
+            cancelButtonIndex: 2,
+            title: 'Select a photo'},
+            buttonIndex => {
+                switch (buttonIndex) {
+                    case 0:
+                        this.takePhotoFromCamera();
+                        break;
+                    case 1:
+                        this.choosePhotoFromGallery();
+                        break;
+                    default:
+                        break
+                }
+            }
+        )
+    };
+
+    takePhotoFromCamera() {
+        ImagePicker.openCamera({
+            width: 300,
+            height: 400,
+            cropping: true,
+          }).then(image => {
+            this.onSelectedImage(image);
+            console.log(image);
+          });
+    }
+
+    choosePhotoFromGallery() {
+        ImagePicker.openPicker({
+            multiple: true,
+            includeExif: false,
+        }).then(image => {
+            image.map(item => this.onSelectedImage(item));
+            console.log(image);
+        });
+    }
+
+    onSelectedImage(image) {
+        console.log(image);
+        let newImages = this.state.images;
+        const source = {uri: image.path};
+        let item = {
+            id: Date.now(),
+            url: source,
+            content: image.data
+        };
+        newImages.push(item);
+        this.setState({images: newImages})
+    };
+    
+    renderImage(image) {
+        console.log(image);
+        return (
+            <View key={image.uri}>
+                <Image style={{marginLeft : 10, width: 100, height: 100, resizeMode: 'cover'}} source={image.url}/>
+            </View>
+        )
+    }
+
+    renderAsset(image) {
+        if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
+            return this.renderVideo(image);
+        }
+
+        return this.renderImage(image);
+    }
+
 
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
@@ -226,69 +302,76 @@ class MarketWrite extends React.Component {
 
     render() {
         return(
+            <Root>
             <SafeAreaView style={{flex:1}}>
-    
+                
                 <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} />
     
                 <Divider />
                 
-                <Layout style={{paddingVertical:10}}>
-                    <Layout style={styles.container}>
-                        <Text>상품명</Text>
-                        <Input
-                            style={styles.input}
-                            onChangeText={text => this.setState({post_title : text})}
-                            // value={itemName}
-                        />
-                    </Layout>
-                    <Layout style={{...styles.container, flexDirection:'row'}}>
-                        <Layout style={{flex:1}}>
-                            <Text>판매가격</Text>
-                            <Input
-                                style={styles.input}   
-                                onChangeText={text => this.setState({deal_price : text})}
-                                // value={price}
-                            />
-                        </Layout>
-                        <Layout style={{flex:1}}>
-                            <Text>지역</Text>
+                <ScrollView>
+                    <Layout style={{paddingVertical:10}}>
+                        <Layout style={styles.container}>
+                            <Text>상품명</Text>
                             <Input
                                 style={styles.input}
-                                onChangeText={text => this.setState({post_location : text})}
-                                // value={loaction}
+                                onChangeText={text => this.setState({post_title : text})}
+                                // value={itemName}
                             />
                         </Layout>
-                    </Layout>
-                    <Layout style={styles.container}>
-                        <Text>사진</Text>
-                        <ScrollView
-                            
-                        />
-                    </Layout>
-                    <Layout style={styles.container}>
-                        <Text>거래방법</Text>
-                        <Layout style={styles.deal_type}>
-                            <Layout style={styles.deal_box}>
-                                <Text>직거래</Text>
+                        <Layout style={{...styles.container, flexDirection:'row'}}>
+                            <Layout style={{flex:1}}>
+                                <Text>판매가격</Text>
+                                <Input
+                                    style={styles.input}   
+                                    onChangeText={text => this.setState({deal_price : text})}
+                                    // value={price}
+                                />
                             </Layout>
-                            <Layout style={styles.deal_box}>
-                                <Text>배송</Text>
-                            </Layout>
-                            <Layout style={styles.deal_box}>
-                                <Text>둘다가능</Text>
+                            <Layout style={{flex:1}}>
+                                <Text>지역</Text>
+                                <Input
+                                    style={styles.input}
+                                    onChangeText={text => this.setState({post_location : text})}
+                                    // value={loaction}
+                                />
                             </Layout>
                         </Layout>
+                        <Layout style={styles.container}>
+                            <Text>사진</Text>
+                            <ScrollView horizontal={true}>
+                                <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
+                                    <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                                </TouchableOpacity>
+                                {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
+                            </ScrollView>                                                 
+                        </Layout>
+                        <Layout style={styles.container}>
+                            <Text>거래방법</Text>
+                            <Layout style={styles.deal_type}>
+                                <Layout style={styles.deal_box}>
+                                    <Text>직거래</Text>
+                                </Layout>
+                                <Layout style={styles.deal_box}>
+                                    <Text>배송</Text>
+                                </Layout>
+                                <Layout style={styles.deal_box}>
+                                    <Text>둘다가능</Text>
+                                </Layout>
+                            </Layout>
+                        </Layout>
+                        <Layout style={styles.container}>
+                            <Text>상세정보</Text>
+                            <Input
+                                onChangeText={text => this.setState({post_content : text})}
+                                // value={detail}
+                            />
+                        </Layout>
+                        <Button onPress={()=>this.submitPost()}>등 록</Button>
                     </Layout>
-                    <Layout style={styles.container}>
-                        <Text>상세정보</Text>
-                        <Input
-                            onChangeText={text => this.setState({post_content : text})}
-                            // value={detail}
-                        />
-                    </Layout>
-                    <Button onPress={()=>this.submitPost()}>등 록</Button>
-                </Layout>
+                </ScrollView>
             </SafeAreaView>
+            </Root>
         )
     }
 }
