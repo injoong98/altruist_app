@@ -661,19 +661,31 @@ class AlbaWrite extends React.Component{
 
 
 class IlbanWrite extends React.Component{
+     //get : 회원정보
+    //post : 포스트 글 업로드
+    //put : ~/{게시판이름}/:{글id}/
+
+
     constructor(props){
         super(props);
-        this.state={
+        this.state = {
             isLoading: true,
-            post_title: '',
-            post_content: '',
-            post_location: '',
-            images: [],
-            image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
-            
+            brd_key: 'ilban',
+            post_title:'',
+            post_content:'',
+            post_category:'',
+            post_nickname:'',
+            post_email:'',
+            post_image: null,
+            post_images: null,
+            imagesource : {},
+            images : null,
+            //isTipVisible:false,
+            //isFollowUp:false,
         }
-    }    
+    }
 
+    //iamgeUpload
     onClickAddImage() {
         const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
         ActionSheet.show(
@@ -718,16 +730,41 @@ class IlbanWrite extends React.Component{
     pickMultiple() {
         ImagePicker.openPicker({
             multiple: true,
-            // includeExif: true,
+            maxFiles: 2,
+            includeExif: true,
+            compressImageQuality: 0.8
         }).then(images => {
             this.setState({
-                post_image: images.map(i => {
+                post_image: null,
+                post_images: images.map(i => {
                     console.log('received image', i);
                     return {uri: i.path, name : i.path.split('/').pop(), type : i.mime};
                 })
             });
+            this.props.onImagePicked({uri: images.map(i => {
+            return{uri: i.path}
+            })
+        })
         }).catch(e => alert(e));
     }
+
+    renderImage(image) {
+        const key = 1
+        return(
+            <Image style={{width: 100, maxHeight: 100, resizeMode: 'cover', marginLeft: 10}} source={image} key={key+1} />
+        
+        ) 
+    }
+
+    renderAsset(image) {
+        if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
+            return this.renderVideo(image);
+        }
+
+        return this.renderImage(image);
+    }
+    //end : iamgeUpload
+    //header
 
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
@@ -740,6 +777,7 @@ class IlbanWrite extends React.Component{
         >Photo</Button>
     )
 
+    //end: header
     render(){
         return(
             <SafeAreaView style={{flex:1}}>
@@ -764,9 +802,9 @@ class IlbanWrite extends React.Component{
                     <View style={{ flex: 2}}>
                         {/* 본문 */}
                         <Input
-                            style={{ flex: 2, minHeight: 200}}
+                            style={{padding:0}}
                             multiline={true}
-                            textStyle={{ minHeight: 400 }}
+                            textStyle={{ minHeight: 100 }}
                             />
                     </View>
                     <Divider />
@@ -775,22 +813,23 @@ class IlbanWrite extends React.Component{
                         <Layout style={styles.container}>
                             <Text>사진</Text>
                             <ScrollView horizontal={true}>
-                                <TouchableOpacity style={{width:100, height:100}}>
-                                    <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                                <TouchableOpacity style={{width:100, height:100}}
+                                onPress ={()=>{
+                                    this.cleanupImages();
+                                    this.pickMultiple();
+                                }}
+                                >
+                                    <Image 
+                                        source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} 
+                                        style={{width:100,height:100}}
+                                        />
                                 </TouchableOpacity>
-                                {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
-                            </ScrollView>         
-                            <Button onPress ={()=>{
-                                this.cleanupImages();
-                                this.pickMultiple();
-                            }}>
-                                사진추가
-                            </Button>                                        
+                                {this.state.post_image ? this.state.post_image.map(item => this.renderAsset(item)) : null}
+                                {this.state.post_images ? this.state.post_images.map(item => <View key={item.uri}>{this.renderAsset(item)}</View>) : null}
+                            </ScrollView>                                        
                         </Layout>
                     </View>   
-                    <Button 
-                    onPress={()=>{this.props.navigation.navigate('IlbanWrite')}}
-                    >글쓰기</Button>
+                   
             </SafeAreaView>
         )
     }
