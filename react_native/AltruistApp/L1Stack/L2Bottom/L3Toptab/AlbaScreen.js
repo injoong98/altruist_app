@@ -43,9 +43,9 @@ class AlbaScreen extends React.Component {
     this.getPostList();
   }
 
-  statefunction=(str)=>{
+  statefunction=()=>{
     this.setState({isLoading:true});
-    this.onRefresh()
+    this.componentDidMount();
   }
 
   renderItem = ({item, index}) => (
