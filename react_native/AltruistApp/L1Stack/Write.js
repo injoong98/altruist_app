@@ -199,12 +199,12 @@ class MarketWrite extends React.Component {
             formdata.append("brd_key", 'b-a-2');
             formdata.append("post_title", post_title);
             formdata.append("post_content", post_content);
-            formdata.append("post_location", post_location);
+            // formdata.append("post_location", post_location);
             formdata.append("post_nickname", 'Edward');
             formdata.append("post_email", 'Edward@sogang.ac.kr');
             formdata.append("post_password", '0000');
-            formdata.append("deal_price", deal_price);
-            formdata.append("deal_type", deal_type);
+            // formdata.append("deal_price", deal_price);
+            // formdata.append("deal_type", deal_type);
             // formdata.append("deal_status", Data.deal_status);
             
         await axios.post(
@@ -228,6 +228,11 @@ class MarketWrite extends React.Component {
             alert('BYE:(')
         })    
     }
+    
+    gobackfunc = () =>{
+        const {navigation,route} = this.props;
+        navigation.goBack();
+    } 
     
     //등록버튼 클릭했을 때
     onClickAddImage() {
