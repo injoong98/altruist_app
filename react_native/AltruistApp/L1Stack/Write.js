@@ -2,7 +2,6 @@ import React from 'react';
 import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules, TouchableOpacity} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
-//import ImagePicker from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import { HeartIcon } from '../assets/icons/icons';
 import axios from 'axios';
@@ -17,8 +16,6 @@ const CloseIcon =  (props) =>(
 const UpIcon =  (props) =>(
     <Icon {...props} name = "arrow-circle-up-outline"/>
 )
-
-
 
 const defaultWrite = ({navigation}) =>{
     
@@ -90,22 +87,43 @@ class GominWrite extends React.Component {
         })    
     
     }
-    submitAlert= () => {
-        Alert.alert(
-            "게시글",
-            "게시글을 작성하시겠습니까?",
-            [
-                {
-                    text: "취소",
-                    onPress: () => alert('취소했습니다.')
-                },
-                { 
-                    text: "직성", 
-                    onPress: ()=> this.submitPost()
-                }
-            ],
-            { cancelable: false }
-        );
+    filterSpamKeyword= async() => {
+        const {post_title,post_content} =this.state;
+        
+        var formdata =new FormData();
+        formdata.append("title", post_title);
+        formdata.append("content", post_content);
+        formdata.append("csrf_test_name", '');
+        
+    
+        await axios.post('http://10.0.2.2/api/postact/filter_spam_keyword',formdata)
+        .then(response=>{
+            const {message,status}=response.data
+            if(status=='500'){
+                alert(message)
+            }else if(status=="200"){
+                Alert.alert(
+                    "게시글",
+                    "게시글을 작성하시겠습니까?",
+                    [
+                        { 
+                            text: "작성", 
+                            onPress: ()=> this.submitPost()
+                        },
+                        {
+                            text: "취소",
+                            onPress: () => alert('취소했습니다.')
+                        }
+                        
+                    ],
+                    { cancelable: false }
+                );
+            }
+
+        })
+        .catch(error=>{
+            alert(`금지단어 검사에 실패 했습니다. ${error.message}`)
+        })
     }
     gobackfunc = () =>{
         const {navigation,route} = this.props;
@@ -113,7 +131,7 @@ class GominWrite extends React.Component {
         route.params.statefunction();
     } 
     SubmitButton = () =>(
-        <TopNavigationAction icon={UpIcon} onPress={() =>{this.submitAlert()}}/>
+        <TopNavigationAction icon={UpIcon} onPress={() =>{this.filterSpamKeyword()}}/>
     )
 
     CloseAction = () =>(
@@ -139,6 +157,10 @@ class GominWrite extends React.Component {
                     textStyle={{minHeight:100}}
                 />            
                 <View style={{alignItems:"flex-end"}}>
+                    <Button onPress={()=>filterSpamKeyword(post_title,post_content)}>
+                        validation
+                    </Button>
+
                     <CheckBox 
                     checked={checked} 
                     onChange={nextChecked=>this.setState({post_anoymous_yn: nextChecked? 1 : 0,checked:nextChecked })}>
@@ -367,9 +389,8 @@ class AlbaWrite extends React.Component{
             alba_type : 0,
             alba_salary_type : 0,
             alba_salary : '',
-            post_image : [],
+            post_image : null,
             imagesource : {},
-            image : null,
             images : null,
             isTipVisible:false,
             isFollowUp:false,
@@ -393,7 +414,7 @@ class AlbaWrite extends React.Component{
     }
     submit_alba_post = async() => {
         console.log(this.state);
-        const {post_title, post_content, post_location, alba_type, alba_salary_type, alba_salary} = this.state;
+        const {post_title, post_content, post_location, alba_type, alba_salary_type, alba_salary, post_image} = this.state;
         let formdata = new FormData();
         formdata.append("brd_key", 'b-a-3');
         formdata.append("post_title", post_title);
@@ -401,12 +422,18 @@ class AlbaWrite extends React.Component{
         formdata.append("post_nickname", 'roothyo');
         formdata.append("post_email", 'roothyo@soongsil.ac.kr');
         formdata.append("post_password", '1234');
+        // post_image.forEach(element => {
+        //     console.log(element);
+        //     formdata.append("post_file", element);
+        // });
+
         // formdata.append("post_location", post_location);
         // formdata.append("alba_type", alba_type);
         // formdata.append("alba_salary_type", alba_salary_type);
         // formdata.append("alba_salary", alba_salary);
+        console.log(post_image);
         console.log(formdata);
-        await axios.post('http://dev.unyict.org/api/board_write/write/b-a-3', formdata)
+        await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
         .then(response=>{
             console.log(response);
             Alert.alert(
@@ -445,6 +472,7 @@ class AlbaWrite extends React.Component{
     }
 
     gobackfunc = () =>{
+        this.cleanupImages();
         const {navigation,route} = this.props;
         navigation.goBack();
         route.params.statefunction();
@@ -462,11 +490,10 @@ class AlbaWrite extends React.Component{
     pickMultiple() {
         ImagePicker.openPicker({
             multiple: true,
-            includeExif: true,
+            // includeExif: true,
         }).then(images => {
             this.setState({
-                image: null,
-                images: images.map(i => {
+                post_image: images.map(i => {
                     console.log('received image', i);
                     return {uri: i.path, width: i.width, height: i.height, mime: i.mime};
                 })
@@ -566,11 +593,11 @@ class AlbaWrite extends React.Component{
                     />
                     <View style={{flex : 1, backgroundColor : 'black'}}>
                         <ScrollView horizontal>
-                            {this.state.image ? this.renderAsset(this.state.image) : null}
-                            {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
+                            {this.state.post_image ? this.state.post_image.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
                         </ScrollView>
                     </View>
                     <Button onPress ={()=>{
+                        this.cleanupImages();
                         this.pickMultiple();
                     }}>
                         사진추가

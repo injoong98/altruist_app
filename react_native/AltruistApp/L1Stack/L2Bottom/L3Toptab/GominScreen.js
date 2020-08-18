@@ -52,7 +52,7 @@ class GominScreen extends React.Component {
             this.setState({lists:response.data.view.list.data.list,isLoading:false})
         })
         .catch((error)=>{
-            alert('error')
+            alert(`error: ${error.message}`)
         })
     }
     componentDidMount(){
