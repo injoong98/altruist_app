@@ -1,8 +1,9 @@
 import React from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
-import WebView from 'react-native-webview';
+//import ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 import { HeartIcon } from '../assets/icons/icons';
 import axios from 'axios';
 const BackIcon =  (props) =>(
@@ -47,8 +48,8 @@ class GominWrite extends React.Component {
         super(props);
         this.state={
             isLoading :true,
-            post_title:'',
-            post_content:'',
+            post_title:'title from avd',
+            post_content:'content from avd 익명,카테고리 1',
             post_anoymous_yn:1,
             post_category:1,
             checked:true
@@ -59,32 +60,22 @@ class GominWrite extends React.Component {
     submitPost= async()=>{
         const {post_title,post_content,post_anoymous_yn,post_category} =this.state
         let formdata = new FormData();
-            formdata.append("brd_key", 'b-a-1');
             formdata.append("post_title", post_title);
             formdata.append("post_content", post_content);
             formdata.append("post_category", post_category);
             formdata.append("post_anoymous_yn", post_anoymous_yn);
-            formdata.append("post_nickname", '임시nickname');
-            formdata.append("post_email", 'post_email@unyict.org');
-            formdata.append("post_password", 'post_password');
         await axios.post(
-            'http://dev.unyict.org/api/board_write/write',
+            'http://10.0.2.2/api/board_write/write/b-a-1',
             formdata
             )
         .then(response=>{
-            var message=response.data.message;
-            if(response.data.status!='200'){
-                var title = '실패 안내';
-            }else{
-                var title = '게시글';
-            }
             Alert.alert(
-                `${title}`,
-                `${message}`,
+                "게시글",
+                "게시글 작성 완료",
                 [
                     { 
-                        text: "확인", 
-                        onPress: ()=> {if(response.data.status=='200'){this.gobackfunc();}else{return true}}
+                        text: "닫기", 
+                        onPress: ()=> this.gobackfunc()
                     }
                 ],
                 { cancelable: false }
@@ -201,23 +192,26 @@ class MarketWrite extends React.Component {
         }
     }
 
-    submit_Market_Post = async() => {
+    submitPost = async() => {
 
-        const {post_title,post_content,post_location,deal_price,deal_type,deal_status}  = this.state
+        const Data = this.state
 
         let formdata = new FormData();
-            formdata.append("post_title", post_title);
-            formdata.append("post_content", post_content);
-            formdata.append("post_location", post_location);
-            formdata.append("deal_price", deal_price);
-            formdata.append("deal_type", deal_type);
-            formdata.append("deal_status", deal_status);
+            formdata.append("post_title", Data.post_title);
+            formdata.append("post_content", Data.post_content);
+            formdata.append("post_location", Data.post_location);
+            formdata.append("deal_price", Data.deal_price);
+            formdata.append("deal_type", Data.deal_type);
+            formdata.append("deal_status", Data.deal_status);
             
-        await axios.post('http://10.0.2.2/api/board_write/write/b-a-2',formdata)
+        await axios.post(
+            'http://10.0.2.2/api/board_write/write/b-a-2',
+            formdata
+        )
         .then(response=>{
             Alert.alert(
-                "상품등록",
-                "상품등록 완료",
+                "게시글",
+                "게시글 작성 완료",
                 [
                     { 
                         text: "OK", 
@@ -232,24 +226,6 @@ class MarketWrite extends React.Component {
         })    
     }
 
-    submit_Market_Alert= () => {
-        Alert.alert(
-            "상품등록",
-            "상품을 등록하시겠습니까?",
-            [
-                {
-                    text: "취소",
-                    onPress: () => alert('취소했습니다.')
-                },
-                { 
-                    text: "등록", 
-                    onPress: ()=> this.submit_Market_Post()
-                }
-            ],
-            { cancelable: false }
-        );
-    }
-
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
@@ -262,49 +238,62 @@ class MarketWrite extends React.Component {
     
                 <Divider />
                 
-                <Layout>
-                    <Text>상품명</Text>
-                    <Input
-                        onChangeText={text => this.setState({post_title : text})}
-                        // value={itemName}
-                    />
-                </Layout>
-                <Layout style={{flexDirection:'row'}}>
-                    <Layout style={{flex:1}}>
-                        <Text>판매가격</Text>
+                <Layout style={{paddingVertical:10}}>
+                    <Layout style={styles.container}>
+                        <Text>상품명</Text>
                         <Input
-                            onChangeText={text => this.setState({deal_price : text})}
-                            // value={price}
+                            style={styles.input}
+                            onChangeText={text => this.setState({post_title : text})}
+                            // value={itemName}
                         />
                     </Layout>
-                    <Layout style={{flex:1}}>
-                        <Text>지역</Text>
-                        <Input
-                            onChangeText={text => this.setState({post_location : text})}
-                            // value={loaction}
+                    <Layout style={{...styles.container, flexDirection:'row'}}>
+                        <Layout style={{flex:1}}>
+                            <Text>판매가격</Text>
+                            <Input
+                                style={styles.input}   
+                                onChangeText={text => this.setState({deal_price : text})}
+                                // value={price}
+                            />
+                        </Layout>
+                        <Layout style={{flex:1}}>
+                            <Text>지역</Text>
+                            <Input
+                                style={styles.input}
+                                onChangeText={text => this.setState({post_location : text})}
+                                // value={loaction}
+                            />
+                        </Layout>
+                    </Layout>
+                    <Layout style={styles.container}>
+                        <Text>사진</Text>
+                        <ScrollView
+                            
                         />
                     </Layout>
+                    <Layout style={styles.container}>
+                        <Text>거래방법</Text>
+                        <Layout style={styles.deal_type}>
+                            <Layout style={styles.deal_box}>
+                                <Text>직거래</Text>
+                            </Layout>
+                            <Layout style={styles.deal_box}>
+                                <Text>배송</Text>
+                            </Layout>
+                            <Layout style={styles.deal_box}>
+                                <Text>둘다가능</Text>
+                            </Layout>
+                        </Layout>
+                    </Layout>
+                    <Layout style={styles.container}>
+                        <Text>상세정보</Text>
+                        <Input
+                            onChangeText={text => this.setState({post_content : text})}
+                            // value={detail}
+                        />
+                    </Layout>
+                    <Button onPress={()=>this.submitPost()}>등 록</Button>
                 </Layout>
-                <Layout>
-                    <Text>사진</Text>
-                    {/* <VirtualizedList
-                        data={DATA}
-                        initialNumToRender={4}
-                        renderItem={({ item }) => <Item uri={item.uri} />}
-                        keyExtractor={item => item.id}
-                        getItemCount={getItemCount}
-                        getItem={getItem}
-                        horizontal={true}
-                    /> */}
-                </Layout>
-                <Layout>
-                    <Text>상세정보</Text>
-                    <Input
-                        onChangeText={text => this.setState({post_content : text})}
-                        // value={detail}
-                    />
-                </Layout>
-                <Button onPress={()=>this.submit_Market_Alert()}>등 록</Button>
             </SafeAreaView>
         )
     }
@@ -323,7 +312,10 @@ class AlbaWrite extends React.Component{
             alba_type : 0,
             alba_salary_type : 0,
             alba_salary : '',
-            _File : [],
+            post_image : [],
+            imagesource : {},
+            image : null,
+            images : null,
             isTipVisible:false,
             isFollowUp:false,
         }
@@ -348,31 +340,35 @@ class AlbaWrite extends React.Component{
         console.log(this.state);
         const {post_title, post_content, post_location, alba_type, alba_salary_type, alba_salary} = this.state;
         let formdata = new FormData();
-            formdata.append("post_title", post_title);
-            formdata.append("post_content", post_content);
-            formdata.append("post_location", post_location);
-            formdata.append("alba_type", alba_type);
-            formdata.append("alba_salary_type", alba_salary_type);
-            formdata.append("alba_salary", alba_salary);
-        await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
+        formdata.append("brd_key", 'b-a-3');
+        formdata.append("post_title", post_title);
+        formdata.append("post_content", post_content);
+        formdata.append("post_nickname", 'roothyo');
+        formdata.append("post_email", 'roothyo@soongsil.ac.kr');
+        formdata.append("post_password", '1234');
+        // formdata.append("post_location", post_location);
+        // formdata.append("alba_type", alba_type);
+        // formdata.append("alba_salary_type", alba_salary_type);
+        // formdata.append("alba_salary", alba_salary);
+        console.log(formdata);
+        await axios.post('http://dev.unyict.org/api/board_write/write/b-a-3', formdata)
         .then(response=>{
+            console.log(response);
             Alert.alert(
                 "게시글",
                 "게시글 작성 완료",
                 [
                     { 
                         text: "OK", 
-                        onPress: ()=> alert('Hi')
+                        onPress: ()=> {this.gobackfunc()}
                     }
                 ],
                 { cancelable: false }
             );
         })
         .catch(error=>{
-            alert('BYE:(')
+            alert(error);
         })
-
-        this.props.navigation.goBack();
     }
 
     submit_alba_Alert= () => {
@@ -393,8 +389,50 @@ class AlbaWrite extends React.Component{
         );
     }
 
-    get_Image_gallary = () =>{
+    gobackfunc = () =>{
+        const {navigation,route} = this.props;
+        navigation.goBack();
+        route.params.statefunction();
+    } 
 
+    cleanupImages() {
+        ImagePicker.clean().then(() => {
+            // console.log('removed tmp images from tmp directory');
+            alert('Temporary images history cleared')
+        }).catch(e => {
+            alert(e);
+        });
+    }
+
+    pickMultiple() {
+        ImagePicker.openPicker({
+            multiple: true,
+            includeExif: true,
+        }).then(images => {
+            this.setState({
+                image: null,
+                images: images.map(i => {
+                    console.log('received image', i);
+                    return {uri: i.path, width: i.width, height: i.height, mime: i.mime};
+                })
+            });
+        }).catch(e => alert(e));
+    }
+
+    scaledHeight(oldW, oldH, newW) {
+        return (oldH / oldW) * newW;
+    }
+
+    renderImage(image) {
+        return <Image style={{width: 200, height: 200, resizeMode: 'contain'}} source={image}/>
+    }
+
+    renderAsset(image) {
+        if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
+            return this.renderVideo(image);
+        }
+
+        return this.renderImage(image);
     }
 
     renderToggleButton = () => (
@@ -467,12 +505,18 @@ class AlbaWrite extends React.Component{
                         </View>
                     <Input
                         multiline={true}
-                        textStyle={{ minHeight: 500}}
+                        textStyle={{ minHeight: 300}}
                         placeholder='Input Context'
                         onChangeText ={(nextText) => {this.setState({post_content:nextText})}}
                     />
+                    <View style={{flex : 1, backgroundColor : 'black'}}>
+                        <ScrollView horizontal>
+                            {this.state.image ? this.renderAsset(this.state.image) : null}
+                            {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
+                        </ScrollView>
+                    </View>
                     <Button onPress ={()=>{
-                        this.get_Image_gallary();
+                        this.pickMultiple();
                     }}>
                         사진추가
                     </Button>
@@ -481,7 +525,7 @@ class AlbaWrite extends React.Component{
                 <View style={styles.bottomView}>
                     <Button 
                         style={styles.bottomButton}
-                        onPress={()=>{this.submit_alba_post()}}>
+                        onPress={()=>{this.submit_alba_Alert()}}>
                             글쓰기 
                     </Button>
                 </View>   
@@ -490,9 +534,26 @@ class AlbaWrite extends React.Component{
     }
 }
 
+
+
+class IlbanWrite extends React.Component{
+    render(){
+        return(
+            <SafeAreaView style={{flex:1}}>
+            <View>
+                <Text>
+                    Hi!
+                </Text>
+            </View>
+            </SafeAreaView>
+        )
+    }
+}
+
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
+      marginHorizontal : 5,
+      padding : 5
     },
     item: {
       backgroundColor: '#f9c2ff',
@@ -526,7 +587,21 @@ const styles = StyleSheet.create({
     bottomButton: {
         width : "95%",
     },
+    deal_type : {
+        flexDirection : 'row',
+        justifyContent : 'space-around',
+        alignItems : 'center',
+    },
+    deal_box : {
+        width : '25%',
+        height : 40,
+        justifyContent : 'center',
+        alignItems : 'center',
+        borderColor : 'gray',
+        borderRadius : 10,
+        borderWidth: 1,
+    }
 });
   
 
-export {defaultWrite, MarketWrite, AlbaWrite,GominWrite}
+export {defaultWrite, MarketWrite, AlbaWrite, GominWrite, IlbanWrite}

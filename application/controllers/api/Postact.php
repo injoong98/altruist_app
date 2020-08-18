@@ -39,7 +39,7 @@ class Postact extends CB_Controller
 	/**
 	 * 게시물 삭제하기
 	 */
-	public function delete($post_id = 0)
+	public function delete()
 	{
 
 		// 이벤트 라이브러리를 로딩합니다
@@ -49,18 +49,26 @@ class Postact extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
 
-		$post_id = (int) $post_id;
-		if (empty($post_id) OR $post_id < 1) {
-			show_404();
-		}
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
-			alert('해당 게시물에서만 접근 가능합니다');
-		}
-
-		$post = $this->Post_model->get_one($post_id);
+		$post_id = $this->Post_model->get_one($post_id);
 
 		if ( ! element('post_id', $post)) {
-			show_404();
+			response_result($view,'Err','post id 가 없습니다..');
+			//show_404();
+		}
+		if (empty($post_id) OR $post_id < 1) {
+			response_result($view,'Err','post_id에 숫자형이 입력되지 않았습니다');
+			//show_404();
+		}
+		if ( ! $this->session->userdata('post_id_' . $post_id)) {
+			response_result($view,'Err','해당 게시물에서만 접근 가능합니다.');
+			//alert('해당 게시물에서만 접근 가능합니다');
+		}
+		
+		$post = $this->Post_model->get_one($post_id);
+		
+		if ( ! element('post_id', $post)) {
+			response_result($view,'Err',$post_id.'로 게시물이 조회되지 않았습니다.');
+			//show_404();
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
@@ -74,19 +82,22 @@ class Postact extends CB_Controller
 		);
 
 		if (element('block_delete', $board) && $is_admin === false) {
-			alert('이 게시판의 글은 관리자에 의해서만 삭제가 가능합니다');
-			return false;
+			response_result($view,'Err','이 게시판의 글은 관리자에 의해서만 삭제가 가능합니다');
+			//alert('이 게시판의 글은 관리자에 의해서만 삭제가 가능합니다');
+			//return false;
 		}
 		if (element('protect_post_day', $board) > 0 && $is_admin === false) {
 			if (ctimestamp() - strtotime(element('post_datetime', $post)) >= element('protect_post_day', $board) * 86400) {
-				alert('이 게시판은 ' . element('protect_post_day', $board) . '일 이상된 게시글의 삭제를 금지합니다');
-				return false;
+				response_result($view,'Err','이 게시판은 ' . element('protect_post_day', $board) . '일 이상된 게시글의 삭제를 금지합니다');
+				//alert('이 게시판은 ' . element('protect_post_day', $board) . '일 이상된 게시글의 삭제를 금지합니다');
+				//return false;
 			}
 		}
 		if (element('protect_comment_num', $board) > 0 && $is_admin === false) {
 			if (element('protect_comment_num', $board) <= element('post_comment_count', $post)) {
-				alert(element('protect_comment_num', $board) . '개 이상의 댓글이 달린 게시글은 삭제할 수 없습니다');
-				return false;
+				response_result($view,'Err',element('protect_comment_num', $board) . '개 이상의 댓글이 달린 게시글은 삭제할 수 없습니다');
+			//	alert(element('protect_comment_num', $board) . '개 이상의 댓글이 달린 게시글은 삭제할 수 없습니다');
+			//	return false;
 			}
 		}
 
@@ -96,8 +107,9 @@ class Postact extends CB_Controller
 		if (element('mem_id', $post)) {
 			if ($is_admin === false
 				AND $mem_id !== abs(element('mem_id', $post))) {
-				alert('회원님은 이 글을 삭제할 권한이 없습니다');
-				return false;
+					response_result($view,'Err','회원님은 이 글을 삭제할 권한이 없습니다');
+				//	alert('회원님은 이 글을 삭제할 권한이 없습니다');
+				//return false;
 			}
 		} else {
 
@@ -124,9 +136,10 @@ class Postact extends CB_Controller
 						'can_delete_' . element('post_id', $post),
 						'1'
 					);
-					redirect(current_url());
+					//redirect(current_url());
 				} else {
-					$view['view']['message'] = '패스워드가 잘못 입력되었습니다';
+					response_result($view,'Err','패스워드가 잘못 입력되었습니다');
+					//$view['view']['message'] = '패스워드가 잘못 입력되었습니다';
 				}
 			}
 			if ( ! $this->session->userdata('can_delete_' . element('post_id', $post))) {
@@ -160,9 +173,10 @@ class Postact extends CB_Controller
 				);
 				$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
 				$this->data = $view;
-				$this->layout = element('layout_skin_file', element('layout', $view));
+				response_result($view,'success',$view['view']['info'] );
+			/* 	$this->layout = element('layout_skin_file', element('layout', $view));
 				$this->view = element('view_skin_file', element('layout', $view));
-				return true;
+				return true; */
 			}
 		}
 
@@ -189,8 +203,13 @@ class Postact extends CB_Controller
 
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('after', $eventname);
-
-		redirect(board_url(element('brd_key', $board)));
+		$view['redirectinfo']['brd_key'] = element('brd_key', $board);
+		$view['redirectinfo']['post_id'] = $post_id;
+	
+		//불필요한 값 제거 
+		unset($view['view']);
+		response_result($view,'success','게시물이 정상적으로 삭제되었습니다.' );
+	//	redirect(board_url(element('brd_key', $board)));
 
 	}
 
@@ -266,15 +285,19 @@ class Postact extends CB_Controller
 
 		$cmt_id = (int) $this->input->post('cmt_id');
 		if (empty($cmt_id) OR $cmt_id < 1) {
-			$result = array('error' => '잘못된 접근입니다');
-			exit(json_encode($result));
+			response_result($view,'Err','잘못된 접근입니다' );
+			//$result = array('error' => '잘못된 접근입니다');
+			//exit(json_encode($result));
 		}
 
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('after', $eventname);
 
-		exit($this->board->delete_comment_check($cmt_id));
-
+		exit($this->board->delete_comment_check_api($cmt_id));
+	/* 	$result = $this->board->delete_comment_check($cmt_id);
+		$view['error'] = $result['error'];
+		response_result($r,'success',$result ); */
+		
 	}
 
 
@@ -3042,7 +3065,7 @@ class Postact extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
 
-		$this->output->set_content_type('application/json');
+		//$this->output->set_content_type('application/json');
 
 		$title = strip_tags($this->input->post('title'));
 		$content = strip_tags($this->input->post('content'));
@@ -3073,14 +3096,19 @@ class Postact extends CB_Controller
 
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('after', $eventname);
-
 		$return = array(
 			'title' => $return_title,
 			'content' => $return_content,
 		);
-		$json = json_encode($return);
+		if($return_content) {
+			response_result($return,'Err','내용에 금지단어('.$return_content.')가 포함되어있습니다');
+		}else{
+			response_result($return);
+			
+		}
+		//$json = json_encode($return);
 
-		exit($json);
+		//exit($json);
 	}
 
 
