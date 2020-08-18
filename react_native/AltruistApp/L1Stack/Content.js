@@ -47,11 +47,10 @@ class GominContent extends React.Component{
             refreshing:false
         }
     }
-    commentValid =() =>{
-        
-    }
+    
     commentUpload= async()=>{
-        const {cmt_content,post}=this.state;var formdata = new FormData();
+        const {cmt_content,post}=this.state;
+        var formdata = new FormData();
         formdata.append("post_id",post.post_id);
         formdata.append("cmt_content",cmt_content);
 
@@ -72,9 +71,28 @@ class GominContent extends React.Component{
             alert(`등록 실패 ! ${error.message}`)
         })
     }
+    
+    commentValid =async() =>{
+        const {cmt_content} =this.state;
+        var formdata = new FormData();
+        formdata.append("content",cmt_content);
+        
+        await Axios.post('http://10.0.2.2/api/postact/filter_spam_keyword',formdata)
+        .then(response=>{
+            const {status,message} = response.data;
+            if(status=='500'){
+                alert(message);
+            }else if(status=="200"){
+                this.commentUpload();
+            }
+        })
+        .catch(error=>{
+            alert('error')
+        })
 
+    }
     UploadButton=(props)=>(
-        <TouchableOpacity onPress={()=>{this.commentUpload()}}>
+        <TouchableOpacity onPress={()=>{this.commentValid()}}>
             <UploadIcon {...props}/>
         </TouchableOpacity>
     )
