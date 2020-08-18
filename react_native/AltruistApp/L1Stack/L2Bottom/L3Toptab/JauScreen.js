@@ -120,6 +120,7 @@ class JauScreen extends React.Component {
           nickname={item.post_nickname} 
           datetime={item.post_datetime} 
           hit={item.post_hit} />
+          {/* 서버에 올라가는거 보고 진행 */}
             <HTML html = {item.post_content} 
             ignoredTags={[ ...IGNORED_TAGS, 'span', 'br', 'img']}
             ignoredStyles ={['lazyloaded']}
