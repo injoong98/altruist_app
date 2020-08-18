@@ -666,6 +666,9 @@ class AlbaWrite extends React.Component{
 
 
 class IlbanWrite extends React.Component{
+    BackAction = () =>(
+        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
+    )
     // constructor(){
     //     super();
     //     this.state = {
@@ -682,40 +685,50 @@ class IlbanWrite extends React.Component{
       };
 
       render(){
-          const UselessTextInput = () => {
-              const [value, onChangeText] = React.useState('Useless Placeholder')
         return(
             <SafeAreaView style={{flex:1}}>
-                <View>
-                    <Picker
-                        selectedValue={this.state.language}
-                        style={{height: 50, width: 100}}
-                        onValueChange={(itemValue, itemIndex) =>
-                            this.setState({language: itemValue})
-                        }>
-                        <Picker.Item label="Java" value="java" />
-                        <Picker.Item label="JavaScript" value="js" />
-                    </Picker>
-                    <TextInput
-                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                        onChangeText={text => onChangeText(text)}
-                        value={value}
+                <TopNavigation title="일반게시판" alignment="center" accessoryLeft={this.BackAction} /> 
+                    <Divider />
+                    <View style={{flex:1}} >
+                        <Picker
+                            selectedValue={this.state.language}
+                            onValueChange={(itemValue, itemIndex) =>
+                                this.setState({language: itemValue})
+                            }>
+                            <Picker.Item label="Java" value="java" />
+                            <Picker.Item label="JavaScript" value="js" />
+                        </Picker>
+                        <TextInput
+                            style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                         />
-
-                </View>
-                {/* <Picker
-                style = {{width:'80%'}}
-                selectedValue={this.state.PickerValue}
-                onValueChange = 
-                {(itemValue, itemIndex) => 
-                    this.setState({PickerValue : itemValue})}
-                >
-                    <Picker.Item label="Html" value="html" />
-                    <Picker.Item label="Html" value="html" />
-                </Picker> */}
+                    </View>
+                    <View style={{flex:2}} >
+                    <TextInput
+                        style={{ minHeight: 200, borderColor: 'gray', borderWidth: 1 }}
+                        editable
+                        minLength={10}
+                    />
+                    </View>
+                    <View style={{flex:1, justifyContent: "center", padding:0, marginBottom: 2, }}>
+                        <Button 
+                            style={styles.bottomButton}
+                            onPress={()=>{this.props.navigation.navigate('IlbanWrite')}}
+                            >
+                        글쓰기 
+                        </Button>
+                    </View>   
+                    {/* <Picker
+                    style = {{width:'80%'}}
+                    selectedValue={this.state.PickerValue}
+                    onValueChange = 
+                    {(itemValue, itemIndex) => 
+                        this.setState({PickerValue : itemValue})}
+                    >
+                        <Picker.Item label="Html" value="html" />
+                        <Picker.Item label="Html" value="html" />
+                    </Picker> */}
             </SafeAreaView>
-            )
-        }
+        )
     }
 }
 

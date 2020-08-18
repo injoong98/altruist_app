@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, Layout} from 'react-native';
+import { StyleSheet, View, Image, Layout, ActivityIndicator} from 'react-native';
 import { Card, List, Text, Divider, Button, Spinner} from '@ui-kitten/components';
 import axios from 'axios';
 
@@ -8,8 +8,11 @@ class AlbaScreen extends React.Component {
   constructor(props){
     super(props);
     this.state={
+      current_page : 1,
       isLoading : true,
-      lists : '',
+      isListLoading : false,
+      isNoMoreData : false,
+      lists : [],
       image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
       refreshing : false,
     }
@@ -26,9 +29,19 @@ class AlbaScreen extends React.Component {
   // );
 
   getPostList = async() =>{
-    await axios.get('http://10.0.2.2/api/board_post/lists/b-a-3')
+    await axios.get(`http://10.0.2.2/api/board_post/lists/b-a-3?page=${this.state.current_page}`)
     .then((response)=>{
-        this.setState({lists:response.data.view.list.data.list,isLoading:false})
+      if(response.data.view.list.data.list.length > 0){
+        this.setState({
+          lists:this.state.lists.concat(response.data.view.list.data.list),
+          isLoading:false,
+          isListLoading:false,
+        })
+      }
+      else{
+        console.log('no page data');
+        this.setState({isListLoading:false, isNoMoreData : true});
+      }
     })
     .catch((error)=>{
         alert('error')
@@ -36,20 +49,36 @@ class AlbaScreen extends React.Component {
   }
 
   componentDidMount(){
-    this.getPostList();
+    this.setState({isListLoading:true}, this.getPostList);
   }
 
   onRefresh = () => {
-    this.getPostList();
+    this.setState({current_page:1, isNoMoreData : false, lists:[]}, this.getPostList);
   }
 
   statefunction=()=>{
-    this.setState({isLoading:true});
-    this.componentDidMount();
+    this.setState({isLoading:true}, this.componentDidMount);
+  }
+
+  load_more_data = () => {
+    if(!this.state.isNoMoreData){
+      this.setState({
+        current_page : this.state.current_page + 1,
+        isListLoading : true},
+        this.getPostList, console.log(this.state.current_page))
+    }
+  }
+
+  renderFooter=()=>{
+    return(
+      this.state.isListLoading ?
+      <View style = {styles.loader}>
+        <ActivityIndicator size='large'/>
+      </View>:null
+    )
   }
 
   renderItem = ({item, index}) => (
-      item.origin_image_url?
       <Card
       onPress={() => {this.props.navigation.navigate('AlbaContent', item.post_id)}}
       style={styles.carditem}
@@ -62,23 +91,10 @@ class AlbaScreen extends React.Component {
                 <Text>item.post_location<Text style={{color : 'red'}}>item.alba_salary_type</Text> item.alba_salary</Text>
             </View>
             <View style={styles.image}>
+              {item.origin_image_url?
                 <Image source={{uri:'http://10.0.2.2'+item.origin_image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
-            </View>
-        </View>
-      </Card>
-      :<Card
-      onPress={() => {this.props.navigation.navigate('AlbaContent', item.post_id)}}
-      style={styles.carditem}
-      status='basic'>
-        <View style={{flexDirection : 'row'}}>
-            <View style={styles.Text}>
-                <Text style={{fontSize : 20}}>{item.post_nickname}</Text>
-                <Text style={{marginTop :5, marginBottom : 5}}>{item.title}</Text>
-                <Divider style={{borderWidth : 0.5}}/>
-                <Text>item.post_location<Text style={{color : 'red'}}>item.alba_salary_type</Text> item.alba_salary</Text>
-            </View>
-            <View style={styles.image}>
-                <Image source={{uri:'http://10.0.2.2'+this.state.image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
+                :<Image source={{uri:'http://10.0.2.2'+this.state.image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
+              }
             </View>
         </View>
       </Card>
@@ -101,6 +117,9 @@ class AlbaScreen extends React.Component {
           renderItem={this.renderItem}
           refreshing={this.state.refreshing}
           onRefresh={this.onRefresh}
+          onEndReached={this.load_more_data}
+          onEndReachedThreshold = {0.9}
+          ListFooterComponent={this.renderFooter}
           />
       </View>
       <View style={styles.bottomView}>
@@ -124,6 +143,10 @@ const styles = StyleSheet.create({
   },
   carditem: {
     marginVertical: 4,
+  },
+  loader : {
+    marginTop : 10,
+    alignItems : 'center',
   },
   Text : {
     flex : 2,

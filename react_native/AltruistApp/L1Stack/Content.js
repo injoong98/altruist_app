@@ -405,11 +405,11 @@ class AlbaContent extends React.Component {
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
-                this.setState({thumb_image: response.data.view.file_image[0].origin_image_url});
+                this.setState({thumb_image: response.data.view.file_image.shift().origin_image_url});
                 this.setState({
                     file_images : response.data.view.file_image.map(i => {
                         console.log('received image', i);
-                        return {uri : 'http://10.0.2.2'+i.origin_image_url};
+                        return {uri : 'http://10.0.2.2'+i.origin_image_url, height : this.scaledHeight(i.pfi_width, i.pfi_height, Dimensions.get('window').width)};
                     })
                 })
                 console.log(this.state.file_images);
@@ -421,7 +421,11 @@ class AlbaContent extends React.Component {
     }
 
     renderImage(image) {
-        return <Image style={{width: '100%', height: Dimensions.get('window').width, resizeMode: 'contain'}} source={image}/>
+        return <Image style={{width: '100%', height: image.height, resizeMode: 'contain'}} source={{uri : image.uri}}/>
+    }
+
+    scaledHeight(oldW, oldH, newW) {
+        return (oldH / oldW) * newW;
     }
     
     setVisible(bool){
