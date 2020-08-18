@@ -1,11 +1,13 @@
 import React from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules, TextInput} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
 //import ImagePicker from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import { HeartIcon } from '../assets/icons/icons';
 import axios from 'axios';
+import {Picker} from '@react-native-community/picker';
+
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -537,14 +539,47 @@ class AlbaWrite extends React.Component{
 
 
 class IlbanWrite extends React.Component{
+    // constructor(){
+    //     super();
+    //     this.state = {
+    //         PickerValue : ''
+    //     }
+    // };
+
+    // clickme = () =>{
+    //     alert(this.state.PickerValue)
+    // }
+
+    state = {
+        language: 'java',
+      };
+
     render(){
         return(
             <SafeAreaView style={{flex:1}}>
-            <View>
-                <Text>
-                    Hi!
-                </Text>
-            </View>
+                <View>
+                    <Picker
+                        selectedValue={this.state.language}
+                        style={{height: 50, width: 100}}
+                        onValueChange={(itemValue, itemIndex) =>
+                            this.setState({language: itemValue})
+                        }>
+                        <Picker.Item label="Java" value="java" />
+                        <Picker.Item label="JavaScript" value="js" />
+                    </Picker>
+                    <TextInput></TextInput>
+
+                </View>
+                {/* <Picker
+                style = {{width:'80%'}}
+                selectedValue={this.state.PickerValue}
+                onValueChange = 
+                {(itemValue, itemIndex) => 
+                    this.setState({PickerValue : itemValue})}
+                >
+                    <Picker.Item label="Html" value="html" />
+                    <Picker.Item label="Html" value="html" />
+                </Picker> */}
             </SafeAreaView>
         )
     }
