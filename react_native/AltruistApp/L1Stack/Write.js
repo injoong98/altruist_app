@@ -339,10 +339,10 @@ class AlbaWrite extends React.Component{
         formdata.append("post_nickname", 'roothyo');
         formdata.append("post_email", 'roothyo@soongsil.ac.kr');
         formdata.append("post_password", '1234');
-        // post_image.forEach(element => {
-        //     console.log(element);
-        //     formdata.append("post_file", element);
-        // });
+        post_image.forEach(element => {
+            console.log(element);
+            formdata.append("file", element);
+        });
 
         // formdata.append("post_location", post_location);
         // formdata.append("alba_type", alba_type);
@@ -350,23 +350,49 @@ class AlbaWrite extends React.Component{
         // formdata.append("alba_salary", alba_salary);
         console.log(post_image);
         console.log(formdata);
-        await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
+        // await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
+        // .then(response=>{
+        //     console.log(response);
+        //     Alert.alert(
+        //         "게시글",
+        //         "게시글 작성 완료",
+        //         [
+        //             { 
+        //                 text: "OK", 
+        //                 onPress: ()=> {this.gobackfunc()}
+        //             }
+        //         ],
+        //         { cancelable: false }
+        //     );
+        // })
+        // .catch(error=>{
+        //     alert(error);
+        // })
+        await axios({
+            method : 'post',
+            url : 'http://localhost/api/board_write/write/b-a-3',
+            data : formdata,
+            header : {
+                'Accept' : 'application/json',
+                'Content-Type' : 'multipart/form-data',
+            },
+        })
         .then(response=>{
-            console.log(response);
-            Alert.alert(
-                "게시글",
-                "게시글 작성 완료",
-                [
-                    { 
-                        text: "OK", 
-                        onPress: ()=> {this.gobackfunc()}
-                    }
-                ],
-                { cancelable: false }
-            );
+                console.log(response);
+                Alert.alert(
+                    "게시글",
+                    "게시글 작성 완료",
+                    [
+                        { 
+                            text: "OK", 
+                            onPress: ()=> {this.gobackfunc()}
+                        }
+                    ],
+                    { cancelable: false }
+                );
         })
         .catch(error=>{
-            alert(error);
+                alert(error);
         })
     }
 
@@ -412,7 +438,7 @@ class AlbaWrite extends React.Component{
             this.setState({
                 post_image: images.map(i => {
                     console.log('received image', i);
-                    return {uri: i.path, width: i.width, height: i.height, mime: i.mime};
+                    return {uri: i.path, name : i.path.split('/').pop(), type : i.mime};
                 })
             });
         }).catch(e => alert(e));
