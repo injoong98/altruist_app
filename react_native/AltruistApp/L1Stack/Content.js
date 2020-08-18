@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal} from '@ui-kitten/components'
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
@@ -17,6 +17,9 @@ const StarIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="star" {...props} />
 )
 
+const UploadIcon = (props) => (
+      <Icon {...props} name='arrow-circle-up'/>
+)
 const defaultContent = ({navigation}) =>{
     
     const BackAction = () =>(
@@ -39,21 +42,47 @@ class GominContent extends React.Component{
         this.state={
             post:'',
             comment:'',
-            value:'',
+            cmt_content:'',
             isLoading:true,
             refreshing:false
         }
     }
-    
-    UproadIcon = (props) => (
-        <TouchableWithoutFeedback>
-          <Icon {...props} name='arrow-circle-up'/>
-        </TouchableWithoutFeedback>
+    commentValid =() =>{
+        
+    }
+    commentUpload= async()=>{
+        const {cmt_content,post}=this.state;var formdata = new FormData();
+        formdata.append("post_id",post.post_id);
+        formdata.append("cmt_content",cmt_content);
+
+        await Axios.post('http://10.0.2.2/api/comment_write/update',formdata)
+        .then(response=>{
+            const {status,message}=response.data;
+            if(status=='200'){
+                alert(`성공 : ${message}`);
+                Keyboard.dismiss();
+                this.setState({cmt_content:''});
+                this.getCommentData(post.post_id);
+                this.refs.pstcmtlist.scrollToEnd();
+            }else if(status=="500"){
+                alert(`실패 : ${message}`)
+            }
+        })
+        .catch(error=>{
+            alert(`등록 실패 ! ${error.message}`)
+        })
+    }
+
+    UploadButton=(props)=>(
+        <TouchableOpacity onPress={()=>{this.commentUpload()}}>
+            <UploadIcon {...props}/>
+        </TouchableOpacity>
     )
 
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
+    
     renderPostBody = (post)=>{
         
         const regex = /(<([^>]+)>)|&nbsp;/ig;
@@ -137,7 +166,7 @@ class GominContent extends React.Component{
 
      render(){
         const {navigation,route} =this.props
-        const {value,post,comment} = this.state
+        const {cmt_content,post,comment} = this.state
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -145,36 +174,29 @@ class GominContent extends React.Component{
             <Spinner size="giant"/>
         </View>
         :
-         <SafeAreaView style={{flex:1}}>
-             <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} /> 
-             <Layout  style={{flex:1}}>
-                <Layout style={{flex:8}}>
-                    <Divider/>
-                    <List 
+        <SafeAreaView style={{flex:1}}>
+            <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} /> 
+            <Divider/>
+            <Layout style={{flex:1}}>
+                    <List
+                    ref={"pstcmtlist"} 
                     data={comment}
                     ListHeaderComponent={this.renderPostBody(post)}
                     renderItem={this.renderCommentsList}
                     onRefresh={this.onRefresh}
                     refreshing={this.state.refreshing}
                     />
-                </Layout>
-                 <Layout level="2"  style={{flex:1}}>
-                    <Layout style={styles.commentBlock}>
-                        <Input
-                            style={{flex:1, margin:15}}
-                            size='large'
-                            placeholder='댓글을 입력하세요.'
-                            value={value}
-                            multiline={true}
-                            accessoryRight={this.UproadIcon}
-                            onChangeText={nextValue => setValue(nextValue)}
-                        />
-                    </Layout>
-                 </Layout>
-               
-             </Layout>
-             
-         </SafeAreaView>
+            </Layout>
+            <Input
+                style={{margin:15,position:'relative',bottom:0}}
+                size='large'
+                placeholder='댓글을 입력하세요.'
+                value={cmt_content}
+                multiline={true}
+                accessoryRight={this.UploadButton}
+                onChangeText={nextValue => this.setState({cmt_content:nextValue})}
+            />
+        </SafeAreaView>
          )
      }
 }
