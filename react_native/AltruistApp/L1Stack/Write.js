@@ -95,18 +95,12 @@ class GominWrite extends React.Component {
         formdata.append("csrf_test_name", '');
         
     
-        await axios.post('http://10.0.2.2/postact/filter_spam_keyword',formdata)
+        await axios.post('http://10.0.2.2/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
-            return response.data      
-        })
-        .then(data=>{
-            if(data.title){
-                console.log(data.title)
-                alert(`제목에 금지 단어 ${data.title}이(가) 포함되어 있습니다.`)
-            }else if(data.content){
-                console.log(data.content)
-                alert(`내용에 금지 단어 ${data.content}이(가) 포함되어 있습니다.`)
-            }else{
+            const {message,status}=response.data
+            if(status=='500'){
+                alert(message)
+            }else if(status=="200"){
                 Alert.alert(
                     "게시글",
                     "게시글을 작성하시겠습니까?",
@@ -124,6 +118,7 @@ class GominWrite extends React.Component {
                     { cancelable: false }
                 );
             }
+
         })
         .catch(error=>{
             alert(`금지단어 검사에 실패 했습니다. ${error.message}`)
