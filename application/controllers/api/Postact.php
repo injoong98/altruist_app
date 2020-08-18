@@ -758,27 +758,31 @@ class Postact extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
 
+		$cmt_id = (int)$this->input->post('cmt_id');
+		$like_type = (int)$this->input->post('like_type');
+
+
 		$target_type = 2; //댓글
 
 		$result = array();
 		$this->output->set_content_type('application/json');
 
 		if ($this->member->is_member() === false) {
-			
-			$result = array('error' => '로그인 후 이용해주세요');
-			exit(json_encode($result));
+			response_result($view,'Err','로그인 후 이용해주세요');
+		/* 	$result = array('error' => '로그인 후 이용해주세요');
+			exit(json_encode($result)); */
 		}
 
-		$cmt_id = (int) $cmt_id;
 		if (empty($cmt_id) OR $cmt_id < 1) {
-			$result = array('error' => '잘못된 접근입니다');
-			exit(json_encode($result));
+			response_result($view,'Err','잘못된 cmt_id 접근입니다');
+		/* 	$result = array('error' => '잘못된 접근입니다');
+			exit(json_encode($result)); */
 		}
 
-		$like_type = (int) $like_type;
 		if ($like_type !== 1 AND $like_type !== 2) {
-			$result = array('error' => '잘못된 접근입니다');
-			exit(json_encode($result));
+			response_result($view,'Err','잘못된 like_type 접근입니다.');
+		/* 	$result = array('error' => '잘못된 접근입니다');
+			exit(json_encode($result)); */
 		}
 
 		$mem_id = (int) $this->member->item('mem_id');
@@ -789,37 +793,43 @@ class Postact extends CB_Controller
 		$comment = $this->Comment_model->get_one($cmt_id, $select);
 
 		if ( ! element('cmt_id', $comment)) {
-			$result = array('error' => '존재하지 않는 댓글입니다');
-			exit(json_encode($result));
+			response_result($view,'Err','존재하지 않는 댓글입니다');
+		/* 	$result = array('error' => '존재하지 않는 댓글입니다');
+			exit(json_encode($result)); */
 		}
 		if (element('cmt_del', $comment)) {
-			$result = array('error' => '삭제된 댓글입니다');
-			exit(json_encode($result));
+			response_result($view,'Err','삭제된 댓글입니다');
+		/* 	$result = array('error' => '삭제된 댓글입니다');
+			exit(json_encode($result)); */
 		}
 
 		$select = 'post_id, brd_id, mem_id, post_del';
 		$post = $this->Post_model->get_one(element('post_id', $comment), $select);
 
 		if ( ! $this->session->userdata('post_id_' . element('post_id', $comment))) {
-			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
-			exit(json_encode($result));
+			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
+			/* $result = array('error' => '해당 게시물에서만 접근 가능합니다');
+			exit(json_encode($result)); */
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
 
 		if ( ! element('use_comment_like', $board) && $like_type === 1) {
-			$result = array('error' => '이 게시판은 추천 기능을 사용하지 않습니다');
-			exit(json_encode($result));
+			response_result($view,'Err','이 게시판은 추천 기능을 사용하지 않습니다');
+		/* 	$result = array('error' => '이 게시판은 추천 기능을 사용하지 않습니다');
+			exit(json_encode($result)); */
 		}
 
 		if ( ! element('use_comment_dislike', $board) && $like_type === 2) {
-			$result = array('error' => '이 게시판은 비추천 기능을 사용하지 않습니다');
-			exit(json_encode($result));
+			response_result($view,'Err','이 게시판은 비추천 기능을 사용하지 않습니다');
+			/* $result = array('error' => '이 게시판은 비추천 기능을 사용하지 않습니다');
+			exit(json_encode($result)); */
 		}
 
 		if (abs(element('mem_id', $comment)) === $mem_id) {
-			$result = array('error' => '본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
-			exit(json_encode($result));
+			response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
+		/* 	$result = array('error' => '본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
+			exit(json_encode($result)); */
 		}
 
 		$select = 'lik_id, lik_type';
@@ -832,8 +842,9 @@ class Postact extends CB_Controller
 
 		if (element('lik_id', $exist)) {
 			$status = element('lik_type', $exist) === '1' ? '추천' : '비추천';
-			$result = array('error' => '이미 이 글을 ' . $status . '하셨습니다');
-			exit(json_encode($result));
+			response_result($view,'Err','이미 이 글을 ' . $status . '하셨습니다');
+		/* 	$result = array('error' => '이미 이 글을 ' . $status . '하셨습니다');
+			exit(json_encode($result)); */
 		}
 
 		$insertdata = array(
@@ -910,8 +921,12 @@ class Postact extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('after', $eventname);
 
-		$result = array('success' => $success, 'count' => $count);
-		exit(json_encode($result));
+		//$result = array('success' => $success, 'count' => $count);
+		
+		$result = array('count' => $count);
+		response_result($result,'success', $success);
+		
+	//	exit(json_encode($result));
 
 	}
 
