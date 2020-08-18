@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView,View,StyleSheet} from 'react-native';
+import {SafeAreaView,View,StyleSheet,ActivityIndicator} from 'react-native';
 import { Icon,Layout,Button,Text,ListItem,List, Divider,Card,Spinner} from '@ui-kitten/components'
 import axios from 'axios'
 
@@ -20,9 +20,11 @@ class GominScreen extends React.Component {
         super(props);
         this.state={
             isLoading : true,
-            lists:'',
+            lists:[],
             refreshing:false,
-            dump:'true'
+            current_page:1,
+            isListLoading : false,
+            isNoMoreData : false,
         }
     }
 
@@ -46,10 +48,28 @@ class GominScreen extends React.Component {
         </Card>
 
     );
+    renderFooter=()=>{
+        return(
+          this.state.isListLoading ?
+          <View style = {styles.loader}>
+            <ActivityIndicator size='large'/>
+          </View>:null
+        )
+      }
     getPostList = async() =>{
-        await axios.get('http://10.0.2.2/api/board_post/lists/b-a-1')
+        await axios.get(`http://10.0.2.2/api/board_post/lists/b-a-1?page=${this.state.current_page}`)
         .then((response)=>{
-            this.setState({lists:response.data.view.list.data.list,isLoading:false})
+            if(response.data.view.list.data.list.length > 0){
+                this.setState({
+                  lists:this.state.lists.concat(response.data.view.list.data.list),
+                  isLoading:false,
+                  isListLoading:false,
+                })
+              }
+              else{
+                console.log('no page data');
+                this.setState({isListLoading:false, isNoMoreData : true});
+              }
         })
         .catch((error)=>{
             alert(`error: ${error.message}`)
@@ -64,8 +84,16 @@ class GominScreen extends React.Component {
     }
     statefunction=(str)=>{
         this.setState({isLoading:true});
-        this.componentDidMount()    }
-
+        this.componentDidMount()    
+    }
+    load_more_data = () => {
+        if(!this.state.isNoMoreData){
+            this.setState({
+            current_page : this.state.current_page + 1,
+            isListLoading : true},
+            this.getPostList, console.log(this.state.current_page))
+        }
+    }
     render(){
         return(
         this.state.isLoading ? 
@@ -80,7 +108,10 @@ class GominScreen extends React.Component {
             ItemSeparatorComponent={Divider}
             renderItem={this.renderItem} 
             onRefresh={this.onRefresh}
-            refreshing={this.state.refreshing}/>
+            refreshing={this.state.refreshing}
+            onEndReached={this.load_more_data}
+            onEndReachedThreshold = {0.9}
+            ListFooterComponent={this.renderFooter}/>
             <View style ={styles.buttoncontainer}>
                 <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} >
                     글쓰기
@@ -110,5 +141,9 @@ const styles = StyleSheet.create({
     },
     infocontainer:{
         display:"flex",flexDirection:"row"
+    },
+    loader:{
+        marginTop : 10,
+        alignItems : 'center',
     }
 })
