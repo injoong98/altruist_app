@@ -439,7 +439,7 @@ class AlbaWrite extends React.Component{
     }
     submit_alba_post = async() => {
         console.log(this.state);
-        const {post_title, post_content, post_location, post_phone, alba_type, alba_salary_type, alba_salary, post_image} = this.state;
+        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary} = this.state;
         let formdata = new FormData();
         formdata.append("brd_key", 'b-a-3');
         formdata.append("post_title", post_title);
@@ -448,7 +448,7 @@ class AlbaWrite extends React.Component{
         formdata.append("post_email", 'roothyo@soongsil.ac.kr');
         formdata.append("post_password", '1234');
         formdata.append("post_location", post_location);
-        formdata.append("post_location", post_hp.replace(/ |-/g,""));
+        formdata.append("post_hp", post_hp);
         formdata.append("alba_type", alba_type);
         formdata.append("alba_salary_type", alba_salary_type.row);
         formdata.append("alba_salary", alba_salary);
@@ -588,8 +588,9 @@ class AlbaWrite extends React.Component{
                             <Input
                                 style={{width : 250}}
                                 size='medium'
-                                placeholder='Input Location'
-                                onChangeText ={(nextText) => {this.setState({post_location:nextText})}}
+                                keyboardType='numeric'
+                                placeholder='Input phonenumber'
+                                onChangeText ={(nextText) => {this.setState({post_hp:nextText})}}
                                 />
                             <RadioGroup
                                 style={{flexDirection:'row', margin : 10}}
@@ -607,10 +608,9 @@ class AlbaWrite extends React.Component{
                             </Tooltip>
                         </View>
                         <Input
-                                style={{width : 250}}
                                 size='medium'
-                                placeholder='Input phonenumber'
-                                onChangeText ={(nextText) => {this.setState({post_hp:nextText})}}
+                                placeholder='Input Location'
+                                onChangeText ={(nextText) => {this.setState({post_location:nextText})}}
                                 />
                         <View style={{flexDirection : 'row', alignItems:'center'}}>
                             <Text style={{margin : 10}}>추후 협의</Text>
@@ -635,10 +635,12 @@ class AlbaWrite extends React.Component{
                             <Input
                                 style={{margin : 10}}
                                 size='medium'
+                                keyboardType='numeric'
                                 placeholder='Input Salary'
                                 disabled={this.state.isFollowUp}
                                 onChangeText ={(nextText) =>  {this.setState({alba_salary:nextText})}}
                                 />
+                            <Text>원</Text>
                         </View>
                     <Input
                         multiline={true}

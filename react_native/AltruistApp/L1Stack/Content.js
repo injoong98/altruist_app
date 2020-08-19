@@ -407,7 +407,7 @@ class AlbaContent extends React.Component {
             post : {} ,
             thumb_image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
             file_images : null,
-            phoneNumber : '01099999999',
+            phoneNumber : '010 9999 9999',
             isLoading : true,
             image_height : 0,
         }
@@ -416,7 +416,7 @@ class AlbaContent extends React.Component {
     Alba_salary_type = [
         {color : 'green', str : '시'},
         {color : 'purple', str : '일'},
-        {color : 'yellow', str : '주'},
+        {color : 'blue', str : '주'},
         {color : 'red', str : '월'},
     ]
 
@@ -563,7 +563,7 @@ class AlbaContent extends React.Component {
                                     fill='black'
                                     name='star'
                                 />
-                                <Text>{post.alba_salary+'원'.replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                                <Text>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                                 </View>
                                 <View style={styles.icons}>
                                 <Icon
@@ -579,7 +579,7 @@ class AlbaContent extends React.Component {
                                     fill='black'
                                     name='share-outline'
                                 />
-                                <Text>{post.post_location}</Text>
+                                <Text numberOfLines={1} ellipsizeMode='tail'>{post.post_location}</Text>
                                 </View>
                             </Layout>
                         </Card>
@@ -596,7 +596,7 @@ class AlbaContent extends React.Component {
                                 </View>
                                 <View style={{flex : 5, flexDirection : 'row'}}>
                                     <Text style={{marginVertical : 5,color : this.Alba_salary_type[post.alba_salary_type].color}}>{this.Alba_salary_type[post.alba_salary_type].str} </Text>
-                                    <Text style={styles.gather}>{post.alba_salary+'원'.replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                                    <Text style={styles.gather}>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                                 </View>
                             </Layout>
                             <Layout style = {{flexDirection : 'row'}}>

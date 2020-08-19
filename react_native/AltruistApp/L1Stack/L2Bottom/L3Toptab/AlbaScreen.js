@@ -21,7 +21,7 @@ class AlbaScreen extends React.Component {
   Alba_salary_type = [
     {color : 'green', str : '시'},
     {color : 'purple', str : '일'},
-    {color : 'yellow', str : '주'},
+    {color : 'blue', str : '주'},
     {color : 'red', str : '월'},  
   ]
 
@@ -64,7 +64,7 @@ class AlbaScreen extends React.Component {
   }
 
   statefunction=()=>{
-    this.setState({isLoading:true}, this.componentDidMount);
+    this.setState({isLoading:true}, this.onRefresh());
   }
 
   load_more_data = () => {
@@ -96,9 +96,11 @@ class AlbaScreen extends React.Component {
                 <Text style={{marginTop :5, marginBottom : 5}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
                 <Divider style={{borderWidth : 0.5}}/>
                 <View style={{flex : 1, flexDirection : 'row'}}>
-                  <Text> item.post_location </Text>
-                  <Text style={{color : this.Alba_salary_type[item.alba_salary_type].color}}>{this.Alba_salary_type[item.alba_salary_type].str}</Text>
-                  <Text> {item.alba_salary != '추후협의'?item.alba_salary+'원':item.alba_salary.replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                  <Text style={{flex:1.2}} numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
+                  <View style={{flex : 1, flexDirection : 'row'}}>
+                    <Text style={{color : this.Alba_salary_type[item.alba_salary_type].color}}>{this.Alba_salary_type[item.alba_salary_type].str}</Text>
+                    <Text> {(item.alba_salary != '추후협의'?item.alba_salary+'원':item.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                  </View>
                 </View>
             </View>
             <View style={styles.image}>
