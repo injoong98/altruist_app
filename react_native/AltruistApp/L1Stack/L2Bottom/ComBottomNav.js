@@ -6,7 +6,25 @@ import {SafeAreaView} from 'react-native'
 import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation} from '@ui-kitten/components'
 
 const {Navigator,Screen} = createBottomTabNavigator();
-
+const FontScreen =() =>(
+    <SafeAreaView style={{flex:1,backgroundColor : ""}}>
+        <TopNavigation title="스페어" alignment="center"/> 
+        <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
+            <Text category="h1">Heading1 더불어 사는 이타주의자</Text>
+            <Text category="h2">Heading2 더불어 사는 이타주의자</Text>
+            <Text category="h3">Heading3 더불어 사는 이타주의자</Text>
+            <Text category="h4">Heading4 더불어 사는 이타주의자</Text>
+            <Text category="h5">Heading5 더불어 사는 이타주의자</Text>
+            <Text category="h6">Heading6 더불어 사는 이타주의자</Text>
+            <Text category="s1">Subtitle1 더불어 사는 이타주의자</Text>
+            <Text category="s2">Subtitle2 더불어 사는 이타주의자</Text>
+            <Text category="p1">Paragraph1 더불어 사는 이타주의자</Text>
+            <Text category="p2">Paragraph2 더불어 사는 이타주의자</Text>
+            <Text category="c1">Caption1 더불어 사는 이타주의자</Text>
+            <Text category="c2">Caption2 더불어 사는 이타주의자</Text>
+        </Layout>   
+    </SafeAreaView>
+)
 const SpareScreen =({navigation}) =>(
     <SafeAreaView style={{flex:1}}>
         <TopNavigation title="스페어" alignment="center" /> 
@@ -33,7 +51,7 @@ const BottomTabBar = ({ navigation, state }) => (
 
 export const ComBottomNav = () =>(
     <Navigator tabBar={props => <BottomTabBar {...props} />}>
-        <Screen name = "Home" component={SpareScreen}/>
+        <Screen name = "Home" component={FontScreen}/>
         <Screen name = "Alt" component={SpareScreen}/>
         <Screen name = "Commu" component={ComToptabNav}/>
         <Screen name = "Meet" component={SpareScreen}/>
