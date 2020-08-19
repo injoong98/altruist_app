@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView,View,StyleSheet,ActivityIndicator} from 'react-native';
+import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity} from 'react-native';
 import { Icon,Layout,Button,Text,ListItem,List, Divider,Card,Spinner} from '@ui-kitten/components'
 import axios from 'axios'
 
@@ -11,7 +11,7 @@ import axios from 'axios'
         <Icon style={styles.icon} fill='#8F9BB3' name="message-circle"/>
     )
     const HeartIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="heart"/>
+        <Icon style={styles.icon} fill='#8F9BB3' name="heart-outline"/>
     )
 
 class GominScreen extends React.Component {
@@ -30,24 +30,27 @@ class GominScreen extends React.Component {
 
     
     
-    renderItem = ({ item, index }) => (
-        <Card onPress = {()=>{this.props.navigation.navigate('GominContent',{title:`${index+1}th post_id=${item.post_id}`,post_id:item.post_id})}}>
-            <Text category="h6" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
+    renderItem = ({ item, index }) => {
+        const regex = /(<([^>]+)>)|&nbsp;/ig;
+        const post_remove_tags = item.post_content.replace(regex, '');
+        
+        return(
+        <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{title:`${index+1}th post_id=${item.post_id}`,post_id:item.post_id})}}>
+            <Text style ={styles.headtext}category="h6" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
             <View style={styles.subtitle}>
-                <Text category="s1">{item.display_name}</Text>
+                <Text style={styles.subtext}category="s2">{post_remove_tags.substr(0,24)+'...'}</Text>
                 <View style={styles.infocontainer}>
-                    <EyeIcon />
-                    <Text category="s1">{item.post_hit}</Text>
                     <HeartIcon />
-                    <Text category="s1">{item.post_like}</Text>
+                    <Text style={styles.infotext} category="s1">{item.post_like}</Text>
                     <CommentIcon />
-                    <Text category="s1">{item.post_comment_count}</Text>
+                    <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
+                    <EyeIcon />
+                    <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                 </View>
 
             </View>
-        </Card>
-
-    );
+        </TouchableOpacity>
+    )};
     renderFooter=()=>{
         return(
           this.state.isListLoading ?
@@ -126,6 +129,14 @@ class GominScreen extends React.Component {
 export {GominScreen}
 
 const styles = StyleSheet.create({
+    container:{
+        backgroundColor:"#6b6cab",
+        borderRadius : 20,
+        marginVertical:5,
+        marginHorizontal:5,
+        padding:0,
+
+    },
     buttoncontainer:{
         width:"100%",bottom:0,
         display :"flex", 
@@ -137,13 +148,27 @@ const styles = StyleSheet.create({
         width: 24,height: 24,marginLeft:5
     },
     subtitle:{
-        marginTop:10, display:"flex",flexDirection:"row", justifyContent:"space-between"
+        marginTop:10, display:"flex",flexDirection:"row", justifyContent:"space-between",
     },
     infocontainer:{
-        display:"flex",flexDirection:"row"
+        display:"flex",flexDirection:"row",
+        borderTopLeftRadius:20,
+        backgroundColor:"#ffffff",
+        position:"relative",bottom:0,right:0,
+        padding:5
     },
     loader:{
         marginTop : 10,
         alignItems : 'center',
+    },
+    infotext:{
+        color:'#141552'
+    },
+    headtext:{
+        paddingTop:10,
+        paddingLeft:20
+    },
+    subtext:{
+        marginLeft:20
     }
 })
