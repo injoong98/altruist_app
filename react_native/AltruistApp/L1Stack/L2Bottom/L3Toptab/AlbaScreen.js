@@ -133,13 +133,11 @@ class AlbaScreen extends React.Component {
           ListFooterComponent={this.renderFooter}
           />
       </View>
-      <View style={styles.bottomView}>
-        <Button 
+      <Button 
           style={styles.bottomButton}
           onPress={()=>{this.props.navigation.navigate('AlbaWrite',{statefunction:this.statefunction});}}>
-            글쓰기 
-          </Button>
-      </View>
+            + 
+      </Button>
       </>
     );
   }
@@ -176,7 +174,9 @@ const styles = StyleSheet.create({
     backgroundColor : 'lightgrey',
   },
   bottomButton: {
-    width : "95%",
+    position:'absolute',
+    right : 10,
+    bottom : 10,
   },
 });
 
