@@ -701,4 +701,4 @@ const styles = StyleSheet.create({
 });
 
 
-export {defaultContent, MarketContent, AlbaContent, GominContent, ImageView}
+export {defaultContent, MarketContent, AlbaContent, GominContent}
