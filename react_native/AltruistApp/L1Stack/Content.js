@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList} from 'react-native';
-import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal} from '@ui-kitten/components'
+import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,} from 'react-native';
+import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal, OverflowMenu, MenuItem} from '@ui-kitten/components'
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
+import {ActionSheet, Root, Container} from 'native-base';
 import Slider from '../components/slider.component'
 
 const BackIcon =  (props) =>(
@@ -48,11 +49,10 @@ class GominContent extends React.Component{
             refreshing:false
         }
     }
-    commentValid =() =>{
-        
-    }
+    
     commentUpload= async()=>{
-        const {cmt_content,post}=this.state;var formdata = new FormData();
+        const {cmt_content,post}=this.state;
+        var formdata = new FormData();
         formdata.append("post_id",post.post_id);
         formdata.append("cmt_content",cmt_content);
 
@@ -73,9 +73,28 @@ class GominContent extends React.Component{
             alert(`등록 실패 ! ${error.message}`)
         })
     }
+    
+    commentValid =async() =>{
+        const {cmt_content} =this.state;
+        var formdata = new FormData();
+        formdata.append("content",cmt_content);
+        
+        await Axios.post('http://10.0.2.2/api/postact/filter_spam_keyword',formdata)
+        .then(response=>{
+            const {status,message} = response.data;
+            if(status=='500'){
+                alert(message);
+            }else if(status=="200"){
+                this.commentUpload();
+            }
+        })
+        .catch(error=>{
+            alert('error')
+        })
 
+    }
     UploadButton=(props)=>(
-        <TouchableOpacity onPress={()=>{this.commentUpload()}}>
+        <TouchableOpacity onPress={()=>{this.commentValid()}}>
             <UploadIcon {...props}/>
         </TouchableOpacity>
     )
@@ -384,6 +403,7 @@ class AlbaContent extends React.Component {
         super(props);
         this.state ={
             visible : false,
+            OF_visible : false,
             post : {} ,
             thumb_image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
             file_images : null,
@@ -435,6 +455,57 @@ class AlbaContent extends React.Component {
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
+    UD_Action = () =>(
+        <TopNavigationAction icon={HeartIcon} onPress={() =>{this.onClick_UD_Action()}}/>
+    )
+    onClick_UD_Action = () => {
+        const buttons = ['수정', '삭제', '취소'];
+        ActionSheet.show(
+            {
+                options: buttons,
+                cancelButtonIndex: 2,
+                title: 'Select a Action'
+            },
+            buttonIndex => {
+                switch (buttonIndex) {
+                    case 0:
+                        this.updateData;
+                        break;
+                    case 1:
+                        this.deleteData(this.props.route.params.post_id)
+                        break;
+                    default:
+                        break
+                }
+            }
+        );
+
+    };
+
+    updateData = () => {
+        alert('update');
+    }
+
+    deleteData = async(id) => {
+        alert('delete');
+        // var formdata =new FormData();
+        // formdata.append("post_id", id);
+        // formdata.append("modify_password", '1234');
+
+        // await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        // .then(response => {
+        //     if(response.status=='500'){
+        //         alert(response.message)
+        //     }else if(response.status=="200"){
+        //         alert(response.message);
+        //     }
+        // })
+        // .catch(error=>{
+        //     alert(`게시글 삭제에 실패했습니다. ${error}`)
+        // })
+    }
+
+
 
     // getImageSize (uri, passProps) {
     //     const img_url = "http://10.0.2.2"+uri;
@@ -463,8 +534,9 @@ class AlbaContent extends React.Component {
                 <Spinner size="giant"/>
             </View>
             :
+            <Root>
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="채용정보" alignment="center" accessoryLeft={this.BackAction} /> 
+                <TopNavigation title="채용정보" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.UD_Action}/> 
                 <Layout style={styles.container}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
                         <Card style={styles.item}>
@@ -577,6 +649,7 @@ class AlbaContent extends React.Component {
                     </View>
                 </Layout>
             </SafeAreaView>
+            </Root>
             )
     }
 }
