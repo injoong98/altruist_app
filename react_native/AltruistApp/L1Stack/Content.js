@@ -340,7 +340,7 @@ class MarketContent extends React.Component {
                 <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
                     <ScrollView>
                         <View>
-                            <Slider image={this.state.image}/>
+                            <Slider image={this.state.image} navigation={this.props.navitation}/>
                         </View>
                         <View style={{}}>
                             <Layout>
