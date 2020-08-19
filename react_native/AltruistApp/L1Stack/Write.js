@@ -408,7 +408,7 @@ class AlbaWrite extends React.Component{
             post_content : '',
             post_location : '',
             alba_type : 0,
-            alba_salary_type : 0,
+            alba_salary_type : new IndexPath(0),
             alba_salary : '',
             post_image : null,
             imagesource : {},
@@ -427,6 +427,9 @@ class AlbaWrite extends React.Component{
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
+    SubmitButton = () =>(
+        <TopNavigationAction icon={UpIcon} onPress={() =>{this.submit_alba_Alert()}}/>
+    )
 
     setTipVisible = (bool) => {this.setState({isTipVisible:bool});}
     setFollowUp = (nextChecked) => {
@@ -443,61 +446,62 @@ class AlbaWrite extends React.Component{
         formdata.append("post_nickname", 'roothyo');
         formdata.append("post_email", 'roothyo@soongsil.ac.kr');
         formdata.append("post_password", '1234');
-        post_image.forEach(element => {
-            console.log(element);
-            formdata.append("file", element);
-        });
+        formdata.append("post_location", post_location);
+        formdata.append("alba_type", alba_type);
+        formdata.append("alba_salary_type", alba_salary_type.row);
+        formdata.append("alba_salary", alba_salary);
+        
+        // post_image.forEach(element => {
+        //     console.log(element);
+        //     formdata.append("file", element);
+        // });
 
-        // formdata.append("post_location", post_location);
-        // formdata.append("alba_type", alba_type);
-        // formdata.append("alba_salary_type", alba_salary_type);
-        // formdata.append("alba_salary", alba_salary);
-        console.log(post_image);
+        // console.log(post_image);
         console.log(formdata);
-        // await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
-        // .then(response=>{
-        //     console.log(response);
-        //     Alert.alert(
-        //         "게시글",
-        //         "게시글 작성 완료",
-        //         [
-        //             { 
-        //                 text: "OK", 
-        //                 onPress: ()=> {this.gobackfunc()}
-        //             }
-        //         ],
-        //         { cancelable: false }
-        //     );
-        // })
-        // .catch(error=>{
-        //     alert(error);
-        // })
-        await axios({
-            method : 'post',
-            url : 'http://localhost/api/board_write/write/b-a-3',
-            data : formdata,
-            header : {
-                'Accept' : 'application/json',
-                'Content-Type' : 'multipart/form-data',
-            },
-        })
+        await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
         .then(response=>{
-                console.log(response);
-                Alert.alert(
-                    "게시글",
-                    "게시글 작성 완료",
-                    [
-                        { 
-                            text: "OK", 
-                            onPress: ()=> {this.gobackfunc()}
-                        }
-                    ],
-                    { cancelable: false }
-                );
+            console.log(response);
+            Alert.alert(
+                "게시글",
+                "게시글 작성 완료",
+                [
+                    { 
+                        text: "OK", 
+                        onPress: ()=> {this.gobackfunc()}
+                    }
+                ],
+                { cancelable: false }
+            );
         })
         .catch(error=>{
-                alert(error);
+            alert(error);
         })
+        // await axios({
+        //     method : 'post',
+        //     url : 'http://10.0.2.2/api/board_write/write/b-a-3',
+        //     data : formdata,
+        //     header : {
+        //         'Accept' : 'application/json',
+        //         'Content-Type' : 'multipart/form-data',
+        //     },
+        // })
+        // .then(response=>{
+        //         console.log(response);
+        //         Alert.alert(
+        //             "게시글",
+        //             "게시글 작성 완료",
+        //             [
+        //                 { 
+        //                     text: "OK", 
+        //                     onPress: ()=> {this.gobackfunc()}
+        //                 }
+        //             ],
+        //             { cancelable: false }
+        //         );
+        // })
+        // .catch(error=>{
+        //         alert(error);
+        // })
     }
 
     submit_alba_Alert= () => {
@@ -527,7 +531,6 @@ class AlbaWrite extends React.Component{
 
     cleanupImages() {
         ImagePicker.clean().then(() => {
-            // console.log('removed tmp images from tmp directory');
             alert('Temporary images history cleared')
         }).catch(e => {
             alert(e);
@@ -570,7 +573,7 @@ class AlbaWrite extends React.Component{
     render(){
         return(
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} /> 
+                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.SubmitButton} /> 
                 <Divider />
                 <Layout style={{flex:10}}>
                     <ScrollView>
@@ -581,6 +584,7 @@ class AlbaWrite extends React.Component{
                             />
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Input
+                                style={{width : 250}}
                                 size='medium'
                                 placeholder='Input Location'
                                 onChangeText ={(nextText) => {this.setState({post_location:nextText})}}
@@ -608,8 +612,8 @@ class AlbaWrite extends React.Component{
                                 onChange={nextChecked => this.setFollowUp(nextChecked)}>
                             </CheckBox>
                             <Select
-                                style={{margin : 10, width : 100}}
-                                value={this.Salary_Type[this.state.alba_salary_type]}
+                                style={{margin : 10, width : 150}}
+                                value={this.Salary_Type[this.state.alba_salary_type.row]}
                                 selectedIndex={this.state.alba_salary_type}
                                 onSelect={(index)=>{this.setState({alba_salary_type:index})}}
                                 disabled={this.state.isFollowUp}
@@ -646,14 +650,7 @@ class AlbaWrite extends React.Component{
                         사진추가
                     </Button>
                 </ScrollView>
-                </Layout>
-                <View style={styles.bottomView}>
-                    <Button 
-                        style={styles.bottomButton}
-                        onPress={()=>{this.submit_alba_Alert()}}>
-                            글쓰기 
-                    </Button>
-                </View>   
+                </Layout>   
             </SafeAreaView>
         );
     }

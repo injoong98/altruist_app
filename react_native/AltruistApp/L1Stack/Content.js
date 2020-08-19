@@ -413,6 +413,14 @@ class AlbaContent extends React.Component {
         }
     }
 
+    Alba_salary_type = [
+        {color : 'green', str : '시'},
+        {color : 'purple', str : '일'},
+        {color : 'yellow', str : '주'},
+        {color : 'red', str : '월'},
+    ]
+
+
     async componentDidMount(){
         const post_id = this.props.route.params;
         console.log(post_id);
@@ -464,7 +472,6 @@ class AlbaContent extends React.Component {
             {
                 options: buttons,
                 cancelButtonIndex: 2,
-                title: 'Select a Action'
             },
             buttonIndex => {
                 switch (buttonIndex) {
@@ -556,7 +563,7 @@ class AlbaContent extends React.Component {
                                     fill='black'
                                     name='star'
                                 />
-                                <Text>post.alba_salary</Text>
+                                <Text>{post.alba_salary+'원'.replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                                 </View>
                                 <View style={styles.icons}>
                                 <Icon
@@ -564,7 +571,7 @@ class AlbaContent extends React.Component {
                                     fill='black'
                                     name='eye'
                                 />
-                                <Text>post.alba_type</Text>
+                                <Text>{post.alba_type?'단기':'장기'}</Text>
                                 </View>
                                 <View style={{flex : 2, justifyContent : 'center', alignItems : 'center'}}>
                                 <Icon
@@ -572,14 +579,14 @@ class AlbaContent extends React.Component {
                                     fill='black'
                                     name='share-outline'
                                 />
-                                <Text>post.post_location</Text>
+                                <Text>{post.post_location}</Text>
                                 </View>
                             </Layout>
                         </Card>
                         
                         <Card style={styles.item}>
                             <Text style={styles.subhead}>근무지역</Text>
-                            <Text style={{margin : 5}}>post.post_location</Text>
+                            <Text style={{margin : 5}}>{post.post_location}</Text>
                         </Card>
                         <Card style={styles.item}>
                             <Text style={styles.subhead}>근무조건</Text>
@@ -587,8 +594,9 @@ class AlbaContent extends React.Component {
                                 <View style={{flex : 1, marginLeft : 5}}>
                                     <Text style={styles.gathertext}>급여</Text>
                                 </View>
-                                <View style={{flex : 5}}>
-                                    <Text style={styles.gather}>post.alba_salary_type post.alba_salary</Text>
+                                <View style={{flex : 5, flexDirection : 'row'}}>
+                                    <Text style={{marginVertical : 5,color : this.Alba_salary_type[post.alba_salary_type].color}}>{this.Alba_salary_type[post.alba_salary_type].str} </Text>
+                                    <Text style={styles.gather}>{post.alba_salary+'원'.replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                                 </View>
                             </Layout>
                             <Layout style = {{flexDirection : 'row'}}>
@@ -596,7 +604,7 @@ class AlbaContent extends React.Component {
                                     <Text style={styles.gathertext}>근무기간</Text>
                                 </View>
                                 <View style={{flex : 5}}>
-                                    <Text style={styles.gather}>post.alba_type</Text>
+                                    <Text style={styles.gather}>{post.alba_type?'단기 (1일 ~ 3개월)':'장기 (3개월 ~)'}</Text>
                                 </View>
                             </Layout>
                         </Card>
