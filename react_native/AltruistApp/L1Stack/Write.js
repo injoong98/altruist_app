@@ -531,9 +531,9 @@ class AlbaWrite extends React.Component{
 
     cleanupImages() {
         ImagePicker.clean().then(() => {
-            alert('Temporary images history cleared')
+            console.log('Temporary images history cleared')
         }).catch(e => {
-            alert(e);
+            console.log(e);
         });
     }
 
@@ -548,11 +548,11 @@ class AlbaWrite extends React.Component{
                     return {uri: i.path, name : i.path.split('/').pop(), type : i.mime};
                 })
             });
-        }).catch(e => alert(e));
+        }).catch(e => console.log(e));
     }
 
     renderImage(image) {
-        return <Image style={{width: 200, height: 200, resizeMode: 'contain'}} source={image}/>
+        return <Image style={{width: 200, height: 200, resizeMode: 'contain', borderWidth: 0.5, margin : 5}} source={image}/>
     }
 
     renderAsset(image) {
@@ -638,17 +638,17 @@ class AlbaWrite extends React.Component{
                         placeholder='Input Context'
                         onChangeText ={(nextText) => {this.setState({post_content:nextText})}}
                     />
-                    <View style={{flex : 1, backgroundColor : 'black'}}>
+                    <View style={{flex : 1}}>
                         <ScrollView horizontal>
                             {this.state.post_image ? this.state.post_image.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
+                            <TouchableOpacity style={{width:200, height:200, margin : 5}} onPress={()=>{
+                                    this.cleanupImages();
+                                    this.pickMultiple();
+                                }}>
+                                <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:200,height:200}}/>
+                            </TouchableOpacity>
                         </ScrollView>
                     </View>
-                    <Button onPress ={()=>{
-                        this.cleanupImages();
-                        this.pickMultiple();
-                    }}>
-                        사진추가
-                    </Button>
                 </ScrollView>
                 </Layout>   
             </SafeAreaView>
