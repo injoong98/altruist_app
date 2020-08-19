@@ -38,7 +38,7 @@ class GominScreen extends React.Component {
         <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{title:`${index+1}th post_id=${item.post_id}`,post_id:item.post_id})}}>
             <Text style ={styles.headtext}category="h6" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
             <View style={styles.subtitle}>
-                <Text style={styles.subtext}category="s2">{post_remove_tags.substr(0,24)+'...'}</Text>
+                <Text style={styles.subtext}category="s2" numberOfLines={1}>{post_remove_tags}</Text>
                 <View style={styles.infocontainer}>
                     <HeartIcon />
                     <Text style={styles.infotext} category="s1">{item.post_like}</Text>
@@ -59,31 +59,45 @@ class GominScreen extends React.Component {
           </View>:null
         )
       }
-    getPostList = async() =>{
+      getPostList = async() =>{
         await axios.get(`http://10.0.2.2/api/board_post/lists/b-a-1?page=${this.state.current_page}`)
         .then((response)=>{
-            if(response.data.view.list.data.list.length > 0){
-                this.setState({
-                  lists:this.state.lists.concat(response.data.view.list.data.list),
-                  isLoading:false,
-                  isListLoading:false,
-                })
-              }
-              else{
-                console.log('no page data');
-                this.setState({isListLoading:false, isNoMoreData : true});
-              }
+          if(response.data.view.list.data.list.length > 0){
+            this.setState({
+              lists:this.state.lists.concat(response.data.view.list.data.list),
+              isLoading:false,
+              isListLoading:false,
+            })
+          }
+          else{
+            console.log('no page data');
+            this.setState({isListLoading:false, isNoMoreData : true});
+          }
         })
         .catch((error)=>{
-            alert(`error: ${error.message}`)
+            alert('error')
         })
-    }
+      }
+    
+      getPostFirst = async() => {
+        await axios.get('http://10.0.2.2/api/board_post/lists/b-a-1')
+        .then((response)=>{
+            this.setState({
+              lists:response.data.view.list.data.list,
+              isLoading:false,
+              isListLoading:false,
+            })
+        })
+        .catch((error)=>{
+            alert('error')
+        })
+      }
     componentDidMount(){
-        this.getPostList();
+        this.setState({current_page:1, isNoMoreData : false,}, this.getPostFirst);
     }
     
     onRefresh= () =>{
-        this.getPostList();
+        this.getPostFirst();
     }
     statefunction=(str)=>{
         this.setState({isLoading:true});
@@ -169,6 +183,7 @@ const styles = StyleSheet.create({
         paddingLeft:20
     },
     subtext:{
-        marginLeft:20
+        marginLeft:20,
+        maxWidth:200
     }
 })
