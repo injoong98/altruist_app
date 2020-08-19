@@ -407,8 +407,9 @@ class AlbaWrite extends React.Component{
             post_title : '',
             post_content : '',
             post_location : '',
+            post_hp : '',
             alba_type : 0,
-            alba_salary_type : 0,
+            alba_salary_type : new IndexPath(0),
             alba_salary : '',
             post_image : null,
             imagesource : {},
@@ -427,6 +428,9 @@ class AlbaWrite extends React.Component{
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
+    SubmitButton = () =>(
+        <TopNavigationAction icon={UpIcon} onPress={() =>{this.submit_alba_Alert()}}/>
+    )
 
     setTipVisible = (bool) => {this.setState({isTipVisible:bool});}
     setFollowUp = (nextChecked) => {
@@ -435,7 +439,7 @@ class AlbaWrite extends React.Component{
     }
     submit_alba_post = async() => {
         console.log(this.state);
-        const {post_title, post_content, post_location, alba_type, alba_salary_type, alba_salary, post_image} = this.state;
+        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary} = this.state;
         let formdata = new FormData();
         formdata.append("brd_key", 'b-a-3');
         formdata.append("post_title", post_title);
@@ -443,61 +447,63 @@ class AlbaWrite extends React.Component{
         formdata.append("post_nickname", 'roothyo');
         formdata.append("post_email", 'roothyo@soongsil.ac.kr');
         formdata.append("post_password", '1234');
-        post_image.forEach(element => {
-            console.log(element);
-            formdata.append("file", element);
-        });
+        formdata.append("post_location", post_location);
+        formdata.append("post_hp", post_hp);
+        formdata.append("alba_type", alba_type);
+        formdata.append("alba_salary_type", alba_salary_type.row);
+        formdata.append("alba_salary", alba_salary);
+        
+        // post_image.forEach(element => {
+        //     console.log(element);
+        //     formdata.append("file", element);
+        // });
 
-        // formdata.append("post_location", post_location);
-        // formdata.append("alba_type", alba_type);
-        // formdata.append("alba_salary_type", alba_salary_type);
-        // formdata.append("alba_salary", alba_salary);
-        console.log(post_image);
+        // console.log(post_image);
         console.log(formdata);
-        // await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
-        // .then(response=>{
-        //     console.log(response);
-        //     Alert.alert(
-        //         "게시글",
-        //         "게시글 작성 완료",
-        //         [
-        //             { 
-        //                 text: "OK", 
-        //                 onPress: ()=> {this.gobackfunc()}
-        //             }
-        //         ],
-        //         { cancelable: false }
-        //     );
-        // })
-        // .catch(error=>{
-        //     alert(error);
-        // })
-        await axios({
-            method : 'post',
-            url : 'http://localhost/api/board_write/write/b-a-3',
-            data : formdata,
-            header : {
-                'Accept' : 'application/json',
-                'Content-Type' : 'multipart/form-data',
-            },
-        })
+        await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
         .then(response=>{
-                console.log(response);
-                Alert.alert(
-                    "게시글",
-                    "게시글 작성 완료",
-                    [
-                        { 
-                            text: "OK", 
-                            onPress: ()=> {this.gobackfunc()}
-                        }
-                    ],
-                    { cancelable: false }
-                );
+            console.log(response);
+            Alert.alert(
+                "게시글",
+                "게시글 작성 완료",
+                [
+                    { 
+                        text: "OK", 
+                        onPress: ()=> {this.gobackfunc()}
+                    }
+                ],
+                { cancelable: false }
+            );
         })
         .catch(error=>{
-                alert(error);
+            alert(error);
         })
+        // await axios({
+        //     method : 'post',
+        //     url : 'http://10.0.2.2/api/board_write/write/b-a-3',
+        //     data : formdata,
+        //     header : {
+        //         'Accept' : 'application/json',
+        //         'Content-Type' : 'multipart/form-data',
+        //     },
+        // })
+        // .then(response=>{
+        //         console.log(response);
+        //         Alert.alert(
+        //             "게시글",
+        //             "게시글 작성 완료",
+        //             [
+        //                 { 
+        //                     text: "OK", 
+        //                     onPress: ()=> {this.gobackfunc()}
+        //                 }
+        //             ],
+        //             { cancelable: false }
+        //         );
+        // })
+        // .catch(error=>{
+        //         alert(error);
+        // })
     }
 
     submit_alba_Alert= () => {
@@ -527,10 +533,9 @@ class AlbaWrite extends React.Component{
 
     cleanupImages() {
         ImagePicker.clean().then(() => {
-            // console.log('removed tmp images from tmp directory');
-            alert('Temporary images history cleared')
+            console.log('Temporary images history cleared')
         }).catch(e => {
-            alert(e);
+            console.log(e);
         });
     }
 
@@ -545,15 +550,11 @@ class AlbaWrite extends React.Component{
                     return {uri: i.path, name : i.path.split('/').pop(), type : i.mime};
                 })
             });
-        }).catch(e => alert(e));
-    }
-
-    scaledHeight(oldW, oldH, newW) {
-        return (oldH / oldW) * newW;
+        }).catch(e => console.log(e));
     }
 
     renderImage(image) {
-        return <Image style={{width: 200, height: 200, resizeMode: 'contain'}} source={image}/>
+        return <Image style={{width: 200, height: 200, resizeMode: 'contain', borderWidth: 0.5, margin : 5}} source={image}/>
     }
 
     renderAsset(image) {
@@ -574,7 +575,7 @@ class AlbaWrite extends React.Component{
     render(){
         return(
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} /> 
+                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.SubmitButton} /> 
                 <Divider />
                 <Layout style={{flex:10}}>
                     <ScrollView>
@@ -585,9 +586,11 @@ class AlbaWrite extends React.Component{
                             />
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Input
+                                style={{width : 250}}
                                 size='medium'
-                                placeholder='Input Location'
-                                onChangeText ={(nextText) => {this.setState({post_location:nextText})}}
+                                keyboardType='numeric'
+                                placeholder='Input phonenumber'
+                                onChangeText ={(nextText) => {this.setState({post_hp:nextText})}}
                                 />
                             <RadioGroup
                                 style={{flexDirection:'row', margin : 10}}
@@ -604,6 +607,11 @@ class AlbaWrite extends React.Component{
                                 3개월미만은 단기, 3개월 이상은 장기
                             </Tooltip>
                         </View>
+                        <Input
+                                size='medium'
+                                placeholder='Input Location'
+                                onChangeText ={(nextText) => {this.setState({post_location:nextText})}}
+                                />
                         <View style={{flexDirection : 'row', alignItems:'center'}}>
                             <Text style={{margin : 10}}>추후 협의</Text>
                             <CheckBox
@@ -612,8 +620,8 @@ class AlbaWrite extends React.Component{
                                 onChange={nextChecked => this.setFollowUp(nextChecked)}>
                             </CheckBox>
                             <Select
-                                style={{margin : 10, width : 100}}
-                                value={this.Salary_Type[this.state.alba_salary_type]}
+                                style={{margin : 10, width : 150}}
+                                value={this.Salary_Type[this.state.alba_salary_type.row]}
                                 selectedIndex={this.state.alba_salary_type}
                                 onSelect={(index)=>{this.setState({alba_salary_type:index})}}
                                 disabled={this.state.isFollowUp}
@@ -627,10 +635,12 @@ class AlbaWrite extends React.Component{
                             <Input
                                 style={{margin : 10}}
                                 size='medium'
+                                keyboardType='numeric'
                                 placeholder='Input Salary'
                                 disabled={this.state.isFollowUp}
                                 onChangeText ={(nextText) =>  {this.setState({alba_salary:nextText})}}
                                 />
+                            <Text>원</Text>
                         </View>
                     <Input
                         multiline={true}
@@ -638,95 +648,218 @@ class AlbaWrite extends React.Component{
                         placeholder='Input Context'
                         onChangeText ={(nextText) => {this.setState({post_content:nextText})}}
                     />
-                    <View style={{flex : 1, backgroundColor : 'black'}}>
+                    <View style={{flex : 1}}>
                         <ScrollView horizontal>
                             {this.state.post_image ? this.state.post_image.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
+                            <TouchableOpacity style={{width:200, height:200, margin : 5}} onPress={()=>{
+                                    this.cleanupImages();
+                                    this.pickMultiple();
+                                }}>
+                                <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:200,height:200}}/>
+                            </TouchableOpacity>
                         </ScrollView>
                     </View>
-                    <Button onPress ={()=>{
-                        this.cleanupImages();
-                        this.pickMultiple();
-                    }}>
-                        사진추가
-                    </Button>
                 </ScrollView>
-                </Layout>
-                <View style={styles.bottomView}>
-                    <Button 
-                        style={styles.bottomButton}
-                        onPress={()=>{this.submit_alba_Alert()}}>
-                            글쓰기 
-                    </Button>
-                </View>   
+                </Layout>   
             </SafeAreaView>
         );
     }
 }
 
 
-
 class IlbanWrite extends React.Component{
+     //get : 회원정보
+    //post : 포스트 글 업로드
+    //put : ~/{게시판이름}/:{글id}/
+
+
+    constructor(props){
+        super(props);
+        this.state={
+            isLoading: true,
+            post_title: '',
+            post_content: '',
+            post_location: '',
+            images: [],
+        }
+    }
+
+    // constructor(props){
+    //     super(props);
+    //     this.state = {
+    //         isLoading: true,
+    //         brd_key: 'ilban',
+    //         post_title:'',
+    //         post_content:'',
+    //         post_category:'',
+    //         post_nickname:'',
+    //         post_email:'',
+    //         post_image: null,
+    //         post_images: null,
+    //         imagesource : {},
+    //         image: null,
+    //         images: {
+    //             value: null,
+    //             valid: false
+    //         }
+    //             //isTipVisible:false,
+    //         //isFollowUp:false,
+    //     }
+    // }
+
+    //iamgeUpload
+    onClickAddImage() {
+        const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
+        ActionSheet.show(
+            {options: buttons,
+            cancelButtonIndex: 2,
+            title: 'Select a photo'},
+            buttonIndex => {
+                switch (buttonIndex) {
+                    case 0:
+                        this.takePhotoFromCamera();
+                        break;
+                    case 1:
+                        this.choosePhotoFromGallery();
+                        break;
+                    default:
+                        break
+                }
+            }
+        )
+    };
+
+    choosePhotoFromGallery() {
+        ImagePicker.openPicker({
+            multiple: true,
+            includeExif: false,
+        }).then(image => {
+            image.map(item => this.onSelectedImage(item));
+            console.log(image);
+        });
+    }
+
+
+    cleanupImages() {
+        ImagePicker.clean().then(() => {
+            // console.log('removed tmp images from tmp directory');
+            alert('Temporary images history cleared')
+        }).catch(e => {
+            alert(e);
+        });
+    }
+
+    pickMultiple() {
+        ImagePicker.openPicker({
+            multiple: true,
+            maxFiles: 2,
+            includeExif: true,
+            compressImageQuality: 0.8
+        }).then(images => {
+            this.setState({
+            //     post_images: images.map(i => {
+            //         console.log('received image', i);
+            //         return {uri: i.path, name : i.path.split('/').pop(), type : i.mime};
+            //     })
+            // });
+            image: null,
+            images: images.map(i => {
+              console.log('received image', i);
+              return {uri: i.path, width: i.width, height: i.height, mime: i.mime};
+            })
+          });
+          this.props.onImagePicked({uri: images.map(i => {
+              return{uri: i.path}
+          })
+        })
+        }).catch(e => alert(e));
+    }
+
+    renderImage(image) {
+        const key = 1
+        return(
+            <Image style={{width: 100, maxHeight: 100, resizeMode: 'cover', marginLeft: 10}} source={image} />
+        
+        ) 
+    }
+
+    renderAsset(image) {
+        if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
+            return this.renderVideo(image);
+        }
+
+        return this.renderImage(image);
+    }
+    //end : iamgeUpload
+    //header
+
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
-    // constructor(){
-    //     super();
-    //     this.state = {
-    //         PickerValue : ''
-    //     }
-    // };
+    
+    SubmitButtom = () =>(
+        <Button 
+        style={{width:100}}
+        onPress={()=>this.onClickAddImage()}
+        >Photo</Button>
+    )
 
-    // clickme = () =>{
-    //     alert(this.state.PickerValue)
-    // }
-
-    state = {
-        language: 'java',
-      };
-
-      render(){
+    //end: header
+    render(){
         return(
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="일반게시판" alignment="center" accessoryLeft={this.BackAction} /> 
+                <TopNavigation title="일반게시판" alignment="center" accessoryLeft={this.BackAction} 
+                accessoryRight={this.SubmitButtom} 
+                /> 
                     <Divider />
-                    <View style={{flex:1}} >
-                        <Picker
-                            selectedValue={this.state.language}
-                            onValueChange={(itemValue, itemIndex) =>
-                                this.setState({language: itemValue})
-                            }>
-                            <Picker.Item label="Java" value="java" />
-                            <Picker.Item label="JavaScript" value="js" />
-                        </Picker>
-                        <TextInput
-                            style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                        />
+                   
+                    <View style={{flexDirection: 'row'}} >
+                        {/* 카테고리 */}
+                        <Select
+                        style={{flex:1, width:10}}
+                        placeholder='Default'
+                        // selectedIndex={selectedIndex}
+                        // onSelect={index => setSelectedIndex(index)}
+                        >
+                            <SelectItem title={evaProps => <Text {...evaProps}>Option 1</Text>} />
+                        </Select>
+                        {/* 제목 */}
+                        <Input style={{ flex:1, width:90}}/>
                     </View>
-                    <View style={{flex:2}} >
-                    <TextInput
-                        style={{ minHeight: 200, borderColor: 'gray', borderWidth: 1 }}
-                        editable
-                        minLength={10}
-                    />
+                    <View style={{ flex: 2}}>
+                        {/* 본문 */}
+                        <Input
+                            style={{padding:0}}
+                            multiline={true}
+                            textStyle={{ minHeight: 100 }}
+                            />
                     </View>
-                    <View style={{flex:1, justifyContent: "center", padding:0, marginBottom: 2, }}>
-                        <Button 
-                            style={styles.bottomButton}
-                            onPress={()=>{this.props.navigation.navigate('IlbanWrite')}}
-                            >
-                        글쓰기 
-                        </Button>
+                    <Divider />
+                    <View style={{flex:1, justifyContent: "center"}}>
+                        {/* 사진 */}
+                        <Layout style={styles.container}>
+                            <Text>사진</Text>
+                            <ScrollView horizontal={true}>
+                                <TouchableOpacity style={{width:100, height:100}}
+                                onPress ={()=>{
+                                    this.cleanupImages();
+                                    this.pickMultiple();
+                                }}
+                                >
+                                    <Image 
+                                        source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} 
+                                        style={{width:100,height:100}}
+                                        />
+                                </TouchableOpacity>
+                                 {this.state.post_images ? this.state.post_images.map(item => this.renderAsset(item)) : null} 
+                                {/* {this.state.images ? this.state.post_images.map(item => <View key={item.uri}>{this.renderAsset(item)}</View>) : null}
+                                 */}
+                                 {/* {this.state.image ? this.renderAsset(this.state.image) : null} */}
+                                 {/* {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null} */}
+                            </ScrollView>                                        
+                        </Layout>
                     </View>   
-                    {/* <Picker
-                    style = {{width:'80%'}}
-                    selectedValue={this.state.PickerValue}
-                    onValueChange = 
-                    {(itemValue, itemIndex) => 
-                        this.setState({PickerValue : itemValue})}
-                    >
-                        <Picker.Item label="Html" value="html" />
-                        <Picker.Item label="Html" value="html" />
-                    </Picker> */}
+                   
             </SafeAreaView>
         )
     }
@@ -785,6 +918,10 @@ const styles = StyleSheet.create({
         borderColor : 'gray',
         borderRadius : 10,
         borderWidth: 1,
+    },
+    select: {
+        flex: 1,
+        margin: 2,
     },
     deal_type_text : {
         color : 'white'

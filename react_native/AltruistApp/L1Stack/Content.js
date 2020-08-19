@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList} from 'react-native';
-import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal} from '@ui-kitten/components'
+import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,} from 'react-native';
+import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal, OverflowMenu, MenuItem} from '@ui-kitten/components'
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
+import {ActionSheet, Root, Container} from 'native-base';
 import Slider from '../components/slider.component'
 
 const BackIcon =  (props) =>(
@@ -339,7 +340,7 @@ class MarketContent extends React.Component {
                 <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
                     <ScrollView>
                         <View>
-                            <Slider image={this.state.image}/>
+                            <Slider image={this.state.image} navigation={this.props.navitation}/>
                         </View>
                         <View style={{}}>
                             <Layout>
@@ -402,14 +403,23 @@ class AlbaContent extends React.Component {
         super(props);
         this.state ={
             visible : false,
+            OF_visible : false,
             post : {} ,
             thumb_image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
             file_images : null,
-            phoneNumber : '01099999999',
+            phoneNumber : '010 9999 9999',
             isLoading : true,
             image_height : 0,
         }
     }
+
+    Alba_salary_type = [
+        {color : 'green', str : '시'},
+        {color : 'purple', str : '일'},
+        {color : 'blue', str : '주'},
+        {color : 'red', str : '월'},
+    ]
+
 
     async componentDidMount(){
         const post_id = this.props.route.params;
@@ -453,6 +463,56 @@ class AlbaContent extends React.Component {
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
+    UD_Action = () =>(
+        <TopNavigationAction icon={HeartIcon} onPress={() =>{this.onClick_UD_Action()}}/>
+    )
+    onClick_UD_Action = () => {
+        const buttons = ['수정', '삭제', '취소'];
+        ActionSheet.show(
+            {
+                options: buttons,
+                cancelButtonIndex: 2,
+            },
+            buttonIndex => {
+                switch (buttonIndex) {
+                    case 0:
+                        this.updateData();
+                        break;
+                    case 1:
+                        this.deleteData(this.props.route.params.post_id)
+                        break;
+                    default:
+                        break
+                }
+            }
+        );
+
+    };
+
+    updateData = () => {
+        alert('update');
+    }
+
+    deleteData = async(id) => {
+        alert('delete');
+        // var formdata =new FormData();
+        // formdata.append("post_id", id);
+        // formdata.append("modify_password", '1234');
+
+        // await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        // .then(response => {
+        //     if(response.status=='500'){
+        //         alert(response.message)
+        //     }else if(response.status=="200"){
+        //         alert(response.message);
+        //     }
+        // })
+        // .catch(error=>{
+        //     alert(`게시글 삭제에 실패했습니다. ${error}`)
+        // })
+    }
+
+
 
     // getImageSize (uri, passProps) {
     //     const img_url = "http://10.0.2.2"+uri;
@@ -481,8 +541,9 @@ class AlbaContent extends React.Component {
                 <Spinner size="giant"/>
             </View>
             :
+            <Root>
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="채용정보" alignment="center" accessoryLeft={this.BackAction} /> 
+                <TopNavigation title="채용정보" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.UD_Action}/> 
                 <Layout style={styles.container}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
                         <Card style={styles.item}>
@@ -502,7 +563,7 @@ class AlbaContent extends React.Component {
                                     fill='black'
                                     name='star'
                                 />
-                                <Text>post.alba_salary</Text>
+                                <Text>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                                 </View>
                                 <View style={styles.icons}>
                                 <Icon
@@ -510,7 +571,7 @@ class AlbaContent extends React.Component {
                                     fill='black'
                                     name='eye'
                                 />
-                                <Text>post.alba_type</Text>
+                                <Text>{post.alba_type?'단기':'장기'}</Text>
                                 </View>
                                 <View style={{flex : 2, justifyContent : 'center', alignItems : 'center'}}>
                                 <Icon
@@ -518,14 +579,14 @@ class AlbaContent extends React.Component {
                                     fill='black'
                                     name='share-outline'
                                 />
-                                <Text>post.post_location</Text>
+                                <Text numberOfLines={1} ellipsizeMode='tail'>{post.post_location}</Text>
                                 </View>
                             </Layout>
                         </Card>
                         
                         <Card style={styles.item}>
                             <Text style={styles.subhead}>근무지역</Text>
-                            <Text style={{margin : 5}}>post.post_location</Text>
+                            <Text style={{margin : 5}}>{post.post_location}</Text>
                         </Card>
                         <Card style={styles.item}>
                             <Text style={styles.subhead}>근무조건</Text>
@@ -533,8 +594,9 @@ class AlbaContent extends React.Component {
                                 <View style={{flex : 1, marginLeft : 5}}>
                                     <Text style={styles.gathertext}>급여</Text>
                                 </View>
-                                <View style={{flex : 5}}>
-                                    <Text style={styles.gather}>post.alba_salary_type post.alba_salary</Text>
+                                <View style={{flex : 5, flexDirection : 'row'}}>
+                                    <Text style={{marginVertical : 5,color : this.Alba_salary_type[post.alba_salary_type].color}}>{this.Alba_salary_type[post.alba_salary_type].str} </Text>
+                                    <Text style={styles.gather}>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                                 </View>
                             </Layout>
                             <Layout style = {{flexDirection : 'row'}}>
@@ -542,11 +604,11 @@ class AlbaContent extends React.Component {
                                     <Text style={styles.gathertext}>근무기간</Text>
                                 </View>
                                 <View style={{flex : 5}}>
-                                    <Text style={styles.gather}>post.alba_type</Text>
+                                    <Text style={styles.gather}>{post.alba_type?'단기 (1일 ~ 3개월)':'장기 (3개월 ~)'}</Text>
                                 </View>
                             </Layout>
                         </Card>
-                        <Card>
+                        <Card style={styles.item}>
                             <HTML
                                 html = {post.post_content}
                                 imagesMaxWidth={Dimensions.get('window').width}
@@ -569,14 +631,14 @@ class AlbaContent extends React.Component {
                                             <Button
                                                 appearance='ghost'
                                                 accessoryLeft={HeartIcon}
-                                                onPress={()=>{Linking.openURL(`tel:${this.state.phoneNumber}`)}}/>
+                                                onPress={()=>{Linking.openURL(`tel:${post.post_ph}`)}}/>
                                             <Text>전화</Text>
                                         </View>
                                             <View style={styles.modal_icons}>
                                             <Button
                                                 appearance='ghost'
                                                 accessoryLeft={CommentIcon}
-                                                onPress={()=>{Linking.openURL(`sms:${this.state.phoneNumber}`)}}/>
+                                                onPress={()=>{Linking.openURL(`sms:${post.post_ph}`)}}/>
                                             <Text>메시지</Text>
                                         </View>
                                         <View style={styles.modal_icons}>
@@ -595,6 +657,7 @@ class AlbaContent extends React.Component {
                     </View>
                 </Layout>
             </SafeAreaView>
+            </Root>
             )
     }
 }

@@ -18,6 +18,13 @@ class AlbaScreen extends React.Component {
     }
   }
 
+  Alba_salary_type = [
+    {color : 'green', str : '시'},
+    {color : 'purple', str : '일'},
+    {color : 'blue', str : '주'},
+    {color : 'red', str : '월'},  
+  ]
+
   // const renderItemHeader = (headerProps, info) => (
   //   <View {...headerProps}>
         
@@ -57,7 +64,7 @@ class AlbaScreen extends React.Component {
   }
 
   statefunction=()=>{
-    this.setState({isLoading:true}, this.componentDidMount);
+    this.setState({isLoading:true}, this.onRefresh());
   }
 
   load_more_data = () => {
@@ -86,9 +93,15 @@ class AlbaScreen extends React.Component {
         <View style={{flexDirection : 'row'}}>
             <View style={styles.Text}>
                 <Text style={{fontSize : 20}}>{item.post_nickname}</Text>
-                <Text style={{marginTop :5, marginBottom : 5}}>{item.title}</Text>
+                <Text style={{marginTop :5, marginBottom : 5}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
                 <Divider style={{borderWidth : 0.5}}/>
-                <Text>item.post_location<Text style={{color : 'red'}}>item.alba_salary_type</Text> item.alba_salary</Text>
+                <View style={{flex : 1, flexDirection : 'row'}}>
+                  <Text style={{flex:1.2}} numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
+                  <View style={{flex : 1, flexDirection : 'row'}}>
+                    <Text style={{color : this.Alba_salary_type[item.alba_salary_type].color}}>{this.Alba_salary_type[item.alba_salary_type].str}</Text>
+                    <Text> {(item.alba_salary != '추후협의'?item.alba_salary+'원':item.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                  </View>
+                </View>
             </View>
             <View style={styles.image}>
               {item.origin_image_url?
@@ -122,13 +135,11 @@ class AlbaScreen extends React.Component {
           ListFooterComponent={this.renderFooter}
           />
       </View>
-      <View style={styles.bottomView}>
-        <Button 
+      <Button 
           style={styles.bottomButton}
           onPress={()=>{this.props.navigation.navigate('AlbaWrite',{statefunction:this.statefunction});}}>
-            글쓰기 
-          </Button>
-      </View>
+            + 
+      </Button>
       </>
     );
   }
@@ -165,7 +176,9 @@ const styles = StyleSheet.create({
     backgroundColor : 'lightgrey',
   },
   bottomButton: {
-    width : "95%",
+    position:'absolute',
+    right : 10,
+    bottom : 10,
   },
 });
 
