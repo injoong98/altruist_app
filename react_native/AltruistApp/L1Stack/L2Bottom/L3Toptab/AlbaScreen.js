@@ -98,7 +98,7 @@ class AlbaScreen extends React.Component {
                 <View style={{flex : 1, flexDirection : 'row'}}>
                   <Text> item.post_location </Text>
                   <Text style={{color : this.Alba_salary_type[item.alba_salary_type].color}}>{this.Alba_salary_type[item.alba_salary_type].str}</Text>
-                  <Text> {item.alba_salary+'원'.replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                  <Text> {item.alba_salary != '추후협의'?item.alba_salary+'원':item.alba_salary.replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                 </View>
             </View>
             <View style={styles.image}>

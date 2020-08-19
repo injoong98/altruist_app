@@ -476,7 +476,7 @@ class AlbaContent extends React.Component {
             buttonIndex => {
                 switch (buttonIndex) {
                     case 0:
-                        this.updateData;
+                        this.updateData();
                         break;
                     case 1:
                         this.deleteData(this.props.route.params.post_id)
@@ -608,7 +608,7 @@ class AlbaContent extends React.Component {
                                 </View>
                             </Layout>
                         </Card>
-                        <Card>
+                        <Card style={styles.item}>
                             <HTML
                                 html = {post.post_content}
                                 imagesMaxWidth={Dimensions.get('window').width}
@@ -631,14 +631,14 @@ class AlbaContent extends React.Component {
                                             <Button
                                                 appearance='ghost'
                                                 accessoryLeft={HeartIcon}
-                                                onPress={()=>{Linking.openURL(`tel:${this.state.phoneNumber}`)}}/>
+                                                onPress={()=>{Linking.openURL(`tel:${post.post_ph}`)}}/>
                                             <Text>전화</Text>
                                         </View>
                                             <View style={styles.modal_icons}>
                                             <Button
                                                 appearance='ghost'
                                                 accessoryLeft={CommentIcon}
-                                                onPress={()=>{Linking.openURL(`sms:${this.state.phoneNumber}`)}}/>
+                                                onPress={()=>{Linking.openURL(`sms:${post.post_ph}`)}}/>
                                             <Text>메시지</Text>
                                         </View>
                                         <View style={styles.modal_icons}>

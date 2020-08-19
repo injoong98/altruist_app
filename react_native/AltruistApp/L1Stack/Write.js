@@ -407,6 +407,7 @@ class AlbaWrite extends React.Component{
             post_title : '',
             post_content : '',
             post_location : '',
+            post_hp : '',
             alba_type : 0,
             alba_salary_type : new IndexPath(0),
             alba_salary : '',
@@ -438,7 +439,7 @@ class AlbaWrite extends React.Component{
     }
     submit_alba_post = async() => {
         console.log(this.state);
-        const {post_title, post_content, post_location, alba_type, alba_salary_type, alba_salary, post_image} = this.state;
+        const {post_title, post_content, post_location, post_phone, alba_type, alba_salary_type, alba_salary, post_image} = this.state;
         let formdata = new FormData();
         formdata.append("brd_key", 'b-a-3');
         formdata.append("post_title", post_title);
@@ -447,6 +448,7 @@ class AlbaWrite extends React.Component{
         formdata.append("post_email", 'roothyo@soongsil.ac.kr');
         formdata.append("post_password", '1234');
         formdata.append("post_location", post_location);
+        formdata.append("post_location", post_hp.replace(/ |-/g,""));
         formdata.append("alba_type", alba_type);
         formdata.append("alba_salary_type", alba_salary_type.row);
         formdata.append("alba_salary", alba_salary);
@@ -604,6 +606,12 @@ class AlbaWrite extends React.Component{
                                 3개월미만은 단기, 3개월 이상은 장기
                             </Tooltip>
                         </View>
+                        <Input
+                                style={{width : 250}}
+                                size='medium'
+                                placeholder='Input phonenumber'
+                                onChangeText ={(nextText) => {this.setState({post_hp:nextText})}}
+                                />
                         <View style={{flexDirection : 'row', alignItems:'center'}}>
                             <Text style={{margin : 10}}>추후 협의</Text>
                             <CheckBox
