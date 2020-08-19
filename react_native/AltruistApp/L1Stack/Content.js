@@ -321,7 +321,7 @@ class MarketContent extends React.Component {
                 <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
                     <ScrollView>
                         <View>
-                            <Slider image={this.state.image}/>
+                            <Slider image={this.state.image} navigation={this.props.navitation}/>
                         </View>
                         <View style={{}}>
                             <Layout>
@@ -628,4 +628,4 @@ const styles = StyleSheet.create({
 });
 
 
-export {defaultContent, MarketContent, AlbaContent, GominContent}
+export {defaultContent, MarketContent, AlbaContent, GominContent, ImageView}
