@@ -668,22 +668,37 @@ class IlbanWrite extends React.Component{
 
     constructor(props){
         super(props);
-        this.state = {
+        this.state={
             isLoading: true,
-            brd_key: 'ilban',
-            post_title:'',
-            post_content:'',
-            post_category:'',
-            post_nickname:'',
-            post_email:'',
-            post_image: null,
-            post_images: null,
-            imagesource : {},
-            images : null,
-            //isTipVisible:false,
-            //isFollowUp:false,
+            post_title: '',
+            post_content: '',
+            post_location: '',
+            images: [],
         }
     }
+
+    // constructor(props){
+    //     super(props);
+    //     this.state = {
+    //         isLoading: true,
+    //         brd_key: 'ilban',
+    //         post_title:'',
+    //         post_content:'',
+    //         post_category:'',
+    //         post_nickname:'',
+    //         post_email:'',
+    //         post_image: null,
+    //         post_images: null,
+    //         imagesource : {},
+    //         image: null,
+    //         images: {
+    //             value: null,
+    //             valid: false
+    //         }
+    //             //isTipVisible:false,
+    //         //isFollowUp:false,
+    //     }
+    // }
 
     //iamgeUpload
     onClickAddImage() {
@@ -735,15 +750,20 @@ class IlbanWrite extends React.Component{
             compressImageQuality: 0.8
         }).then(images => {
             this.setState({
-                post_image: null,
-                post_images: images.map(i => {
-                    console.log('received image', i);
-                    return {uri: i.path, name : i.path.split('/').pop(), type : i.mime};
-                })
-            });
-            this.props.onImagePicked({uri: images.map(i => {
-            return{uri: i.path}
+            //     post_images: images.map(i => {
+            //         console.log('received image', i);
+            //         return {uri: i.path, name : i.path.split('/').pop(), type : i.mime};
+            //     })
+            // });
+            image: null,
+            images: images.map(i => {
+              console.log('received image', i);
+              return {uri: i.path, width: i.width, height: i.height, mime: i.mime};
             })
+          });
+          this.props.onImagePicked({uri: images.map(i => {
+              return{uri: i.path}
+          })
         })
         }).catch(e => alert(e));
     }
@@ -751,7 +771,7 @@ class IlbanWrite extends React.Component{
     renderImage(image) {
         const key = 1
         return(
-            <Image style={{width: 100, maxHeight: 100, resizeMode: 'cover', marginLeft: 10}} source={image} key={key+1} />
+            <Image style={{width: 100, maxHeight: 100, resizeMode: 'cover', marginLeft: 10}} source={image} />
         
         ) 
     }
@@ -824,8 +844,11 @@ class IlbanWrite extends React.Component{
                                         style={{width:100,height:100}}
                                         />
                                 </TouchableOpacity>
-                                {this.state.post_image ? this.state.post_image.map(item => this.renderAsset(item)) : null}
-                                {this.state.post_images ? this.state.post_images.map(item => <View key={item.uri}>{this.renderAsset(item)}</View>) : null}
+                                 {this.state.post_images ? this.state.post_images.map(item => this.renderAsset(item)) : null} 
+                                {/* {this.state.images ? this.state.post_images.map(item => <View key={item.uri}>{this.renderAsset(item)}</View>) : null}
+                                 */}
+                                 {/* {this.state.image ? this.renderAsset(this.state.image) : null} */}
+                                 {/* {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null} */}
                             </ScrollView>                                        
                         </Layout>
                     </View>   
