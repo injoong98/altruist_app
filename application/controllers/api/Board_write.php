@@ -849,9 +849,18 @@ class Board_write extends CB_Controller
 				$updatedata['post_category'] = $this->input->post('post_category', null, '');
 			}
 
-			$updatedata['post_device']
-				= ($this->cbconfig->get_device_type() === 'mobile') ? 'mobile' : 'desktop';
-
+			$updatedata['post_device']	= ($this->cbconfig->get_device_type() === 'mobile') ? 'mobile' : 'desktop';
+		
+			$updatedata['post_location'] = $this->input->post('post_location', null, '');
+			$updatedata['alba_type'] = $this->input->post('alba_type', null, '');
+			$updatedata['alba_salary_type'] = $this->input->post('alba_salary_type', null, '');
+			$updatedata['alba_salary'] = $this->input->post('alba_salary', null, '');
+			$updatedata['post_hp'] = $this->input->post('post_hp', null, '');
+			
+			
+			
+			
+			// 글작성 
 			$post_id = $this->Post_model->insert($updatedata);
 
 			if ($can_post_secret && $this->input->post('post_secret')) {
@@ -2288,9 +2297,19 @@ class Board_write extends CB_Controller
 				}
 			}
 
+			
+			//알바천일국 컬럼
+			$metadata['post_location'] = $this->input->post('post_location', null, '');
+			$metadata['alba_type'] = $this->input->post('alba_type', null, '');
+			$metadata['alba_salary_type'] = $this->input->post('alba_salary_type', null, '');
+			$metadata['alba_salary'] = $this->input->post('alba_salary', null, '');
+			$metadata['post_hp'] = $this->input->post('post_hp', null, '');
+					
+			
+			
 			// 이벤트가 존재하면 실행합니다
 			Events::trigger('before_post_update', $eventname);
-
+			//업데이트
 			$this->Post_model->update($post_id, $updatedata);
 
 			// 네이버 신디케이션 보내기
