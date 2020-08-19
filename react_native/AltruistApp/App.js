@@ -15,12 +15,16 @@ import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {StackNav} from "./L1Stack/StackNav";
 import { AppIconsPack } from './app-icons-pack';
 import { default as customtheme } from './custom-theme.json';
+import { default as mapping } from './mapping.json';
 
  const App = () => {
   return (
   <>
     <IconRegistry icons={[EvaIconsPack,AppIconsPack]} />
-    <ApplicationProvider {...eva} theme={{...eva.light,...customtheme}}>
+    <ApplicationProvider 
+      {...eva} 
+      theme={{...eva.light,...customtheme}}
+      customMapping={mapping}>
       <NavigationContainer>
         <StackNav />
       </NavigationContainer>
