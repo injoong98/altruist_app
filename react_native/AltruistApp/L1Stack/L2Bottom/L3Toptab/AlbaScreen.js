@@ -55,12 +55,26 @@ class AlbaScreen extends React.Component {
     })
   }
 
+  getPostFirst = async() => {
+    await axios.get('http://10.0.2.2/api/board_post/lists/b-a-3')
+    .then((response)=>{
+        this.setState({
+          lists:response.data.view.list.data.list,
+          isLoading:false,
+          isListLoading:false,
+        })
+    })
+    .catch((error)=>{
+        alert('error')
+    })
+  }
+
   componentDidMount(){
     this.setState({isListLoading:true}, this.getPostList);
   }
 
   onRefresh = () => {
-    this.setState({current_page:1, isNoMoreData : false, lists:[]}, this.getPostList);
+    this.setState({current_page:1, isNoMoreData : false,}, this.getPostFirst);
   }
 
   statefunction=()=>{
