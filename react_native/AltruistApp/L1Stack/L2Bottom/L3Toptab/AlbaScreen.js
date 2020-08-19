@@ -93,7 +93,7 @@ class AlbaScreen extends React.Component {
         <View style={{flexDirection : 'row'}}>
             <View style={styles.Text}>
                 <Text style={{fontSize : 20}}>{item.post_nickname}</Text>
-                <Text style={{marginTop :5, marginBottom : 5}}>{item.title}</Text>
+                <Text style={{marginTop :5, marginBottom : 5}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
                 <Divider style={{borderWidth : 0.5}}/>
                 <View style={{flex : 1, flexDirection : 'row'}}>
                   <Text> item.post_location </Text>
