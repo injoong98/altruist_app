@@ -18,7 +18,7 @@ const TopTabBar = ({ navigation, state }) => (
     <Tab title='일반'/>
     <Tab title='고민'/>
     <Tab title='수수마켓'/>
-    <Tab title='알바통'/>
+    <Tab title='알바천일국'/>
   </TabBar>
 );
 
@@ -34,7 +34,7 @@ const TabNavigator = () => (
 
 export const ComToptabNav= () => (
   <>
-    <TopNavigation title ="Community" alignment ='center'/>
+    <TopNavigation title ="Community" alignment ='center' style={{backgroundColor : '#b9b5d6'}}/>
     <TabNavigator/>
   </>
 );

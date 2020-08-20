@@ -102,11 +102,10 @@ class AlbaScreen extends React.Component {
   renderItem = ({item, index}) => (
       <Card
       onPress={() => {this.props.navigation.navigate('AlbaContent', item.post_id)}}
-      style={styles.carditem}
-      status='basic'>
+      style={styles.carditem}>
         <View style={{flexDirection : 'row'}}>
             <View style={styles.Text}>
-                <Text style={{fontSize : 20}}>{item.post_nickname}</Text>
+                <Text style={{fontSize : 25}}>{item.post_nickname}</Text>
                 <Text style={{marginTop :5, marginBottom : 5}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
                 <Divider style={{borderWidth : 0.5}}/>
                 <View style={{flex : 1, flexDirection : 'row'}}>
@@ -165,9 +164,13 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: 2,
     paddingVertical: 2,
+    marginHorizontal : 4,
+    backgroundColor : 'white'
   },
   carditem: {
     marginVertical: 4,
+    borderRadius : 25,
+    backgroundColor : '#E9E9E9',
   },
   loader : {
     marginTop : 10,
@@ -187,7 +190,6 @@ const styles = StyleSheet.create({
     flex : 1,
     justifyContent : 'center',
     alignItems : 'center',
-    backgroundColor : 'lightgrey',
   },
   bottomButton: {
     position:'absolute',
