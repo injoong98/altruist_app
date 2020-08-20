@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { StyleSheet, View, Image, Dimensions } from 'react-native';
-import { Button, Card, List, Layout, Text,Icon, StyleService, Spinner} from '@ui-kitten/components'
+import { Button, Card, List, Layout, Text,Icon, StyleService, Spinner, Divider} from '@ui-kitten/components'
 import { HeartIcon, PlusIcon } from '../../../assets/icons/icons';
 import { getPostList } from "./extra/getPost";
 import axios from 'axios';
@@ -115,21 +115,30 @@ class JauScreen extends React.Component {
 
         <View>
           <JauHeader 
-          category = {item.category.bca_value}
-          title={item.post_title} 
-          nickname={item.post_nickname} 
-          datetime={item.post_datetime} 
-          hit={item.post_hit} />
-          {/* 서버에 올라가는거 보고 진행 */}
-            <HTML html = {item.post_content} 
-            ignoredTags={[ ...IGNORED_TAGS, 'span', 'br', 'img']}
-            ignoredStyles ={['lazyloaded']}
-            imagesMaxWidth={Dimensions.get("window").width}
+              category = {item.category.bca_value}
+              title={item.post_title} 
+              nickname={item.post_nickname} 
+              datetime={item.post_datetime} 
+              hit={item.post_hit} 
             />
+          {/* 서버에 올라가는거 보고 진행 */}
+         <View>
+           <Divider />
           <Text ellipsizeMode='tail'
-            numberOfLines = {1}>
+            numberOfLines = {3}>
+            0% WAITING Transforming artifact memory-type-java-2.2.0.aar (com.facebook.fresco:memory-type-java:2.2.0) with AarTransform
+            Transforming artifact imagepipeline-native-2.2.0.aar (com.facebook.fresco:imagepipeline-native:2.2.0) with ExtractAarTransform
+            Transforming artifact lifecycle-livedata-core-2.0.0.aar (androidx.lifecycle:lifecycle-livedata-core:2.0.0) with ExtractAarTransform
+            Transforming artifact imagepipeline-2.2.0.aar (com.facebook.fresco:imagepipeline:2.2.0) with ExtractAarTransform
+            Transforming artifact soloader-0.8.2.aar (com.facebook.soloader:soloader:0.8.2) with JetifyTransform > JetifyTransform soloader-0.8.2.aar
+            Transforming artifact core-1.0.1.aar (androidx.core:core:1.0.1) with ExtractAarTransform
+            Transforming artifact android-jsc-r245459.aar (org.webkit:android-jsc:r245459) with ExtractAarTransform
+            info Connecting to the development server...
           </Text>
+          <Divider />
+        </View>
           <JauFooter />
+          <Divider />
         </View>
   );
   

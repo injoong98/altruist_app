@@ -210,6 +210,8 @@ class Login extends CB_Controller
 					redirect('membermodify/password_modify');
 				}
 			}
+			response_result($_SESSION);
+			return true;
 
 			$url_after_login = $this->cbconfig->item('url_after_login');
 			if ($url_after_login) {
@@ -380,6 +382,10 @@ class Login extends CB_Controller
 		delete_cookie('autologin');
 
 		$this->session->sess_destroy();
+		
+		response_result($_SESSION);
+		return true;
+
 		$url_after_logout = $this->cbconfig->item('url_after_logout');
 		if ($url_after_logout) {
 			$url_after_logout = site_url($url_after_logout);
