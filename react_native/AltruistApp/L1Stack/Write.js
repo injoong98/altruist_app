@@ -668,274 +668,319 @@ class AlbaWrite extends React.Component{
 
 
 class IlbanWrite extends React.Component{
-     //get : 회원정보
-    //post : 포스트 글 업로드
-    //put : ~/{게시판이름}/:{글id}/
+    //get : 회원정보
+   //post : 포스트 글 업로드
+   //put : ~/{게시판이름}/:{글id}/
 
 
-    constructor(props){
-        super(props);
-        this.state={
-            isLoading: true,
-            post_title: '',
-            post_content: '',
-            post_location: '',
-            images: [],
-        }
-    }
+   constructor(props){
+       super(props);
+       this.state={
+           isLoading: true,
+           brd_key: 'ilban',
+           post_title: '',
+           post_content: '',
+           post_nickname:'',
+           post_email:'',
+           images: [],
+       }
+   }
 
-    // constructor(props){
-    //     super(props);
-    //     this.state = {
-    //         isLoading: true,
-    //         brd_key: 'ilban',
-    //         post_title:'',
-    //         post_content:'',
-    //         post_category:'',
-    //         post_nickname:'',
-    //         post_email:'',
-    //         post_image: null,
-    //         post_images: null,
-    //         imagesource : {},
-    //         image: null,
-    //         images: {
-    //             value: null,
-    //             valid: false
-    //         }
-    //             //isTipVisible:false,
-    //         //isFollowUp:false,
-    //     }
-    // }
-
-    //iamgeUpload
-    onClickAddImage() {
-        const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
-        ActionSheet.show(
-            {options: buttons,
-            cancelButtonIndex: 2,
-            title: 'Select a photo'},
-            buttonIndex => {
-                switch (buttonIndex) {
-                    case 0:
-                        this.takePhotoFromCamera();
-                        break;
-                    case 1:
-                        this.choosePhotoFromGallery();
-                        break;
-                    default:
-                        break
-                }
-            }
-        )
-    };
-
-    choosePhotoFromGallery() {
-        ImagePicker.openPicker({
-            multiple: true,
-            includeExif: false,
-        }).then(image => {
-            image.map(item => this.onSelectedImage(item));
-            console.log(image);
-        });
-    }
+   // constructor(props){
+   //     super(props);
+   //     this.state = {
+   //         isLoading: true,
+   //         brd_key: 'ilban',
+   //         post_title:'',
+   //         post_content:'',
+   //         post_category:'',
+   //         post_nickname:'',
+   //         post_email:'',
+   //         post_image: null,
+   //         post_images: null,
+   //         imagesource : {},
+   //         image: null,
+   //         images: {
+   //             value: null,
+   //             valid: false
+   //         }
+   //             //isTipVisible:false,
+   //         //isFollowUp:false,
+   //     }
+   // }
 
 
-    cleanupImages() {
-        ImagePicker.clean().then(() => {
-            // console.log('removed tmp images from tmp directory');
-            alert('Temporary images history cleared')
-        }).catch(e => {
-            alert(e);
-        });
-    }
+   submitPost = async() => {
 
-    pickMultiple() {
-        ImagePicker.openPicker({
-            multiple: true,
-            maxFiles: 2,
-            includeExif: true,
-            compressImageQuality: 0.8
-        }).then(images => {
-            this.setState({
-            //     post_images: images.map(i => {
-            //         console.log('received image', i);
-            //         return {uri: i.path, name : i.path.split('/').pop(), type : i.mime};
-            //     })
-            // });
-            image: null,
-            images: images.map(i => {
-              console.log('received image', i);
-              return {uri: i.path, width: i.width, height: i.height, mime: i.mime};
-            })
-          });
-          this.props.onImagePicked({uri: images.map(i => {
-              return{uri: i.path}
-          })
-        })
-        }).catch(e => alert(e));
-    }
+       console.log(this.state);
+       const {post_title, post_content, post_category} = this.state;
 
-    renderImage(image) {
-        const key = 1
-        return(
-            <Image style={{width: 100, maxHeight: 100, resizeMode: 'cover', marginLeft: 10}} source={image} />
-        
-        ) 
-    }
+       let formdata = new FormData();
+           formdata.append("brd_key", 'ilban');
+           formdata.append("post_title", post_title);
+           formdata.append("post_category", post_category);
+           formdata.append("post_content", post_content);
+           formdata.append("post_nickname", 'ryeMhi');
+           formdata.append("post_email", 'yhr0901@gmail.com');
+           formdata.append("post_password", '0000');
+           
+       await axios.post(
+           'http://10.0.2.2/api/board_write/write/ilban',
+           formdata
+       )
+       .then(response=>{
+           Alert.alert(
+               "게시글",
+               "게시글 작성 완료",
+               [
+                   { 
+                       text: "OK", 
+                       onPress: ()=> {this.gobackfunc()}
+                   }
+               ],
+               { cancelable: false }
+           );
+       })
+       .catch(error=>{
+           alert('BYE:(')
+       })    
+   }
+   
 
-    renderAsset(image) {
-        if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
-            return this.renderVideo(image);
-        }
+   onClickAddImage() {
+       const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
+       ActionSheet.show(
+           {options: buttons,
+           cancelButtonIndex: 2,
+           title: 'Select a photo'},
+           buttonIndex => {
+               switch (buttonIndex) {
+                   case 0:
+                       this.takePhotoFromCamera();
+                       break;
+                   case 1:
+                       this.choosePhotoFromGallery();
+                       break;
+                   default:
+                       break
+               }
+           }
+       )
+   };
 
-        return this.renderImage(image);
-    }
-    //end : iamgeUpload
-    //header
+   takePhotoFromCamera() {
+       ImagePicker.openCamera({
+           width: 300,
+           height: 400,
+           cropping: true,
+         }).then(image => {
+           this.onSelectedImage(image);
+           console.log(image);
+         });
+   }
 
-    BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
-    )
-    
-    SubmitButtom = () =>(
-        <Button 
-        style={{width:100}}
-        onPress={()=>this.onClickAddImage()}
-        >Photo</Button>
-    )
+   choosePhotoFromGallery() {
+       ImagePicker.openPicker({
+           multiple: true,
+           includeExif: false,
+       }).then(image => {
+           image.map(item => this.onSelectedImage(item));
+           console.log(image);
+       });
+   }
 
-    //end: header
-    render(){
-        return(
-            <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="일반게시판" alignment="center" accessoryLeft={this.BackAction} 
-                accessoryRight={this.SubmitButtom} style={styles.topbar}
-                /> 
-                    <Divider />
+   onSelectedImage(image) {
+       console.log(image);
+       let newImages = this.state.images;
+       const source = {uri: image.path};
+       let item = {
+           id: Date.now(),
+           url: source,
+           content: image.data
+       };
+       newImages.push(item);
+       this.setState({images: newImages})
+   };
+   
+   renderImage(image) {
+       console.log(image);
+       return (
+           <View key={image.uri}>
+               <Image style={styles.market_RenderImage} source={image.url}/>
+           </View>
+       )
+   }
+
+   renderAsset(image) {
+       if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
+           return this.renderVideo(image);
+       }
+
+       return this.renderImage(image);
+   }
+
+
+   // pickMultiple() {
+   //     ImagePicker.openPicker({
+   //         multiple: true,
+   //         maxFiles: 2,
+   //         includeExif: true,
+   //         compressImageQuality: 0.8
+   //     }).then(images => {
+   //         this.setState({
+   //         //     post_images: images.map(i => {
+   //         //         console.log('received image', i);
+   //         //         return {uri: i.path, name : i.path.split('/').pop(), type : i.mime};
+   //         //     })
+   //         // });
+   //         image: null,
+   //         images: images.map(i => {
+   //           console.log('received image', i);
+   //           return {uri: i.path, width: i.width, height: i.height, mime: i.mime};
+   //         })
+   //       });
+   //       this.props.onImagePicked({uri: images.map(i => {
+   //           return{uri: i.path}
+   //       })
+   //     })
+   //     }).catch(e => alert(e));
+   // }
+
+   //end : iamgeUpload
+   //header
+
+   BackAction = () =>(
+       <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
+   )
+   
+   SubmitButtom = () =>(
+       <Button 
+       style={{width:100}}
+       onPress={()=>this.onClickAddImage()}
+       >글작성</Button>
+   )
+
+   //end: header
+   render(){
+       return(
+           <Root>
+           <SafeAreaView style={{flex:1}}>
+               <TopNavigation title="일반게시판" alignment="center" accessoryLeft={this.BackAction} 
+               accessoryRight={this.SubmitButtom} 
+               /> 
+                   <Divider />
+                  
+                   <View style={{flexDirection: 'row'}} >
+                       {/* 카테고리 */}
+                       <Select
+                       style={{flex:1, width:10}}
+                       placeholder='Default'
+                       // selectedIndex={selectedIndex}
+                       // onSelect={index => setSelectedIndex(index)}
+                       >
+                       {/* <SelectItem title={evaProps => <Text {...evaProps}>Option 1</Text>} /> */}
+                       </Select>
+                       {/* 제목 */}
+                       <Input style={{ flex:1, width:90}}
+                       onChangeText = {text=>this.setState({post_title:text})}/>
+                   </View>
+                   <View style={{ flex: 2}}>
+                       {/* 본문 */}
+                       <Input
+                           style={{padding:0}}
+                           multiline={true}
+                           textStyle={{ minHeight: 350 }}
+                           onChangeText = {text=>this.setState({post_content:text})}
+                           />
+                   </View>
+                   <Divider />
+                   {/* <View style={{flex:1, justifyContent: "center"}}> */}
                    
-                    <View style={{flexDirection: 'row'}} >
-                        {/* 카테고리 */}
-                        <Select
-                        style={{flex:1, width:10}}
-                        placeholder='Default'
-                        // selectedIndex={selectedIndex}
-                        // onSelect={index => setSelectedIndex(index)}
-                        >
-                            <SelectItem title={evaProps => <Text {...evaProps}>Option 1</Text>} />
-                        </Select>
-                        {/* 제목 */}
-                        <Input style={{ flex:1, width:90}}/>
-                    </View>
-                    <View style={{ flex: 2}}>
-                        {/* 본문 */}
-                        <Input
-                            style={{padding:0}}
-                            multiline={true}
-                            textStyle={{ minHeight: 100 }}
-                            />
-                    </View>
-                    <Divider />
-                    <View style={{flex:1, justifyContent: "center"}}>
-                        {/* 사진 */}
-                        <Layout style={styles.container}>
-                            <Text>사진</Text>
-                            <ScrollView horizontal={true}>
-                                <TouchableOpacity style={{width:100, height:100}}
-                                onPress ={()=>{
-                                    this.cleanupImages();
-                                    this.pickMultiple();
-                                }}
-                                >
-                                    <Image 
-                                        source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} 
-                                        style={{width:100,height:100}}
-                                        />
-                                </TouchableOpacity>
-                                 {this.state.post_images ? this.state.post_images.map(item => this.renderAsset(item)) : null} 
-                                {/* {this.state.images ? this.state.post_images.map(item => <View key={item.uri}>{this.renderAsset(item)}</View>) : null}
-                                 */}
-                                 {/* {this.state.image ? this.renderAsset(this.state.image) : null} */}
-                                 {/* {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null} */}
-                            </ScrollView>                                        
-                        </Layout>
-                    </View>   
-                   
-            </SafeAreaView>
-        )
-    }
+                       {/* 사진 */}
+                       <Layout style={styles.container}>
+                           <Text>사진</Text>
+                           <ScrollView horizontal={true} style={styles.input}>
+                               <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
+                                   <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                               </TouchableOpacity>
+                               {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
+                           </ScrollView>                                   
+                       </Layout>
+                   {/* </View>    */}
+           </SafeAreaView>
+           </Root>
+       )
+   }
 }
 
 const styles = StyleSheet.create({
-    container: {
-      marginHorizontal : 5,
-      padding : 5
-    },
-    topbar :{
-        backgroundColor : '#b9b5d6',
-    },
-    item: {
-      backgroundColor: '#f9c2ff',
-      height: 150,
-      justifyContent: 'center',
-      marginVertical: 8,
-      marginHorizontal: 16,
-      padding: 20,
-    },
-    title: {
-      fontSize: 32,
-    },
-    input : {
-        marginVertical : 2,
-        margin : 10,
-        marginTop : 5,
-    },
-    photo: {
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        margin: 10, 
-        borderWidth: 2,
-        borderColor: 'grey'
-    },
-    bottomView: {
-        flex : 1,
-        justifyContent : 'center',
-        alignItems : 'center',
-        backgroundColor : 'lightgrey',
-    },
-    bottomButton: {
-        width : "95%",
-    },
-    deal_type : {
-        flexDirection : 'row',
-        justifyContent : 'space-around',
-        alignItems : 'center',
-        marginTop : 10
-    },
-    deal_box : {
-        width : '30%',
-        height : 50,
-        justifyContent : 'center',
-        alignItems : 'center',
-        backgroundColor : 'gray',
-        opacity : 0.5,
-        borderColor : 'gray',
-        borderRadius : 10,
-        borderWidth: 1,
-    },
-    select: {
-        flex: 1,
-        margin: 2,
-    },
-    deal_type_text : {
-        color : 'white'
-    },
-    market_RenderImage : {
-        marginLeft : 10, 
-        width: 100, 
-        height: 100, 
-        resizeMode: 'cover',
-    },
+   container: {
+     marginHorizontal : 5,
+     padding : 5
+   },
+   item: {
+     backgroundColor: '#f9c2ff',
+     height: 150,
+     justifyContent: 'center',
+     marginVertical: 8,
+     marginHorizontal: 16,
+     padding: 20,
+   },
+   title: {
+     fontSize: 32,
+   },
+   input : {
+       marginVertical : 2,
+       margin : 10,
+       marginTop : 5,
+   },
+   photo: {
+       justifyContent: 'center', 
+       alignItems: 'center', 
+       margin: 10, 
+       borderWidth: 2,
+       borderColor: 'grey'
+   },
+   bottomView: {
+       flex : 1,
+       justifyContent : 'center',
+       alignItems : 'center',
+       backgroundColor : 'lightgrey',
+   },
+   bottomButton: {
+       width : "95%",
+   },
+   deal_type : {
+       flexDirection : 'row',
+       justifyContent : 'space-around',
+       alignItems : 'center',
+       marginTop : 10
+   },
+   deal_box : {
+       width : '30%',
+       height : 50,
+       justifyContent : 'center',
+       alignItems : 'center',
+       backgroundColor : 'gray',
+       opacity : 0.5,
+       borderColor : 'gray',
+       borderRadius : 10,
+       borderWidth: 1,
+   },
+   select: {
+       flex: 1,
+       margin: 2,
+   },
+   deal_type_text : {
+       color : 'white'
+   },
+   market_RenderImage : {
+       marginLeft : 10, 
+       width: 100, 
+       height: 100, 
+       resizeMode: 'cover',
+   },
 });
-  
+ 
 
 export {defaultWrite, MarketWrite, AlbaWrite, GominWrite, IlbanWrite}
