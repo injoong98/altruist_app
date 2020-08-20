@@ -66,6 +66,7 @@ class GominWrite extends React.Component {
             formdata.append("post_content", post_content);
             formdata.append("post_category", post_category);
             formdata.append("post_anoymous_yn", post_anoymous_yn);
+            formdata.append("brd_key", "b-a-1");
         await axios.post(
             'http://10.0.2.2/api/board_write/write/b-a-1',
             formdata
@@ -73,7 +74,7 @@ class GominWrite extends React.Component {
         .then(response=>{
             Alert.alert(
                 "게시글",
-                "게시글 작성 완료",
+                `"게시글 작성 완료"\n${JSON.stringify(response.data)}`,
                 [
                     { 
                         text: "닫기", 
