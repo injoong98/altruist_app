@@ -2,10 +2,18 @@ import React from 'react';
 import {createBottomTabNavigator}from '@react-navigation/bottom-tabs'
 import {ComToptabNav} from './L3Toptab/ComToptabNav'
 
-import {SafeAreaView} from 'react-native'
+import {SafeAreaView,View} from 'react-native'
 import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation} from '@ui-kitten/components'
 
+import ToggleTune from './ToggleTune'
+
 const {Navigator,Screen} = createBottomTabNavigator();
+const ToggleScreen=()=>(
+    <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
+        <ToggleTune />
+    </View>
+
+)
 const FontScreen =() =>(
     <SafeAreaView style={{flex:1,backgroundColor : ""}}>
         <TopNavigation title="스페어" alignment="center"/> 
@@ -52,7 +60,7 @@ const BottomTabBar = ({ navigation, state }) => (
 export const ComBottomNav = () =>(
     <Navigator tabBar={props => <BottomTabBar {...props} />}>
         <Screen name = "Home" component={FontScreen}/>
-        <Screen name = "Alt" component={SpareScreen}/>
+        <Screen name = "Alt" component={ToggleScreen}/>
         <Screen name = "Commu" component={ComToptabNav}/>
         <Screen name = "Meet" component={SpareScreen}/>
         <Screen name = "Prof" component={SpareScreen}/>
