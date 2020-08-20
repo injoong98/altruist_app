@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules, TouchableOpacity, TextInput} from 'react-native';
-import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem} from '@ui-kitten/components'
+import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem, Card} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
 import ImagePicker from 'react-native-image-crop-picker';
 import { HeartIcon } from '../assets/icons/icons';
@@ -554,7 +554,7 @@ class AlbaWrite extends React.Component{
     }
 
     renderImage(image) {
-        return <Image style={{width: 200, height: 200, resizeMode: 'contain', borderWidth: 0.5, margin : 5}} source={image}/>
+        return <Image style={{width: 150, height: 150, resizeMode: 'contain', borderWidth: 0.5, margin : 5}} source={image}/>
     }
 
     renderAsset(image) {
@@ -574,24 +574,25 @@ class AlbaWrite extends React.Component{
 
     render(){
         return(
-            <SafeAreaView style={{flex:1}}>
+            <SafeAreaView style={{flex:1,}}>
                 <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.SubmitButton} style={styles.topbar}/> 
                 <Divider />
-                <Layout style={{flex:10}}>
+                <Layout style={{flex:10, backgroundColor : '#F4F4F4'}}>
                     <ScrollView>
-                        <Input
-                            size='medium'
+                        <TextInput
+                            style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, marginTop : 10,
+                                backgroundColor : 'white', paddingLeft : 20, fontSize : 24}}
                             placeholder='Input Title'
                             onChangeText ={(nextText) => {this.setState({post_title:nextText})}}
-                            />
+                        />
                         <View style={{flexDirection:'row', alignItems:'center'}}>
-                            <Input
-                                style={{width : 250}}
-                                size='medium'
-                                keyboardType='numeric'
-                                placeholder='Input phonenumber'
+                            <TextInput
+                                style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
+                                    backgroundColor : 'white', paddingLeft : 20, fontSize : 20, width : 230}}
+                                category = 'h4'
+                                placeholder='Input phone number'
                                 onChangeText ={(nextText) => {this.setState({post_hp:nextText})}}
-                                />
+                            />
                             <RadioGroup
                                 style={{flexDirection:'row', margin : 10}}
                                 selectedIndex = {this.state.alba_type}
@@ -607,20 +608,21 @@ class AlbaWrite extends React.Component{
                                 3개월미만은 단기, 3개월 이상은 장기
                             </Tooltip>
                         </View>
-                        <Input
-                                size='medium'
-                                placeholder='Input Location'
-                                onChangeText ={(nextText) => {this.setState({post_location:nextText})}}
-                                />
+                        <TextInput
+                            style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
+                                    backgroundColor : 'white', paddingLeft : 20, fontSize : 20}}
+                            placeholder='Input Location'
+                            onChangeText ={(nextText) => {this.setState({post_location:nextText})}}
+                            />
                         <View style={{flexDirection : 'row', alignItems:'center'}}>
-                            <Text style={{margin : 10}}>추후 협의</Text>
+                            <Text style={{margin : 10, fontSize : 16}} category='c2'>임금 추후 협의</Text>
                             <CheckBox
                                 style={{margin : 10}}
                                 checked={this.state.isFollowUp}
                                 onChange={nextChecked => this.setFollowUp(nextChecked)}>
                             </CheckBox>
                             <Select
-                                style={{margin : 10, width : 150}}
+                                style={{margin : 10, width : 100}}
                                 value={this.Salary_Type[this.state.alba_salary_type.row]}
                                 selectedIndex={this.state.alba_salary_type}
                                 onSelect={(index)=>{this.setState({alba_salary_type:index})}}
@@ -632,33 +634,37 @@ class AlbaWrite extends React.Component{
                                 <SelectItem title = '월'/>
                             </Select>
 
-                            <Input
-                                style={{margin : 10}}
+                            <TextInput
+                                style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
+                                    backgroundColor : 'white', paddingHorizontal : 20, fontSize : 16}}
                                 size='medium'
                                 keyboardType='numeric'
-                                placeholder='Input Salary'
+                                placeholder='Input Salary 원'
                                 disabled={this.state.isFollowUp}
                                 onChangeText ={(nextText) =>  {this.setState({alba_salary:nextText})}}
                                 />
-                            <Text>원</Text>
                         </View>
-                    <Input
+                    <TextInput
+                        style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
+                            backgroundColor : 'white', paddingHorizontal : 20, fontSize : 20}}
                         multiline={true}
-                        textStyle={{ minHeight: 300}}
+                        numberOfLines={5}
                         placeholder='Input Context'
+                        textAlignVertical='top'
                         onChangeText ={(nextText) => {this.setState({post_content:nextText})}}
                     />
-                    <View style={{flex : 1}}>
-                        <ScrollView horizontal>
+                    <Layout style={styles.picture}>
+                        <View style={{flexDirection : 'row', flex: 1, alignItems : 'center', justifyContent : 'space-between', marginVertical : 10}}>
+                            <Text category='h4'> 사진</Text>
+                            <Button
+                                appearance='ghost'
+                                accessoryLeft={HeartIcon}
+                                onPress={()=>this.pickMultiple()}/>
+                        </View>
+                        <ScrollView horizontal style={{height : 150}}>
                             {this.state.post_image ? this.state.post_image.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
-                            <TouchableOpacity style={{width:200, height:200, margin : 5}} onPress={()=>{
-                                    this.cleanupImages();
-                                    this.pickMultiple();
-                                }}>
-                                <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:200,height:200}}/>
-                            </TouchableOpacity>
                         </ScrollView>
-                    </View>
+                    </Layout>
                 </ScrollView>
                 </Layout>   
             </SafeAreaView>
@@ -871,7 +877,7 @@ const styles = StyleSheet.create({
       padding : 5
     },
     topbar :{
-        backgroundColor : '#b9b5d6',
+        backgroundColor : '#B09BDE',
     },
     item: {
       backgroundColor: '#f9c2ff',
@@ -935,6 +941,12 @@ const styles = StyleSheet.create({
         height: 100, 
         resizeMode: 'cover',
     },
+    picture : {
+        borderRadius : 20,
+        margin : 10,
+        paddingHorizontal : 10,
+        marginVertical : 10,
+    }
 });
   
 

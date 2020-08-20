@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   carditem: {
     marginVertical: 4,
     borderRadius : 25,
-    backgroundColor : '#E9E9E9',
+    backgroundColor : '#F4F4F4',
   },
   loader : {
     marginTop : 10,
