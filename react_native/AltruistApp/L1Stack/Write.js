@@ -144,7 +144,7 @@ class GominWrite extends React.Component {
         return(
 
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} /> 
+                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/> 
                 <Divider />
                 <Input
                     placeholder="Place your Post's Title"
@@ -320,7 +320,7 @@ class MarketWrite extends React.Component {
             <Root>
             <SafeAreaView style={{flex:1}}>
                 
-                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} />
+                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} style={styles.topbar}/>
     
                 <Divider />
                 
@@ -575,7 +575,7 @@ class AlbaWrite extends React.Component{
     render(){
         return(
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.SubmitButton} /> 
+                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.SubmitButton} style={styles.topbar}/> 
                 <Divider />
                 <Layout style={{flex:10}}>
                     <ScrollView>
@@ -809,7 +809,7 @@ class IlbanWrite extends React.Component{
         return(
             <SafeAreaView style={{flex:1}}>
                 <TopNavigation title="일반게시판" alignment="center" accessoryLeft={this.BackAction} 
-                accessoryRight={this.SubmitButtom} 
+                accessoryRight={this.SubmitButtom} style={styles.topbar}
                 /> 
                     <Divider />
                    
@@ -869,6 +869,9 @@ const styles = StyleSheet.create({
     container: {
       marginHorizontal : 5,
       padding : 5
+    },
+    topbar :{
+        backgroundColor : '#b9b5d6',
     },
     item: {
       backgroundColor: '#f9c2ff',

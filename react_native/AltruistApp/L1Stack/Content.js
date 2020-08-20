@@ -195,7 +195,7 @@ class GominContent extends React.Component{
         </View>
         :
         <SafeAreaView style={{flex:1}}>
-            <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} /> 
+            <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} style={styles.topbar}/> 
             <Divider/>
             <Layout style={{flex:1}}>
                     <List
@@ -336,7 +336,7 @@ class MarketContent extends React.Component {
             </View>
             :
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="수수마켓" alignment="center" accessoryLeft={this.BackAction} />
+                <TopNavigation title="수수마켓" alignment="center" accessoryLeft={this.BackAction} style={styles.topbar}/>
                 <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
                     <ScrollView>
                         <View>
@@ -543,45 +543,43 @@ class AlbaContent extends React.Component {
             :
             <Root>
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="채용정보" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.UD_Action}/> 
+                <TopNavigation title="채용정보" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.UD_Action} style={styles.topbar}/> 
                 <Layout style={styles.container}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
                         <Card style={styles.item}>
                             <Text>{post.post_datetime}</Text>
-                            <Text category='h3'>{post.post_title}</Text>
-                            <Layout style={{flexDirection:'row', marginBottom : 5}}>
-                                <View style={{width : 100, height : 50, borderRightWidth : 0.3, justifyContent : 'center', alignItems : 'center'}}>
-                                    <Image style={{flex:1, width : '100%', resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.thumb_image}}/>
-                                </View>
-                                <Text style={{margin : 15}}>{post.post_nickname}</Text>
+                            <Layout style={{flexDirection:'row',justifyContent : 'center', alignItems : 'center'}}>
+                                <Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.thumb_image}}/>
+                                <Text category='h4' style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
-                            <Divider style={{borderWidth : 0.3}}/>
-                            <Layout style={{flexDirection:'row', marginTop:10}}>
-                                <View style={styles.icons}>
+                            <View style={styles.title}>
+                                <Text category='h2' style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
+                            </View>
+                            <Layout style={styles.icons}>
                                 <Icon
                                     style={{width:32,height:32}}
-                                    fill='black'
+                                    fill={this.Alba_salary_type[post.alba_salary_type].color}
                                     name='star'
                                 />
-                                <Text>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
-                                </View>
-                                <View style={styles.icons}>
+                                <Text category='h4'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
                                 <Icon
                                     style={{width:32,height:32}}
                                     fill='black'
-                                    name='eye'
+                                    name={post.alba_type?'eye':'heart'}
                                 />
-                                <Text>{post.alba_type?'단기':'장기'}</Text>
-                                </View>
-                                <View style={{flex : 2, justifyContent : 'center', alignItems : 'center'}}>
-                                <Icon
-                                    style={{width:32,height:32}}
-                                    fill='black'
-                                    name='share-outline'
-                                />
-                                <Text numberOfLines={1} ellipsizeMode='tail'>{post.post_location}</Text>
-                                </View>
+                                <Text category='h4'> {post.alba_type?'1일~3개월':'3개월이상'}</Text>
                             </Layout>
+                            {/* <Layout style ={styles.icons}>
+                                <Icon
+                                    style={{width:32,height:32, flex : 1}}
+                                    fill='black'
+                                    name='share'
+                                />
+                                <View style={{flex : 10, marginLeft:10}}>
+                                    <Text category='h4'>{post.post_email}</Text>
+                                    <Text category='h4'>{post.post_hp}</Text>
+                                </View>
+                            </Layout> */}
                         </Card>
                         
                         <Card style={styles.item}>
@@ -617,11 +615,10 @@ class AlbaContent extends React.Component {
                             {this.state.file_images ? this.state.file_images.map(i => <View key={i.uri}>{this.renderImage(i)}</View>) : null} 
                         </Card>
                     </ScrollView>
-                    <View style={styles.bottom}>
-                        <Button style={{width : '100%'}} onPress={()=>this.setVisible(true)}>
+                    <Button style={styles.bottomButton} onPress={()=>this.setVisible(true)}>
                             지원하기
-                        </Button>
-                        <Modal
+                    </Button>
+                    <Modal
                             visible={this.state.visible}
                             backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
                             onBackdropPress={() => this.setVisible(false)}>
@@ -653,8 +650,7 @@ class AlbaContent extends React.Component {
                                         취소
                                     </Button>
                                 </Card>
-                        </Modal>
-                    </View>
+                    </Modal>
                 </Layout>
             </SafeAreaView>
             </Root>
@@ -671,10 +667,19 @@ const styles = StyleSheet.create({
     container : {
         flex : 1,
     },
-    icons : {
-        justifyContent: 'center', 
+    topbar : {
+        backgroundColor : '#b9b5d6',
+    },
+    title : {
+        backgroundColor : '#E9E9E9',
+        borderRadius : 40,
+        marginVertical : 8,
+        justifyContent: 'center',
+    },
+    icons : { 
         alignItems: 'center',
-        flex : 1,
+        flexDirection:'row',
+        marginTop:10,
     },
     modal_icons : {
         justifyContent: 'center', 
@@ -682,9 +687,10 @@ const styles = StyleSheet.create({
         margin : 10,
     },
     item : {
+        marginHorizontal : 10,
         marginVertical : 5,
         paddingVertical : 10,
-        paddingHorizontal : 10,
+        borderRadius : 20,
     },
     subhead : {
         fontSize : 16,
@@ -703,9 +709,15 @@ const styles = StyleSheet.create({
         height: 50, 
         justifyContent: 'center', 
         alignItems: 'center',
-    },icon:{
+    },
+    icon:{
         width: 20,height: 20
-    }
+    },
+    bottomButton: {
+        position:'absolute',
+        bottom : 10,
+        left : '40%'
+      },
 });
 
 
