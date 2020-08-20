@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     },
     toggelText:{
         flex:1,
-        fontSize:24,
+        fontSize:20,
         color:'#ffffff',
         textAlign:"center",
         textAlignVertical:"center",
