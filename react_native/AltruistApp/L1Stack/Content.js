@@ -565,9 +565,9 @@ class AlbaContent extends React.Component {
                                 <Icon
                                     style={{width:32,height:32}}
                                     fill='black'
-                                    name={post.alba_type?'eye':'heart'}
+                                    name={!post.alba_type?'eye':'heart'}
                                 />
-                                <Text category='h4'> {post.alba_type?'1일~3개월':'3개월이상'}</Text>
+                                <Text category='h4'> {!post.alba_type?'1일~3개월':'3개월이상'}</Text>
                             </Layout>
                             {/* <Layout style ={styles.icons}>
                                 <Icon
@@ -602,7 +602,7 @@ class AlbaContent extends React.Component {
                                     <Text style={styles.gathertext}>근무기간</Text>
                                 </View>
                                 <View style={{flex : 5}}>
-                                    <Text style={styles.gather}>{post.alba_type?'단기 (1일 ~ 3개월)':'장기 (3개월 ~)'}</Text>
+                                    <Text style={styles.gather}>{!post.alba_type?'단기 (1일 ~ 3개월)':'장기 (3개월 ~)'}</Text>
                                 </View>
                             </Layout>
                         </Card>
