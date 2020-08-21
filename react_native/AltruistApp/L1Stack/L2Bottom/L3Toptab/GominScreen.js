@@ -173,7 +173,7 @@ export {GominScreen}
 
 const styles = StyleSheet.create({
     container:{
-        backgroundColor:"#6b6cab",
+        backgroundColor:"#E3E3E3",
         borderRadius : 20,
         marginVertical:5,
         marginHorizontal:5,

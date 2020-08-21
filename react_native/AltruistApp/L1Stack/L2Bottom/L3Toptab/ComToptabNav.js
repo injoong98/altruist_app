@@ -34,7 +34,7 @@ const TabNavigator = () => (
 
 export const ComToptabNav= () => (
   <>
-    <TopNavigation title ="Community" alignment ='center' style={{backgroundColor : '#b9b5d6'}}/>
+    <TopNavigation title ="Community" alignment ='center' style={{backgroundColor : '#B09BDE'}}/>
     <TabNavigator/>
   </>
 );

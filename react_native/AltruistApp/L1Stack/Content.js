@@ -547,11 +547,7 @@ class AlbaContent extends React.Component {
                 <Layout style={styles.container}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
                         <Card style={styles.item}>
-                            <Text>{post.post_datetime}</Text>
-                            <Layout style={{flexDirection:'row',justifyContent : 'center', alignItems : 'center'}}>
-                                <Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.thumb_image}}/>
-                                <Text category='h4' style={{margin : 15}}>{post.post_nickname}</Text>
-                            </Layout>
+                            <Text>{post.post_datetime.substr(0,post.post_datetime.length-3)}</Text>
                             <View style={styles.title}>
                                 <Text category='h2' style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
                             </View>
@@ -568,6 +564,11 @@ class AlbaContent extends React.Component {
                                     name={!post.alba_type?'eye':'heart'}
                                 />
                                 <Text category='h4'> {!post.alba_type?'1일~3개월':'3개월이상'}</Text>
+                            </Layout>
+                            <Divider/>
+                            <Layout style={{flexDirection:'row', alignItems : 'center'}}>
+                                <Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.thumb_image}}/>
+                                <Text category='h4' style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
                             {/* <Layout style ={styles.icons}>
                                 <Icon
@@ -679,7 +680,7 @@ const styles = StyleSheet.create({
     icons : { 
         alignItems: 'center',
         flexDirection:'row',
-        marginTop:10,
+        marginVertical:10,
     },
     modal_icons : {
         justifyContent: 'center', 
