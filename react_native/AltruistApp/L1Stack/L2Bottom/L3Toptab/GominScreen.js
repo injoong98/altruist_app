@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity} from 'react-native';
+import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity,Animated} from 'react-native';
 import { Icon,Layout,Button,Text,ListItem,List, Divider,Card,Spinner} from '@ui-kitten/components'
 import axios from 'axios'
 
@@ -25,11 +25,31 @@ class GominScreen extends React.Component {
             current_page:1,
             isListLoading : false,
             isNoMoreData : false,
+            // searchInput : new Animated.Value(0),
+            // searchOpenClose : false
         }
     }
+    
+    // searchOpen = () => {
+    //     Animated.timing(this.state.searchInput,{
+    //         toValue:50,
+    //         duration:2000,
+    //         useNativeDriver:false
+    //     }).start();
+    //     this.setState({searchOpenClose:!this.state.searchOpenClose})
 
+    // }
     
-    
+    // searchClose = () => {
+    //     Animated.timing(this.state.searchInput,{
+    //         toValue:0,
+    //         duration:2000,
+    //         useNativeDriver:false
+    //     }).start();
+    //     this.setState({searchOpenClose:!this.state.searchOpenClose})
+
+    // }
+
     renderItem = ({ item, index }) => {
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = item.post_content.replace(regex, '');
@@ -112,6 +132,7 @@ class GominScreen extends React.Component {
         }
     }
     render(){
+        // const {searchOpenClose} = this.state
         return(
         this.state.isLoading ? 
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -120,6 +141,11 @@ class GominScreen extends React.Component {
             </Text>
         </View>:
         <SafeAreaView style={{flex:1}}>
+            {/* <Animated.View style={{overflow:'hidden',height:this.state.searchInput,borderStyle:'solid',borderColor:'red',borderWidth:1}}>
+                <Text>
+                    안녕하세요
+                </Text>
+            </Animated.View> */}
             <List
             data ={this.state.lists}
             ItemSeparatorComponent={Divider}
@@ -133,6 +159,9 @@ class GominScreen extends React.Component {
                 <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} >
                     글쓰기
                 </Button>
+                {/* <Button onPress={searchOpenClose ? this.searchClose : this.searchOpen}>
+                    검색
+                </Button> */}
             </View>
         </SafeAreaView>
         )
@@ -154,7 +183,6 @@ const styles = StyleSheet.create({
     buttoncontainer:{
         width:"100%",bottom:0,
         display :"flex", 
-        flexDirection:"row",
         justifyContent:"center", 
         alignItems:"center"
     },

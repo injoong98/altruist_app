@@ -1,6 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator}from '@react-navigation/bottom-tabs';
 import {ComToptabNav} from './L3Toptab/ComToptabNav';
+import {AltStackNav} from './L3Stack/AltStackNav';
 
 import {SafeAreaView,View, Image} from 'react-native';
 import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, Card, Icon} from '@ui-kitten/components';
@@ -95,9 +96,9 @@ const BottomTabBar = ({ navigation, state }) => (
 export const ComBottomNav = () =>(
     <Navigator tabBar={props => <BottomTabBar {...props} />}>
         <Screen name = "Home" component={FontScreen}/>
-        <Screen name = "Alt" component={ToggleScreen}/>
+        <Screen name = "Alt" component={AltStackNav}/>
         <Screen name = "Commu" component={ComToptabNav}/>
-        <Screen name = "Meet" component={SpareScreen}/>
+        <Screen name = "Meet" component={ToggleScreen}/>
         <Screen name = "Prof" component={LoginScreen}/>
     </Navigator>
 )
