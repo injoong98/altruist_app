@@ -4,6 +4,10 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {SafeAreaView} from 'react-native'
 import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction} from '@ui-kitten/components'
 import AltMainScreen from './Main'
+import AltApplyScreen from './Apply'
+import AltListScreen from './List'
+import AltProfileScreen from './Profile'
+import AltQuestionScreen from './Question'
 
 const {Navigator,Screen} = createStackNavigator();
 
@@ -30,9 +34,9 @@ const SpareScreen =({navigation}) =>{
 export const AltStackNav = () =>(
     <Navigator headerMode="none">
         <Screen name = "AltMain" component={AltMainScreen}/>
-        <Screen name = "AltApply" component={SpareScreen}/>
-        <Screen name = "AltList" component={SpareScreen}/>
-        <Screen name = "AltProfile" component={SpareScreen}/>
-        <Screen name = "AltQuestion" component={SpareScreen}/>
+        <Screen name = "AltApply" component={AltApplyScreen}/>
+        <Screen name = "AltList" component={AltListScreen}/>
+        <Screen name = "AltProfile" component={AltProfileScreen}/>
+        <Screen name = "AltQuestion" component={AltQuestionScreen}/>
     </Navigator>
 )
