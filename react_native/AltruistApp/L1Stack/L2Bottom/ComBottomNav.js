@@ -6,7 +6,7 @@ import {AltStackNav} from './L3Stack/AltStackNav';
 import {SafeAreaView,View, Image} from 'react-native';
 import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, Card, Icon} from '@ui-kitten/components';
 
-import ToggleTune from './ToggleTune';
+import ToggleTune from '../../components/ToggleTune';
 import LoginScreen from './Login'
 
 const {Navigator,Screen} = createBottomTabNavigator();
@@ -38,13 +38,9 @@ const FontScreen =() =>(
     </SafeAreaView>
 )
 const SpareScreen =({navigation}) =>(
-    <SafeAreaView style={{flex:1, backgroundColor : '#E4E4E4'}}>
-        <TopNavigation title="스페어" alignment="center"/> 
-        <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
-            <Text>스페어</Text>
-            <Button onPress={()=>{navigation.goBack()}}>뒤로가기</Button>
-            <Button onPress = {()=>{navigation.navigate('Write')}}>글작성</Button>
-        </Layout>   
+    <SafeAreaView style={{flex:1, backgroundColor : '#E4E4E4',flexDirection:'row'}}>
+        <View style={{flex:1,backgroundColor:'yellow'}}></View>
+        <View style={{flex:1,backgroundColor:'blue'}}></View>
     </SafeAreaView>
 )
 
@@ -66,7 +62,7 @@ export const ComBottomNav = () =>(
         <Screen name = "Home" component={FontScreen}/>
         <Screen name = "Alt" component={AltStackNav}/>
         <Screen name = "Commu" component={ComToptabNav}/>
-        <Screen name = "Meet" component={ToggleScreen}/>
+        <Screen name = "Meet" component={SpareScreen}/>
         <Screen name = "Prof" component={LoginScreen}/>
     </Navigator>
 )
