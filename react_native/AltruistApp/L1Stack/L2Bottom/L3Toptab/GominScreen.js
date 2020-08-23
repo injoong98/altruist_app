@@ -5,10 +5,10 @@ import axios from 'axios'
 
 
     const  EyeIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="eye"/>
+        <Icon style={styles.icon} fill='#8F9BB3' name="eye-outline"/>
     )
     const CommentIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="message-circle"/>
+        <Icon style={styles.icon} fill='#8F9BB3' name="message-circle-outline"/>
     )
     const HeartIcon = (props)=>(
         <Icon style={styles.icon} fill='#8F9BB3' name="heart-outline"/>

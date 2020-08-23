@@ -5,12 +5,19 @@ import Axios from 'axios';
 import HTML from 'react-native-render-html';
 import {ActionSheet, Root, Container} from 'native-base';
 import Slider from '../components/slider.component'
+import { Alert } from 'react-native';
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
 const CommentIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="message-circle"/>
+)
+const PlusIcon = (props)=>(
+    <Icon style={styles.icon} fill='#8F9BB3' name="plus-square"/>
+)
+const BlameIcon = (props)=>(
+    <Icon style={styles.icon} fill='#8F9BB3' name="archive"/>
 )
 const HeartIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="heart"/>
@@ -102,57 +109,105 @@ class GominContent extends React.Component{
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
-    
-    renderPostBody = (post)=>{
+    postBlame = ()=>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
         
-        const regex = /(<([^>]+)>)|&nbsp;/ig;
-        const post_remove_tags = post.post_content.replace(regex, '\n');
-        return (
-            <View >
-                <View style={{paddingLeft:15}}>
-                    <Text style={{marginBottom:10}} category="h5">{post.post_title}</Text>
-                    <Divider/>
-                </View>
-                <View style={{paddingLeft:10}}>
-                    <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
-                        <StarIcon /><Text>{`${post.display_name} | ${post.post_datetime}`} </Text>
-                    </View>
-                    <Divider/>
-                </View>
-                <View style={{padding:10}}>
-                    <Text category="h6">
-                    {post_remove_tags}
-                    </Text>
-                </View>
-                <View style={{paddingRight:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
-                    <HeartIcon />
-                    <Text>{post.post_like}</Text>
-                    <CommentIcon />
-                    <Text>{post.post_comment_count}</Text>
-                </View>
-            </View>
-        )
+        Axios.post('http://10.0.2.2/api/postact/post_blame',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+                this.getPostData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
     }
-
-    renderCommentsList=({item,index})=>(
-        <Card>
-            <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
-                <View style={{flexDirection:"row"}}>
-                <StarIcon />
-                <Text category="s2">{item.cmt_nickname}</Text>
-                </View>
-                <HeartIcon onPress={()=>{alert('좋아요누르겠습니다.')}} />
-            </View>
-            <View style={{padding:5}}>
-                <Text category="s1">{item.content}</Text>
-            </View>
-            <View style={{display:"flex", justifyContent:"flex-start",flexDirection:"row",alignItems:"center"}}>
-                <Text category="s2">{item.cmt_datetime}</Text>
-                <HeartIcon style ={{width:10,heigth:10}} />
-                <Text>{item.cmt_like}</Text>
-            </View>
-        </Card>
-    )
+    postBlameConfirm = () =>{
+        Alert.alert(
+            "게시글",
+            "이 게시글을 신고하시겠습니까?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "OK", 
+                    onPress: ()=> this.postBlame()
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+    cmtBlame = (cmt_id)=>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',cmt_id)
+        
+        Axios.post('http://10.0.2.2/api/postact/comment_blame',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+                alert(`${JSON.stringify(response.data.message)}`)
+                this.getCommentData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    cmtBlameConfirm = (cmt_id) =>{
+        Alert.alert(
+            "댓글",
+            "이 댓글을 신고하시겠습니까?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "OK", 
+                    onPress: ()=> this.cmtBlame(cmt_id)
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+    postLike = () =>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        formdata.append('like_type',1)
+        Axios.post('http://10.0.2.2/api/postact/post_like',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+                this.getPostData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    cmtLike = (cmt_id) =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',cmt_id)
+        formdata.append('like_type',1)
+        Axios.post('http://10.0.2.2/api/postact/comment_like',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+            this.getCommentData(this.state.post.post_id)}
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    
     getCommentData = async (post_id)=>{
         await Axios.get(`http://10.0.2.2/api/comment_list/lists/${post_id}`)
         .then((response)=>{
@@ -171,6 +226,11 @@ class GominContent extends React.Component{
             alert('error')
         })
     }
+     onRefresh=()=>{
+        const {post_id} = this.props.route.params
+        this.getCommentData(post_id)
+
+    } 
     async componentDidMount(){
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
@@ -178,12 +238,79 @@ class GominContent extends React.Component{
         .then(()=>{this.setState({isLoading:false})})
 
     }
-     onRefresh=()=>{
-        const {post_id} = this.props.route.params
-        this.getCommentData(post_id)
+    renderPostBody = (post)=>{
+        
+        const regex = /(<([^>]+)>)|&nbsp;/ig;
+        const post_remove_tags = post.post_content.replace(regex, '\n');
 
+        return (
+            <View >
+                <View style={{paddingLeft:15}}>
+                    <Text style={{marginBottom:10}} category="h5">{post.post_title}</Text>
+                    <Divider/>
+                </View>
+                <View style={{paddingLeft:10}}>
+                    <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
+                        <StarIcon /><Text>{`${post.display_name} | ${post.post_datetime}`} </Text>
+                    </View>
+                    <Divider/>
+                </View>
+                <View style={{padding:10}}>
+                    <Text category="h6">
+                    {post_remove_tags}
+                    </Text>
+                </View>
+                <View style={{paddingHorizontal:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                   
+                    <View>
+                        <CommentIcon />
+                        <Text>{post.post_comment_count}</Text>
+                    </View>
+                    <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
+                        <TouchableOpacity onPress={()=>this.postLike()}>
+                            <HeartIcon />
+                            <Text>{post.post_like}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={()=>alert("저장!")}>
+                            <PlusIcon />
+                            <Text>{post.scrap_count}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={()=>this.postBlameConfirm()}>
+                            <BlameIcon />
+                            <Text>{post.post_blame}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        )
     }
 
+    renderCommentsList=({item,index})=>(
+        <Card>
+            <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <View style={{flexDirection:"row"}}>
+                <StarIcon />
+                <Text category="s2">{item.cmt_nickname}</Text>
+                </View>
+                <View style={{display:'flex',flexDirection:'row'}}>
+                    <TouchableOpacity onPress={()=>this.cmtLike(item.cmt_id)}>
+                        <HeartIcon />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
+                        <BlameIcon />
+                    </TouchableOpacity>
+                </View>
+            </View>
+            <View style={{padding:5}}>
+                <Text category="s1">{item.content}</Text>
+            </View>
+            <View style={{display:"flex", justifyContent:"flex-start",flexDirection:"row",alignItems:"center"}}>
+                <Text category="s2">{item.cmt_datetime}</Text>
+                <HeartIcon style ={{width:10,heigth:10}} />
+                <Text>{item.cmt_like}</Text>
+            </View>
+        </Card>
+    )
      render(){
         const {navigation,route} =this.props
         const {cmt_content,post,comment} = this.state
