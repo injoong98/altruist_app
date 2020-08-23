@@ -3,8 +3,8 @@ import {createBottomTabNavigator}from '@react-navigation/bottom-tabs';
 import {ComToptabNav} from './L3Toptab/ComToptabNav';
 import {AltStackNav} from './L3Stack/AltStackNav';
 
-import {SafeAreaView,View} from 'react-native';
-import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation} from '@ui-kitten/components';
+import {SafeAreaView,View, Image} from 'react-native';
+import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, Card, Icon} from '@ui-kitten/components';
 
 import ToggleTune from './ToggleTune';
 import LoginScreen from './Login'
@@ -38,8 +38,8 @@ const FontScreen =() =>(
     </SafeAreaView>
 )
 const SpareScreen =({navigation}) =>(
-    <SafeAreaView style={{flex:1}}>
-        <TopNavigation title="스페어" alignment="center" /> 
+    <SafeAreaView style={{flex:1, backgroundColor : '#E4E4E4'}}>
+        <TopNavigation title="스페어" alignment="center"/> 
         <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
             <Text>스페어</Text>
             <Button onPress={()=>{navigation.goBack()}}>뒤로가기</Button>
