@@ -2,6 +2,8 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { TabBar, Tab, Layout, Text,TopNavigation,Button } from '@ui-kitten/components';
 
+import {TopBarTune} from '../../../components/TopBarTune'
+
 import {AlbaScreen} from './AlbaScreen'
 import {CommunityScreen} from './CommunityScreen'
 import {GominScreen} from './GominScreen'
@@ -34,7 +36,9 @@ const TabNavigator = () => (
 
 export const ComToptabNav= () => (
   <>
-    <TopNavigation title ="Community" alignment ='center' style={{backgroundColor : '#B09BDE'}}/>
+    {/* <TopNavigation title ="Community" alignment ='center' style={{backgroundColor : '#B09BDE'}}/> */}
+    <TopBarTune text="COMMUNITY" func={()=>navigation.navigate('Meet')} />
+
     <TabNavigator/>
   </>
 );

@@ -1,7 +1,7 @@
 import React from 'react';
 import {SafeAreaView} from 'react-native';
 import {TopNavigation,Layout,Text,Button } from '@ui-kitten/components';
-
+import {TopBarTune} from '../../../components/TopBarTune'
 class AltMainScreen extends React.Component{
     constructor(props){
         super(props)
@@ -10,7 +10,8 @@ class AltMainScreen extends React.Component{
         const {navigation} =this.props
         return(
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="메인" alignment="center"/> 
+                {/* <TopNavigation title="메인" alignment="center"/>  */}
+                <TopBarTune text="이타주의자" func={()=>navigation.navigate('Meet')} />
                 <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
                     <Text>이타주의자 메인</Text>
                     <Button onPress={()=>navigation.navigate('AltApply')}>지원</Button>
