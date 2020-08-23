@@ -8,6 +8,7 @@
 
 
 import React from "react";
+import {StatusBar} from "react-native";
 import * as eva from '@eva-design/eva';
 import { NavigationContainer } from "@react-navigation/native";
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
@@ -17,7 +18,8 @@ import { AppIconsPack } from './app-icons-pack';
 import { default as customtheme } from './custom-theme.json';
 import { default as mapping } from './mapping.json';
 
- const App = () => {
+const App = () => {
+  StatusBar.setBackgroundColor('#B09BDE')
   return (
   <>
     <IconRegistry icons={[EvaIconsPack,AppIconsPack]} />
