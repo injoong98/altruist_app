@@ -1,7 +1,8 @@
 import React from 'react';
 import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity,Animated} from 'react-native';
-import { Icon,Layout,Button,Text,ListItem,List, Divider,Card,Spinner} from '@ui-kitten/components'
-import axios from 'axios'
+import { Icon,Layout,Button,Text,ListItem,List, Divider,Card,Spinner} from '@ui-kitten/components';
+import axios from 'axios';
+import {PostTime} from '../../../components/PostTime'
 
 
     const  EyeIcon = (props)=>(
@@ -56,9 +57,16 @@ class GominScreen extends React.Component {
         
         return(
         <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{title:`${index+1}th post_id=${item.post_id}`,post_id:item.post_id})}}>
-            <Text style ={styles.headtext}category="h6" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
-            <View style={styles.subtitle}>
+            <View>
+                <Text style ={styles.headtext}category="h4" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
                 <Text style={styles.subtext}category="s2" numberOfLines={1}>{post_remove_tags}</Text>
+            </View>
+            <View style={styles.subtitle}>
+                <View style={{display:'flex',flexDirection:'row',alignItems:'flex-end',padding:10}}> 
+                    <Text category="s2">{item.display_name}</Text>
+                    {/* <Text category="s2">{item.post_datetime}</Text> */}
+                    <PostTime datetime = {item.post_datetime}/>
+                </View>
                 <View style={styles.infocontainer}>
                     <HeartIcon />
                     <Text style={styles.infotext} category="s1">{item.post_like}</Text>
@@ -154,7 +162,8 @@ class GominScreen extends React.Component {
             refreshing={this.state.refreshing}
             onEndReached={this.load_more_data}
             onEndReachedThreshold = {0.9}
-            ListFooterComponent={this.renderFooter}/>
+            ListFooterComponent={this.renderFooter}
+            style={{backgroundColor:'#ffffff'}}/>
             <View style ={styles.buttoncontainer}>
                 <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} >
                     글쓰기
@@ -176,8 +185,9 @@ const styles = StyleSheet.create({
         backgroundColor:"#E3E3E3",
         borderRadius : 20,
         marginVertical:5,
-        marginHorizontal:5,
+        marginHorizontal:15,
         padding:0,
+
 
     },
     buttoncontainer:{
@@ -208,7 +218,8 @@ const styles = StyleSheet.create({
     },
     headtext:{
         paddingTop:10,
-        paddingLeft:20
+        paddingLeft:20,
+        fontWeight:'bold'
     },
     subtext:{
         marginLeft:20,
