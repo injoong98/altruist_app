@@ -1,8 +1,10 @@
 import React from 'react';
 
-import {StyleSheet, SafeAreaView, Image, View} from 'react-native'
-import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card} from '@ui-kitten/components'
-
+import {StyleSheet, SafeAreaView, Image, View, ScrollView} from 'react-native'
+import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal} from '@ui-kitten/components'
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import {TopBarTune} from '../../../components/TopBarTune';
+// import {Tag} from '../../../components/Tag.component';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -22,7 +24,7 @@ class AltListScreen extends React.Component{
                 {name : '김영희'},
                 {name : '강호동'},
             ],
-
+            isFilterVisible : false,
         }
     }
 
@@ -33,14 +35,14 @@ class AltListScreen extends React.Component{
     )
 
     renderItem = ({item, index}) => (
-        <Card style = {{backgroundColor:'white', borderRadius : 20, margin : 10}}>
+        <Card style = {styles.card} onPress = {()=>{this.props.navigation.navigate('AltProfile', item.name)}}>
             <View style = {{flexDirection : 'row', justifyContent:'flex-end'}}>
-                <Text style = {{backgroundColor : '#b9b5d6', borderRadius : 20, padding : 4, marginHorizontal : 5}}>IT개발</Text>
-                <Text style = {{backgroundColor : '#A7D4DE', borderRadius : 20, padding : 4, marginHorizontal : 5}}>스타트업/창업</Text>
-                <Text style = {{backgroundColor : '#eab0b3', borderRadius : 20, padding : 4, marginHorizontal : 5}}>UX/UI기획</Text>
+                <Text category = 'c2' style = {tags('#A7D4DE')}>IT개발</Text>
+                <Text category = 'c2' style = {tags('#A7D4DE')}>스타트업/창업</Text>
+                <Text category = 'c2' style = {tags('#EAB0B3')}>UX/UI기획</Text>
             </View>
             <View style={{flexDirection : 'row', alignItems : 'flex-end', justifyContent : 'flex-start'}}>
-                <Image style ={{width : 100, height : 100, resizeMode:'contain', backgroundColor:'black'}}/>
+                <Image source = {{uri : 'http://10.0.2.2/uploads/noimage.gif'}} style = {{width : 100, height : 100, borderRadius : 30, resizeMode:'contain'}}/>
                 <View style={{marginLeft : 10}}>
                     <Text category = 'h1'>{item.name}</Text>
                     <Text category = 'h6'>1줄이내로 자신을 표현해주세요</Text>
@@ -56,13 +58,13 @@ class AltListScreen extends React.Component{
             <Text category='h6' style={{fontSize : 16}}>학력 또는 직장을 입력합니다.</Text>
             <View style = {{flexDirection : 'row'}}>
                 <View style = {{flexDirection : 'row', flex : 5}}>
-                    <Text style = {{backgroundColor : '#eab0b3', borderRadius : 20, padding : 4, marginHorizontal : 5, fontSize : 16, textAlignVertical : 'center'}}>IT개발</Text>
-                    <Text style = {{backgroundColor : '#eab0b3', borderRadius : 20, padding : 4, marginHorizontal : 5, fontSize : 16, textAlignVertical : 'center'}}>스타트업/창업</Text>
-                    <Text style = {{backgroundColor : '#eab0b3', borderRadius : 20, padding : 4, marginHorizontal : 5, fontSize : 16, textAlignVertical : 'center'}}>UX/UI기획</Text>
+                    <Text category = 'c2' style = {tags('#A7D4DE', 16)}>IT개발</Text>
+                    <Text category = 'c2' style = {tags('#A7D4DE', 16)}>스타트업/창업</Text>
+                    <Text category = 'c2' style = {tags('#A7D4DE', 16)}>UX/UI기획</Text>
                 </View>
                 <Button 
                     style = {{height : 20}}
-                    onPress={()=>{alert('question')}}>지원하기</Button>
+                    onPress={()=>{alert('question')}}>질문하기</Button>
             </View>
         </Card>
     );
@@ -70,29 +72,82 @@ class AltListScreen extends React.Component{
     render(){
         return (
             <SafeAreaView style={{flex:1}}>
-            <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction}/> 
-                
+                <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/>
+                <ScrollView horizontal style={{marginVertical : 4}}>
+                    <TouchableOpacity 
+                        style = {tags('#A7D4DE')}
+                        onPress = {()=>this.setState({isFilterVisible:true})}
+                        >
+                        <Text category = 'c2' >     +     </Text>
+                    </TouchableOpacity>
+                    <Text category = 'c2' style = {tags('#A7D4DE')}>IT개발</Text>
+                    <Text category = 'c2' style = {tags('#A7D4DE')}>스타트업/창업</Text>
+                    <Text category = 'c2' style = {tags('#EAB0B3')}>UX/UI기획</Text>
+                </ScrollView>
                 <List
-                    style={styles.container}
                     contentContainerStyle={styles.contentContainer}
                     data={this.state.data}
                     renderItem={this.renderItem}
                     />      
+                <Modal
+                    visible={this.state.isFilterVisible}
+                    backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
+                    onBackdropPress={() => this.setState({isFilterVisible:false})}>
+                        <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
+                            <Text category='h5'>필터 적용하기</Text>
+                            <Text category='h6'>직무 분야</Text>
+                                <View style = {{flexDirection : 'row', flexWrap: 'wrap'}}>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
+                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
+                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
+                                </View>
+                            <Text category='h6'>활동 분야</Text>
+                                <View style = {{flexDirection : 'row', flexWrap: 'wrap'}}>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
+                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
+                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
+                                </View>
+                            <Button onPress={()=>{this.setState({isFilterVisible:false})}}>적용하기</Button>
+                        </View>
+                </Modal>
             </SafeAreaView>
         );
     }
 }
     
-const styles = StyleSheet.create({
-      container: {
+var tags = function (value='black', size=14, vertical=0) {
+    return{
+        backgroundColor : value,
+        borderRadius : 20, 
+        padding : 4, 
+        marginHorizontal : 5,
+        marginVertical : vertical,
+        fontSize : size, 
+        textAlignVertical : 'center',
+        justifyContent : 'center',
+    }
+}
 
-      },
+const styles = StyleSheet.create({
       contentContainer: {
-        paddingHorizontal: 8,
-        paddingVertical: 4,
+        // paddingHorizontal: 8,
+        // paddingVertical: 4,
+        marginHorizontal: 4,
+        marginVertical: 2,
       },
-      item: {
-        marginVertical: 4,
+      card : {
+        backgroundColor:'#E4E4E4',
+        borderRadius : 20,
+        margin : 10
       },
+      tags : {
+
+      }
 });
 export default AltListScreen;
