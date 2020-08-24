@@ -587,27 +587,64 @@ class AlbaWrite extends React.Component{
                             onChangeText ={(nextText) => {this.setState({post_title:nextText})}}
                         />
                         <View style={{flexDirection:'row', alignItems:'center'}}>
-                            <TextInput
-                                style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
-                                    backgroundColor : 'white', paddingLeft : 20, fontSize : 20, width : 230}}
-                                category = 'h4'
-                                placeholder='Input phone number'
-                                onChangeText ={(nextText) => {this.setState({post_hp:nextText})}}
-                            />
-                            <RadioGroup
-                                style={{flexDirection:'row', margin : 10}}
-                                selectedIndex = {this.state.alba_type}
-                                onChange={(index) => { this.setState({alba_type:index})}}>
-                                <Radio>단기</Radio>
-                                <Radio>장기</Radio>
-                            </RadioGroup>
-                            <Tooltip
-                                anchor={this.renderToggleButton}
-                                visible={this.state.isTipVisible}
-                                placement='bottom end'
-                                onBackdropPress={() => this.setTipVisible(false)}>
-                                3개월미만은 단기, 3개월 이상은 장기
-                            </Tooltip>
+                            <View style={{flex : 1, borderRadius : 20, marginLeft : 10,
+                                backgroundColor : 'white', paddingLeft : 20, }}>
+                                <View style={{flexDirection : 'row'}}>
+                                    <RadioGroup
+                                        style={{flexDirection:'row'}}
+                                        selectedIndex = {this.state.alba_type}
+                                        onChange={(index) => { this.setState({alba_type:index})}}>
+                                        <Radio>단기</Radio>
+                                        <Radio>장기</Radio>
+                                    </RadioGroup>
+                                    <Tooltip
+                                        anchor={this.renderToggleButton}
+                                        visible={this.state.isTipVisible}
+                                        placement='bottom end'
+                                        onBackdropPress={() => this.setTipVisible(false)}>
+                                        3개월미만은 단기, 3개월 이상은 장기
+                                    </Tooltip>
+                                </View>
+                                <View style={{flexDirection : 'row', alignItems:'center'}}>
+                                    <Text style={{fontSize : 16}} category='c2'>추후 협의</Text>
+                                    <CheckBox
+                                        style={{margin : 10}}
+                                        checked={this.state.isFollowUp}
+                                        onChange={nextChecked => this.setFollowUp(nextChecked)}>
+                                    </CheckBox>
+                                    <Select
+                                        style={{margin : 5, width : 100}}
+                                        value={this.Salary_Type[this.state.alba_salary_type.row]}
+                                        selectedIndex={this.state.alba_salary_type}
+                                        onSelect={(index)=>{this.setState({alba_salary_type:index})}}
+                                        disabled={this.state.isFollowUp}
+                                        >
+                                        <SelectItem title = '시급'/>
+                                        <SelectItem title = '일급'/>
+                                        <SelectItem title = '주급'/>
+                                        <SelectItem title = '월급'/>
+                                    </Select>
+                                </View>
+                            </View>
+                            <View style={{flex : 1}}>
+                                <TextInput
+                                    style={{flex : 1, borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
+                                        backgroundColor : 'white', paddingLeft : 20, fontSize : 16}}
+                                    category = 'h4'
+                                    keyboardType='numeric'
+                                    placeholder='Input phone number'
+                                    onChangeText ={(nextText) => {this.setState({post_hp:nextText})}}
+                                />
+                                <TextInput
+                                    style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
+                                        backgroundColor : 'white', paddingHorizontal : 20, fontSize : 16}}
+                                    size='medium'
+                                    keyboardType='numeric'
+                                    placeholder='Input Salary 원'
+                                    disabled={this.state.isFollowUp}
+                                    onChangeText ={(nextText) =>  {this.setState({alba_salary:nextText})}}
+                                />
+                            </View>
                         </View>
                         <TextInput
                             style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
@@ -615,36 +652,6 @@ class AlbaWrite extends React.Component{
                             placeholder='Input Location'
                             onChangeText ={(nextText) => {this.setState({post_location:nextText})}}
                             />
-                        <View style={{flexDirection : 'row', alignItems:'center'}}>
-                            <Text style={{margin : 10, fontSize : 16}} category='c2'>임금 추후 협의</Text>
-                            <CheckBox
-                                style={{margin : 10}}
-                                checked={this.state.isFollowUp}
-                                onChange={nextChecked => this.setFollowUp(nextChecked)}>
-                            </CheckBox>
-                            <Select
-                                style={{margin : 10, width : 100}}
-                                value={this.Salary_Type[this.state.alba_salary_type.row]}
-                                selectedIndex={this.state.alba_salary_type}
-                                onSelect={(index)=>{this.setState({alba_salary_type:index})}}
-                                disabled={this.state.isFollowUp}
-                                >
-                                <SelectItem title = '시'/>
-                                <SelectItem title = '일'/>
-                                <SelectItem title = '주'/>
-                                <SelectItem title = '월'/>
-                            </Select>
-
-                            <TextInput
-                                style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
-                                    backgroundColor : 'white', paddingHorizontal : 20, fontSize : 16}}
-                                size='medium'
-                                keyboardType='numeric'
-                                placeholder='Input Salary 원'
-                                disabled={this.state.isFollowUp}
-                                onChangeText ={(nextText) =>  {this.setState({alba_salary:nextText})}}
-                                />
-                        </View>
                     <TextInput
                         style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
                             backgroundColor : 'white', paddingHorizontal : 20, fontSize : 20}}
