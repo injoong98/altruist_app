@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {StyleSheet, SafeAreaView, Image, View, ScrollView} from 'react-native'
-import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card} from '@ui-kitten/components'
+import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal} from '@ui-kitten/components'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {TopBarTune} from '../../../components/TopBarTune';
 // import {Tag} from '../../../components/Tag.component';
@@ -24,7 +24,7 @@ class AltListScreen extends React.Component{
                 {name : '김영희'},
                 {name : '강호동'},
             ],
-
+            isFilterVisible : false,
         }
     }
 
@@ -72,34 +72,62 @@ class AltListScreen extends React.Component{
     render(){
         return (
             <SafeAreaView style={{flex:1}}>
-            <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/>
-            <ScrollView horizontal style={{marginVertical : 4}}>
-                <TouchableOpacity 
-                    style = {tags('#A7D4DE')}
-                    onPress = {()=>alert('Filter')}
-                    >
+                <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/>
+                <ScrollView horizontal style={{marginVertical : 4}}>
+                    <TouchableOpacity 
+                        style = {tags('#A7D4DE')}
+                        onPress = {()=>this.setState({isFilterVisible:true})}
+                        >
                         <Text category = 'c2' >     +     </Text>
-                </TouchableOpacity>
-                <Text category = 'c2' style = {tags('#A7D4DE')}>IT개발</Text>
-                <Text category = 'c2' style = {tags('#A7D4DE')}>스타트업/창업</Text>
-                <Text category = 'c2' style = {tags('#EAB0B3')}>UX/UI기획</Text>
-            </ScrollView>
+                    </TouchableOpacity>
+                    <Text category = 'c2' style = {tags('#A7D4DE')}>IT개발</Text>
+                    <Text category = 'c2' style = {tags('#A7D4DE')}>스타트업/창업</Text>
+                    <Text category = 'c2' style = {tags('#EAB0B3')}>UX/UI기획</Text>
+                </ScrollView>
                 <List
                     contentContainerStyle={styles.contentContainer}
                     data={this.state.data}
                     renderItem={this.renderItem}
                     />      
+                <Modal
+                    visible={this.state.isFilterVisible}
+                    backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
+                    onBackdropPress={() => this.setState({isFilterVisible:false})}>
+                        <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
+                            <Text category='h5'>필터 적용하기</Text>
+                            <Text category='h6'>직무 분야</Text>
+                                <View style = {{flexDirection : 'row', flexWrap: 'wrap'}}>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
+                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
+                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
+                                </View>
+                            <Text category='h6'>활동 분야</Text>
+                                <View style = {{flexDirection : 'row', flexWrap: 'wrap'}}>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
+                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
+                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
+                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
+                                </View>
+                            <Button onPress={()=>{this.setState({isFilterVisible:false})}}>적용하기</Button>
+                        </View>
+                </Modal>
             </SafeAreaView>
         );
     }
 }
     
-var tags = function (value='black', size=14) {
+var tags = function (value='black', size=14, vertical=0) {
     return{
         backgroundColor : value,
         borderRadius : 20, 
         padding : 4, 
-        marginHorizontal : 5, 
+        marginHorizontal : 5,
+        marginVertical : vertical,
         fontSize : size, 
         textAlignVertical : 'center',
         justifyContent : 'center',
