@@ -24,6 +24,7 @@ class AltListScreen extends React.Component{
                 {name : '강호동'},
             ],
             isFilterVisible : false,
+            filterTag : [],
         }
     }
 
@@ -73,7 +74,7 @@ class AltListScreen extends React.Component{
                 </View>
                 <Button 
                     style = {{height : 20}}
-                    onPress={()=>{alert('question')}}>질문하기</Button>
+                    onPress={()=>{console.log(this.state.filterTag)}}>질문하기</Button>
             </View>
         </Card>
     );
@@ -82,14 +83,10 @@ class AltListScreen extends React.Component{
         return (
             <SafeAreaView style={{flex:1}}>
                 <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/>
-                <TouchableOpacity onPress={()=>this.setState({isFilterVisible:true})}>
-                    <ScrollView horizontal style={{marginVertical : 4}}>
-                        <Tag style={{backgroundColor : '#A7D4DE'}}>  +  </Tag>
-                        <Tag style={{backgroundColor : '#EAB0B3'}}>IT개발</Tag>
-                        <Tag style={{backgroundColor : '#A7D4DE'}}>스타트업/창업</Tag>
-                        <Tag style={{backgroundColor : '#EAB0B3'}}>UX/UI기획</Tag>
-                    </ScrollView>
-                </TouchableOpacity>
+                <ScrollView horizontal style={{marginVertical : 4}}>
+                    <Tag onPress={()=>this.setState({isFilterVisible:true})}>  +  </Tag>
+                    {this.state.filterTag?this.state.filterTag.map(name => (<Tag key = {name} onPress={(key)=>this.state.filterTag.shift(key)}> {name}</Tag>)):null}
+                </ScrollView>
                 <List
                     contentContainerStyle={styles.contentContainer}
                     data={this.state.data}
@@ -101,9 +98,17 @@ class AltListScreen extends React.Component{
                     onBackdropPress={() => this.setState({isFilterVisible:false})}>
                         <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                             <Text category='h5'>필터 적용하기</Text>
-                            <Text category='h6'>직무 분야</Text>
                                 <View style = {{flexDirection : 'row', flexWrap: 'wrap'}}>
-                                    {this.job_type.map(name => (<Tag style={{marginVertical : 5}} key = {name}>{name}</Tag>))}
+                                    {this.state.filterTag.map(name => (<Tag style={{marginVertical : 5}}
+                                                                            key = {name}
+                                                                            onPress ={()=>this.state.filterTag.push(name)}> {name}</Tag>))}
+                                </View>
+                                <Text category='h6'>직무 분야</Text>
+                                <View style = {{flexDirection : 'row', flexWrap: 'wrap'}}>
+                                    {this.job_type.map(name => (<Tag style={{marginVertical : 5}} 
+                                                                    key = {name} 
+                                                                    onPress ={()=>this.state.filterTag.push(name)}>
+                                                                    {name}</Tag>))}
                                 </View>
                             <Text category='h6'>활동 분야</Text>
                                 <View style = {{flexDirection : 'row', flexWrap: 'wrap'}}>
