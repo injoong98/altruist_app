@@ -8,27 +8,47 @@ const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
 
-const data = new Array(8).fill({
-    title: 'Item',
-  });
+const data = [
+    {
+        mem_username : '홍길동',
+        alt_aboutme : '자기 한줄 소개 PR 입니다. 1줄로 소개해주세요',
+        alt_score : 5.00,
+        alt_title : ['IT개발', '서비스기획/UI,UX', '전략/기획'],
+    },
+    {
+        mem_username : '김철수',
+        alt_aboutme : '포마드 머리가 잘어울리는 마케터',
+        alt_score : 3.50,
+        alt_title : ['마케팅/MD', '영업/영업관리', '홍보/SCR'],
+    },
+    {
+        mem_username : '김영희',
+        alt_aboutme : '영희는 철수가 좋을까?',
+        alt_score : 4.20,
+        alt_title : ['서비스', '공무원/공공/비영리', '회계/재무/금융'],
+    },
+    {
+        mem_username : '강호동',
+        alt_aboutme : '안녕하세요 강호동입니데이',
+        alt_score : 4.99,
+        alt_title : ['전문/특수', '미디어'],
+    },
+]
 
 class AltListScreen extends React.Component{
 
     constructor (props) {
         super(props);
         this.state={
-            data : [
-                {name : '홍길동'},
-                {name : '김철수'},
-                {name : '김영희'},
-                {name : '강호동'},
-            ],
+            data : null,
             isFilterVisible : false,
             filterTag : [],
         }
     }
 
-
+    componentDidMount(){
+        this.setState({data:data})
+    }
 
     job_type =[
         'IT개발', '공무원/공공/비영리', '교육/상담/컨설팅', '기타 사무', '디자인/예술', '마케팅/MD','목회/섭리기관 행정', '미디어', '생산/제조',
@@ -45,17 +65,15 @@ class AltListScreen extends React.Component{
     )
 
     renderItem = ({item, index}) => (
-        <Card style = {styles.card} onPress = {()=>{this.props.navigation.navigate('AltProfile', item.name)}}>
+        <Card style = {styles.card} onPress = {()=>{this.props.navigation.navigate('AltProfile', item)}}>
             <View style = {{flexDirection : 'row', justifyContent:'flex-end'}}>
-                <Tag disabled={true} style={{backgroundColor : '#EAB0B3'}}>IT개발</Tag>
-                <Tag style={{backgroundColor : '#A7D4DE'}}>스타트업/창업</Tag>
-                <Tag style={{backgroundColor : '#EAB0B3'}}>UX/UI기획</Tag>
+                {item.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))}
             </View>
             <View style={{flexDirection : 'row', alignItems : 'flex-end', justifyContent : 'flex-start'}}>
-                <Image source = {{uri : 'http://10.0.2.2/uploads/noimage.gif'}} style = {{width : 100, height : 100, borderRadius : 30, resizeMode:'contain'}}/>
-                <View style={{marginLeft : 10}}>
-                    <Text category = 'h1'>{item.name}</Text>
-                    <Text category = 'h6'>1줄이내로 자신을 표현해주세요</Text>
+                <Image source = {{uri : 'http://10.0.2.2/uploads/noimage.gif'}} style = {{flex : 1, width : 100, height : 100, borderRadius : 30, resizeMode:'contain'}}/>
+                <View style={{marginLeft : 10, flex:3, maxHeight : 110}}>
+                    <Text category = 'h1'>{item.mem_username}</Text>
+                    <Text category = 'h6' numberOfLines={2}>{item.alt_aboutme}</Text>
                 </View>
             </View>
             <View style={{flexDirection : 'row'}}>
@@ -68,7 +86,7 @@ class AltListScreen extends React.Component{
             <Text category='h6' style={{fontSize : 16}}>학력 또는 직장을 입력합니다.</Text>
             <View style = {{flexDirection : 'row'}}>
                 <View style = {{flexDirection : 'row', flex : 5}}>
-                    <Tag disabled={true} style={{backgroundColor : '#EAB0B3', fontSize : 16}}>IT개발</Tag>
+                    <Tag disabled={true}>IT개발</Tag>
                     <Tag style={{backgroundColor : '#A7D4DE', fontSize : 16}}>스타트업/창업</Tag>
                     <Tag style={{backgroundColor : '#EAB0B3', fontSize : 16}}>UX/UI기획</Tag>
                 </View>
@@ -85,7 +103,7 @@ class AltListScreen extends React.Component{
                 <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/>
                 <ScrollView horizontal style={{marginVertical : 4}}>
                     <Tag onPress={()=>this.setState({isFilterVisible:true})}>  +  </Tag>
-                    {this.state.filterTag?this.state.filterTag.map(name => (<Tag key = {name} onPress={(key)=>this.state.filterTag.shift(key)}> {name}</Tag>)):null}
+                    {this.state.filterTag.length?this.state.filterTag.map(name => (<Tag key = {name} onPress={()=>this.state.filterTag.splice(this.state.filterTag.indexOf(name), 1)}> {name}</Tag>)):null}
                 </ScrollView>
                 <List
                     contentContainerStyle={styles.contentContainer}
