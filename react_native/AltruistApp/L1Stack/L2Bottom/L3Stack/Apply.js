@@ -1,5 +1,6 @@
 import React,{useState} from 'react';
-
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import {SafeAreaView, View, TextInput} from 'react-native'
 import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction, Radio, CheckBox } from '@ui-kitten/components'
 
@@ -23,7 +24,15 @@ const BackIcon =  (props) =>(
 //     )
 // }
 
+//이거 다시 보기 !
+function  BackAction({navigation}){
+    return(
+        <TopNavigationAction icon={BackIcon} onPress={() => {navigation.goBack()}}/>
 
+    )
+
+}
+    
 
 
 
@@ -41,29 +50,30 @@ class AltApplyScreen extends React.Component{
 
     setFollowUp = (nextChecked) =>{
         this.setState({setAgree : nextChecked});
+        console.log("Button Pressed");
     }
 
     // setFollowUp = (nextChecked) => {
     //     this.setState({isFollowUp:nextChecked});
     //     this.setState({alba_salary:'추후협의'});
     // }
-    BackAction = () =>(
-    <TopNavigationAction icon={BackIcon} onPress={() => {navigation.goBack()}}/>
-    )
+   
   
     applyAceept = () => {
         const {current} = this.state
         const agreeCheck = current.setAgree ? current.isShowTest = "flex" : current.isShowTest = "none"
         this.setState({isShowTest : agreeCheck})
+
     }
 
 
     
-  render(){
     
+  render(){
+    console.log('dhfjks');
       return(
         <SafeAreaView style={{flex:1}}>
-            <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction}/> 
+            <TopNavigation title="이타주의자" alignment="center" accessoryLeft={BackAction}/> 
             <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
                 <Text>이타주의자 지원</Text>
                 <Text style={{ width:350}}>이타주의자에 지원하려는 당신을 환영합니다.
@@ -123,7 +133,7 @@ class AltApplyScreen extends React.Component{
       )
   }
  
-
+  
 }
 
 export default AltApplyScreen;
