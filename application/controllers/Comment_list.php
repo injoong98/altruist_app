@@ -80,6 +80,15 @@ class Comment_list extends CB_Controller
 			$check
 		);
 
+
+		// 본인인증 사용하는 경우 - 시작
+		if (element('access_view_selfcert', $board)) {
+			$this->load->library(array('selfcertlib'));
+			$this->selfcertlib->selfcertcheck('view', element('access_view_selfcert', $board));
+		}
+		// 본인인증 사용하는 경우 - 끝
+
+
 		$is_admin = $this->member->is_admin(
 			array(
 				'board_id' => element('brd_id', $board),

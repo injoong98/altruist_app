@@ -134,6 +134,7 @@ class Board_write extends CB_Controller
 			$check
 		);
 
+
 		if (element('post_del', $origin)) {
 			alert('삭제된 글에는 답변을 입력하실 수 없습니다');
 			return;
@@ -276,8 +277,6 @@ class Board_write extends CB_Controller
 		$view['view']['post']['can_post_notice'] = $can_post_notice = ($is_admin !== false) ? true : false;
 		$view['view']['post']['can_post_secret'] = $can_post_secret
 			= element('use_post_secret', $board) === '1' ? true : false;
-		$view['view']['post']['can_anoymous'] = $can_anoymous
-			= element('brd_anoymous_allow', $board) === '1' ? true : false;
 		$view['view']['post']['post_secret'] = element('use_post_secret_selected', $board) ? '1' : '';
 		$view['view']['post']['can_post_receive_email'] = $can_post_receive_email
 			= element('use_post_receive_email', $board) ? true : false;
@@ -287,6 +286,9 @@ class Board_write extends CB_Controller
 		$use_subj_style = ($this->cbconfig->get_device_view_type() === 'mobile')
 			? element('use_mobile_subject_style', $board)
 			: element('use_subject_style', $board);
+		$use_poll = ($this->cbconfig->get_device_view_type() === 'mobile')
+			? element('use_mobile_poll', $board)
+			: element('use_poll', $board);
 
 		/**
 		 * Validation 라이브러리를 가져옵니다
@@ -456,6 +458,21 @@ class Board_write extends CB_Controller
 			$use_subject_style = false;
 		}
 		$view['view']['board']['use_subject_style'] = $use_subject_style;
+		if ($use_poll) {
+			$check = array(
+				'group_id' => element('bgr_id', $board),
+				'board_id' => element('brd_id', $board),
+			);
+			$can_poll_write = $this->accesslevel->is_accessable(
+				element('access_poll_write', $board),
+				element('access_poll_write_level', $board),
+				element('access_poll_write_group', $board),
+				$check
+			);
+		} else {
+			$can_poll_write = false;
+		}
+		$view['view']['board']['can_poll_write'] = $can_poll_write;
 
 		if (element('use_post_tag', $board)) {
 			$check = array(
@@ -814,9 +831,6 @@ class Board_write extends CB_Controller
 			if ($can_post_secret) {
 				$updatedata['post_secret'] = $this->input->post('post_secret') ? 1 : 0;
 			}
-			if ($can_anoymous) {
-				$updatedata['post_anoymous_yn'] = $this->input->post('post_anoymous_yn') ? 1 : 0;
-			}
 			if (element('use_post_secret', $board) === '2') {
 				$updatedata['post_secret'] = 1;
 			}
@@ -919,6 +933,51 @@ class Board_write extends CB_Controller
 					'post_link_count' => count($post_link),
 				 );
 				$this->Post_model->update($post_id, $postupdate);
+			}
+			if ($can_poll_write) {
+				$this->load->model(array('Post_poll_model', 'Post_poll_item_model', 'Post_poll_item_poll_model'));
+				$post_poll_item = $this->input->post('poll_item');
+				$has_poll_item = false;
+				foreach ($post_poll_item as $pkey => $pval) {
+					if ($pval) {
+						$has_poll_item = true;
+					}
+				}
+				if ($post_poll_item && $has_poll_item) {
+					$start_time = sprintf("%02d", $this->input->post('ppo_start_time'));
+					$start_datetime = $this->input->post('ppo_start_date')
+						? $this->input->post('ppo_start_date') . ' ' . $start_time . ':00:00' : null;
+					$end_time = sprintf("%02d", $this->input->post('ppo_end_time'));
+					$end_datetime = $this->input->post('ppo_end_date')
+						? $this->input->post('ppo_end_date') . ' ' . $end_time . ':00:00' : null;
+					$ppo_choose_count = $this->input->post('ppo_choose_count') ? $this->input->post('ppo_choose_count') : 0;
+					$ppo_after_comment = $this->input->post('ppo_after_comment') ? $this->input->post('ppo_after_comment') : 0;
+					$polldata = array(
+						'post_id' => $post_id,
+						'brd_id' => element('brd_id', $board),
+						'ppo_start_datetime' => $start_datetime,
+						'ppo_end_datetime' => $end_datetime,
+						'ppo_title' => $this->input->post('ppo_title', null, ''),
+						'ppo_choose_count' => $ppo_choose_count,
+						'ppo_after_comment' => $ppo_after_comment,
+						'ppo_datetime' => cdate('Y-m-d H:i:s'),
+						'ppo_ip' => $this->input->ip_address(),
+						'mem_id' => $mem_id,
+					);
+					if ($is_admin !== false) {
+						$polldata['ppo_point'] = $this->input->post('ppo_point') ? $this->input->post('ppo_point') : 0;
+					}
+					$ppo_id = $this->Post_poll_model->insert($polldata);
+					foreach ($post_poll_item as $pkey => $pval) {
+						if ($pval) {
+							$itemdata = array(
+								'ppo_id' => $ppo_id,
+								'ppi_item' => $pval,
+							);
+							$this->Post_poll_item_model->insert($itemdata);
+						}
+					}
+				}
 			}
 
 			if ($this->member->is_member() && element('use_tempsave', $board)) {
@@ -1317,7 +1376,6 @@ class Board_write extends CB_Controller
 
 		$post['extravars'] = $this->Post_extra_vars_model->get_all_meta($post_id);
 		$post['meta'] = $this->Post_meta_model->get_all_meta($post_id);
-		$post['post_content'] = html_purifier($post['post_content']);
 
 		$view['view']['post'] = $post;
 		$board = $this->board->item_all(element('brd_id', $post));
@@ -1472,6 +1530,10 @@ class Board_write extends CB_Controller
 			? element('use_mobile_subject_style', $board)
 			: element('use_subject_style', $board);
 
+		$use_poll = ($this->cbconfig->get_device_view_type() === 'mobile')
+			? element('use_mobile_poll', $board)
+			: element('use_poll', $board);
+
 		if ($use_subj_style) {
 			$check = array(
 				'group_id' => element('bgr_id', $board),
@@ -1487,6 +1549,35 @@ class Board_write extends CB_Controller
 			$use_subject_style = false;
 		}
 		$view['view']['board']['use_subject_style'] = $use_subject_style;
+		if ($use_poll) {
+			$this->load->model(array('Post_poll_model', 'Post_poll_item_model', 'Post_poll_item_poll_model'));
+			$postwhere = array(
+				'post_id' => $post_id,
+			);
+			$view['view']['poll'] = $poll
+				= $this->Post_poll_model->get_one('', '', $postwhere);
+			$view['view']['poll_item'] = $poll_item = '';
+			if (element('ppo_id', $poll)) {
+				$itemwhere = array(
+					'ppo_id' => element('ppo_id', $poll),
+				);
+				$view['view']['poll_item'] = $poll_item
+					= $this->Post_poll_item_model->get('', '', $itemwhere, '', '', 'ppi_id', 'ASC');
+			}
+			$check = array(
+				'group_id' => element('bgr_id', $board),
+				'board_id' => element('brd_id', $board),
+			);
+			$can_poll_write = $this->accesslevel->is_accessable(
+				element('access_poll_write', $board),
+				element('access_poll_write_level', $board),
+				element('access_poll_write_group', $board),
+				$check
+			);
+		} else {
+			$can_poll_write = false;
+		}
+		$view['view']['board']['can_poll_write'] = $can_poll_write;
 
 		if (element('use_post_tag', $board)) {
 			$check = array(
@@ -1534,7 +1625,6 @@ class Board_write extends CB_Controller
 		$view['view']['post']['can_post_notice'] = $can_post_notice = ($is_admin !== false) ? true : false;
 		$view['view']['post']['can_post_secret'] = $can_post_secret
 			= element('use_post_secret', $board) === '1' ? true : false;
-		$view['view']['post']['can_anoymous'] = $can_anoymous	= element('brd_anoymous_allow', $board) === '1' ? true : false;
 		$view['view']['post']['can_post_receive_email'] = $can_post_receive_email = element('use_post_receive_email', $board) ? true : false;
 
 		$primary_key = $this->Post_model->primary_key;
@@ -2024,9 +2114,6 @@ class Board_write extends CB_Controller
 			if ($can_post_secret) {
 				$updatedata['post_secret'] = $this->input->post('post_secret') ? 1 : 0;
 			}
-			if ($can_anoymous) {
-				$updatedata['post_anoymous_yn'] = $this->input->post('post_anoymous_yn') ? 1 : 0;
-			}
 			if (element('use_post_secret', $board) === '2') {
 				$updatedata['post_secret'] = 1;
 			}
@@ -2106,6 +2193,130 @@ class Board_write extends CB_Controller
 			}
 			$updatedata['post_link_count'] = $link_count;
 
+			if ($can_poll_write) {
+				if ($ppo_id = (int) $this->input->post('ppo_id')) {
+					$post_poll_data = $this->Post_poll_model->get_one($ppo_id);
+					if (element('post_id', $post_poll_data) == $post_id) {
+						$post_poll_item = $this->input->post('poll_item');
+						$post_poll_item_update = $this->input->post('poll_item_update');
+						if ($post_poll_item OR $post_poll_item_update) {
+							$start_time = sprintf("%02d", $this->input->post('ppo_start_time'));
+							$start_datetime = $this->input->post('ppo_start_date')
+								? $this->input->post('ppo_start_date') . ' ' . $start_time . ':00:00' : null;
+							$end_time = sprintf("%02d", $this->input->post('ppo_end_time'));
+							$end_datetime = $this->input->post('ppo_end_date')
+								? $this->input->post('ppo_end_date') . ' ' . $end_time . ':00:00' : null;
+							$ppo_choose_count = $this->input->post('ppo_choose_count') ? $this->input->post('ppo_choose_count') : 0;
+							$ppo_after_comment = $this->input->post('ppo_after_comment') ? $this->input->post('ppo_after_comment') : 0;
+							$polldata = array(
+								'ppo_start_datetime' => $start_datetime,
+								'ppo_end_datetime' => $end_datetime,
+								'ppo_title' => $this->input->post('ppo_title', null, ''),
+								'ppo_choose_count' => $ppo_choose_count,
+								'ppo_after_comment' => $ppo_after_comment,
+							);
+							if ($is_admin !== false) {
+								$polldata['ppo_point'] = $this->input->post('ppo_point') ? $this->input->post('ppo_point') : 0;
+							}
+							$this->Post_poll_model->update(element('ppo_id', $post_poll_data), $polldata);
+							if ($post_poll_item_update) {
+								foreach ($post_poll_item_update as $pkey => $pval) {
+									$item = $this->Post_poll_item_model->get_one($pkey);
+									if (element('ppi_id', $item) && element('ppi_id', $item) == $pkey) {
+										if (element('ppo_id', $item) == element('ppo_id', $post_poll_data)) {
+											if ($pval) {
+												$itemdata = array(
+													'ppi_item' => $pval,
+												);
+												$this->Post_poll_item_model->update($pkey, $itemdata);
+											} else {
+												$this->Post_poll_item_model->delete($pkey);
+												$pipwhere = array(
+													'ppi_id' => $pkey,
+												);
+												$this->Post_poll_item_poll_model->delete_where($pipwhere);
+											}
+										}
+									}
+								}
+							}
+							if ($post_poll_item) {
+								foreach ($post_poll_item as $pkey => $pval) {
+									if ($pval) {
+										$itemdata = array(
+											'ppo_id' => element('ppo_id', $post_poll_data),
+											'ppi_item' => $pval,
+										);
+										$this->Post_poll_item_model->insert($itemdata);
+									}
+								}
+							}
+						} else {
+							$pwhere = array(
+								'ppo_id' => element('ppo_id', $post_poll_data),
+							);
+							$this->Post_poll_model->delete(element('ppo_id', $post_poll_data));
+							$this->Post_poll_item_model->delete_where($pwhere);
+							$this->Post_poll_item_poll_model->delete_where($pwhere);
+						}
+					}
+
+					$pwhere = array(
+						'ppo_id' => $ppo_id,
+					);
+					$cnt = $this->Post_poll_item_model->count_by($pwhere);
+					if ($cnt === 0) {
+						$this->Post_poll_model->delete($ppo_id);
+						$this->Post_poll_item_model->delete_where($pwhere);
+						$this->Post_poll_item_poll_model->delete_where($pwhere);
+					}
+
+				} else {
+					$post_poll_item = $this->input->post('poll_item');
+					$has_poll_item = false;
+					foreach ($post_poll_item as $pkey => $pval) {
+						if ($pval) {
+							$has_poll_item = true;
+						}
+					}
+					if ($post_poll_item && $has_poll_item) {
+						$start_time = sprintf("%02d", $this->input->post('ppo_start_time'));
+						$start_datetime = $this->input->post('ppo_start_date')
+							? $this->input->post('ppo_start_date') . ' ' . $start_time . ':00:00' : '';
+						$end_time = sprintf("%02d", $this->input->post('ppo_end_time'));
+						$end_datetime = $this->input->post('ppo_end_date')
+							? $this->input->post('ppo_end_date') . ' ' . $end_time . ':00:00' : '';
+						$ppo_choose_count = $this->input->post('ppo_choose_count') ? $this->input->post('ppo_choose_count') : 0;
+						$ppo_after_comment = $this->input->post('ppo_after_comment') ? $this->input->post('ppo_after_comment') : 0;
+
+						$polldata = array(
+							'post_id' => $post_id,
+							'brd_id' => element('brd_id', $board),
+							'ppo_start_datetime' => $start_datetime,
+							'ppo_end_datetime' => $end_datetime,
+							'ppo_title' => $this->input->post('ppo_title', null, ''),
+							'ppo_choose_count' => $ppo_choose_count,
+							'ppo_after_comment' => $ppo_after_comment,
+							'ppo_datetime' => cdate('Y-m-d H:i:s'),
+							'ppo_ip' => $this->input->ip_address(),
+							'mem_id' => $mem_id,
+						);
+						if ($is_admin !== false) {
+							$polldata['ppo_point'] = $this->input->post('ppo_point') ? $this->input->post('ppo_point') : 0;
+						}
+						$ppo_id = $this->Post_poll_model->insert($polldata);
+						foreach ($post_poll_item as $pkey => $pval) {
+							if ($pval) {
+								$itemdata = array(
+									'ppo_id' => $ppo_id,
+									'ppi_item' => $pval,
+								);
+								$this->Post_poll_item_model->insert($itemdata);
+							}
+						}
+					}
+				}
+			}
 
 			$file_updated = false;
 			$file_changed = false;

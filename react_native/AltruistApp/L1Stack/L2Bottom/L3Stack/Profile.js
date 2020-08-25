@@ -25,14 +25,12 @@ class AltProfileScreen extends React.Component {
                 <ScrollView>
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <View style = {{flexDirection : 'row', justifyContent:'flex-end'}}>
-                            <Tag disabled={true} style={{backgroundColor : '#EAB0B3'}}>IT개발</Tag>
-                            <Tag style={{backgroundColor : '#A7D4DE'}}>스타트업/창업</Tag>
-                            <Tag style={{backgroundColor : '#EAB0B3'}}>UX/UI기획</Tag>
+                            {this.props.route.params.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))}
                         </View>
                         <View style={{flexDirection : 'row', alignItems : 'flex-end', justifyContent : 'flex-start',}}>
                             <Image source = {{uri : 'http://10.0.2.2/uploads/noimage.gif'}} style = {{width : 150, height : 150, borderRadius : 30, resizeMode:'contain', flex : 1}}/>
                             <View style={{marginLeft : 10, flex : 2, marginBottom : 5,}}>
-                                <Text category = 'h1'>{this.props.route.params}</Text>
+                                <Text category = 'h1'>{this.props.route.params.mem_username}</Text>
                                 <View style={{flexDirection : 'row', alignItems : 'center'}}>
                                     <Icon style={{width : 30, height : 30}} fill='yellow' name='star'/>
                                     <Icon style={{width : 30, height : 30}} fill='yellow' name='star'/>
@@ -41,7 +39,7 @@ class AltProfileScreen extends React.Component {
                                     <Icon style={{width : 30, height : 30}} fill='yellow' name='star'/>
                                     <Text> 답변율 99.9%</Text>
                                 </View>
-                                <Text category = 'h6' numberOfLines ={2}>2줄이내로 자신을 표현해주세요 정말로 말이에요.당신은 얼마나 말할 수 있을지 모르겠어요 한 4줄정도까지는 가능한거 같아요 그 이상으로 넘어가면 생략해야겠죠?</Text>
+                                <Text category = 'h6' numberOfLines ={2}>{this.props.route.params.alt_aboutme}</Text>
                             </View>
                         </View>
                     </View>
@@ -49,15 +47,13 @@ class AltProfileScreen extends React.Component {
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <Text category='h5'>활동 분야</Text>
                         <View style = {{flexDirection : 'row', justifyContent:'flex-start'}}>
-                            <Tag style={{backgroundColor : '#EAB0B3'}}>IT개발</Tag>
-                            <Tag style={{backgroundColor : '#A7D4DE'}}>스타트업/창업</Tag>
-                            <Tag style={{backgroundColor : '#EAB0B3'}}>UX/UI기획</Tag>
+                            {this.props.route.params.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))}
                         </View>
                     </View>
 
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <Text category='h5'>멘토 소개</Text>
-                        <Text category='p2'>반갑습니다. 저는 대도 홍길동이라고 합니다. 여러분들에게 도벽에 대한 멘토링을 할 수 있습니다. 감사합니다.</Text>
+                        <Text category='p2'>post.alt_content</Text>
                     </View>
 
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
@@ -89,11 +85,11 @@ class AltProfileScreen extends React.Component {
                             </View>
                         </ScrollView>
                     </View>
-                    <Button 
-                        style={styles.bottomButton} onPress={()=>alert('question')}>
-                                질문하기
-                    </Button>
                 </ScrollView>
+                <Button 
+                    style={styles.bottomButton} onPress={()=>alert('question')}>
+                    질문하기
+                </Button>
             </SafeAreaView>
         )
     }

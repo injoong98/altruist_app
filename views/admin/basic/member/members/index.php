@@ -45,10 +45,14 @@
 							<th><a href="<?php echo element('mem_username', element('sort', $view)); ?>">실명</a></th>
 							<th><a href="<?php echo element('mem_nickname', element('sort', $view)); ?>">닉네임</a></th>
 							<th><a href="<?php echo element('mem_email', element('sort', $view)); ?>">이메일</a></th>
+							<?php if ($this->cbconfig->item('use_selfcert')) { ?>
+								<th>본인인증</th>
+							<?php } ?>
 							<?php if ($this->cbconfig->item('use_sociallogin')) { ?>
 								<th>소셜연동</th>
 							<?php } ?>
 							<th><a href="<?php echo element('mem_point', element('sort', $view)); ?>">포인트</a></th>
+							<th><?php echo $this->cbconfig->item('deposit_name') ? html_escape($this->cbconfig->item('deposit_name')) : '예치금'; ?></th>
 							<th><a href="<?php echo element('mem_register_datetime', element('sort', $view)); ?>">가입일</a></th>
 							<th><a href="<?php echo element('mem_lastlogin_datetime', element('sort', $view)); ?>">최근로그인</a></th>
 							<th>회원그룹</th>
@@ -74,6 +78,15 @@
 							</td>
 							<td><?php echo element('display_name', $result); ?></td>
 							<td><?php echo html_escape(element('mem_email', $result)); ?></td>
+							<?php if ($this->cbconfig->item('use_selfcert')) { ?>
+								<td>
+									<?php
+									echo (element('selfcert_type', element('meta', $result)) === 'phone') ? '<span class="label label-success">휴대폰</span>' : '';
+									echo (element('selfcert_type', element('meta', $result)) === 'ipin') ? '<span class="label label-success">IPIN</span>' : '';
+									echo is_adult(element('selfcert_birthday', element('meta', $result))) ? '<span class="label label-danger">성인</span>' : '';
+									?>
+								</td>
+							<?php } ?>
 							<?php if ($this->cbconfig->item('use_sociallogin')) { ?>
 								<td>
 									<?php if ($this->cbconfig->item('use_sociallogin_facebook') && element('facebook_id', element('social', $result))) { ?>
@@ -94,6 +107,7 @@
 								</td>
 							<?php } ?>
 							<td class="text-right"><?php echo number_format(element('mem_point', $result)); ?></td>
+							<td class="text-right"><?php echo number_format((int) element('total_deposit', element('meta', $result))); ?></td>
 							<td><?php echo display_datetime(element('mem_register_datetime', $result), 'full'); ?></td>
 							<td><?php echo display_datetime(element('mem_lastlogin_datetime', $result), 'full'); ?></td>
 							<td><?php echo element('member_group', $result); ?></td>

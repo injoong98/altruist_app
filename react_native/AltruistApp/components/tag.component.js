@@ -5,13 +5,17 @@ import {Text} from '@ui-kitten/components';
 const color_array = [
     '#A7D4DE', '#EAB0B3', '#B09BDE'
 ];
+const color_press_array = [
+    '#C5F2FC', '#EFBFBF', '#BF9FDF'
+];
 
 export default class Tag extends React.Component{
     
     constructor(props){
         super(props)
         this.state={
-            color : null
+            color : null,
+            checked : false,
         }
     }
     
@@ -23,7 +27,7 @@ export default class Tag extends React.Component{
     render(){
         return(
             <TouchableOpacity onPress={this.props.onPress} disabled ={this.props.disabled}>
-                <Text style={[styles.defaultStyle, {backgroundColor : color_array[this.state.color]}, this.props.style]} category = 'c2'>
+                <Text style={[styles.defaultStyle, {backgroundColor : (this.state.checked?color_press_array[this.state.color]:color_array[this.state.color])}, this.props.style]} category = 'c2'>
                     {this.props.children}
                 </Text>
             </TouchableOpacity>
