@@ -1,10 +1,9 @@
 import React from 'react';
 
 import {StyleSheet, SafeAreaView, Image, View, ScrollView} from 'react-native'
-import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal} from '@ui-kitten/components'
+import {Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal} from '@ui-kitten/components'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import {TopBarTune} from '../../../components/TopBarTune';
-// import {Tag} from '../../../components/Tag.component';
+import Tag from '../../../components/tag.component';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -25,10 +24,21 @@ class AltListScreen extends React.Component{
                 {name : '강호동'},
             ],
             isFilterVisible : false,
+            filterTag : [],
         }
     }
 
-    
+
+
+    job_type =[
+        'IT개발', '공무원/공공/비영리', '교육/상담/컨설팅', '기타 사무', '디자인/예술', '마케팅/MD','목회/섭리기관 행정', '미디어', '생산/제조',
+        '서비스', '서비스기획/UI,UX', '연구/설계', '영업/영업관리', '외국어/통역/번역', '유통/무역/구매', '인사/총무/노무', '전략/기획',
+        '전문/특수', '창업/스타트업', '해외/기술영업', '홍보/CSR', '회계/재무/금융' 
+    ]
+
+    active_type = [
+        '공직/선교/헌신', '교제,축복', '사회생활', '신앙생활', '원리/말씀', '인간관계', '자기계발', '진로/학습'
+    ]
 
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() => {this.props.navigation.goBack()}}/>
@@ -37,9 +47,9 @@ class AltListScreen extends React.Component{
     renderItem = ({item, index}) => (
         <Card style = {styles.card} onPress = {()=>{this.props.navigation.navigate('AltProfile', item.name)}}>
             <View style = {{flexDirection : 'row', justifyContent:'flex-end'}}>
-                <Text category = 'c2' style = {tags('#A7D4DE')}>IT개발</Text>
-                <Text category = 'c2' style = {tags('#A7D4DE')}>스타트업/창업</Text>
-                <Text category = 'c2' style = {tags('#EAB0B3')}>UX/UI기획</Text>
+                <Tag disabled={true} style={{backgroundColor : '#EAB0B3'}}>IT개발</Tag>
+                <Tag style={{backgroundColor : '#A7D4DE'}}>스타트업/창업</Tag>
+                <Tag style={{backgroundColor : '#EAB0B3'}}>UX/UI기획</Tag>
             </View>
             <View style={{flexDirection : 'row', alignItems : 'flex-end', justifyContent : 'flex-start'}}>
                 <Image source = {{uri : 'http://10.0.2.2/uploads/noimage.gif'}} style = {{width : 100, height : 100, borderRadius : 30, resizeMode:'contain'}}/>
@@ -58,13 +68,13 @@ class AltListScreen extends React.Component{
             <Text category='h6' style={{fontSize : 16}}>학력 또는 직장을 입력합니다.</Text>
             <View style = {{flexDirection : 'row'}}>
                 <View style = {{flexDirection : 'row', flex : 5}}>
-                    <Text category = 'c2' style = {tags('#A7D4DE', 16)}>IT개발</Text>
-                    <Text category = 'c2' style = {tags('#A7D4DE', 16)}>스타트업/창업</Text>
-                    <Text category = 'c2' style = {tags('#A7D4DE', 16)}>UX/UI기획</Text>
+                    <Tag disabled={true} style={{backgroundColor : '#EAB0B3', fontSize : 16}}>IT개발</Tag>
+                    <Tag style={{backgroundColor : '#A7D4DE', fontSize : 16}}>스타트업/창업</Tag>
+                    <Tag style={{backgroundColor : '#EAB0B3', fontSize : 16}}>UX/UI기획</Tag>
                 </View>
                 <Button 
                     style = {{height : 20}}
-                    onPress={()=>{alert('question')}}>질문하기</Button>
+                    onPress={()=>{console.log(this.state.filterTag)}}>질문하기</Button>
             </View>
         </Card>
     );
@@ -74,15 +84,8 @@ class AltListScreen extends React.Component{
             <SafeAreaView style={{flex:1}}>
                 <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/>
                 <ScrollView horizontal style={{marginVertical : 4}}>
-                    <TouchableOpacity 
-                        style = {tags('#A7D4DE')}
-                        onPress = {()=>this.setState({isFilterVisible:true})}
-                        >
-                        <Text category = 'c2' >     +     </Text>
-                    </TouchableOpacity>
-                    <Text category = 'c2' style = {tags('#A7D4DE')}>IT개발</Text>
-                    <Text category = 'c2' style = {tags('#A7D4DE')}>스타트업/창업</Text>
-                    <Text category = 'c2' style = {tags('#EAB0B3')}>UX/UI기획</Text>
+                    <Tag onPress={()=>this.setState({isFilterVisible:true})}>  +  </Tag>
+                    {this.state.filterTag?this.state.filterTag.map(name => (<Tag key = {name} onPress={(key)=>this.state.filterTag.shift(key)}> {name}</Tag>)):null}
                 </ScrollView>
                 <List
                     contentContainerStyle={styles.contentContainer}
@@ -95,42 +98,27 @@ class AltListScreen extends React.Component{
                     onBackdropPress={() => this.setState({isFilterVisible:false})}>
                         <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                             <Text category='h5'>필터 적용하기</Text>
-                            <Text category='h6'>직무 분야</Text>
                                 <View style = {{flexDirection : 'row', flexWrap: 'wrap'}}>
-                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
-                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
-                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
-                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
-                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
-                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
+                                    {this.state.filterTag.map(name => (<Tag style={{marginVertical : 5}}
+                                                                            key = {name}
+                                                                            onPress ={()=>this.state.filterTag.push(name)}> {name}</Tag>))}
+                                </View>
+                                <Text category='h6'>직무 분야</Text>
+                                <View style = {{flexDirection : 'row', flexWrap: 'wrap'}}>
+                                    {this.job_type.map(name => (<Tag style={{marginVertical : 5}} 
+                                                                    key = {name} 
+                                                                    onPress ={()=>this.state.filterTag.push(name)}>
+                                                                    {name}</Tag>))}
                                 </View>
                             <Text category='h6'>활동 분야</Text>
                                 <View style = {{flexDirection : 'row', flexWrap: 'wrap'}}>
-                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
-                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
-                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
-                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>IT개발</Text>
-                                    <Text category = 'c2' style = {tags('#A7D4DE',14,5)}>스타트업/창업</Text>
-                                    <Text category = 'c2' style = {tags('#EAB0B3',14,5)}>UX/UI기획</Text>
+                                    {this.active_type.map(name => (<Tag style={{marginVertical : 5}} key = {name}>{name}</Tag>))}
                                 </View>
                             <Button onPress={()=>{this.setState({isFilterVisible:false})}}>적용하기</Button>
                         </View>
                 </Modal>
             </SafeAreaView>
         );
-    }
-}
-    
-var tags = function (value='black', size=14, vertical=0) {
-    return{
-        backgroundColor : value,
-        borderRadius : 20, 
-        padding : 4, 
-        marginHorizontal : 5,
-        marginVertical : vertical,
-        fontSize : size, 
-        textAlignVertical : 'center',
-        justifyContent : 'center',
     }
 }
 
