@@ -75,5 +75,4 @@ class Member_dormant_model extends CB_Model
 		$result = $this->db->get();
 		return $result->row_array();
 	}
-
 }

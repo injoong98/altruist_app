@@ -125,6 +125,7 @@ class Register extends CB_Controller
 			$view['view']['event']['formrunfalse'] = Events::trigger('formrunfalse', $eventname);
 
 			$this->session->set_userdata('registeragree', '');
+			$this->session->set_userdata('selfcertinfo', '');
 
 			$view['view']['member_register_policy1'] = $this->cbconfig->item('member_register_policy1');
 			$view['view']['member_register_policy2'] = $this->cbconfig->item('member_register_policy2');
@@ -235,6 +236,44 @@ class Register extends CB_Controller
 		}
 
 
+		if ($this->cbconfig->item('use_selfcert') && $this->cbconfig->item('use_selfcert_required') && ! $this->session->userdata('selfcertinfo')) {
+			if ( ! $this->session->userdata('selfcertinfo')) {
+				$this->session->set_flashdata(
+					'message',
+					'본인 확인 후에 회원가입이 가능합니다.'
+				);
+				redirect('register');
+			}
+		}
+
+		$selfcert_phone = $selfcert_username = $selfcert_birthday = $selfcert_sex = '';
+		$selfcert_meta = '';
+
+		if ($this->cbconfig->item('use_selfcert') && $this->session->userdata('selfcertinfo')) {
+			$selfcertinfo = $this->session->userdata('selfcertinfo');
+			if (element('selfcert_type', $selfcertinfo) == 'phone') {
+				if ($this->cbconfig->item('use_selfcert_phone') == 'kcb' OR $this->cbconfig->item('use_selfcert_phone') == 'kcp') {
+					$selfcert_phone = element('selfcert_phone', $selfcertinfo);
+					$selfcert_username = element('selfcert_username', $selfcertinfo);
+					$selfcert_birthday = element('selfcert_birthday', $selfcertinfo);
+					$selfcert_sex = element('selfcert_sex', $selfcertinfo);
+					$selfcert_key = element('selfcert_key', $selfcertinfo);
+					$selfcert_local_code = element('selfcert_local_code', $selfcertinfo);
+					$selfcert_meta = array(
+						'selfcert_type' => element('selfcert_type', $selfcertinfo),
+						'selfcert_company' => $this->cbconfig->item('use_selfcert_phone'),
+						'selfcert_comm_id' => element('selfcert_comm_id', $selfcertinfo),
+						'selfcert_phone' => $selfcert_phone,
+						'selfcert_username' => $selfcert_username,
+						'selfcert_birthday' => $selfcert_birthday,
+						'selfcert_sex' => $selfcert_sex,
+						'selfcert_key' => $selfcert_key,
+						'selfcert_local_code' => $selfcert_local_code,
+					);
+				}
+			}
+		}
+
 		$password_length = $this->cbconfig->item('password_length');
 		$email_description = '';
 		if ($this->cbconfig->item('use_register_email_auth')) {
@@ -286,11 +325,13 @@ class Register extends CB_Controller
 			'label' => '패스워드 확인',
 			'rules' => 'trim|required|min_length[' . $password_length . ']|matches[mem_password]',
 		);
-		$configbasic['mem_username'] = array(
-			'field' => 'mem_username',
-			'label' => '이름',
-			'rules' => 'trim|min_length[2]|max_length[20]',
-		);
+		if ( ! $selfcert_username) {
+			$configbasic['mem_username'] = array(
+				'field' => 'mem_username',
+				'label' => '이름',
+				'rules' => 'trim|min_length[2]|max_length[20]',
+			);
+		}
 		$configbasic['mem_nickname'] = array(
 			'field' => 'mem_nickname',
 			'label' => '닉네임',
@@ -308,21 +349,27 @@ class Register extends CB_Controller
 			'label' => '홈페이지',
 			'rules' => 'prep_url|valid_url',
 		);
-		$configbasic['mem_phone'] = array(
-			'field' => 'mem_phone',
-			'label' => '전화번호',
-			'rules' => 'trim|valid_phone',
-		);
-		$configbasic['mem_birthday'] = array(
-			'field' => 'mem_birthday',
-			'label' => '생년월일',
-			'rules' => 'trim|exact_length[10]',
-		);
-		$configbasic['mem_sex'] = array(
-			'field' => 'mem_sex',
-			'label' => '성별',
-			'rules' => 'trim|exact_length[1]',
-		);
+		if ( ! $selfcert_phone) {
+			$configbasic['mem_phone'] = array(
+				'field' => 'mem_phone',
+				'label' => '전화번호',
+				'rules' => 'trim|valid_phone',
+			);
+		}
+		if ( ! $selfcert_birthday) {
+			$configbasic['mem_birthday'] = array(
+				'field' => 'mem_birthday',
+				'label' => '생년월일',
+				'rules' => 'trim|exact_length[10]',
+			);
+		}
+		if ( ! $selfcert_sex) {
+			$configbasic['mem_sex'] = array(
+				'field' => 'mem_sex',
+				'label' => '성별',
+				'rules' => 'trim|exact_length[1]',
+			);
+		}
 		$configbasic['mem_zipcode'] = array(
 			'field' => 'mem_zipcode',
 			'label' => '우편번호',
@@ -399,6 +446,18 @@ class Register extends CB_Controller
 					continue;
 				}
 				if (element('func', $value) === 'basic') {
+					if ($key == 'mem_username' && $selfcert_username) {
+						continue;
+					}
+					if ($key == 'mem_phone' && $selfcert_phone) {
+						continue;
+					}
+					if ($key == 'mem_birthday' && $selfcert_birthday) {
+						continue;
+					}
+					if ($key == 'mem_sex' && $selfcert_sex) {
+						continue;
+					}
 
 					if ($key === 'mem_address') {
 						if (element('required', $value) === '1') {
@@ -584,6 +643,18 @@ class Register extends CB_Controller
 					if ( ! element('use', $value)) {
 						continue;
 					}
+					if (element('field_name', $value) === 'mem_username' && $selfcert_username) {
+						continue;
+					}
+					if (element('field_name', $value) === 'mem_phone' && $selfcert_phone) {
+						continue;
+					}
+					if (element('field_name', $value) === 'mem_birthday' && $selfcert_birthday) {
+						continue;
+					}
+					if (element('field_name', $value) === 'mem_sex' && $selfcert_sex) {
+						continue;
+					}
 
 					$required = element('required', $value) ? 'required' : '';
 
@@ -756,19 +827,27 @@ class Register extends CB_Controller
 			$metadata['meta_nickname_datetime'] = cdate('Y-m-d H:i:s');
 			$insertdata['mem_level'] = $mem_level;
 
-			if (isset($form['mem_username']['use']) && $form['mem_username']['use']) {
+			if ($selfcert_username) {
+				$insertdata['mem_username'] = $selfcert_username;
+			} else if (isset($form['mem_username']['use']) && $form['mem_username']['use']) {
 				$insertdata['mem_username'] = $this->input->post('mem_username', null, '');
 			}
 			if (isset($form['mem_homepage']['use']) && $form['mem_homepage']['use']) {
 				$insertdata['mem_homepage'] = $this->input->post('mem_homepage', null, '');
 			}
-			if (isset($form['mem_phone']['use']) && $form['mem_phone']['use']) {
+			if ($selfcert_phone) {
+				$insertdata['mem_phone'] = $selfcert_phone;
+			} else if (isset($form['mem_phone']['use']) && $form['mem_phone']['use']) {
 				$insertdata['mem_phone'] = $this->input->post('mem_phone', null, '');
 			}
-			if (isset($form['mem_birthday']['use']) && $form['mem_birthday']['use']) {
+			if ($selfcert_birthday) {
+				$insertdata['mem_birthday'] = $selfcert_birthday;
+			} else if (isset($form['mem_birthday']['use']) && $form['mem_birthday']['use']) {
 				$insertdata['mem_birthday'] = $this->input->post('mem_birthday', null, '');
 			}
-			if (isset($form['mem_sex']['use']) && $form['mem_sex']['use']) {
+			if ($selfcert_sex) {
+				$insertdata['mem_sex'] = $selfcert_sex;
+			} else if (isset($form['mem_sex']['use']) && $form['mem_sex']['use']) {
 				$insertdata['mem_sex'] = $this->input->post('mem_sex', null, '');
 			}
 			if (isset($form['mem_address']['use']) && $form['mem_address']['use']) {
@@ -815,6 +894,22 @@ class Register extends CB_Controller
 				'mem_userid' => $this->input->post('mem_userid'),
 			);
 			$this->Member_userid_model->insert($useridinsertdata);
+
+			if ($selfcert_meta) {
+				foreach ($selfcert_meta as $certkey => $certvalue) {
+					$metadata[$certkey] = $certvalue;
+				}
+
+				$selfcertupdatedata = array(
+					'mem_id' => $mem_id
+				);
+				$selfcertwhere = array(
+					'msh_cert_key' => $selfcert_key,
+				);
+
+				$this->load->model('Member_selfcert_history_model');
+				$this->Member_selfcert_history_model->update('', $selfcertupdatedata, $selfcertwhere);
+			}
 
 			$this->Member_meta_model->save($mem_id, $metadata);
 
@@ -891,7 +986,7 @@ class Register extends CB_Controller
 			);
 			$mem_userid = $this->input->post('mem_userid', null, '');
 			$mem_nickname = $this->input->post('mem_nickname', null, '');
-			$mem_username = $this->input->post('mem_username', null, '');
+			$mem_username = $selfcert_username ? $selfcert_username : $this->input->post('mem_username', null, '');
 			$mem_email = $this->input->post('mem_email', null, '');
 			$receive_email = $this->input->post('mem_receive_email') ? '동의' : '거부';
 			$receive_note = $this->input->post('mem_use_note') ? '동의' : '거부';
@@ -1026,10 +1121,10 @@ class Register extends CB_Controller
 			}
 			if (($this->cbconfig->item('send_sms_register_user') && $this->input->post('mem_receive_sms'))
 				OR $this->cbconfig->item('send_sms_register_alluser')) {
-				if ($this->input->post('mem_phone')) {
+				if ($selfcert_phone OR $this->input->post('mem_phone')) {
 					$smssendlistuser['mem_id'] = $mem_id;
 					$smssendlistuser['mem_nickname'] = $this->input->post('mem_nickname');
-					$smssendlistuser['mem_phone'] = $this->input->post('mem_phone');
+					$smssendlistuser['mem_phone'] = $selfcert_phone ? $selfcert_phone : $this->input->post('mem_phone');
 				}
 			}
 
@@ -1187,6 +1282,7 @@ class Register extends CB_Controller
 					$mem_id
 				);
 			}
+			$this->session->unset_userdata('selfcertinfo');
 
 			redirect('register/result');
 		}

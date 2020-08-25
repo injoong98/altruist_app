@@ -339,20 +339,14 @@ class Board_post extends CB_Controller
 			: element('view_date_style_manual', $board);
 
 		if (element('mem_id', $post) >= 0) {
-			$dbmember = $this->Member_model->get_by_memid(element('mem_id', $post), 'mem_icon');
-
-			if(element('post_anoymous_yn', $view['view']['post'])) {// 익명글일경우에는 고민주의자로 표기
-				$view['view']['post']['display_name'] = '고민주의자';
-			}else {
-				$view['view']['post']['display_name'] = display_username(
-					element('post_userid', $post),
-					element('post_nickname', $post),
-					($use_sideview_icon ? element('mem_icon', $dbmember) : ''),
-					($use_sideview ? 'Y' : 'N')
-				);
-			}
-
-
+			$dbmember = $this->Member_model
+				->get_by_memid(element('mem_id', $post), 'mem_icon');
+			$view['view']['post']['display_name'] = display_username(
+				element('post_userid', $post),
+				element('post_nickname', $post),
+				($use_sideview_icon ? element('mem_icon', $dbmember) : ''),
+				($use_sideview ? 'Y' : 'N')
+			);
 		} else {
 			$view['view']['post']['display_name'] = '익명사용자';
 		}
@@ -450,6 +444,80 @@ class Board_post extends CB_Controller
 			$view['view']['file_count'] = count($file);
 			$view['view']['file_download_count'] = count($view['view']['file_download']);
 			$view['view']['file_image_count'] = count($view['view']['file_image']);
+		}
+
+		if (element('use_poll', $board) OR element('use_mobile_poll', $board)) {
+			$this->load->model(array('Post_poll_model', 'Post_poll_item_model', 'Post_poll_item_poll_model'));
+			$pollwhere = array(
+				'post_id' => $post_id,
+			);
+			$poll = $this->Post_poll_model->get_one('', '', $pollwhere);
+			$pollwhere = array(
+				'ppo_id' => element('ppo_id', $poll),
+			);
+			$poll_item = $this->Post_poll_item_model
+				->get('', '', $pollwhere, '', '', 'ppi_id', 'ASC');
+
+			if (empty($poll['ppo_start_datetime'])
+				OR $poll['ppo_start_datetime'] === '0000-00-00 00:00:00') {
+				$poll['ppo_start_datetime'] = '';
+			}
+			if (empty($poll['ppo_end_datetime'])
+				OR $poll['ppo_end_datetime'] === '0000-00-00 00:00:00') {
+				$poll['ppo_end_datetime'] = '';
+			}
+			$poll['poll_period'] = '';
+			if ($poll['ppo_start_datetime']) {
+				$poll['poll_period'] .= cdate('Y월 m일 d일 H시', strtotime($poll['ppo_start_datetime']));
+			}
+			$poll['poll_period'] .= '~';
+			if ($poll['ppo_end_datetime']) {
+				$poll['poll_period'] .= cdate('Y월 m일 d일 H시', strtotime($poll['ppo_end_datetime']));
+			}
+			if (empty($poll['ppo_start_datetime']) && empty($poll['ppo_end_datetime'])) {
+				$poll['poll_period'] = '제한 없음';
+			}
+			$poll['ended_poll'] = false;
+			if ($poll['ppo_end_datetime'] && $poll['ppo_end_datetime'] < cdate('Y-m-d H:i:s')) {
+				$poll['ended_poll'] = true;
+			}
+
+			$post_poll_count = 0;
+			if ($this->member->is_member()) {
+				$where = array(
+					'ppo_id' => element('ppo_id', $poll),
+					'mem_id' => $mem_id,
+				);
+				$post_poll_count = $this->Post_poll_item_poll_model->count_by($where);
+			}
+			if ($post_poll_count > 0 OR $poll['ended_poll']) {
+				if ($post_poll_count) {
+					$poll['attended'] = true;
+				}
+				$sum_count = 0;
+				$max = 0;
+
+				if ($poll_item && is_array($poll_item)) {
+					foreach ($poll_item as $key => $value) {
+						if ($value['ppi_count'] > $max) {
+							$max = $value['ppi_count'];
+						}
+						$sum_count+= $value['ppi_count'];
+					}
+					foreach ($poll_item as $key => $value) {
+						$rate = $sum_count ? ($value['ppi_count'] / $sum_count * 100) : 0;
+						$poll_item[$key]['rate'] = $rate;
+						$s_rate = number_format($rate, 1);
+						$poll_item[$key]['s_rate'] = $s_rate;
+
+						$bar = $max ? (int) ($value['ppi_count'] / $max * 100) : 0;
+						$poll_item[$key]['bar'] = $bar;
+					}
+				}
+
+			}
+			$view['view']['poll'] = $poll;
+			$view['view']['poll_item'] = $poll_item;
 		}
 
 		$autourl = ($this->cbconfig->get_device_view_type() === 'mobile')
@@ -1041,6 +1109,10 @@ class Board_post extends CB_Controller
 			$board['category'] = $this->Board_category_model
 				->get_all_category(element('brd_id', $board));
 		}
+		
+		if (element('use_poll', $board) OR element('use_mobile_poll', $board)) {
+			$this->load->model('Post_poll_model');
+		}
 
 		$noticeresult = $this->Post_model
 			->get_notice_list(element('brd_id', $board), $except_all_notice, $sfield, $skeyword);
@@ -1148,18 +1220,12 @@ class Board_post extends CB_Controller
 				}
 
 				if (element('mem_id', $val) >= 0) {
-
-					if(element('post_anoymous_yn', $val)) {// 익명글일경우에는 고민주의자로 표기
-						$result['list'][$key]['display_name'] = '고민주의자';
-					}else {
-						$result['list'][$key]['display_name'] = display_username(
-							element('post_userid', $val),
-							element('post_nickname', $val),
-							($use_sideview_icon ? element('mem_icon', $val) : ''),
-							($use_sideview ? 'Y' : 'N')
-						);
-					}
-
+					$result['list'][$key]['display_name'] = display_username(
+						element('post_userid', $val),
+						element('post_nickname', $val),
+						($use_sideview_icon ? element('mem_icon', $val) : ''),
+						($use_sideview ? 'Y' : 'N')
+					);
 				} else {
 					$result['list'][$key]['display_name'] = '익명사용자';
 				}
@@ -1174,6 +1240,12 @@ class Board_post extends CB_Controller
 					$result['list'][$key]['category']
 						= $this->Board_category_model
 						->get_category_info(element('brd_id', $val), element('post_category', $val));
+				}
+				$result['list'][$key]['ppo_id'] = '';
+				if (element('use_poll', $board) OR element('use_mobile_poll', $board)) {
+					$poll_where = array('post_id' => element('post_id', $val));
+					$post_poll = $this->Post_poll_model->get_one('', '', $poll_where);
+					$result['list'][$key]['ppo_id'] = element('ppo_id', $post_poll);
 				}
 				if ($param->output()) {
 					$result['list'][$key]['post_url'] .= '?' . $param->output();
