@@ -2,6 +2,7 @@ import React from 'react';
 
 import {SafeAreaView, StyleSheet, View, Image, ScrollView} from 'react-native';
 import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction, Card} from '@ui-kitten/components'
+import Tag from '../../../components/tag.component';
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -24,9 +25,9 @@ class AltProfileScreen extends React.Component {
                 <ScrollView>
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <View style = {{flexDirection : 'row', justifyContent:'flex-end'}}>
-                            <Text category = 'c2' style = {tags('#A7D4DE')}>IT개발</Text>
-                            <Text category = 'c2' style = {tags('#A7D4DE')}>스타트업/창업</Text>
-                            <Text category = 'c2' style = {tags('#EAB0B3')}>UX/UI기획</Text>
+                            <Tag disabled={true} style={{backgroundColor : '#EAB0B3'}}>IT개발</Tag>
+                            <Tag style={{backgroundColor : '#A7D4DE'}}>스타트업/창업</Tag>
+                            <Tag style={{backgroundColor : '#EAB0B3'}}>UX/UI기획</Tag>
                         </View>
                         <View style={{flexDirection : 'row', alignItems : 'flex-end', justifyContent : 'flex-start',}}>
                             <Image source = {{uri : 'http://10.0.2.2/uploads/noimage.gif'}} style = {{width : 150, height : 150, borderRadius : 30, resizeMode:'contain', flex : 1}}/>
@@ -48,9 +49,9 @@ class AltProfileScreen extends React.Component {
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <Text category='h5'>활동 분야</Text>
                         <View style = {{flexDirection : 'row', justifyContent:'flex-start'}}>
-                            <Text category = 'c2' style = {tags('#A7D4DE')}>IT개발</Text>
-                            <Text category = 'c2' style = {tags('#A7D4DE')}>스타트업/창업</Text>
-                            <Text category = 'c2' style = {tags('#EAB0B3')}>UX/UI기획</Text>
+                            <Tag style={{backgroundColor : '#EAB0B3'}}>IT개발</Tag>
+                            <Tag style={{backgroundColor : '#A7D4DE'}}>스타트업/창업</Tag>
+                            <Tag style={{backgroundColor : '#EAB0B3'}}>UX/UI기획</Tag>
                         </View>
                     </View>
 
@@ -73,7 +74,7 @@ class AltProfileScreen extends React.Component {
                     </View>
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <Text category='h5'>후기</Text>
-                        <ScrollView horizontal>
+                        <ScrollView>
                             <View style={{backgroundColor : '#F4F4F4', borderRadius : 20, padding : 10, margin : 5}}>
                                 <Text category='h5'>김쫀떡</Text>
                                 <Text category='p2'>쫀떡이 까까 줘라</Text>
@@ -95,18 +96,6 @@ class AltProfileScreen extends React.Component {
                 </ScrollView>
             </SafeAreaView>
         )
-    }
-}
-
-var tags = function (value='black', size=14) {
-    return{
-        backgroundColor : value,
-        borderRadius : 20, 
-        padding : 4, 
-        marginHorizontal : 5, 
-        fontSize : size, 
-        textAlignVertical : 'center',
-        justifyContent : 'center',
     }
 }
 
