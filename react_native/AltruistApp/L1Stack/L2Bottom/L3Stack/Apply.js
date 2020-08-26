@@ -1,5 +1,6 @@
 import React,{useState} from 'react';
-
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import {SafeAreaView, View, TextInput} from 'react-native'
 import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction, Radio, CheckBox } from '@ui-kitten/components'
 
@@ -22,6 +23,19 @@ const BackIcon =  (props) =>(
 //     </SafeAreaView>
 //     )
 // }
+
+//이거 다시 보기 !
+function  BackAction({navigation}){
+    return(
+        <TopNavigationAction icon={BackIcon} onPress={() => {navigation.goBack()}}/>
+
+    )
+
+}
+    
+
+
+
 class AltApplyScreen extends React.Component{
 
     constructor(props){
@@ -29,88 +43,97 @@ class AltApplyScreen extends React.Component{
         this.state = {
             text:'',
             setTest :'',
-            setAgree:false
+            setAgree:false,
+            isShowTest :false
         };
     }
 
     setFollowUp = (nextChecked) =>{
         this.setState({setAgree : nextChecked});
+        console.log("Button Pressed");
     }
 
     // setFollowUp = (nextChecked) => {
     //     this.setState({isFollowUp:nextChecked});
     //     this.setState({alba_salary:'추후협의'});
     // }
-    BackAction = () =>(
-    <TopNavigationAction icon={BackIcon} onPress={() => {navigation.goBack()}}/>
-    )
+   
   
-  render(){
+    applyAceept = () => {
+        const {current} = this.state
+        const agreeCheck = current.setAgree ? current.isShowTest = "flex" : current.isShowTest = "none"
+        this.setState({isShowTest : agreeCheck})
+
+    }
+
+
     
+    
+  render(){
+    console.log('dhfjks');
       return(
         <SafeAreaView style={{flex:1}}>
-            <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction}/> 
+            <TopNavigation title="이타주의자" alignment="center" accessoryLeft={BackAction}/> 
             <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
                 <Text>이타주의자 지원</Text>
-                <Text style={{ width:200}}>이타주의자에 지원하려는 당신을 환영합니다.
+                <Text style={{ width:350}}>이타주의자에 지원하려는 당신을 환영합니다.
                     이타주의자는 누구나 될 수 있습니다.
                     나이, 성별, 국적, 경력을 따지지 않습니다. 서로가 서로의 이타주의자가 될 수 있는 이타주의자 입니다 :)
                 </Text>
                 <CheckBox
-                    style={{margin : 10}}
+                    style={{margin : 10, width:200}}
                     checked={this.state.setAgree}
                     //checked={({check}) => {check.setAgree}}
                     onChange={nextChecked => this.setFollowUp(nextChecked)}>
                         {`이타주의자들에 대해 이해했으며 지원을 시작하겠습니다`}
                 </CheckBox>
                 {/* // onPress={}버튼 클릭시 아래 숨겨진 화면 보임 */}
-               <Button>지원하기 시작</Button>
-                <View
-                style={{flexDirection: "row"}}>
-                    {/* 자기PR */}
-                    <Text 
-                    category="h5"
-                    style={{flex:0.3}}
-                    >자기PR</Text>
-                    <TextInput
-                        style={{flex:0.7, height: 40, borderColor: 'gray', borderWidth: 1}}
-                        borderStyle="solid"
-                        placeholder="10자 이내로 자신에 대해 설명해주세요!"
-                        defaultValue={this.text}
-                    />
-                </View>
-                <View
-                 style={{flexDirection: "row"}}>
                     <View
-                      style={{flexDirection: "column", flex:0.3}}>
-                        <Text category="h5">활동카테고리</Text>
-                        <Text category="s2"
-                        >이타주의자로 활동하려는 영역을 선택해주세요(5개까지중복가능)</Text>
+                    style={{flexDirection: "row"}}>
+                        {/* 자기PR */}
+                        <Text 
+                        category="h5"
+                        style={{flex:0.3}}
+                        >자기PR</Text>
+                        <TextInput
+                            style={{flex:0.7, height: 40, borderColor: 'gray', borderWidth: 1}}
+                            borderStyle="solid"
+                            placeholder="10자 이내로 자신에 대해 설명해주세요!"
+                            defaultValue={this.text}
+                        />
                     </View>
-                      <CheckBox
-                      style={{margin : 10, flex:0.7}}
-                      checked={this.state.setAgree}
-                      onChange={nextChecked => this.setFollowUp(nextChecked)}>
-                          {`개발/프로그래밍`}
-                    </CheckBox>
-                  </View>
-                  <View style={{flexDirection: "row"}}>
-                      <Text category="h5"
-                      style={{flex:0.3}}>긴글 소개 입력창</Text>
-                      {/* axios.get으로 가지고 오기 */}
-                      <TextInput
-                        style={{flex:0.7, height: 40, borderColor: 'gray', borderWidth: 1}}
-                        borderStyle="solid"
-                        placeholder="긴글 소개 입력창"
-                        defaultValue={this.text}
-                    />
-                  </View>
+                    <View
+                    style={{flexDirection: "row"}}>
+                        <View
+                        style={{flexDirection: "column", flex:0.3}}>
+                            <Text category="h5">활동카테고리</Text>
+                            <Text category="s2"
+                            >이타주의자로 활동하려는 영역을 선택해주세요(5개까지중복가능)</Text>
+                        </View>
+                        <CheckBox
+                        style={{margin : 10, flex:0.7}}
+                        checked={this.state.setAgree}
+                        onChange={nextChecked => this.setFollowUp(nextChecked)}>
+                            {`개발/프로그래밍`}
+                        </CheckBox>
+                    </View>
+                    <View style={{flexDirection: "row"}}>
+                        <Text category="h5"
+                        style={{flex:0.3}}>긴글 소개 입력창</Text>
+                        {/* axios.get으로 가지고 오기 */}
+                        <TextInput
+                            style={{flex:0.7, height: 40, borderColor: 'gray', borderWidth: 1}}
+                            borderStyle="solid"
+                            placeholder="긴글 소개 입력창"
+                            defaultValue={this.text}
+                        />
+                    </View>
             </Layout>   
         </SafeAreaView>
       )
   }
  
-
+  
 }
 
 export default AltApplyScreen;

@@ -107,6 +107,22 @@ class Comment_write extends CB_Controller
 			exit(json_encode($result));
 		}
 
+
+		// 본인인증 사용하는 경우 - 시작
+		if (element('access_comment_selfcert', $board))
+		{
+			$this->load->library('selfcertlib');
+			$is_selfcert = $this->selfcertlib->is_selfcert('comment', element('access_comment_selfcert', $board));
+			if ($is_selfcert === false) {
+				$alertmessage = $this->member->is_member()
+					? '회원님은 댓글을 작성할 수 있는 권한이 없습니다<br />본인인증 후에 댓글 작성이 가능합니다.'
+					: '비회원은 댓글을 작성할 수 있는 권한이 없습니다.<br>회원이시라면 로그인 후 이용해 보십시오';
+				$result = array('error' => $alertmessage);
+				exit(json_encode($result));
+			}
+		}
+		// 본인인증 사용하는 경우 - 끝
+
 		$is_admin = $this->member->is_admin(
 			array(
 				'board_id' => element('brd_id', $board),

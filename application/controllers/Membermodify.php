@@ -168,6 +168,14 @@ class Membermodify extends CB_Controller
 
 		$mem_id = (int) $this->member->item('mem_id');
 
+		$selfcert_type = $this->member->item('selfcert_type');
+		$selfcert_company = $this->member->item('selfcert_company');
+		$selfcert_phone = $this->member->item('selfcert_phone');
+		$selfcert_username = $this->member->item('selfcert_username');
+		$selfcert_birthday = $this->member->item('selfcert_birthday');
+		$selfcert_sex = $this->member->item('selfcert_sex');
+		$selfcert_is_adult = $this->member->item('selfcert_is_adult');
+
 
 		 if ( ! function_exists('password_hash')) {
 			$this->load->helper('password');
@@ -233,11 +241,13 @@ class Membermodify extends CB_Controller
 			}
 		}
 
-		$configbasic['mem_username'] = array(
-			'field' => 'mem_username',
-			'label' => '이름',
-			'rules' => 'trim|min_length[2]|max_length[20]',
-		);
+		if ( ! $selfcert_username) {
+			$configbasic['mem_username'] = array(
+				'field' => 'mem_username',
+				'label' => '이름',
+				'rules' => 'trim|min_length[2]|max_length[20]',
+			);
+		}
 		$configbasic['mem_nickname'] = array(
 			'field' => 'mem_nickname',
 			'label' => '닉네임',
@@ -255,21 +265,27 @@ class Membermodify extends CB_Controller
 			'label' => '홈페이지',
 			'rules' => 'prep_url|valid_url',
 		);
-		$configbasic['mem_phone'] = array(
-			'field' => 'mem_phone',
-			'label' => '전화번호',
-			'rules' => 'trim|valid_phone',
-		);
-		$configbasic['mem_birthday'] = array(
-			'field' => 'mem_birthday',
-			'label' => '생년월일',
-			'rules' => 'trim|exact_length[10]',
-		);
-		$configbasic['mem_sex'] = array(
-			'field' => 'mem_sex',
-			'label' => '성별',
-			'rules' => 'trim|exact_length[1]',
-		);
+		if ( ! $selfcert_phone) {
+			$configbasic['mem_phone'] = array(
+				'field' => 'mem_phone',
+				'label' => '전화번호',
+				'rules' => 'trim|valid_phone',
+			);
+		}
+		if ( ! $selfcert_birthday) {
+			$configbasic['mem_birthday'] = array(
+				'field' => 'mem_birthday',
+				'label' => '생년월일',
+				'rules' => 'trim|exact_length[10]',
+			);
+		}
+		if ( ! $selfcert_sex) {
+			$configbasic['mem_sex'] = array(
+				'field' => 'mem_sex',
+				'label' => '성별',
+				'rules' => 'trim|exact_length[1]',
+			);
+		}
 		$configbasic['mem_zipcode'] = array(
 			'field' => 'mem_zipcode',
 			'label' => '우편번호',
@@ -337,6 +353,18 @@ class Membermodify extends CB_Controller
 					continue;
 				}
 				if ($key === 'mem_userid' OR $key === 'mem_password' OR $key === 'mem_recommend') {
+					continue;
+				}
+				if ($key == 'mem_username' && $selfcert_username) {
+					continue;
+				}
+				if ($key == 'mem_phone' && $selfcert_phone) {
+					continue;
+				}
+				if ($key == 'mem_birthday' && $selfcert_birthday) {
+					continue;
+				}
+				if ($key == 'mem_sex' && $selfcert_sex) {
 					continue;
 				}
 
@@ -518,6 +546,18 @@ class Membermodify extends CB_Controller
 						continue;
 					}
 					if ($key === 'mem_userid' OR $key === 'mem_password' OR $key === 'mem_recommend') {
+						continue;
+					}
+					if ($key === 'mem_username' && $selfcert_username) {
+						continue;
+					}
+					if ($key === 'mem_phone' && $selfcert_phone) {
+						continue;
+					}
+					if ($key === 'mem_birthday' && $selfcert_birthday) {
+						continue;
+					}
+					if ($key === 'mem_sex' && $selfcert_sex) {
 						continue;
 					}
 
@@ -719,19 +759,27 @@ class Membermodify extends CB_Controller
 				);
 				$this->Member_nickname_model->insert($nickinsert);
 			}
-			if (isset($form['mem_username']['use']) && $form['mem_username']['use']) {
+			if ($selfcert_username) {
+				$updatedata['mem_username'] = $selfcert_username;
+			} else if (isset($form['mem_username']['use']) && $form['mem_username']['use']) {
 				$updatedata['mem_username'] = $this->input->post('mem_username', null, '');
 			}
 			if (isset($form['mem_homepage']['use']) && $form['mem_homepage']['use']) {
 				$updatedata['mem_homepage'] = $this->input->post('mem_homepage', null, '');
 			}
-			if (isset($form['mem_phone']['use']) && $form['mem_phone']['use']) {
+			if ($selfcert_phone) {
+				$updatedata['mem_phone'] = $selfcert_phone;
+			} else if (isset($form['mem_phone']['use']) && $form['mem_phone']['use']) {
 				$updatedata['mem_phone'] = $this->input->post('mem_phone', null, '');
 			}
-			if (isset($form['mem_birthday']['use']) && $form['mem_birthday']['use']) {
+			if ($selfcert_birthday) {
+				$updatedata['mem_birthday'] = $selfcert_birthday;
+			} else if (isset($form['mem_birthday']['use']) && $form['mem_birthday']['use']) {
 				$updatedata['mem_birthday'] = $this->input->post('mem_birthday', null, '');
 			}
-			if (isset($form['mem_sex']['use']) && $form['mem_sex']['use']) {
+			if ($selfcert_sex) {
+				$updatedata['mem_sex'] = $selfcert_sex;
+			} else if (isset($form['mem_sex']['use']) && $form['mem_sex']['use']) {
 				$updatedata['mem_sex'] = $this->input->post('mem_sex', null, '');
 			}
 			if (isset($form['mem_address']['use']) && $form['mem_address']['use']) {

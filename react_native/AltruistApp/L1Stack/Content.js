@@ -673,10 +673,10 @@ class AlbaContent extends React.Component {
                 <TopNavigation title="채용정보" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.UD_Action} style={styles.topbar}/> 
                 <Layout style={styles.container}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
-                        <Card style={styles.item}>
-                            <Text>{post.post_datetime.substr(0,post.post_datetime.length-3)}</Text>
+                        <Card disabled={true} style={styles.item}>
+                            <Text category='c2'>{post.post_datetime.substr(0,post.post_datetime.length-3)}</Text>
                             <View style={styles.title}>
-                                <Text category='h2' style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
+                                <Text style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
                             </View>
                             <Layout style={styles.icons}>
                                 <Icon
@@ -684,18 +684,18 @@ class AlbaContent extends React.Component {
                                     fill={this.Alba_salary_type[post.alba_salary_type].color}
                                     name='star'
                                 />
-                                <Text category='h4'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
+                                <Text category='h5'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
                                 <Icon
                                     style={{width:32,height:32}}
                                     fill='black'
                                     name={!post.alba_type?'eye':'heart'}
                                 />
-                                <Text category='h4'> {!post.alba_type?'1일~3개월':'3개월이상'}</Text>
+                                <Text category='h5'> {post.alba_type == 0?'일일~3개월':'3개월이상'}</Text>
                             </Layout>
                             <Divider/>
                             <Layout style={{flexDirection:'row', alignItems : 'center'}}>
                                 <Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.thumb_image}}/>
-                                <Text category='h4' style={{margin : 15}}>{post.post_nickname}</Text>
+                                <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
                             {/* <Layout style ={styles.icons}>
                                 <Icon
@@ -710,12 +710,12 @@ class AlbaContent extends React.Component {
                             </Layout> */}
                         </Card>
                         
-                        <Card style={styles.item}>
-                            <Text style={styles.subhead}>근무지역</Text>
+                        <Card disabled={true} style={styles.item}>
+                            <Text category='p2' style={styles.subhead}>근무지역</Text>
                             <Text style={{margin : 5}}>{post.post_location}</Text>
                         </Card>
-                        <Card style={styles.item}>
-                            <Text style={styles.subhead}>근무조건</Text>
+                        <Card disabled={true} style={styles.item}>
+                            <Text category='p2' style={styles.subhead}>근무조건</Text>
                             <Layout style = {{flexDirection : 'row'}}>
                                 <View style={{flex : 1, marginLeft : 5}}>
                                     <Text style={styles.gathertext}>급여</Text>
@@ -734,7 +734,7 @@ class AlbaContent extends React.Component {
                                 </View>
                             </Layout>
                         </Card>
-                        <Card style={styles.item}>
+                        <Card disabled={true} style={styles.item}>
                             <HTML
                                 html = {post.post_content}
                                 imagesMaxWidth={Dimensions.get('window').width}
@@ -822,7 +822,6 @@ const styles = StyleSheet.create({
     },
     subhead : {
         fontSize : 16,
-        fontWeight:'bold',
         margin : 5,
     },
     gathertext : {

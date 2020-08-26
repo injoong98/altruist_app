@@ -497,7 +497,7 @@ $config['sess_save_path'] =  APPPATH.'cache/session/';
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
-
+$config['uri_segment_cmall_item'] ='item';
 /*
 |--------------------------------------------------------------------------
 | Cookie Related Variables
