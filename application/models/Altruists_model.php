@@ -33,6 +33,16 @@ class Altruists_model extends CB_Model
 	}
 
 
+	public function get_alt_cate($act_use = 1, $select = '')
+	{
+		$this->db->from('alt_cate');
+		$this->db->where('act_use', $act_use);
+		$result = $this->db->get();
+		return $result->result_array();
+
+
+
+	}
 	public function get_by_memid($memid = 0, $select = '')
 	{
 		$memid = (int) $memid;

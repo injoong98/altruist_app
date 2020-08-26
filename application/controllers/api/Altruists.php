@@ -1192,6 +1192,35 @@ class Altruists extends CB_Controller
 		}
 	}
 
+/**
+ * 이타주의자들 전문영역 카테고리 가져오기
+ */
+	public function area_category()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+
+		$view = array();
+		$result = array();
+
+	//	$alt_id = $this->Altruists_model->insert($insertdata);
+		
+		$result = $this->Altruists_model->get_alt_cate();
+		$view['count'] = count($result);
+		$view['data'] =$result;
+		if ($view['count'] > 0) {
+			response_result($view,'success','OK');
+			
+		}else {
+			response_result($view,'Err','자료가 없습니다.');
+
+		}
+
+
+	}
+
+
+
+
 	/**
 	 * 이타주의자 지원하기 
 	 */
