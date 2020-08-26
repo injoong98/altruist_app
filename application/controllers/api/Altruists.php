@@ -1203,7 +1203,7 @@ class Altruists extends CB_Controller
 		
 		// 이타주의자에 지원 자격 조건
 		if (!$this->member->is_member()) { // 이타주의자들 회원 
-			response_result($r,'Err','로그인 후 지원해주세요');
+			//response_result($r,'Err','로그인 후 지원해주세요');
 		}
 
 		$view = array();
@@ -1395,23 +1395,74 @@ class Altruists extends CB_Controller
 
 		//$mem_level = (int) $this->cbconfig->item('register_level');
 		
-		$insertdata = array();
 		$metadata = array();
+		log_message('error','call Altruists/apply');
+		
+		try {
+			
+			$this->db->trans_start();
 
-		/* 입력 데이터 셋 */
+			//프로필 저장 
+			$insertdata = array();
+			$insertdata['mem_id'] = $this->input->post('mem_id');
+			$insertdata['alt_aboutme'] = $this->input->post('alt_aboutme');
+			$insertdata['alt_content'] = $this->input->post('alt_content');
+			$insertdata['alt_answertype'] = $this->input->post('alt_answertype');
+			$insertdata['alt_status'] = $this->input->post('alt_status');
+			$insertdata['alt_score'] = $this->input->post('alt_score');
+			$insertdata['alt_honor'] = $this->input->post('alt_honor');
+			$insertdata['alt_photo'] = $this->input->post('alt_photo');
+			$insertdata['alt_title'] = $this->input->post('alt_title');
+			// alt_datetime - 자동 입력으로 생략 cdate('Y-m-d H:i:s');
 
-		$insertdata['mem_id'] = $this->input->post('mem_id');
-		$insertdata['alt_aboutme'] = $this->input->post('alt_aboutme');
-		$insertdata['alt_content'] = $this->input->post('alt_content');
-		$insertdata['alt_answertype'] = $this->input->post('alt_answertype');
-		$insertdata['alt_status'] = $this->input->post('alt_status');
-		$insertdata['alt_score'] = $this->input->post('alt_score');
-		$insertdata['alt_honor'] = $this->input->post('alt_honor');
-		$insertdata['alt_photo'] = $this->input->post('alt_photo');
-		$insertdata['alt_title'] = $this->input->post('alt_title');
-		// alt_datetime - 자동 입력으로 생략 cdate('Y-m-d H:i:s');
+			$alt_id = $this->Altruists_model->insert($insertdata);
 
-		$alt_id = $this->Altruists_model->insert($insertdata);
+			
+			//경력 정보 저장
+			$acv_insert = array();
+			if(isset($_POST['acv_content'])  && is_array($_POST['acv_content']) && count($_POST['acv_content']) > 0 ) {
+				for( $i= 0 ; count($_POST['acv_content'])-1 >= $i; $i++ ) {
+					$acv_insert[$i]['acv_type']    =    $_POST['acv_type'][$i];
+					$acv_insert[$i]['acv_year']    =    $_POST['acv_year'][$i];
+					$acv_insert[$i]['acv_content'] = 	$_POST['acv_content'][$i];
+					$acv_insert[$i]['acv_final']   = 	$_POST['acv_final'][$i];
+					$acv_insert[$i]['acv_file1']   = 	$_POST['acv_file1'][$i];
+					$acv_insert[$i]['acv_file2']   = 	$_POST['acv_file2'][$i];
+					$acv_insert[$i]['acv_file3']   = 	$_POST['acv_file3'][$i];
+					$acv_insert[$i]['acv_status']  = 	$_POST['acv_status'][$i];
+					$acv_insert[$i]['acv_open']    = 	$_POST['acv_open'][$i];
+					$acv_insert[$i]['alt_id']      = 	$alt_id;
+				}
+			}
+
+			$acv_result = $this->db->insert_batch('cb_alt_cv',$acv_insert);
+		
+			//전문영역 저장
+			$area_insert = array();
+			if(isset($_POST['act_id'])  && is_array($_POST['act_id']) && count($_POST['act_id']) > 0 ) {
+				for( $i= 0 ; count($_POST['act_id'])-1 >= $i; $i++ ) {
+					$area_insert[$i]['alt_id']      = 	$alt_id;
+					$area_insert[$i]['act_id']    =    $_POST['act_id'][$i];
+				}
+			}
+
+			$area_result = $this->db->insert_batch('cb_alt_area',$area_insert);
+
+			//commit 
+			$this->db->trans_complete();
+
+			if ($this->db->trans_status() === FALSE)
+			{
+				response_result($view,'Err','데이터 저장 도중 오류가 발생하였습니다');	
+			}else {
+				response_result($view,'success','정상적으로 지원되었습니다.');
+			}
+        }
+        catch(Exception $e) {
+            log_message('error',$e->getMessage());
+			response_result($view,'Err','지원에 실패하였습니다');
+        }
+        
 
 		// 지원이력이 필요할경우 입력.
 		/* 	$nickinsert = array(
@@ -1427,11 +1478,7 @@ class Altruists extends CB_Controller
 			$this->input->post('mem_nickname')
 		);
 		*/
-		if(!$alt_id) {
-			response_result($view,'Err','지원에 실패하였습니다');
-		}else{
-			response_result($view,'success','정상적으로 지원되었습니다.');
-		}
+	
 	}
 
 
