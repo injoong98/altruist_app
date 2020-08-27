@@ -12,7 +12,7 @@ const BackIcon =  (props) =>(
 
 
 
-class AltApplyFormScreen extends React.Component{
+class ApplyCompleteScreen extends React.Component{
     constructor(props){
         super(props)
     }
@@ -29,18 +29,6 @@ class AltApplyFormScreen extends React.Component{
                     <Layout style={styles.wrapper}>
                         <Text> 이타주의자 지원하기 FORM </Text>
                     </Layout>
-                    <View style={{flexDirection:'row'}}>
-                        <Text>한줄 PR</Text>
-                        <TextInput 
-                        numColumns={5}
-                        multiline={true}
-                        ></TextInput>
-                    </View>
-
-                    <View style={{flexDirection:'row', justifyContent:'center'}}>
-                        <Button style={{margin:10}}>취소</Button>
-                        <Button style={{margin:10}} onPress={()=>navigation.navigate('AltApplyComplete')}>완료</Button>
-                    </View>
             </SafeAreaView>
         )
     }
@@ -51,13 +39,16 @@ class AltApplyFormScreen extends React.Component{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        padding: 50,
     },
     wrapper :{
-        margin: 10,
+        marginTop: 20,
+        marginBottom: 100,
         backgroundColor: "#eaeaea"
-      },
-      title: {
+    },
+    title: {
         marginTop: 16,
+        marginBottom: 10,
         paddingVertical: 8,
         borderWidth: 4,
         borderColor: "#20232a",
@@ -72,4 +63,4 @@ const styles = StyleSheet.create({
 
 
 
-export default AltApplyFormScreen;
+export default ApplyCompleteScreen;

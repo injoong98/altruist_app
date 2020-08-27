@@ -9,6 +9,7 @@ import AltListScreen from './List'
 import AltProfileScreen from './Profile'
 import AltQuestionScreen from './Question'
 import AltApplyFormScreen from './ApplyForm'
+import ApplyCompleteScreen from './ApplyComplete'
 
 const {Navigator,Screen} = createStackNavigator();
 
@@ -40,5 +41,6 @@ export const AltStackNav = () =>(
         <Screen name = "AltProfile" component={AltProfileScreen}/>
         <Screen name = "AltQuestion" component={AltQuestionScreen}/>
         <Screen name = "AltApplyForm" component={AltApplyFormScreen}/>
+        <Screen name = "AltApplyComplete" component={ApplyCompleteScreen}/>
     </Navigator>
 )
