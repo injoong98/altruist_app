@@ -15,13 +15,14 @@ const { Navigator, Screen } = createMaterialTopTabNavigator();
 
 const TopTabBar = ({ navigation, state }) => (
   <TabBar
-    selectedIndex={state.index}
-    onSelect={index => {navigation.navigate(state.routeNames[index]);console.log(state.index)}}>
-    <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h6' belowctgry="h6" abovetext="COMM" belowtext="UNITY" selected={state.index+1} thisindex ={1}/> }/>
-    <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h6' belowctgry="p2" abovetext="자유" belowtext="게시판" selected={state.index+1} thisindex ={2}/> }/>
-    <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h6' belowctgry="p2" abovetext="고민" belowtext="있어요" selected={state.index+1} thisindex ={3}/> }/>
-    <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h6' belowctgry="h6" abovetext="수수" belowtext="마켓"   selected={state.index+1} thisindex ={4}/> }/>
-    <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h6' belowctgry="p2" abovetext="알바" belowtext="천일국" selected={state.index+1} thisindex ={5}/> }/>
+      selectedIndex={state.index}
+      onSelect={index => {navigation.navigate(state.routeNames[index]);console.log(state.index)}}
+    >
+    <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h2' belowctgry="h2" abovetext="COMM" belowtext="UNITY" selected={state.index+1} thisindex ={1}/> }/>
+    <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h2' belowctgry="h4" abovetext="자유" belowtext="게시판" selected={state.index+1} thisindex ={2}/> }/>
+    <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h2' belowctgry="h4" abovetext="고민" belowtext="있어요" selected={state.index+1} thisindex ={3}/> }/>
+    <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h2' belowctgry="h2" abovetext="수수" belowtext="마켓"   selected={state.index+1} thisindex ={4}/> }/>
+    <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h2' belowctgry="h4" abovetext="알바" belowtext="천일국" selected={state.index+1} thisindex ={5}/> }/>
   </TabBar>
 );
 
