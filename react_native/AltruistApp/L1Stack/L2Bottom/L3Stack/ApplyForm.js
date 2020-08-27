@@ -27,7 +27,7 @@ class AltApplyFormScreen extends React.Component{
                 <TopNavigation 
                 title="이타주의자" alignment="center" accessoryLeft={this.BackAction} /> 
                     <Layout style={styles.wrapper}>
-                        <Text style={styles.title}> 이타주의자 지원하기 </Text>
+                        <Text> 이타주의자 지원하기 FORM </Text>
                     </Layout>
             </SafeAreaView>
         )
