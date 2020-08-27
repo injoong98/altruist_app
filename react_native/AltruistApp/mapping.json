@@ -2,39 +2,39 @@
     "strict": {
       "text-font-family": "NanumSquareR",
   
-      "text-heading-1-font-size": 36,
+      "text-heading-1-font-size": 23,
       "text-heading-1-font-weight": "800",
-      "text-heading-1-font-family": "Jalnan",
+      "text-heading-1-font-family": "NanumSquareEB",
   
-      "text-heading-2-font-size": 36,
-      "text-heading-2-font-weight": "800",
+      "text-heading-2-font-size": 20,
+      "text-heading-2-font-weight": "600",
       "text-heading-2-font-family": "Jalnan",
   
-      "text-heading-3-font-size": 36,
+      "text-heading-3-font-size": 18,
       "text-heading-3-font-weight": "800",
-      "text-heading-3-font-family": "Jalnan",
+      "text-heading-3-font-family": "NanumSquareEB",
   
-      "text-heading-4-font-size": 36,
+      "text-heading-4-font-size": 15,
       "text-heading-4-font-weight": "800",
-      "text-heading-4-font-family": "Jalnan",
+      "text-heading-4-font-family": "NanumSquareEB",
       
-      "text-heading-5-font-size": 24,
+      "text-heading-5-font-size": 15,
       "text-heading-5-font-weight": "800",
-      "text-heading-5-font-family": "Jalnan",
+      "text-heading-5-font-family": "NanumSquareB",
       
-      "text-heading-6-font-size": 20,
+      "text-heading-6-font-size": 14,
       "text-heading-6-font-weight": "800",
-      "text-heading-6-font-family": "Jalnan",
+      "text-heading-6-font-family": "NanumSquareEB",
   
 
-      "text-subtitle-1-font-size": 18,
+      "text-subtitle-1-font-size": 13,
       "text-subtitle-1-font-weight": "600",
-      "text-subtitle-1-font-family": "NanumSquareR",
+      "text-subtitle-1-font-family": "NanumSquareB",
   
 
-      "text-subtitle-2-font-size": 16,
+      "text-subtitle-2-font-size": 9,
       "text-subtitle-2-font-weight": "600",
-      "text-subtitle-2-font-family": "NanumSquareR",
+      "text-subtitle-2-font-family": "NanumSquareEB",
   
   
       "text-paragraph-1-font-size": 14,
@@ -46,7 +46,7 @@
       "text-paragraph-2-font-family": "Jalnan",
  
   
-      "text-caption-1-font-size": 12,
+      "text-caption-1-font-size": 10,
       "text-caption-1-font-weight": "400",
       "text-caption-1-font-family": "NanumSquareR",
   
