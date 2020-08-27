@@ -15,7 +15,7 @@ class AltMainScreen extends React.Component{
                 <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
                     <Text>이타주의자 메인</Text>
                     <Button onPress={()=>navigation.navigate('AltApply')}>지원</Button>
-                    <Button onPress={()=>navigation.navigate('AltQuestion')}>질문</Button>
+                    <Button onPress={()=>navigation.navigate('AltAreaList')}>질문</Button>
                     <Button onPress={()=>navigation.navigate('AltList')}>리스트</Button>
                     <Button onPress={()=>navigation.navigate('AltProfile')}>프로필</Button>
                 </Layout>   
