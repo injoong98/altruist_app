@@ -37,13 +37,13 @@ export class TopBarTune extends React.Component {
 
 const styles = StyleSheet.create({
     container:{
-        height:50,
+        height:45,
         display:'flex',
         flexDirection:'row'
     },
     leftside:{
         backgroundColor:"#ffffff",
-        width:"55%",
+        width:"59%",
         height:"100%"
     },
     leftinner:{
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     },  
     rightside:{
         backgroundColor:"#B09BDE",
-        width:"45%",
+        width:"41%",
         height:"100%"
     },
     rightinner:{
