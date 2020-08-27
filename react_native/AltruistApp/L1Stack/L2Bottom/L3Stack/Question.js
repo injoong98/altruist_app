@@ -2,6 +2,7 @@ import React from 'react';
 
 import {SafeAreaView,TextInput,View,StyleSheet} from 'react-native'
 import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction} from '@ui-kitten/components'
+import axios from 'axios'
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -14,9 +15,21 @@ class AltQuestionScreen extends React.Component
         this.state={
             title:'',
             content:'',
-            userid_send:'',
-            user_recieve:'',
+            user_recieve:this.props.reciever,
         }
+    }
+    
+    sendQue = () => {
+        var formdata = new FormData();
+        formdata.append('brd_key',)
+        
+        axios.post('http://dev.unyict.org/api/board_write/write')
+        .then(res=>{
+            alert(JSON.stringify(res.data))
+        })
+        .catch(err=>{
+            alert(JSON.stringify(err))
+        })
     }
 
     BackAction = () =>(
@@ -39,10 +52,15 @@ class AltQuestionScreen extends React.Component
                </View>
                <View>
                     <Text style={styles.fieldtitle}>내용</Text>
-                    <TextInput style={styles.contentInput} value={content} onChangeText={text =>this.setState({content:text})}/>
+                    <TextInput 
+                        style={styles.contentInput} 
+                        value={content} 
+                        onChangeText={text =>this.setState({content:text}) }
+                        textAlignVertical='top'
+                    />
                </View>
             </View>
-            <Button>질문 보내기</Button>
+            <Button onPress ={{}}>질문 보내기</Button>
         </SafeAreaView>
         )
 
