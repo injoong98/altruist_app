@@ -23,7 +23,7 @@ class AltQueType extends React.Component{
                     <Button onPress={()=>{alert('1대1')}}>
                         1대1 질문하기
                     </Button>
-                    <Button onPress={()=>{alert('1대다');navigation.navigate('AltQuestionScreen');}}>
+                    <Button onPress={()=>{alert('1대다');navigation.navigate('AltQuestion');}}>
                         다수에게 질문하기
                     </Button>
                 </View>
