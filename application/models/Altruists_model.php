@@ -40,8 +40,22 @@ class Altruists_model extends CB_Model
 		$result = $this->db->get();
 		return $result->result_array();
 
+	}
+	public function get_alt_cv($alt_id = 0, $select = '')
+	{
+		$this->db->from('cb_alt_cv');
+		$this->db->where('alt_id', $alt_id);
+		$result = $this->db->get();
+		return $result->result_array();
 
-
+	}
+	public function cb_alt_area($alt_id = 0)
+	{
+		$this->db->from('cb_alt_area');
+		$this->db->join('alt_cate', 'alt_cate.act_id = cb_alt_area.act_id', 'left');
+		$this->db->where('alt_id', $alt_id);
+		$result = $this->db->get();
+		return $result->result_array();
 	}
 	public function get_by_memid($memid = 0, $select = '')
 	{
@@ -59,7 +73,7 @@ class Altruists_model extends CB_Model
 		if (empty($userid)) {
 			return false;
 		}
-		$where = array('mem_userid' => $userid);
+		$where = array('mem_id' => $userid);
 		return $this->get_one('', $select, $where);
 	}
 

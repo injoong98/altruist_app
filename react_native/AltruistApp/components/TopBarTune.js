@@ -17,7 +17,7 @@ export class TopBarTune extends React.Component {
             <View style={styles.container}>
                 <View style={styles.leftside}>
                     <View style={styles.leftinner}>
-                        <Text category='h5' style={styles.toptext}>{this.props.text}</Text>
+                        <Text category='h2' style={styles.toptext}>{this.props.text}</Text>
                     </View>
                 </View>
                 <View style={styles.rightside}>
@@ -37,13 +37,13 @@ export class TopBarTune extends React.Component {
 
 const styles = StyleSheet.create({
     container:{
-        height:50,
+        height:45,
         display:'flex',
         flexDirection:'row'
     },
     leftside:{
         backgroundColor:"#ffffff",
-        width:"55%",
+        width:"59%",
         height:"100%"
     },
     leftinner:{
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     },  
     rightside:{
         backgroundColor:"#B09BDE",
-        width:"45%",
+        width:"41%",
         height:"100%"
     },
     rightinner:{
