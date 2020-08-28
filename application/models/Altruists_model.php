@@ -118,14 +118,21 @@ class Altruists_model extends CB_Model
 
 	public function get_admin_list($limit = '', $offset = '', $where = '', $like = '', $findex = '', $forder = '', $sfield = '', $skeyword = '', $sop = 'OR')
 	{
-		$join = array();
+		/* $join = array();
 		if (isset($where['mgr_id'])) {
 			$select = 'member.*';
 			$join[] = array('table' => 'member_group_member', 'on' => 'member.mem_id = member_group_member.mem_id', 'type' => 'left');
-		}
+		} */
 		$result = $this->_get_list_common($select = '', $join, $limit, $offset, $where, $like, $findex, $forder, $sfield, $skeyword, $sop);
 
 		return $result;
+	}
+	public function get_alt_member_ids()
+	{
+		
+		$result = $this->_get_list_common($select = '', $join, $limit, $offset, $where, $like, $findex, $forder, $sfield, $skeyword, $sop);
+
+		//return $result;
 	}
 
 
