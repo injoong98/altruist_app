@@ -2,7 +2,7 @@ import React from 'react';
 
 import {StyleSheet, SafeAreaView, Image, View, ScrollView} from 'react-native'
 import {Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal} from '@ui-kitten/components'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import axios from 'axios';
 import Tag from '../../../components/tag.component';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -57,7 +57,46 @@ class AltListScreen extends React.Component{
     ]
 
     active_type = [
-        '공직/선교/헌신', '교제,축복', '사회생활', '신앙생활', '원리/말씀', '인간관계', '자기계발', '진로/학습'
+        {
+            act_id : 1,
+            act_content : '공직/선교/헌신',
+            checked : false,
+        },
+        {
+            act_id : 2,
+            act_content : '교제,축복',
+            checked : false,
+        },
+        {
+            act_id : 3,
+            act_content : '사회생활',
+            checked : false,
+        },
+        {
+            act_id : 4,
+            act_content : '신앙생활',
+            checked : false,
+        },
+        {
+            act_id : 5,
+            act_content : '원리/말씀',
+            checked : false,
+        },
+        {
+            act_id : 6,
+            act_content : '인간관계',
+            checked : false,
+        },
+        {
+            act_id : 7,
+            act_content : '자기계발',
+            checked : false,
+        },
+        {
+            act_id : 8,
+            act_content : '진로/학습',
+            checked : false,
+        },
     ]
 
     BackAction = () =>(
@@ -103,7 +142,6 @@ class AltListScreen extends React.Component{
                 <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/>
                 <ScrollView horizontal style={{marginVertical : 4}}>
                     <Tag onPress={()=>this.setState({isFilterVisible:true})}>  +  </Tag>
-                    {this.state.filterTag.length?this.state.filterTag.map(name => (<Tag key = {name} onPress={()=>this.state.filterTag.splice(this.state.filterTag.indexOf(name), 1)}> {name}</Tag>)):null}
                 </ScrollView>
                 <List
                     contentContainerStyle={styles.contentContainer}
@@ -130,7 +168,6 @@ class AltListScreen extends React.Component{
                                 </View>
                             <Text category='h6'>활동 분야</Text>
                                 <View style = {{flexDirection : 'row', flexWrap: 'wrap'}}>
-                                    {this.active_type.map(name => (<Tag style={{marginVertical : 5}} key = {name}>{name}</Tag>))}
                                 </View>
                             <Button onPress={()=>{this.setState({isFilterVisible:false})}}>적용하기</Button>
                         </View>
