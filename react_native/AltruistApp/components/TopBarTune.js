@@ -8,6 +8,9 @@ const BellIcon =(props)=> (
 const BackIcon =(props)=> (
     <Icon {...props} fill='#ffffff' name="arrow-ios-back-outline"/>
 )
+const UploadIcon =(props)=> (
+    <Icon {...props} fill='#B09BDE' name="arrowhead-up-outline"/>
+)
 
 export class TopBarTune extends React.Component {
     constructor(props){
@@ -29,9 +32,15 @@ export class TopBarTune extends React.Component {
                 <View style={styles.rightside}>
                     <View style={styles.rightinner}>
                         <View style={styles.iconcontainer}>
-                            <TouchableOpacity onPress={this.props.func}>
-                                <BellIcon style={styles.topicon}/>
-                            </TouchableOpacity>
+                            {this.props.right =='upload' ? 
+                                <TouchableOpacity onPress={this.props.func}>
+                                    <UploadIcon style={styles.topicon}/>
+                                </TouchableOpacity>
+                            :
+                                <TouchableOpacity onPress={this.props.func}>
+                                    <BellIcon style={styles.topicon}/>
+                                </TouchableOpacity>
+                            }
                         </View>
                     </View>
                 </View>
