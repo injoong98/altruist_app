@@ -1291,6 +1291,49 @@ class Altruists extends CB_Controller
 
 		
 	}
+	/**
+	 *  이타주의자 프로필 목록입니다.
+	 */
+	public function approve()
+	{
+
+		$view = array();
+		$result = array();
+		
+		$alt_id = $this->input->post('alt_id');
+		$alt_status = $this->input->post('alt_status');
+		if (empty($alt_id) OR $alt_id < 1) {
+			response_result($view,'Err','alt_id 값이 누락 되었습니다.');
+		}
+		if (empty($alt_status)) {
+			response_result($view,'Err','alt_status 값이 누락 되었습니다.');
+		}
+		$where_alt['alt_status'] = 'R';
+		$where_alt['alt_id'] = $alt_id;
+		$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
+		if($alt_profile['total_rows'] < 1) {
+			response_result($view,'Err','alt_id:'.$alt_id.', 처리대상 없음');
+		}
+		$data = array(
+			'alt_status' => $alt_status
+		);
+
+		$this->db->where('alt_id', $alt_id);
+		$this->db->where('alt_status', 'R');
+
+		$result = $this->db->update('alt_profile', $data);
+
+		if ($result)
+		{
+			response_result($view,'success','정상처리');
+		}else {
+			response_result($view,'Err','데이터 저장 도중 오류가 발생하였습니다');	
+		}
+		
+		
+		
+		
+	}
 
 
 
@@ -1321,7 +1364,7 @@ class Altruists extends CB_Controller
 		}
 		$alt_mem_id =0;
 		$alt_mem = $this->Altruists_model->get_by_memid($mem_id);
-		if($alt_mem['mem_id'] && $alt_mem['alt_status']!=='E') {
+		if($alt_mem['alt_status'] =='Y' || $alt_mem['alt_status']!=='R') {
 			response_result($alt_mem,'Err','회원님은 이미 이타주의자에 지원하셨습니다.');
 		}
 		/**
