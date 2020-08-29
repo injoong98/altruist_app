@@ -1214,165 +1214,160 @@ class Altruists extends CB_Controller
 			response_result($view,'Err','자료가 없습니다.');
 		}
 
-
 	}
 	/**
 	 *  이타주의자 프로필 목록입니다.
 	 */
 	public function lists()
 	{
-		// 이벤트 라이브러리를 로딩합니다
-		$eventname = 'event_altruists_lists';
-		$this->load->event($eventname);
 
 		$view = array();
-		$view['view'] = array();
+		$result = array();
+		$where_alt['alt_status'] = 'Y';
 
-		// 이벤트가 존재하면 실행합니다
-		$view['view']['event']['before'] = Events::trigger('before', $eventname);
-
-		/**
-		 * 페이지에 숫자가 아닌 문자가 입력되거나 1보다 작은 숫자가 입력되면 에러 페이지를 보여줍니다.
-		 */
-		$param =& $this->querystring;
-		$page = (((int) $this->input->get('page')) > 0) ? ((int) $this->input->get('page')) : 1;
-		$view['view']['sort'] = array(
-			'mem_id' => $param->sort('mem_id', 'asc'),
-			'mem_userid' => $param->sort('mem_userid', 'asc'),
-			'mem_username' => $param->sort('mem_username', 'asc'),
-			'mem_nickname' => $param->sort('mem_nickname', 'asc'),
-			'mem_email' => $param->sort('mem_email', 'asc'),
-			'mem_point' => $param->sort('mem_point', 'asc'),
-			'mem_register_datetime' => $param->sort('mem_register_datetime', 'asc'),
-			'mem_lastlogin_datetime' => $param->sort('mem_lastlogin_datetime', 'asc'),
-			'mem_level' => $param->sort('mem_level', 'asc'),
-		);
-		$findex = $this->input->get('findex', null, 'member.mem_id');
-		$forder = $this->input->get('forder', null, 'desc');
-		$sfield = $this->input->get('sfield', null, '');
-		$skeyword = $this->input->get('skeyword', null, '');
-		$listnum = 20;
-		$per_page = $listnum;
-		$offset = ($page - 1) * $per_page;
-
-		/**
-		 * 게시판 목록에 필요한 정보를 가져옵니다.
-		 */
-		$this->Member_model->allow_search_field = array('mem_id', 'mem_userid', 'mem_email', 'mem_username', 'mem_nickname', 'mem_level', 'mem_homepage', 'mem_register_datetime', 'mem_register_ip', 'mem_lastlogin_datetime', 'mem_lastlogin_ip', 'mem_is_admin'); // 검색이 가능한 필드
-		$this->{$this->modelname}->search_field_equal = array('mem_id', 'mem_level', 'mem_is_admin'); // 검색중 like 가 아닌 = 검색을 하는 필드
-		$this->{$this->modelname}->allow_order_field = array('member.mem_id', 'mem_userid', 'mem_username', 'mem_nickname', 'mem_email', 'mem_point', 'mem_register_datetime', 'mem_lastlogin_datetime', 'mem_level'); // 정렬이 가능한 필드
-
-		$where = array();
-		if ($this->input->get('mem_is_admin')) {
-			$where['mem_is_admin'] = 1;
-		}
-		if ($this->input->get('mem_denied')) {
-			$where['mem_denied'] = 1;
-		}
-		if ($mgr_id = (int) $this->input->get('mgr_id')) {
-			if ($mgr_id > 0) {
-				$where['mgr_id'] = $mgr_id;
-			}
-		}
-		$result = $this->{$this->modelname}
-			->get_admin_list($per_page, $offset, $where, '', $findex, $forder, $sfield, $skeyword);
-		$list_num = $result['total_rows'] - ($page - 1) * $per_page;
-
-		if (element('list', $result)) {
-			foreach (element('list', $result) as $key => $val) {
-
-				$where = array(
-					'mem_id' => element('mem_id', $val),
-				);
-				$result['list'][$key]['member_group_member'] = $this->Member_group_member_model->get('', '', $where, '', 0, 'mgm_id', 'ASC');
-				$mgroup = array();
-				if ($result['list'][$key]['member_group_member']) {
-					foreach ($result['list'][$key]['member_group_member'] as $mk => $mv) {
-						if (element('mgr_id', $mv)) {
-							$mgroup[] = $this->Member_group_model->item(element('mgr_id', $mv));
-						}
-					}
-				}
-				$result['list'][$key]['member_group'] = '';
-				if ($mgroup) {
-					foreach ($mgroup as $mk => $mv) {
-						if ($result['list'][$key]['member_group']) {
-							$result['list'][$key]['member_group'] .= ', ';
-						}
-						$result['list'][$key]['member_group'] .= element('mgr_title', $mv);
-					}
-				}
-				$result['list'][$key]['display_name'] = display_username(
-					element('mem_userid', $val),
-					element('mem_nickname', $val),
-					element('mem_icon', $val)
-				);
-				$result['list'][$key]['meta'] = $this->Member_meta_model->get_all_meta(element('mem_id', $val));
-				$result['list'][$key]['social'] = $this->Social_meta_model->get_all_meta(element('mem_id', $val));
-
-				$result['list'][$key]['num'] = $list_num--;
+		// 이타주의자들 프로필에 등록이 된 인원
+		
+		$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
+		if ($alt_profile) {
+			foreach ($alt_profile['list'] as $key_alt => $val_alt) {
+				$result['list'][$key_alt]['alt_profile'] =$val_alt ;
+				//멤버 기본 정보
+				$result_member = $this->{$this->modelname}->get_by_memid(element('mem_id', $val_alt));
+				$result['list'][$key_alt]['mem_basic_info'] =$result_member ;
+			
+				//전문영역 가져오기
+				$alt_area = $this->Altruists_model->cb_alt_area(element('alt_id', $val_alt));
+				$result['list'][$key_alt]['alt_area'] =$alt_area ;
+				//경력내역 가져오기
+				$get_alt_cv = $this->Altruists_model->get_alt_cv(element('alt_id', $val_alt));
+				$result['list'][$key_alt]['get_alt_cv'] =$get_alt_cv ;
 				
-				//이타주의자들 프로필 
-				$alt_profile = $this->Altruists_model->get_by_userid(element('mem_id', $val));
-				$result['list'][$key]['alt_profile'] =$alt_profile ;
-
-				if ($alt_profile) {
-					foreach ($alt_profile as $key_alt => $val_alt) {
-						//전문영역 가져오기
-						$alt_area = $this->Altruists_model->cb_alt_area(element('alt_id', $alt_profile));
-						$result['list'][$key]['alt_profile']['alt_area'] =$alt_area ;
-						//경력내역 가져오기
-						$get_alt_cv = $this->Altruists_model->get_alt_cv(element('alt_id', $alt_profile));
-						$result['list'][$key]['alt_profile']['get_alt_cv'] =$get_alt_cv ;
-					}
-				}
 			}
 		}
 
 		$view['view']['data'] = $result;
-		$view['view']['all_group'] = $this->Member_group_model->get_all_group();
 		
-		/**
-		 * primary key 정보를 저장합니다
-		 */
-		$view['view']['primary_key'] = $this->{$this->modelname}->primary_key;
-		
-		/**
-		 * 페이지네이션을 생성합니다
-		 */
-		$config['base_url'] = admin_url($this->pagedir) . '?' . $param->replace('page');
-		$config['total_rows'] = $result['total_rows'];
-		$config['per_page'] = $per_page;
-		$view['view']['data']['total_rows'] = $result['total_rows'];
-		$this->pagination->initialize($config);
-		$view['view']['paging'] = $this->pagination->create_links();
-		$view['view']['page'] = $page;
-
-		/**
-		 * 쓰기 주소, 삭제 주소등 필요한 주소를 구합니다
-		 */
-/* 		$search_option = array('mem_userid' => '회원아이디', 'mem_email' => '이메일', 'mem_username' => '회원명', 'mem_nickname' => '닉네임', 'mem_level' => '회원레벨', 'mem_homepage' => '홈페이지', 'mem_register_datetime' => '회원가입날짜', 'mem_register_ip' => '회원가입IP', 'mem_lastlogin_datetime' => '최종로그인날짜', 'mem_lastlogin_ip' => '최종로그인IP', 'mem_adminmemo' => '관리자메모');
-		$view['view']['skeyword'] = ($sfield && array_key_exists($sfield, $search_option)) ? $skeyword : '';
-		$view['view']['search_option'] = search_option($search_option, $sfield);
-		$view['view']['listall_url'] = admin_url($this->pagedir);
-		$view['view']['write_url'] = admin_url($this->pagedir . '/write');
-		$view['view']['list_delete_url'] = admin_url($this->pagedir . '/listdelete/?' . $param->output());
- */
-		// 이벤트가 존재하면 실행합니다
-		$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
-
-		/**
-		 * 어드민 레이아웃을 정의합니다
-		 */
-		//$layoutconfig = array('layout' => 'layout', 'skin' => 'index');
-		//$view['layout'] = $this->managelayout->admin($layoutconfig, $this->cbconfig->get_device_view_type());
-		/* $this->data = $view;
-		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view)); */
 		//json api output
 		response_result($view);
 
 		
+	}
+	/**
+	 *  이타주의자 프로필 목록입니다.
+	 */
+	public function profile()
+	{
+
+		$view = array();
+		$result = array();
+		
+		$alt_id = $this->input->post('alt_id');
+		if (empty($alt_id) OR $alt_id < 1) {
+			response_result($view,'Err','alt_id값이 누락 되었습니다.');
+		}
+		$where_alt['alt_status'] = 'Y';
+		$where_alt['alt_id'] = $alt_id;
+		// 이타주의자들 프로필에 등록이 된 인원
+		$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
+		if ($alt_profile) {
+			foreach ($alt_profile['list'] as $key_alt => $val_alt) {
+				$result['list'][$key_alt]['alt_profile'] =$val_alt ;
+				//멤버 기본 정보
+				$result_member = $this->{$this->modelname}->get_by_memid(element('mem_id', $val_alt));
+				$result['list'][$key_alt]['mem_basic_info'] =$result_member ;
+				//전문영역 가져오기
+				$alt_area = $this->Altruists_model->cb_alt_area(element('alt_id', $val_alt));
+				$result['list'][$key_alt]['alt_area'] =$alt_area ;
+				//경력내역 가져오기
+				$get_alt_cv = $this->Altruists_model->get_alt_cv(element('alt_id', $val_alt));
+				$result['list'][$key_alt]['get_alt_cv'] =$get_alt_cv ;
+				
+			}
+		}
+		$view['view']['data'] = $result;
+		
+		//json api output
+		response_result($view);
+
+		
+	}
+	/**
+	 *  이타주의자 신청에 대한 승인
+	 */
+	public function approve()
+	{
+
+		$view = array();
+		$result = array();
+		
+		$alt_id = $this->input->post('alt_id');
+		$alt_status = $this->input->post('alt_status');
+		if (empty($alt_id) OR $alt_id < 1) {
+			response_result($view,'Err','alt_id 값이 누락 되었습니다.');
+		}
+		if (empty($alt_status)) {
+			response_result($view,'Err','alt_status 값이 누락 되었습니다.');
+		}
+		$where_alt['alt_status'] = 'R';
+		$where_alt['alt_id'] = $alt_id;
+		$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
+		if($alt_profile['total_rows'] < 1) {
+			response_result($view,'Err','alt_id:'.$alt_id.', 처리대상 없음');
+		}
+		$data = array(
+			'alt_status' => $alt_status
+		);
+
+		$this->db->where('alt_id', $alt_id);
+		$this->db->where('alt_status', 'R');
+
+		$result = $this->db->update('alt_profile', $data);
+
+		if ($result)
+		{
+			response_result($view,'success','정상처리');
+		}else {
+			response_result($view,'Err','데이터 저장 도중 오류가 발생하였습니다');	
+		}
+	}
+	/**
+	 *  이타주의자 경력 인증 처리
+	 */
+	public function credit()
+	{
+
+		$view = array();
+		$result = array();
+		//acv_status 0 - 비인증 , 1 - 인증
+		$acv_id = $this->input->post('acv_id');
+		$acv_status = $this->input->post('acv_status');
+		if (empty($acv_id) OR $acv_id < 1) {
+			response_result($view,'Err','acv_id 값이 누락 되었습니다.');
+		}
+		if ($acv_status) {
+			response_result($view,'Err','acv_status 값이 누락 되었습니다.');
+		}
+	//	$where_alt['alt_status'] = '0';
+		$where_alt['acv_id'] = $acv_id;
+		$alt_cv = $this->Altruists_model->get_alt_cv_by_id($acv_id);
+		
+		if(count($alt_cv) < 1) {
+			response_result($view,'Err','acv_id:'.$acv_id.', 처리대상 없음');
+		}
+		$data = array(
+			'acv_status' => $acv_status
+		);
+
+		$this->db->where('acv_id', $acv_id);
+
+		$result = $this->db->update('alt_cv', $data);
+
+		if ($result)
+		{
+			response_result($view,'success','정상처리');
+		}else {
+			response_result($view,'Err','데이터 저장 도중 오류가 발생하였습니다');	
+		}
 	}
 
 
@@ -1404,7 +1399,7 @@ class Altruists extends CB_Controller
 		}
 		$alt_mem_id =0;
 		$alt_mem = $this->Altruists_model->get_by_memid($mem_id);
-		if($alt_mem['mem_id'] && $alt_mem['alt_status']!=='E') {
+		if($alt_mem['alt_status'] =='Y' || $alt_mem['alt_status']!=='R') {
 			response_result($alt_mem,'Err','회원님은 이미 이타주의자에 지원하셨습니다.');
 		}
 		/**

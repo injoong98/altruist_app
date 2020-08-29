@@ -49,6 +49,14 @@ class Altruists_model extends CB_Model
 		return $result->result_array();
 
 	}
+	public function get_alt_cv_by_id($acv_id = 0, $select = '')
+	{
+		$this->db->from('cb_alt_cv');
+		$this->db->where('acv_id', $acv_id);
+		$result = $this->db->get();
+		return $result->result_array();
+
+	}
 	public function cb_alt_area($alt_id = 0)
 	{
 		$this->db->from('cb_alt_area');
@@ -118,14 +126,24 @@ class Altruists_model extends CB_Model
 
 	public function get_admin_list($limit = '', $offset = '', $where = '', $like = '', $findex = '', $forder = '', $sfield = '', $skeyword = '', $sop = 'OR')
 	{
-		$join = array();
+		/* $join = array();
+		
 		if (isset($where['mgr_id'])) {
 			$select = 'member.*';
 			$join[] = array('table' => 'member_group_member', 'on' => 'member.mem_id = member_group_member.mem_id', 'type' => 'left');
 		}
+		
+		*/
 		$result = $this->_get_list_common($select = '', $join, $limit, $offset, $where, $like, $findex, $forder, $sfield, $skeyword, $sop);
 
 		return $result;
+	}
+	public function get_alt_cv_id($where)
+	{
+		$_table = 'alt_cv';
+		$result = $this->_get_list_common($select = '', $join, $limit, $offset, $where, $like, $findex, $forder, $sfield, $skeyword, $sop);
+
+		//return $result;
 	}
 
 
