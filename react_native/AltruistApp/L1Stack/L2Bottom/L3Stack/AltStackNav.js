@@ -7,8 +7,9 @@ import AltMainScreen from './Main'
 import AltApplyScreen from './Apply'
 import AltListScreen from './List'
 import AltProfileScreen from './Profile'
-import {AltQuestionScreen,AltQueType,AltAreaList} from './Question'
+import {AltQuestionWrite,AltQueType,AltAreaList} from './Question'
 import AltApplyFormScreen from './ApplyForm'
+import ApplyCompleteScreen from './ApplyComplete'
 
 const {Navigator,Screen} = createStackNavigator();
 
@@ -38,9 +39,10 @@ export const AltStackNav = () =>(
         <Screen name = "AltApply" component={AltApplyScreen}/>
         <Screen name = "AltList" component={AltListScreen}/>
         <Screen name = "AltProfile" component={AltProfileScreen}/>
-        <Screen name = "AltQuestion" component={AltQuestionScreen}/>
         <Screen name = "AltApplyForm" component={AltApplyFormScreen}/>
+        <Screen name = "AltApplyComplete" component={ApplyCompleteScreen}/>
         <Screen name = "AltQueType" component={AltQueType}/>
         <Screen name = "AltAreaList" component={AltAreaList}/>
+        <Screen name = "AltQuestionWrite" component={AltQuestionWrite}/>
     </Navigator>
 )

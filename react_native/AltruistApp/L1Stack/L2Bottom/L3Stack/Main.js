@@ -11,13 +11,17 @@ class AltMainScreen extends React.Component{
         return(
             <SafeAreaView style={{flex:1}}>
                 {/* <TopNavigation title="메인" alignment="center"/>  */}
-                <TopBarTune text="이타주의자" func={()=>navigation.navigate('Meet')} />
+                <TopBarTune 
+                    text="이타주의자" 
+                    func={()=>navigation.navigate('Meet')} 
+                    gbckfunc={()=>{navigation.goBack()}} 
+                    gbckuse={false}
+                />
                 <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
                     <Text>이타주의자 메인</Text>
                     <Button onPress={()=>navigation.navigate('AltApply')}>지원</Button>
-                    <Button onPress={()=>navigation.navigate('AltAreaList')}>질문</Button>
+                    <Button onPress={()=>navigation.navigate('AltQueType')}>질문</Button>
                     <Button onPress={()=>navigation.navigate('AltList')}>리스트</Button>
-                    <Button onPress={()=>navigation.navigate('AltProfile')}>프로필</Button>
                 </Layout>   
             </SafeAreaView>
         )

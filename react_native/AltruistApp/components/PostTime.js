@@ -13,14 +13,14 @@ export const PostTime = ({datetime}) =>{
     if(timeDiff<(60*1000)){
         res = '방금'
     }else if(timeDiff<(60*60*1000)){
-        res = `${Math.floor(timeDiff/(60*1000))}분전`
+        res = `${Math.floor(timeDiff/(60*1000))}분 전`
     }else if(timeDiff<(24*60*60*1000)){
-        res = `${Math.floor(timeDiff/(60*60*1000))}시간전`
+        res = `${Math.floor(timeDiff/(60*60*1000))}시간 전`
     }else if(timeDiff<(2*24*60*60*1000)){
         res = "어제"
     }else{
         res = `${(postdatetime.getMonth()+1)}/${(postdatetime.getDate()-1)}`
     }
 
-    return (<Text category="s2">{`  ${res}`}</Text> )
+    return (<Text category="s2">{`${res}`}</Text> )
 }

@@ -10,15 +10,19 @@ export class TopTab extends React.Component{
     render(){
         var {thisindex,selected,abovectgry,abovetext,belowctgry,belowtext} = this.props
         return(
-        <>
+        <View style={styles.tabcontainer}>
             <Text style={thisindex==selected ?styles.borderselected : styles.border} category={abovectgry}>{abovetext}</Text>
             <Text style={thisindex==selected ?styles.borderselected : styles.border} category={belowctgry}>{belowtext}</Text>
-        </>
+        </View>
         )
     }
 }
 
 const styles = StyleSheet.create({
+    tabcontainer:{
+        paddingBottom:18,
+        paddingTop:16
+    },
     border :{
         lineHeight:20,
         color:"#B09BDE",

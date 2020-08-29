@@ -3,7 +3,7 @@ import React from 'react';
 import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity} from 'react-native'
 import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner} from '@ui-kitten/components'
 import axios from 'axios'
-
+import Tag from '../../../components/tag.component'
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -14,18 +14,21 @@ class AltQueType extends React.Component{
     constructor(props){
         super(props)
     }
+    BackAction = () =>(
+        <TopNavigationAction icon={BackIcon} onPress={()=>this.props.navigation.goBack()}/>
+    )
     render(){
-        const {navigation,route} = this.props
+        const {navigation,route} = this.props;
         return(
             <SafeAreaView style={{flex:1}}>
-                <Text>{route.params.act_content}</Text>
-                <View style={{flex:1 , justifyContent:'center', alignItems:'center'}}>
-                    <Button onPress={()=>{alert('1대1')}}>
-                        1대1 질문하기
-                    </Button>
-                    <Button onPress={()=>{alert('1대다');navigation.navigate('AltQuestion');}}>
-                        다수에게 질문하기
-                    </Button>
+                <TopNavigation title="질문 유형 선택" accessoryLeft={this.BackAction}/>
+                <View style={{flex:1 , justifyContent:'space-evenly', alignItems:'center'}}>
+                    <TouchableOpacity style={{flex:1,backgroundColor:'#A7D4DE',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{alert('1대1');navigation.navigate('AltList');}}>
+                        <Text category ="h2" style={{fontSize:30}}>1대1 질문하기</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{flex:1,backgroundColor:'#EAB0B3',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{alert('1대다');navigation.navigate('AltAreaList');}}>
+                        <Text category ="h2" style={{fontSize:30}}>여러명에게 질문하기</Text>
+                    </TouchableOpacity>
                 </View>
             </SafeAreaView>
         )
@@ -35,14 +38,19 @@ class AltAreaList extends React.Component{
     constructor(props){
         super(props)
         this.state={
-            area_category:[],
+            act_array:[],
             isLoading : true
         }
     }
+
+    BackAction=()=>(
+        <TopNavigationAction icon={BackIcon} onPress={()=>this.props.navigation.goBack()}/>
+    )
+
     renderItem = ({item,index}) => (
         <TouchableOpacity 
             style={{borderColor:'blue',borderStyle:'solid',borderWidth:1}}
-            onPress={()=>this.props.navigation.navigate('AltQueType',{act_content:item.act_content})}
+            onPress={()=>this.props.navigation.navigate('AltQuestionWrite',{act:item.act_content})}
         >
             <Text>{item.act_content}</Text>
         </TouchableOpacity>       
@@ -50,7 +58,10 @@ class AltAreaList extends React.Component{
     getAreaCategory= async()=>{
         await axios.get('http://dev.unyict.org/api/altruists/area_category')
         .then(res=>{
-            this.setState({area_category:res.data.data,isLoading:false});
+            this.setState({act_array:res.data.data});
+        })
+        .then(()=>{
+            this.setState({isLoading:false});
         })
         .catch(err=>{
             alert('area 불러오기 실패! ㅜ')
@@ -68,11 +79,27 @@ class AltAreaList extends React.Component{
                 <Spinner />
             </View>
             :
-            <SafeAreaView style={{borderColor:'blue',borderStyle:'solid',borderWidth:1,flex:1 , justifyContent:'center', alignItems:'center'}}>
-                <List
-                    data={this.state.area_category}
-                    renderItem={this.renderItem}
-                />
+            <SafeAreaView style={{flex:1, alignItems:'center'}}>
+                <TopNavigation title="이타주의자 분야 선택" accessoryLeft={this.BackAction}/>
+                <View style = {{flex:1,justifyContent:'space-evenly',backgroundColor:'#ffffff'}}>
+                    <View style = {{flexDirection : 'row', flexWrap: 'wrap',}}>
+                        {this.state.act_array.map(act => (
+                            <Tag style={{marginVertical : 5}}
+                                key = {act.act_content}
+                                onPress ={()=>navigation.navigate('AltQuestionWrite',{act:act.act_content,act_code:act.act_id})}>
+                                {act.act_content}
+                            </Tag>
+                        ))}
+                    </View>
+                    <View style={{padding:10,}}>
+                        <Text category='h2' style={{fontSize:18}}>
+                            !!1대다 질문은 모든 이타주의자들이 조회하고 답변할 수 있습니다.
+                        </Text>
+                        <Text category='h2' style={{fontSize:18}}>
+                            !!분야를 선택하면 해당 이타주의자들에게 질문 등록에 대한 알림이 갑니다.
+                        </Text>
+                    </View>
+                </View>
             </SafeAreaView>
 
         )
@@ -80,7 +107,7 @@ class AltAreaList extends React.Component{
 
 }
 
-class AltQuestionScreen extends React.Component
+class AltQuestionWrite extends React.Component
 {
     constructor(props){
         super(props);
@@ -93,6 +120,8 @@ class AltQuestionScreen extends React.Component
 
     sendQue = () => {
         var formdata = new FormData();
+        formdata.append('brd_key',)
+        formdata.append('post_title',)
         formdata.append('brd_key',)
         
         axios.post('http://dev.unyict.org/api/board_write/write')
@@ -110,12 +139,14 @@ class AltQuestionScreen extends React.Component
 
     render(){
         const {title,content} = this.state;
+        const {act} = this.props.route.params
 
         return(
         <SafeAreaView style={{flex:1}}>
             <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction}/> 
             <View style={{ flex:1,backgroundColor:"#f4f4f4",padding:10}}>
                 <View>
+                    <Text>{act}</Text>
                     <Text>이타주의자에게 질문</Text>
                 </View>
                <View>
@@ -160,4 +191,4 @@ const styles = StyleSheet.create({
 
 })
 
-export {AltQuestionScreen,AltQueType,AltAreaList};
+export {AltQuestionWrite,AltQueType,AltAreaList};

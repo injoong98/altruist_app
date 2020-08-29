@@ -7,6 +7,7 @@ import { HeartIcon } from '../assets/icons/icons';
 import axios from 'axios';
 import {Picker} from '@react-native-community/picker';
 import {ActionSheet, Root} from 'native-base';
+import { TopBarTune } from '../components/TopBarTune';
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -145,30 +146,41 @@ class GominWrite extends React.Component {
         return(
 
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/> 
-                <Divider />
-                <Input
-                    placeholder="Place your Post's Title"
-                    onChangeText={nextValue => this.setState({post_title:nextValue})}
+                <TopBarTune 
+                    text="이타주의자" 
+                    func={() =>{this.filterSpamKeyword()}} 
+                    right="upload"
+                    gbckfunc={()=>{navigation.goBack()}} 
+                    gbckuse={false}
                 />
-                <Divider />
-                <Input
-                    placeholder="Place your Post's content"
-                    onChangeText={nextValue => this.setState({post_content:nextValue})}
-                    multiline={true}
-                    textStyle={{minHeight:100}}
-                />            
-                <View style={{alignItems:"flex-end"}}>
-                    <Button onPress={()=>filterSpamKeyword(post_title,post_content)}>
-                        validation
-                    </Button>
-
-                    <CheckBox 
-                    checked={checked} 
-                    onChange={nextChecked=>this.setState({post_anoymous_yn: nextChecked? 1 : 0,checked:nextChecked })}>
-                    {`익명`}
-                    </CheckBox>
-                </View>
+                <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
+                    {/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
+                        <TextInput
+                            style={{backgroundColor:'#ffffff',borderRadius:8.5, marginTop:18,marginHorizontal:12,marginBottom:14,fontSize:18}}
+                            placeholder="제목"
+                            onChangeText={nextValue => this.setState({post_title:nextValue})}
+                            placeholderTextColor='#A897C2'
+                        />
+                        <TextInput
+                            style={{maxHeight:'120%', minHeight:'70%',backgroundColor:'#ffffff',borderRadius:8.5, marginHorizontal:12,marginBottom:14,fontSize:18}}
+                            placeholder="내용"
+                            onChangeText={nextValue => this.setState({post_content:nextValue})}
+                            multiline={true}
+                            textAlignVertical='top'
+                            textStyle={{minHeight:100}}
+                            placeholderTextColor='#A897C2'
+                        />            
+                        <View style={{alignItems:"flex-end",paddingRight:12}}>
+                            <CheckBox 
+                            checked={checked} 
+                            onChange={nextChecked=>this.setState({post_anoymous_yn: nextChecked? 1 : 0,checked:nextChecked })}>
+                                {()=>
+                                <Text category="h3">
+                                    익명
+                                </Text>}
+                            </CheckBox>
+                        </View>
+                    </KeyboardAvoidingView>
             </SafeAreaView>
     
         )

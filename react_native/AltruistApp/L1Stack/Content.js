@@ -8,7 +8,10 @@ import Slider from '../components/slider.component'
 import { Alert } from 'react-native';
 
 const BackIcon =  (props) =>(
-    <Icon {...props} name = "arrow-back"/>
+    <Icon {...props} fill ="#63579D"name = "arrow-ios-back-outline"/>
+)
+const MoreIcon =  (props) =>(
+    <Icon {...props} fill ="#63579D"name = "more-vertical-outline"/>
 )
 const CommentIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="message-circle"/>
@@ -107,7 +110,10 @@ class GominContent extends React.Component{
     )
 
     BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
+        <TopNavigationAction icon={()=><BackIcon style={{width:35,height:35}}/>} onPress={() =>{this.props.navigation.goBack()}}/>
+    )
+    MoreAction = () =>(
+        <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{alert('신고,스크랩')}}/>
     )
     postBlame = ()=>{
         var formdata = new FormData();
@@ -261,7 +267,6 @@ class GominContent extends React.Component{
                     </Text>
                 </View>
                 <View style={{paddingHorizontal:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
-                   
                     <View>
                         <CommentIcon />
                         <Text>{post.post_comment_count}</Text>
@@ -322,7 +327,7 @@ class GominContent extends React.Component{
         </View>
         :
         <SafeAreaView style={{flex:1}}>
-            <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} style={styles.topbar}/> 
+            <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.MoreAction} style={styles.topbar}/> 
             <Divider/>
             <Layout style={{flex:1}}>
                     <List
@@ -796,7 +801,7 @@ const styles = StyleSheet.create({
         flex : 1,
     },
     topbar : {
-        backgroundColor : '#b9b5d6',
+        backgroundColor : '#ffffff',
     },
     title : {
         backgroundColor : '#E9E9E9',
