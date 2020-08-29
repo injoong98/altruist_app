@@ -1252,6 +1252,45 @@ class Altruists extends CB_Controller
 
 		
 	}
+	/**
+	 *  이타주의자 프로필 목록입니다.
+	 */
+	public function profile()
+	{
+
+		$view = array();
+		$result = array();
+		
+		$alt_id = $this->input->post('alt_id');
+		if (empty($alt_id) OR $alt_id < 1) {
+			response_result($view,'Err','alt_id값이 누락 되었습니다.');
+		}
+		$where_alt['alt_status'] = 'Y';
+		$where_alt['alt_id'] = $alt_id;
+		// 이타주의자들 프로필에 등록이 된 인원
+		$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
+		if ($alt_profile) {
+			foreach ($alt_profile['list'] as $key_alt => $val_alt) {
+				$result['list'][$key_alt]['alt_profile'] =$val_alt ;
+				//멤버 기본 정보
+				$result_member = $this->{$this->modelname}->get_by_memid(element('mem_id', $val_alt));
+				$result['list'][$key_alt]['mem_basic_info'] =$result_member ;
+				//전문영역 가져오기
+				$alt_area = $this->Altruists_model->cb_alt_area(element('alt_id', $val_alt));
+				$result['list'][$key_alt]['alt_area'] =$alt_area ;
+				//경력내역 가져오기
+				$get_alt_cv = $this->Altruists_model->get_alt_cv(element('alt_id', $val_alt));
+				$result['list'][$key_alt]['get_alt_cv'] =$get_alt_cv ;
+				
+			}
+		}
+		$view['view']['data'] = $result;
+		
+		//json api output
+		response_result($view);
+
+		
+	}
 
 
 

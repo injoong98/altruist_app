@@ -45,11 +45,8 @@ class Board_write extends CB_Controller
 		$eventname = 'event_board_write_write';
 		$this->load->event($eventname);
 		
-
-		
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
-		
 		$brd_key = $this->input->post('brd_key');
 		
 		if (empty($brd_key)) {
@@ -62,6 +59,7 @@ class Board_write extends CB_Controller
 			response_result($r,'Err','게시판 키'.$brd_key.'로 게시판을 조회하지 못했습니다.');
 			//show_404();
 		}
+
 		$board = $this->board->item_all($board_id);
 
 		$board['is_use_captcha'] = false;
