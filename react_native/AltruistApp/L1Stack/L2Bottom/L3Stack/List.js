@@ -1,53 +1,44 @@
 import React from 'react';
 
 import {StyleSheet, SafeAreaView, Image, View, ScrollView} from 'react-native'
-import {Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal} from '@ui-kitten/components'
+import {Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal, Spinner} from '@ui-kitten/components'
 import axios from 'axios';
 import Tag from '../../../components/tag.component';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
 
-const data = [
-    {
-        mem_username : '홍길동',
-        alt_aboutme : '자기 한줄 소개 PR 입니다. 1줄로 소개해주세요',
-        alt_score : 5.00,
-        alt_title : ['IT개발', '서비스기획/UI,UX', '전략/기획'],
-    },
-    {
-        mem_username : '김철수',
-        alt_aboutme : '포마드 머리가 잘어울리는 마케터',
-        alt_score : 3.50,
-        alt_title : ['마케팅/MD', '영업/영업관리', '홍보/SCR'],
-    },
-    {
-        mem_username : '김영희',
-        alt_aboutme : '영희는 철수가 좋을까?',
-        alt_score : 4.20,
-        alt_title : ['서비스', '공무원/공공/비영리', '회계/재무/금융'],
-    },
-    {
-        mem_username : '강호동',
-        alt_aboutme : '안녕하세요 강호동입니데이',
-        alt_score : 4.99,
-        alt_title : ['전문/특수', '미디어'],
-    },
-]
-
 class AltListScreen extends React.Component{
 
     constructor (props) {
         super(props);
         this.state={
-            data : null,
+            lists : null,
+            alt_list : null,
+            isLoading : true,
             isFilterVisible : false,
             filterTag : [],
         }
     }
 
+    getAltruistsList = async() => {
+        await axios.get('http://10.0.2.2/api/altruists/lists')
+        .then((response) => {
+            this.setState({lists:response.data.view.data.list})
+            console.log(this.state.lists);
+        })
+        .catch((error)=>{
+            alert(error);
+            console.log(error);
+        })
+
+        this.state.lists.map((i) => {
+            console.log(i.alt_profile);
+        })
+    }
+
     componentDidMount(){
-        this.setState({data:data})
+        this.setState(this.getAltruistsList());
     }
 
     job_type =[
@@ -106,13 +97,13 @@ class AltListScreen extends React.Component{
     renderItem = ({item, index}) => (
         <Card style = {styles.card} onPress = {()=>{this.props.navigation.navigate('AltProfile', item)}}>
             <View style = {{flexDirection : 'row', justifyContent:'flex-end'}}>
-                {item.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))}
+                {/* {item.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))} */}
             </View>
             <View style={{flexDirection : 'row', alignItems : 'flex-end', justifyContent : 'flex-start'}}>
                 <Image source = {{uri : 'http://10.0.2.2/uploads/noimage.gif'}} style = {{flex : 1, width : 100, height : 100, borderRadius : 30, resizeMode:'contain'}}/>
                 <View style={{marginLeft : 10, flex:3, maxHeight : 110}}>
-                    <Text category = 'h1'>{item.mem_username}</Text>
-                    <Text category = 'h6' numberOfLines={2}>{item.alt_aboutme}</Text>
+                    <Text category = 'h1'>{item.mem_nickname}</Text>
+                    <Text category = 'h6' numberOfLines={2}>{}</Text>
                 </View>
             </View>
             <View style={{flexDirection : 'row'}}>
@@ -138,16 +129,19 @@ class AltListScreen extends React.Component{
     
     render(){
         return (
+
             <SafeAreaView style={{flex:1}}>
                 <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/>
-                <ScrollView horizontal style={{marginVertical : 4}}>
+                <ScrollView horizontal style={{flex : 1, marginVertical : 4}}>
                     <Tag onPress={()=>this.setState({isFilterVisible:true})}>  +  </Tag>
                 </ScrollView>
-                <List
+                <View style={{flex: 25}}>
+                    <List
                     contentContainerStyle={styles.contentContainer}
-                    data={this.state.data}
+                    data={this.state.lists}
                     renderItem={this.renderItem}
-                    />      
+                    />
+                </View> 
                 <Modal
                     visible={this.state.isFilterVisible}
                     backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}

@@ -25,12 +25,12 @@ class AltProfileScreen extends React.Component {
                 <ScrollView>
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <View style = {{flexDirection : 'row', justifyContent:'flex-end'}}>
-                            {this.props.route.params.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))}
+                            {/* {this.props.route.params.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))} */}
                         </View>
                         <View style={{flexDirection : 'row', alignItems : 'flex-end', justifyContent : 'flex-start',}}>
                             <Image source = {{uri : 'http://10.0.2.2/uploads/noimage.gif'}} style = {{width : 150, height : 150, borderRadius : 30, resizeMode:'contain', flex : 1}}/>
                             <View style={{marginLeft : 10, flex : 2, marginBottom : 5,}}>
-                                <Text category = 'h1'>{this.props.route.params.mem_username}</Text>
+                                <Text category = 'h1'>{this.props.route.params.mem_nickname}</Text>
                                 <View style={{flexDirection : 'row', alignItems : 'center'}}>
                                     <Icon style={{width : 30, height : 30}} fill='yellow' name='star'/>
                                     <Icon style={{width : 30, height : 30}} fill='yellow' name='star'/>
@@ -47,7 +47,7 @@ class AltProfileScreen extends React.Component {
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <Text category='h5'>활동 분야</Text>
                         <View style = {{flexDirection : 'row', justifyContent:'flex-start'}}>
-                            {this.props.route.params.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))}
+                            {/* {this.props.route.params.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))} */}
                         </View>
                     </View>
 
