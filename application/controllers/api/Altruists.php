@@ -1292,7 +1292,7 @@ class Altruists extends CB_Controller
 		
 	}
 	/**
-	 *  이타주의자 프로필 목록입니다.
+	 *  이타주의자 신청에 대한 승인
 	 */
 	public function approve()
 	{
@@ -1329,10 +1329,45 @@ class Altruists extends CB_Controller
 		}else {
 			response_result($view,'Err','데이터 저장 도중 오류가 발생하였습니다');	
 		}
+	}
+	/**
+	 *  이타주의자 경력 인증 처리
+	 */
+	public function credit()
+	{
+
+		$view = array();
+		$result = array();
+		//acv_status 0 - 비인증 , 1 - 인증
+		$acv_id = $this->input->post('acv_id');
+		$acv_status = $this->input->post('acv_status');
+		if (empty($acv_id) OR $acv_id < 1) {
+			response_result($view,'Err','acv_id 값이 누락 되었습니다.');
+		}
+		if ($acv_status) {
+			response_result($view,'Err','acv_status 값이 누락 되었습니다.');
+		}
+	//	$where_alt['alt_status'] = '0';
+		$where_alt['acv_id'] = $acv_id;
+		$alt_cv = $this->Altruists_model->get_alt_cv_by_id($acv_id);
 		
-		
-		
-		
+		if(count($alt_cv) < 1) {
+			response_result($view,'Err','acv_id:'.$acv_id.', 처리대상 없음');
+		}
+		$data = array(
+			'acv_status' => $acv_status
+		);
+
+		$this->db->where('acv_id', $acv_id);
+
+		$result = $this->db->update('alt_cv', $data);
+
+		if ($result)
+		{
+			response_result($view,'success','정상처리');
+		}else {
+			response_result($view,'Err','데이터 저장 도중 오류가 발생하였습니다');	
+		}
 	}
 
 
