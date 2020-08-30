@@ -25,15 +25,10 @@ class AltListScreen extends React.Component{
         await axios.get('http://10.0.2.2/api/altruists/lists')
         .then((response) => {
             this.setState({lists:response.data.view.data.list})
-            console.log(this.state.lists);
         })
         .catch((error)=>{
             alert(error);
             console.log(error);
-        })
-
-        this.state.lists.map((i) => {
-            console.log(i.alt_profile);
         })
     }
 
@@ -95,30 +90,30 @@ class AltListScreen extends React.Component{
     )
 
     renderItem = ({item, index}) => (
-        <Card style = {styles.card} onPress = {()=>{this.props.navigation.navigate('AltProfile', item)}}>
+        <Card style = {styles.card} onPress = {()=>{this.props.navigation.navigate('AltProfile', item.alt_profile.alt_id)}}>
             <View style = {{flexDirection : 'row', justifyContent:'flex-end'}}>
-                {/* {item.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))} */}
+                <Tag>{item.alt_profile.alt_title}</Tag>
             </View>
             <View style={{flexDirection : 'row', alignItems : 'flex-end', justifyContent : 'flex-start'}}>
                 <Image source = {{uri : 'http://10.0.2.2/uploads/noimage.gif'}} style = {{flex : 1, width : 100, height : 100, borderRadius : 30, resizeMode:'contain'}}/>
                 <View style={{marginLeft : 10, flex:3, maxHeight : 110}}>
-                    <Text category = 'h1'>{item.mem_nickname}</Text>
-                    <Text category = 'h6' numberOfLines={2}>{}</Text>
+                    <Text category = 'h1'>{item.mem_basic_info.mem_nickname}</Text>
+                    <Text category = 'p2' numberOfLines={2}>{item.alt_profile.alt_aboutme}</Text>
+                    <View style={{flexDirection : 'row'}}>
+                        <Icon style={{width : 40, height : 40}} fill='yellow' name='star'/>
+                        <Icon style={{width : 40, height : 40}} fill='yellow' name='star'/>
+                        <Icon style={{width : 40, height : 40}} fill='yellow' name='star'/>
+                        <Icon style={{width : 40, height : 40}} fill='yellow' name='star'/>
+                        <Icon style={{width : 40, height : 40}} fill='yellow' name='star'/>
+                    </View>
                 </View>
             </View>
-            <View style={{flexDirection : 'row'}}>
-                <Icon style={{width : 40, height : 40}} fill='yellow' name='star'/>
-                <Icon style={{width : 40, height : 40}} fill='yellow' name='star'/>
-                <Icon style={{width : 40, height : 40}} fill='yellow' name='star'/>
-                <Icon style={{width : 40, height : 40}} fill='yellow' name='star'/>
-                <Icon style={{width : 40, height : 40}} fill='yellow' name='star'/>
+            <View style={{marginVertical : 5, marginLeft : 10}}>
+                {item.get_alt_cv.map((i)=><Text category ='p2' key={i.acv_id}>{i.acv_year.trim()+') '}{i.acv_content.trim()}</Text>)}
             </View>
-            <Text category='h6' style={{fontSize : 16}}>학력 또는 직장을 입력합니다.</Text>
             <View style = {{flexDirection : 'row'}}>
-                <View style = {{flexDirection : 'row', flex : 5}}>
-                    <Tag disabled={true}>IT개발</Tag>
-                    <Tag style={{backgroundColor : '#A7D4DE', fontSize : 16}}>스타트업/창업</Tag>
-                    <Tag style={{backgroundColor : '#EAB0B3', fontSize : 16}}>UX/UI기획</Tag>
+                <View style = {{flexDirection : 'row', flex : 5, marginVertical : 5}}>
+                    {item.alt_area.map(i => (<Tag key = {i.act_id}>{i.act_content}</Tag>))}
                 </View>
                 <Button 
                     style = {{height : 20}}

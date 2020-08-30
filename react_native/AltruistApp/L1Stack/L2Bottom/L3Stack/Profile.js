@@ -1,8 +1,9 @@
 import React from 'react';
 
 import {SafeAreaView, StyleSheet, View, Image, ScrollView} from 'react-native';
-import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction, Card} from '@ui-kitten/components'
+import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction, Card, Spinner} from '@ui-kitten/components'
 import Tag from '../../../components/tag.component';
+import Axios from 'axios';
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -12,6 +13,28 @@ class AltProfileScreen extends React.Component {
 
     constructor(props){
         super(props);
+        this.state={
+            altruist : null,
+            isLoading : true,
+        }
+    }
+
+    async componentDidMount(){
+        console.log(this.props.route.params);
+        await this.getAltProfile(this.props.route.params);
+    }
+
+    getAltProfile = async(alt_id) => {
+        let formdata = new FormData();
+        formdata.append('alt_id', alt_id);
+        await Axios.post('http://10.0.2.2/api/altruists/profile', formdata)
+        .then((response)=>{
+            this.setState({altruist:response.data.view.data.list[0], isLoading:false});
+            console.log(this.state.altruist);
+        })
+        .catch((error)=>{
+            alert('error : '+error);
+        })
     }
 
     BackAction = () =>(
@@ -19,18 +42,25 @@ class AltProfileScreen extends React.Component {
     )
  
     render(){
+        const {altruist} = this.state;
         return(
-            <SafeAreaView style={{flex:1}}>
+            this.state.isLoading?
+                <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+                    <Text>is Loading now...</Text>
+                    <Spinner size="giant"/>
+                </View>
+            :<SafeAreaView style={{flex:1}}>
                 <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/> 
                 <ScrollView>
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <View style = {{flexDirection : 'row', justifyContent:'flex-end'}}>
-                            {/* {this.props.route.params.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))} */}
+                            <Tag>{altruist.alt_profile.alt_title}</Tag>
                         </View>
                         <View style={{flexDirection : 'row', alignItems : 'flex-end', justifyContent : 'flex-start',}}>
                             <Image source = {{uri : 'http://10.0.2.2/uploads/noimage.gif'}} style = {{width : 150, height : 150, borderRadius : 30, resizeMode:'contain', flex : 1}}/>
                             <View style={{marginLeft : 10, flex : 2, marginBottom : 5,}}>
-                                <Text category = 'h1'>{this.props.route.params.mem_nickname}</Text>
+                                <Text category = 'h1'>{altruist.mem_basic_info.mem_nickname}</Text>
+                                <Text category = 'h6' numberOfLines ={2}>{altruist.alt_profile.alt_aboutme}</Text>
                                 <View style={{flexDirection : 'row', alignItems : 'center'}}>
                                     <Icon style={{width : 30, height : 30}} fill='yellow' name='star'/>
                                     <Icon style={{width : 30, height : 30}} fill='yellow' name='star'/>
@@ -39,29 +69,25 @@ class AltProfileScreen extends React.Component {
                                     <Icon style={{width : 30, height : 30}} fill='yellow' name='star'/>
                                     <Text> 답변율 99.9%</Text>
                                 </View>
-                                <Text category = 'h6' numberOfLines ={2}>{this.props.route.params.alt_aboutme}</Text>
                             </View>
                         </View>
                     </View>
 
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <Text category='h5'>활동 분야</Text>
-                        <View style = {{flexDirection : 'row', justifyContent:'flex-start'}}>
-                            {/* {this.props.route.params.alt_title.map(name => (<Tag key = {name}>{name}</Tag>))} */}
+                        <View style = {{flexDirection : 'row', justifyContent:'flex-start', marginVertical : 5}}>
+                            {altruist.alt_area.map(i => (<Tag key = {i.act_id}>{i.act_content}</Tag>))}
                         </View>
                     </View>
 
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <Text category='h5'>멘토 소개</Text>
-                        <Text category='p2'>post.alt_content</Text>
+                        <Text category='p2'>{altruist.alt_profile.alt_content}</Text>
                     </View>
 
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
                         <Text category='h5'>주요 활동 및 경력</Text>
-                        <Text category='p2'>1997년) 태어남.</Text>
-                        <Text category='p2'>2001년) 아버지를 아버지라 부르지 못함.</Text>
-                        <Text category='p2'>2017년) 활동을 열심히 함.</Text>
-                        <Text category='p2'>2020년) 노랭이 좀팽이</Text>
+                        {altruist.get_alt_cv.map((i)=><Text category='p2'key={i.acv_id}>{i.acv_year.trim()+') '}{i.acv_content.trim()}</Text>)}
                     </View>
 
                     <View style={{backgroundColor : 'white', borderRadius : 20, padding : 10, margin : 5}}>
