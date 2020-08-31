@@ -1108,21 +1108,26 @@ class Board_post extends CB_Controller
 		/**
 		 * 게시판 목록에 필요한 정보를 가져옵니다.
 		 */
-		$where = array(
-			'brd_id' => $this->board->item_key('brd_id', $brd_key),
-		);
-		$where['post_del <>'] = 2;
-		if (element('except_notice', $board)
-			&& $this->cbconfig->get_device_view_type() !== 'mobile') {
-			$where['post_notice'] = 0;
+		if ($brd_key=='indi' && $is_admin === false) {
+			$where = "`cb_post`.brd_id=".$this->board->item_key('brd_id', $brd_key)." AND (`cb_post`.mem_id=".$mem_id." OR `cb_post`.answer_mem_id=".$mem_id.")";
+		}else{
+			$where = array(
+			   'brd_id' => $this->board->item_key('brd_id', $brd_key),
+		   );
+		   $where['post_del <>'] = 2;
+		   if (element('except_notice', $board)
+			   && $this->cbconfig->get_device_view_type() !== 'mobile') {
+			   $where['post_notice'] = 0;
+		   }
+		   if (element('mobile_except_notice', $board)
+			   && $this->cbconfig->get_device_view_type() === 'mobile') {
+			   $where['post_notice'] = 0;
+		   }
+		   if (element('use_personal', $board) && $is_admin === false) {
+			   $where['post.mem_id'] = $mem_id;
+		   }
 		}
-		if (element('mobile_except_notice', $board)
-			&& $this->cbconfig->get_device_view_type() === 'mobile') {
-			$where['post_notice'] = 0;
-		}
-		if (element('use_personal', $board) && $is_admin === false) {
-			$where['post.mem_id'] = $mem_id;
-		}
+		
 
 		$category_id = (int) $this->input->get('category_id');
 		if (empty($category_id) OR $category_id < 1) {
