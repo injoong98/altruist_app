@@ -33,10 +33,10 @@ const TabNavigator = () => (
   </Navigator>
 );
 
-export const AltQueToptab= () => (
+export const AltQueToptab= ({navigation}) => (
   <>
     {/* <TopNavigation title ="Community" alignment ='center' style={{backgroundColor : '#B09BDE'}}/> */}
-    <TopBarTune text="나의 질문" func={()=>navigation.navigate('Meet')} gbckuse={true} />
+    <TopBarTune text="나의 질문" func={()=>navigation.navigate('Meet')} gbckuse={true} gbckfunc={()=>navigation.goBack()}/>
     <TabNavigator/>
   </>
 );

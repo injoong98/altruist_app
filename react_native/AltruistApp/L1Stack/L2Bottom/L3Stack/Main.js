@@ -22,7 +22,7 @@ class AltMainScreen extends React.Component{
                     <Button onPress={()=>navigation.navigate('AltApply')}>지원</Button>
                     <Button onPress={()=>navigation.navigate('AltQueType')}>질문</Button>
                     <Button onPress={()=>navigation.navigate('AltList')}>멘토리스트</Button>
-                    <Button onPress={()=>navigation.navigate('AltQueListTab')}>질문리스트</Button>
+                    <Button onPress={()=>navigation.navigate('AltQueList')}>질문리스트</Button>
                 </Layout>   
             </SafeAreaView>
         )
