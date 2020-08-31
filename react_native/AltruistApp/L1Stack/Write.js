@@ -151,7 +151,7 @@ class GominWrite extends React.Component {
                     func={() =>{this.filterSpamKeyword()}} 
                     right="upload"
                     gbckfunc={()=>{navigation.goBack()}} 
-                    gbckuse={false}
+                    gbckuse={true}
                 />
                 <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
                     {/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}

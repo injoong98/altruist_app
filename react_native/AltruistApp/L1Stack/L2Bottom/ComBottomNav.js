@@ -9,6 +9,22 @@ import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, C
 import ToggleTune from '../../components/ToggleTune';
 import LoginScreen from './Login'
 
+const HomeIcon = (props) => (
+    <Icon {...props} name= 'home' pack='alticons'/>
+)
+const AltruistIcon = (props) => (
+    <Icon {...props} name= 'altruist' pack='alticons'/>
+)
+const CommunityIcon = (props) => (
+    <Icon {...props} name= 'community' pack='alticons'/>
+)
+const BellIcon = (props) => (
+    <Icon {...props} name= 'bell' pack='alticons'/>
+)
+const MypageIcon = (props) => (
+    <Icon {...props} name= 'mypage' pack='alticons'/>
+)
+
 const {Navigator,Screen} = createBottomTabNavigator();
 
 const ToggleScreen=()=>(
@@ -48,11 +64,11 @@ const BottomTabBar = ({ navigation, state }) => (
     <BottomNavigation
       selectedIndex={state.index}
       onSelect={index => navigation.navigate(state.routeNames[index])}>
-      <BottomNavigationTab title='홈'/>
-      <BottomNavigationTab title='잍자'/>
-      <BottomNavigationTab title='커뮤니티'/>
-      <BottomNavigationTab title='알림?'/>  
-      <BottomNavigationTab title='프로필'/>
+      <BottomNavigationTab title = {HomeIcon}/>
+      <BottomNavigationTab title={AltruistIcon}/>
+      <BottomNavigationTab title={CommunityIcon}/>
+      <BottomNavigationTab title={BellIcon}/>  
+      <BottomNavigationTab title={MypageIcon}/>
     </BottomNavigation>
   );
 

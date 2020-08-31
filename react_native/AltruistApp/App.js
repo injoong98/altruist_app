@@ -17,12 +17,12 @@ import {StackNav} from "./L1Stack/StackNav";
 import { AppIconsPack } from './app-icons-pack';
 import { default as customtheme } from './custom-theme.json';
 import { default as mapping } from './mapping.json';
-
+import {AltIconsPack} from './alt-icons'
 const App = () => {
   StatusBar.setBackgroundColor('#B09BDE')
   return (
   <>
-    <IconRegistry icons={[EvaIconsPack,AppIconsPack]} />
+    <IconRegistry icons={[EvaIconsPack,AltIconsPack]} />
     <ApplicationProvider 
       {...eva} 
       theme={{...eva.light,...customtheme}}

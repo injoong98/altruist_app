@@ -1,13 +1,54 @@
 import React from 'react';
-
 import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity} from 'react-native'
-import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner} from '@ui-kitten/components'
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs'
+import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,TabNavigator,TabBar} from '@ui-kitten/components'
 import axios from 'axios'
 import Tag from '../../../components/tag.component'
-
+import TopBarTune from '../../../components/TopBarTune'
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
+
+class AltQueList extends React.Component{
+    
+    constructor(props){
+        super(props)
+        this.state={
+            list:[],
+
+        }
+
+    }
+
+    getQue = ()=>{
+
+        axios.post()
+        .then
+    }
+
+    renderQueList = ({item,list}) =>{
+        return(
+            <TouchableOpacity>
+                <Text>From.질문자</Text>
+                <Text>제목</Text>
+                <Text>본문 미리보기...</Text>
+            </TouchableOpacity>
+        )
+    }
+    
+    render(){
+        return(
+            <SafeAreaView>
+                <Text>{this.props.type}</Text>
+                {/* <List 
+                    data={}
+                    renderItem={}
+                /> */}
+            </SafeAreaView>
+        )
+    }
+
+}
 
 
 class AltQueType extends React.Component{
@@ -187,8 +228,11 @@ const styles = StyleSheet.create({
     },
     fieldtitle:{
         padding :10
+    },
+    indicatorStyle:{
+        height:0
     }
 
 })
 
-export {AltQuestionWrite,AltQueType,AltAreaList};
+export {AltQuestionWrite,AltQueType,AltAreaList,AltQueList};

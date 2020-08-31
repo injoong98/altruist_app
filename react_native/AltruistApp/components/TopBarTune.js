@@ -3,13 +3,13 @@ import {View,StyleSheet,TouchableOpacity} from 'react-native';
 import {Text,Icon} from '@ui-kitten/components'
 
 const BellIcon =(props)=> (
-    <Icon {...props} fill='#B09BDE' name="bell"/>
+    <Icon {...props} fill='#B09BDE' name="bell" pack="alticons"/>
 )
 const BackIcon =(props)=> (
     <Icon {...props} fill='#ffffff' name="arrow-ios-back-outline"/>
 )
 const UploadIcon =(props)=> (
-    <Icon {...props} fill='#B09BDE' name="arrowhead-up-outline"/>
+    <Icon {...props} fill='#B09BDE' name="upload" pack="alticons"/>
 )
 
 export class TopBarTune extends React.Component {
@@ -19,9 +19,12 @@ export class TopBarTune extends React.Component {
     }
 
     render(){
+        const bckclr = this.props.right =='upload'? '#f4f4f4': '#ffffff'
         return(
             <View style={styles.container}>
-                <View style={styles.leftside}>
+                <View 
+                    style={{backgroundColor:bckclr,width:"59%",height:"100%"}}
+                >
                     <View style={styles.leftinner}>
                         <Text category='h2' style={styles.toptext}>{this.props.text}</Text>
                     </View>
@@ -30,7 +33,10 @@ export class TopBarTune extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.rightside}>
-                    <View style={styles.rightinner}>
+                    <View 
+                        style={{
+                            borderTopLeftRadius:16,backgroundColor:bckclr,width:"100%",height:"100%"}}
+                    >
                         <View style={styles.iconcontainer}>
                             {this.props.right =='upload' ? 
                                 <TouchableOpacity onPress={this.props.func}>
@@ -90,8 +96,8 @@ const styles = StyleSheet.create({
         // borderWidth:1
     },
     topicon:{
-        height:40,
-        width:40
+        height:35,
+        width:35
     },
     iconcontainer:{
         height:"100%",

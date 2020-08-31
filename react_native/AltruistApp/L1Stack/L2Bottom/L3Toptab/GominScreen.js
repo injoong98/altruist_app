@@ -5,14 +5,17 @@ import axios from 'axios';
 import {PostTime} from '../../../components/PostTime'
 
 
-    const  EyeIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="eye-outline"/>
+    const  ViewIcon = (props)=>(
+        <Icon style={styles.icon} fill='#8F9BB3' name="view-filled" pack="alticons"/>
     )
     const CommentIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="message-circle-outline"/>
+        <Icon  style={styles.icon} fill='#8F9BB3' name="message-circle" {...props}/>
     )
     const HeartIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="heart-outline"/>
+        <Icon style={styles.icon} fill='#8F9BB3' name="heart-filled" pack="alticons"/>
+    )
+    const WriteIcon = (props)=>(
+        <Icon style={styles.icon} fill='#8F9BB3' name="write" pack="alticons"/>
     )
 
 class GominScreen extends React.Component {
@@ -67,16 +70,16 @@ class GominScreen extends React.Component {
                     <PostTime datetime = {item.post_datetime}/>
                 </View>
                 <View style={styles.infocontainer}>
-                    <View style={{alignItems:'center'}}>
+                    <View style={{alignItems:'center',}}>
                         <HeartIcon />
                         <Text style={styles.infotext} category="s1">{item.post_like}</Text>
                     </View>
-                    <View style={{alignItems:'center'}}>
-                        <CommentIcon />
+                    <View style={{alignItems:'center',}}>
+                        <CommentIcon style={{height:10,width:10}} />
                         <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
                     </View>
-                    <View style={{alignItems:'center'}}>
-                        <EyeIcon />
+                    <View style={{alignItems:'center',}}>
+                        <ViewIcon />
                         <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                     </View>
 
@@ -170,14 +173,15 @@ class GominScreen extends React.Component {
                 ListFooterComponent={this.renderFooter}
                 style={{backgroundColor:'#ffffff'}}
             />
-            <View style ={styles.buttoncontainer}>
-                <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} >
-                    글쓰기
-                </Button>
+                <TouchableOpacity 
+                    style={{position:'absolute', right:20,bottom:14}} 
+                    onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} 
+                >
+                    <WriteIcon />
+                </TouchableOpacity>
                 {/* <Button onPress={searchOpenClose ? this.searchClose : this.searchOpen}>
                     검색
                 </Button> */}
-            </View>
         </SafeAreaView>
         )
         }
@@ -204,7 +208,8 @@ const styles = StyleSheet.create({
         alignItems:"center"
     },
     icon:{
-        width: 15,height: 15
+        // width: 15,
+        // height: 15
     },
     subtitle:{
         marginTop:10, display:"flex",flexDirection:"row", justifyContent:"space-between",
