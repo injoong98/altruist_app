@@ -17,7 +17,7 @@ class LoginScreen extends React.Component{
         formdata.append('mem_userid',mem_userid);
         formdata.append('mem_password',mem_password);
     
-        axios.post('http://10.0.2.2/api/login',formdata)
+        axios.post('http://dev.unyict.org/api/login',formdata)
         .then(response=>{
             alert(`성공 : ${JSON.stringify(response.data)}`)
         })
