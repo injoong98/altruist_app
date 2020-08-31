@@ -64,11 +64,11 @@ const BottomTabBar = ({ navigation, state }) => (
     <BottomNavigation
       selectedIndex={state.index}
       onSelect={index => navigation.navigate(state.routeNames[index])}>
-      <BottomNavigationTab title = {HomeIcon}/>
-      <BottomNavigationTab title={AltruistIcon}/>
-      <BottomNavigationTab title={CommunityIcon}/>
-      <BottomNavigationTab title={BellIcon}/>  
-      <BottomNavigationTab title={MypageIcon}/>
+      <BottomNavigationTab title={()=><HomeIcon/>}/>
+      <BottomNavigationTab title={()=><AltruistIcon/>}/>
+      <BottomNavigationTab title={()=><CommunityIcon/>}/>
+      <BottomNavigationTab title={()=><BellIcon/>}/>  
+      <BottomNavigationTab title={()=><MypageIcon/>}/>
     </BottomNavigation>
   );
 
