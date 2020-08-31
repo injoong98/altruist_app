@@ -57,17 +57,23 @@ class AltApplyFormScreen extends React.Component{
 //        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary} = this.state;
 
         let formdata = new FormData();
-        formdata.append("mem_id", "5");
+        formdata.append("mem_id", "106");
         formdata.append("alt_aboutme",'언택트 주부 9단');
         formdata.append("alt_content", '안녕하세요 적당히 바람이 시원해 언택트 주부 9단이 왔어요 ');
         formdata.append("alt_answertype", '2');
         formdata.append("alt_status", 'R');
         formdata.append("alt_honor", '0');
         formdata.append("acv_type[]", 'J');
-        formdata.append("acv_year[]", '2020');
+        formdata.append("acv_type[]", 'J');
+        formdata.append("acv_year[]", '2021');
+        formdata.append("acv_year[]", '2022');
+        formdata.append("acv_content[]", '2021초보주부론 편찬의원회');
         formdata.append("acv_content[]", '2020초보주부론 편찬의원회');
         formdata.append("acv_status[]", '0');
+        formdata.append("acv_status[]", '0');
         formdata.append("acv_open[]", '1');
+        formdata.append("acv_open[]", '1');
+        formdata.append("act_id[]", '1');
         formdata.append("act_id[]", '1');
         
         // formdata.append("acv_type[]", 'J');
