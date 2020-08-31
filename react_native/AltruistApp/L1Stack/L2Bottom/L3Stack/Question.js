@@ -1,7 +1,7 @@
 import React from 'react';
-import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity} from 'react-native'
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs'
-import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,TabNavigator,TabBar} from '@ui-kitten/components'
+import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity, Modal} from 'react-native'
+
+import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,Divider} from '@ui-kitten/components'
 import axios from 'axios'
 import Tag from '../../../components/tag.component'
 import TopBarTune from '../../../components/TopBarTune'
@@ -14,38 +14,60 @@ class AltQueList extends React.Component{
     constructor(props){
         super(props)
         this.state={
+            isLoading:true,
+            modalVisible:false,
             list:[],
-
+            list_showing:[],
         }
-
     }
 
-    getQue = ()=>{
-
-        axios.post()
-        .then
+    getQuestions = ()=>{
+        axios.get('http://dev.unyict.org/api/board_post/lists/indi')
+        .then(res=>{
+            this.setState({list:res.data.view.list.data.list,list_showing:res.data.view.list.data.list});
+        })
+        .then(res=>{
+            this.setState({isLoading:false})
+        })
+        .catch(err=>{
+            alert(JSON.stringify(err));
+            this.setState({isLoading:false})
+        })
     }
 
     renderQueList = ({item,list}) =>{
         return(
             <TouchableOpacity>
-                <Text>From.질문자</Text>
-                <Text>제목</Text>
-                <Text>본문 미리보기...</Text>
+                <Text>보낸 사람 {item.post_userid}</Text>
+                <Text>질문 제목 {item.post_title}</Text>
+                <Text>받는 사람 {item.answer_mem_id}</Text>
             </TouchableOpacity>
         )
     }
-    
+
+    componentDidMount(){
+        this.getQuestions();    
+    }
+
     render(){
+        const {isLoading,list} = this.state;
+        
         return(
+            isLoading ?
+            <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                <Spinner size='giant'/>
+            </View>:
             <SafeAreaView>
-                <Text>{this.props.type}</Text>
-                {/* <List 
-                    data={}
-                    renderItem={}
-                /> */}
+                <View>
+                    <Text>필터 위치</Text>
+                </View>
+                <List 
+                    ItemSeparatorComponent={Divider}
+                    data={list}
+                    renderItem={this.renderQueList}
+                />
             </SafeAreaView>
-        )
+            )
     }
 
 }
