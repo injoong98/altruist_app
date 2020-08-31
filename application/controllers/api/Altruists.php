@@ -1399,8 +1399,10 @@ class Altruists extends CB_Controller
 		}
 		$alt_mem_id =0;
 		$alt_mem = $this->Altruists_model->get_by_memid($mem_id);
-		if($alt_mem['alt_status'] =='Y' || $alt_mem['alt_status']!=='R') {
-			response_result($alt_mem,'Err','회원님은 이미 이타주의자에 지원하셨습니다.');
+		if($alt_mem){
+			if($alt_mem['alt_status'] =='Y' || $alt_mem['alt_status']!=='R') {
+				response_result($alt_mem,'Err','회원님은 이미 이타주의자에 지원하셨습니다.');
+			}
 		}
 		/**
 		 * 유효성 검사 룰 정의 
