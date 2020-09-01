@@ -27,7 +27,7 @@ class LoginScreen extends React.Component{
     }
 
     doLogout=()=>{
-        axios.get('http://10.0.2.2/api/login/logout/')
+        axios.get('http://dev.unyict.org/api/login/logout/')
         .then(response=>{
             alert(`성공 : ${JSON.stringify(response.data)}`)
         })
