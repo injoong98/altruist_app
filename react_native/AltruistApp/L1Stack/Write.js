@@ -709,6 +709,7 @@ class IlbanWrite extends React.Component{
            post_nickname:'',
            post_email:'',
            images: [],
+           post_category : []
        }
    }
 
@@ -735,6 +736,17 @@ class IlbanWrite extends React.Component{
    //     }
    // }
 
+   getCategory = async() =>{
+    await axios.get( 'http://dev.unyict.org/api/board_post/lists/ilban' )
+       .then(res => {
+           console.log(res.data.view.list.board.category)
+           this.setState({post_category:res.data.view.list.board.category})
+       })
+       .catch(err => {
+           console.log(err)
+       })
+   }
+
 
    submitPost = async() => {
 
@@ -744,7 +756,7 @@ class IlbanWrite extends React.Component{
        let formdata = new FormData();
            formdata.append("brd_key", 'ilban');
            formdata.append("post_title", post_title);
-           formdata.append("post_category", post_category);
+           formdata.append("post_category", post_category.bca_id);
            formdata.append("post_content", post_content);
            formdata.append("post_nickname", 'ryeMhi');
            formdata.append("post_email", 'yhr0901@gmail.com');
@@ -755,6 +767,7 @@ class IlbanWrite extends React.Component{
            formdata
        )
        .then(response=>{
+           console.log(response)
            Alert.alert(
                "게시글",
                "게시글 작성 완료",
@@ -768,17 +781,19 @@ class IlbanWrite extends React.Component{
            );
        })
        .catch(error=>{
-           alert('BYE:(')
+           console.log(error)
+           console.error();
+           //alert('')
        })    
    }
    
 
    onClickAddImage() {
-       const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
+       const buttons = ['사진 촬영', '갤러리에서 사진 가져오기', '취소'];
        ActionSheet.show(
            {options: buttons,
            cancelButtonIndex: 2,
-           title: 'Select a photo'},
+           title: '사진 선택'},
            buttonIndex => {
                switch (buttonIndex) {
                    case 0:
@@ -845,36 +860,6 @@ class IlbanWrite extends React.Component{
        return this.renderImage(image);
    }
 
-
-   // pickMultiple() {
-   //     ImagePicker.openPicker({
-   //         multiple: true,
-   //         maxFiles: 2,
-   //         includeExif: true,
-   //         compressImageQuality: 0.8
-   //     }).then(images => {
-   //         this.setState({
-   //         //     post_images: images.map(i => {
-   //         //         console.log('received image', i);
-   //         //         return {uri: i.path, name : i.path.split('/').pop(), type : i.mime};
-   //         //     })
-   //         // });
-   //         image: null,
-   //         images: images.map(i => {
-   //           console.log('received image', i);
-   //           return {uri: i.path, width: i.width, height: i.height, mime: i.mime};
-   //         })
-   //       });
-   //       this.props.onImagePicked({uri: images.map(i => {
-   //           return{uri: i.path}
-   //       })
-   //     })
-   //     }).catch(e => alert(e));
-   // }
-
-   //end : iamgeUpload
-   //header
-
    BackAction = () =>(
        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
    )
@@ -882,12 +867,36 @@ class IlbanWrite extends React.Component{
    SubmitButtom = () =>(
        <Button 
        style={{width:100}}
-       onPress={()=>this.onClickAddImage()}
+       onPress={()=>this.submitPost()}
        >글작성</Button>
    )
 
+   SelectItems(post_category){
+        return(
+            <Select
+            style={{flex:1, width:10}}
+        //    value={this.props.post_category.bca_id}
+          //  selectedIndex={this.props.post_category.bca_id}
+            //onSelect={(index)=>{this.setState({post_category:index})}}
+            placeholder='게시판 선택'
+            //selectedIndex={selectedIndex}
+            //onSelect={index => setSelectedIndex(index)}
+            >
+                {/* <SelectItem title={evaProps => <Text {...evaProps}>{this.props.post_category.bca_value}</Text>} />  */}
+                <SelectItem title={evaProps => <Text {...evaProps}>option</Text>} /> 
+            </Select>
+        )
+   }
+
+   componentDidMount(){
+    this.getCategory()
+   }
+
+
    //end: header
    render(){
+       const {post_category} = this.state
+    console.log(`ㅇ라ㅣㅁㄴㅇㄹ`+this.state.post_category)
        return(
            <Root>
            <SafeAreaView style={{flex:1}}>
@@ -898,17 +907,10 @@ class IlbanWrite extends React.Component{
                   
                    <View style={{flexDirection: 'row'}} >
                        {/* 카테고리 */}
-                       <Select
-                       style={{flex:1, width:10}}
-                       placeholder='Default'
-                       // selectedIndex={selectedIndex}
-                       // onSelect={index => setSelectedIndex(index)}
-                       >
-                       {/* <SelectItem title={evaProps => <Text {...evaProps}>Option 1</Text>} /> */}
-                       </Select>
+                       <this.SelectItems />
                        {/* 제목 */}
                        <Input style={{ flex:1, width:90}}
-                       onChangeText = {text=>this.setState({post_title:text})}/>
+                       onChangeText = {post_title=>this.setState({post_title:post_title})}/>
                    </View>
                    <View style={{ flex: 2}}>
                        {/* 본문 */}
@@ -916,7 +918,7 @@ class IlbanWrite extends React.Component{
                            style={{padding:0}}
                            multiline={true}
                            textStyle={{ minHeight: 350 }}
-                           onChangeText = {text=>this.setState({post_content:text})}
+                           onChangeText = {post_content=>this.setState({post_content:post_content})}
                            />
                    </View>
                    <Divider />
