@@ -27,7 +27,12 @@ class ApplyCompleteScreen extends React.Component{
                 <TopNavigation 
                 title="이타주의자" alignment="center" accessoryLeft={this.BackAction} /> 
                     <Layout style={styles.wrapper}>
-                        <Text> 이타주의자 지원하기 FORM </Text>
+                        <Text> 이타주의자 지원 완료</Text>
+                        <Text> 이타주의자 지원에 감사드립니다!</Text>
+                        <Text> 관리자 확인 후, 이타주의자 목록에서 확인하실 수 있으며</Text>
+                        <Text> {`마이페이지 > 내 정보 > 이타주의자 항목 에서`}</Text>
+                        <Text> 수정 원하는 부분을 수정할 수 있습니다!</Text>
+                        <Button>이타주의자 메인으로 돌아가기</Button>
                     </Layout>
             </SafeAreaView>
         )
