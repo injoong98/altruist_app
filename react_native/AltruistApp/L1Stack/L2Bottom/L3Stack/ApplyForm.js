@@ -16,19 +16,18 @@ class AltApplyFormScreen extends React.Component{
     constructor(props){
         super(props)
         this.state ={
-            mem_id : '',
-            alt_aboutme : '',
-            alt_content : '',
-            alt_answertype : '',
-            alt_status : '',
-            alt_honor : '',
-            acv_type : '',
-            acv_year : '',
-            acv_content : '',
-            acv_status : '',
-            acv_open : '',
-            act_id : '',
-
+         mem_id: '',
+         alt_aboutme: '',
+         alt_content: '',
+         alt_answertype: '',
+         alt_status: '',
+         alt_honor: '',
+         acv_type: '',
+         acv_year: '',
+         acv_content: '',
+         acv_status: '',
+         acv_open: '',
+         act_id: '',
         }
     }
     
@@ -49,40 +48,40 @@ class AltApplyFormScreen extends React.Component{
 
 
     setAltruist = async() => {
-        const {
-            mem_id,
-            alt_aboutme,
-            alt_content,
-            alt_answertype,
-            alt_status,
-            alt_honor,
-            acv_type,
-            acv_year,
-            acv_content,
-            acv_status,
-            acv_open,
-            act_id,
-        } = this.state;
+        //const {
+        //     mem_id,
+        //     alt_aboutme,
+        //     alt_content,
+        //     alt_answertype,
+        //     alt_status,
+        //     alt_honor,
+        //     acv_type,
+        //     acv_year,
+        //     acv_content,
+        //     acv_status,
+        //     acv_open,
+        //     act_id,
+        // } = this.state;
 
         let formdata = new FormData();
-        formdata.append("mem_id", mem_id);
-        formdata.append("alt_aboutme", alt_aboutme);
-        formdata.append("alt_content", alt_content);
-        formdata.append("alt_answertype", alt_answertype);
-        formdata.append("alt_status", 'R');
-        formdata.append("alt_honor", alt_honor);
-        // formdata.append("acv_type[]", 'J');
-        formdata.append("acv_type[]", acv_type);
-        // formdata.append("acv_year[]", '2021');
-        formdata.append("acv_year[]", acv_year);
-        // formdata.append("acv_content[]", '2021초보주부론 편찬의원회');
-        formdata.append("acv_content[]", acv_content);
-        // formdata.append("acv_status[]", '0');
-        formdata.append("acv_status[]", acv_status);
-        // formdata.append("acv_open[]", '1');
-        formdata.append("acv_open[]", acv_open);
-        // formdata.append("act_id[]", '1');
-        formdata.append("act_id[]", act_id);
+        // formdata.append("mem_id", mem_id);
+        // formdata.append("alt_aboutme", alt_aboutme);
+        // formdata.append("alt_content", alt_content);
+        // formdata.append("alt_answertype", alt_answertype);
+        // formdata.append("alt_status", 'R');
+        // formdata.append("alt_honor", alt_honor);
+        // // formdata.append("acv_type[]", 'J');
+        // formdata.append("acv_type[]", acv_type);
+        // // formdata.append("acv_year[]", '2021');
+        // formdata.append("acv_year[]", acv_year);
+        // // formdata.append("acv_content[]", '2021초보주부론 편찬의원회');
+        // formdata.append("acv_content[]", acv_content);
+        // // formdata.append("acv_status[]", '0');
+        // formdata.append("acv_status[]", acv_status);
+        // // formdata.append("acv_open[]", '1');
+        // formdata.append("acv_open[]", acv_open);
+        // // formdata.append("act_id[]", '1');
+        // formdata.append("act_id[]", act_id);
 
         // formdata.append("mem_id", "106");
         // formdata.append("alt_aboutme",'언택트 주부 9단');
@@ -175,53 +174,53 @@ class AltApplyFormScreen extends React.Component{
                     <ScrollView>
                         <View style={{flexDirection:'row'}}>
                             <Text>자기PR</Text>
-                            <TextInput style={styles.contentInput} value={alt_aboutme} onChangeText={text =>this.setState({alt_aboutme:alt_aboutme})}/>
+                            <TextInput style={styles.contentInput} value={this.state.alt_aboutme} onChangeText={text =>this.setState({alt_aboutme:alt_aboutme})}/>
                         </View>
                         <View style={{flexDirection:'row'}}>
                             <Text>자기소개</Text>
-                            <TextInput style={styles.contentInput} value={alt_content} onChangeText={text =>this.setState({alt_content:alt_content})}/>
+                            <TextInput style={styles.contentInput} value={this.state.alt_content} onChangeText={text =>this.setState({alt_content:alt_content})}/>
                         </View>
                         <View style={{flexDirection:'row'}}>
                             <Text>답변대기</Text>
-                            <TextInput style={styles.contentInput} value={alt_answertype} onChangeText={text =>this.setState({alt_answertype:alt_answertype})}/>
+                            <TextInput style={styles.contentInput} value={this.state.alt_answertype} onChangeText={text =>this.setState({alt_answertype:alt_answertype})}/>
                         </View>
                         {/* <View style={{flexDirection:'row'}}>
                             <Text>상태</Text>
-                            <TextInput style={styles.contentInput} value={alt_status} onChangeText={text =>this.setState({alt_status:alt_status})}/>
+                            <TextInput style={styles.contentInput} value={this.state.alt_status} onChangeText={text =>this.setState({alt_status:alt_status})}/>
                         </View> */}
                         <View style={{flexDirection:'row'}}>
                             <Text>명예여부</Text>
-                            <TextInput style={styles.contentInput} value={alt_honor} onChangeText={text =>this.setState({alt_honor:alt_honor})}/>
+                            <TextInput style={styles.contentInput} value={this.state.alt_honor} onChangeText={text =>this.setState({alt_honor:alt_honor})}/>
                         </View>
 
                         {/* 경력구분 */}
                         <View style={{flexDirection:'row'}}>
                             <Text>경력년도</Text>
-                            <TextInput style={styles.contentInput} value={acv_type} onChangeText={text =>this.setState({careertype:text})}/>
+                            <TextInput style={styles.contentInput} value={this.state.acv_type} onChangeText={text =>this.setState({careertype:text})}/>
                         </View>
                         <View style={{flexDirection:'row'}}>
                             <Text>경력내용</Text>
-                            <TextInput style={styles.contentInput} value={acv_year} onChangeText={text =>this.setState({careeryear:text})}/>
+                            <TextInput style={styles.contentInput} value={this.state.acv_year} onChangeText={text =>this.setState({careeryear:text})}/>
                         </View>
                         <View style={{flexDirection:'row'}}>
                             <Text>최종경력여부</Text>
-                            <TextInput style={styles.contentInput} value={acv_content} onChangeText={text =>this.setState({careerfinal:text})}/>
+                            <TextInput style={styles.contentInput} value={this.state.acv_content} onChangeText={text =>this.setState({careerfinal:text})}/>
                         </View>
                         {/* <View style={{flexDirection:'row'}}>
                             <Text>증빙용첨부파일</Text>
-                            <TextInput style={styles.contentInput} value={acv_content} onChangeText={text =>this.setState({careerfile:text})}/>
+                            <TextInput style={styles.contentInput} value={this.state.acv_content} onChangeText={text =>this.setState({careerfile:text})}/>
                         </View> */}
                         <View style={{flexDirection:'row'}}>
                             <Text>경력인증상태</Text>
-                            <TextInput style={styles.contentInput} value={acv_status} onChangeText={text =>this.setState({careerstatus:text})}/>
+                            <TextInput style={styles.contentInput} value={this.state.acv_status} onChangeText={text =>this.setState({careerstatus:text})}/>
                         </View>
                         <View style={{flexDirection:'row'}}>
                             <Text>공개여부</Text>
-                            <TextInput style={styles.contentInput} value={acv_open} onChangeText={text =>this.setState({careeropen:text})}/>
+                            <TextInput style={styles.contentInput} value={this.state.acv_open} onChangeText={text =>this.setState({careeropen:text})}/>
                         </View>
                         <View style={{flexDirection:'row'}}>
                             <Text>경력 카테고리코드	</Text>
-                            <TextInput style={styles.contentInput} value={act_id} onChangeText={text =>this.setState({categoryid:text})}/>
+                            <TextInput style={styles.contentInput} value={this.state.act_id} onChangeText={text =>this.setState({categoryid:text})}/>
                         </View>
                         <View>
                             <Button style={{margin:10}}>취소</Button>

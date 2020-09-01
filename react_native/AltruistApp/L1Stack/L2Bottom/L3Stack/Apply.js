@@ -15,10 +15,8 @@ class AltApplyScreen extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            checkboxes : Array(3).fill(false),
-            isChecked : Array(3).fill(false),
-            allCheck : false,
-            checked : Array(3).fill(false)
+            checkboxes : [],
+            
         }
     }
     
@@ -33,8 +31,8 @@ class AltApplyScreen extends React.Component{
         return (
           <CheckBox
             checked={checked}
-            onChange={nextChecked =>setChecked(nextChecked)}
-            onClick={()=>this.handleClick(i, this.checked)}
+            onChange={nextChecked =>{setChecked(nextChecked); this.handleClick(i, nextChecked)}}
+            
             // onChange={()=>this.handleChange()}
             >
                 {this.checked}
@@ -46,32 +44,26 @@ class AltApplyScreen extends React.Component{
       };
 
     handleClick(i, checked){
-        checkboxes = this.state.checkboxes.slice();
+        console.log(i)
+        console.log(checked)
+        const checkboxes = this.state.checkboxes;
         checkboxes[i] = checked == true ? true : false
         this.setState({checkboxes : checkboxes}) 
         console.log(this.state)
     }
 
     goNextStep(){
-        for(let j=0; this.state.checkboxes.length; j++){
+        for(let j=0; j < this.state.checkboxes.length; j++){
             if(this.state.checkboxes[j] == false){
-                console.log('동의 눌러줘')
-                return false
+                // console.log('동의 눌러줘')
+                // return false
+                this.props.navigation.navigate('AltMain')
+                alert('동의가 필요합니다.')
             }else{
-                return true
+                this.props.navigation.navigate('AltApplyForm')
+                
             }
         }
-    }
-
-    functionCombined(){
-        if(this.goNextStep() == true){
-            // this.props.navigation.navigate('AltApplyForm')
-            this.props.navigation.navigate('AltMain')
-        }else{
-            this.props.navigation.navigate('AltApplyForm')
-            //this.props.navigation.navigate('AltMain')
-        }
-
     }
     
     render(){ 
@@ -87,15 +79,16 @@ class AltApplyScreen extends React.Component{
                     <View>
                         <Card>
                             {/* <this.CheckContent content = {`하이`} /> */}
+                            <this.CheckAgrees i = {0} />
+                        </Card>
+                        <Card>
                             <this.CheckAgrees i = {1} />
                         </Card>
                         <Card>
                             <this.CheckAgrees i = {2} />
                         </Card>
-                        <Card>
-                            <this.CheckAgrees i = {3} />
-                        </Card>
-                        <Button onPress={()=>navigation.navigate('AltApplyForm')}>지원하기</Button>
+                        {/* <Button onPress={()=>navigation.navigate('AltApplyForm')}>지원하기</Button> */}
+                        <Button onPress={()=>this.goNextStep()}>지원하기</Button>
                     </View>
                 </ScrollView>
             </SafeAreaView>
