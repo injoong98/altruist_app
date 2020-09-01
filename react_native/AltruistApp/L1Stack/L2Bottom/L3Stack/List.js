@@ -117,7 +117,7 @@ class AltListScreen extends React.Component{
                 </View>
                 <Button 
                     style = {{height : 20}}
-                    onPress={()=>{console.log(this.state.filterTag)}}>질문하기</Button>
+                    onPress={()=>{console.log(this.state.filterTag);this.props.navigation.navigate('AltQuestionWrite',{item,brd_key:'indi',answer_mem_id:item.alt_profile.mem_id})}}>질문하기</Button>
             </View>
         </Card>
     );
