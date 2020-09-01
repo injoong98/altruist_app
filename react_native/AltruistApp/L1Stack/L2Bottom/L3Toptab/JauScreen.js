@@ -126,14 +126,7 @@ class JauScreen extends React.Component {
            <Divider />
           <Text ellipsizeMode='tail'
             numberOfLines = {3}>
-            0% WAITING Transforming artifact memory-type-java-2.2.0.aar (com.facebook.fresco:memory-type-java:2.2.0) with AarTransform
-            Transforming artifact imagepipeline-native-2.2.0.aar (com.facebook.fresco:imagepipeline-native:2.2.0) with ExtractAarTransform
-            Transforming artifact lifecycle-livedata-core-2.0.0.aar (androidx.lifecycle:lifecycle-livedata-core:2.0.0) with ExtractAarTransform
-            Transforming artifact imagepipeline-2.2.0.aar (com.facebook.fresco:imagepipeline:2.2.0) with ExtractAarTransform
-            Transforming artifact soloader-0.8.2.aar (com.facebook.soloader:soloader:0.8.2) with JetifyTransform > JetifyTransform soloader-0.8.2.aar
-            Transforming artifact core-1.0.1.aar (androidx.core:core:1.0.1) with ExtractAarTransform
-            Transforming artifact android-jsc-r245459.aar (org.webkit:android-jsc:r245459) with ExtractAarTransform
-            info Connecting to the development server...
+            {item.post_content}
           </Text>
           <Divider />
         </View>
