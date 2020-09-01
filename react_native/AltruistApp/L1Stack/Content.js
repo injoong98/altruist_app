@@ -68,6 +68,19 @@ class GominContent extends React.Component{
         }
     }
     
+    postscrap = async()=>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        
+        Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        .then(response=>{
+            alert(`${JSON.stringify(response.data)}`)
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+
     commentUpload= async()=>{
         const {cmt_content,post}=this.state;
         var formdata = new FormData();
@@ -117,7 +130,7 @@ class GominContent extends React.Component{
         </TouchableOpacity>
     )
 
-    renderToggleButton=()=>(
+    renderPostMore=()=>(
         <TouchableOpacity style={{height:35,width:35}} onPress={()=>this.setState({popoverVisibel:true})}>
             <MoreIcon />
         </TouchableOpacity>
@@ -128,13 +141,13 @@ class GominContent extends React.Component{
     MoreAction = () =>(
         // <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{this.setState({modalVisible:true})}}/>
         <Popover
-        anchor={this.renderToggleButton}
+        anchor={this.renderPostMore}
         visible={this.state.popoverVisibel}
         placement='bottom start'
         onBackdropPress={() => this.setState({popoverVisibel:false})}>
             <View>
                 <TouchableOpacity 
-                    onPress={()=>{alert('스크랩');this.setState({popoverVisibel:false})}} 
+                    onPress={()=>{this.postscrap();this.setState({popoverVisibel:false})}} 
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
                     <Text category='h3'>스크랩</Text>
                 </TouchableOpacity>
