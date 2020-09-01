@@ -1,10 +1,10 @@
 import React from 'react';
-import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity, Modal} from 'react-native'
+import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity, Modal,KeyboardAvoidingView,Alert} from 'react-native'
 
 import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,Divider} from '@ui-kitten/components'
 import axios from 'axios'
 import Tag from '../../../components/tag.component'
-import TopBarTune from '../../../components/TopBarTune'
+import {TopBarTune} from '../../../components/TopBarTune'
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -86,10 +86,10 @@ class AltQueType extends React.Component{
             <SafeAreaView style={{flex:1}}>
                 <TopNavigation title="질문 유형 선택" accessoryLeft={this.BackAction}/>
                 <View style={{flex:1 , justifyContent:'space-evenly', alignItems:'center'}}>
-                    <TouchableOpacity style={{flex:1,backgroundColor:'#A7D4DE',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{alert('1대1');navigation.navigate('AltList');}}>
+                    <TouchableOpacity style={{flex:1,backgroundColor:'#A7D4DE',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{navigation.navigate('AltList');}}>
                         <Text category ="h2" style={{fontSize:30}}>1대1 질문하기</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{flex:1,backgroundColor:'#EAB0B3',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{alert('1대다');navigation.navigate('AltAreaList');}}>
+                    <TouchableOpacity style={{flex:1,backgroundColor:'#EAB0B3',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{navigation.navigate('AltAreaList');}}>
                         <Text category ="h2" style={{fontSize:30}}>여러명에게 질문하기</Text>
                     </TouchableOpacity>
                 </View>
@@ -162,7 +162,7 @@ class AltAreaList extends React.Component{
                             !!분야를 선택하면 해당 이타주의자들에게 질문 등록에 대한 알림이 갑니다.
                         </Text>
                     </View>
-                </View>
+                </View>    
             </SafeAreaView>
 
         )
@@ -177,57 +177,120 @@ class AltQuestionWrite extends React.Component
         this.state={
             title:'',
             content:'',
-            user_recieve:this.props.reciever,
+            answer_mem_id:this.props.route.params.answer_mem_id,
+            brd_key:this.props.route.params.brd_key,
         }
     }
 
     sendQue = () => {
+        const {title,content,answer_mem_id,brd_key} = this.state;
         var formdata = new FormData();
-        formdata.append('brd_key',)
-        formdata.append('post_title',)
-        formdata.append('brd_key',)
+        formdata.append('brd_key',brd_key);
+        formdata.append('post_title',title);
+        formdata.append('post_content',content);
+        formdata.append('answer_mem_id',answer_mem_id);
         
-        axios.post('http://dev.unyict.org/api/board_write/write')
-        .then(res=>{
-            alert(JSON.stringify(res.data))
+        axios.post('http://10.0.2.2/api/board_write/write',formdata)
+        .then(response=>{
+            Alert.alert(
+                "이타주의자",
+                `"질문을 전달했습니다!"\n${JSON.stringify(response.data)}`,
+                [
+                    { 
+                        text: "닫기", 
+                        onPress: ()=> this.props.navigation.goBack()
+                    }
+                ],
+                { cancelable: false }
+            );
         })
-        .catch(err=>{
-            alert(JSON.stringify(err))
+        .catch(error=>{
+            alert('BYE:(')
         })
     }
 
+    filterSpamKeyword= async() => {
+        const {title,content} =this.state;
+        
+        var formdata =new FormData();
+        formdata.append("title", title);
+        formdata.append("content", content);
+        formdata.append("csrf_test_name", '');
+        
+    
+        await axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        .then(response=>{
+            const {message,status}=response.data
+            if(status=='500'){
+                alert(message)
+            }else if(status=="200"){
+                Alert.alert(
+                    "이타주의자",
+                    "질문을 보내시겠습니까?",
+                    [
+                        { 
+                            text: "보내기", 
+                            onPress: ()=> this.sendQue()
+                        },
+                        {
+                            text: "취소",
+                            onPress: () => alert('취소했습니다.')
+                        }
+                        
+                    ],
+                    { cancelable: false }
+                );
+            }
+
+        })
+        .catch(error=>{
+            alert(`금지단어 검사에 실패 했습니다. ${error.message}`)
+        })
+    }
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() => {this.props.navigation.goBack()}}/>
     )
 
     render(){
         const {title,content} = this.state;
-        const {act} = this.props.route.params
+        const {act,answer_mem_id,brd_key,item} = this.props.route.params
 
         return(
         <SafeAreaView style={{flex:1}}>
-            <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction}/> 
-            <View style={{ flex:1,backgroundColor:"#f4f4f4",padding:10}}>
-                <View>
-                    <Text>{act}</Text>
-                    <Text>이타주의자에게 질문</Text>
+            <TopBarTune 
+                text={`${item.mem_basic_info.mem_username}님께 질문`} 
+                func={() =>{this.filterSpamKeyword()}} 
+                right="upload"
+                gbckfunc={()=>{this.props.navigation.goBack()}} 
+                gbckuse={true}
+            />
+            <KeyboardAvoidingView
+                    style={{flex:1}} 
+                    behavior={Platform.OS == "ios" ? "padding" : "height"}
+            >
+                <View style={{ flex:1,backgroundColor:"#f4f4f4",padding:10}}>
+                    <View>
+                        <TextInput 
+                            style={styles.titleInput} 
+                            value={title} 
+                            onChangeText={text =>this.setState({title:text})}
+                            placeholder="제목"
+                            placeholderTextColor='#A897C2'
+                        />
+                    </View>
+                    <View>
+                        <TextInput 
+                            style={styles.contentInput} 
+                            value={content} 
+                            onChangeText={text =>this.setState({content:text}) }
+                            textAlignVertical='top'
+                            multiline={true}
+                            placeholder="내용"
+                            placeholderTextColor='#A897C2'
+                        />
+                    </View>
                 </View>
-               <View>
-                    <Text style={styles.fieldtitle}>제목</Text>
-                    <TextInput style={styles.titleInput} value={title} onChangeText={text =>this.setState({title:text})}/>
-               </View>
-               <View>
-                    <Text style={styles.fieldtitle}>내용</Text>
-                    <TextInput 
-                        style={styles.contentInput} 
-                        value={content} 
-                        onChangeText={text =>this.setState({content:text}) }
-                        textAlignVertical='top'
-                        multiline={true}
-                    />
-               </View>
-            </View>
-            <Button onPress ={()=>{alert("질문 약관 \n 활동분야 외 질문은 안 됩니다. ")}}>질문 보내기</Button>
+           </KeyboardAvoidingView>
         </SafeAreaView>
         )
 
@@ -239,14 +302,19 @@ const styles = StyleSheet.create({
         backgroundColor:'#ffffff',
         borderRadius:15,
         marginHorizontal:10,
-        marginBottom:20
+        marginBottom:20,
+        fontSize:18,
+        minHeight:45
     },
     contentInput :{
         backgroundColor:'#ffffff',
         borderRadius:15,
         marginHorizontal:10,
         marginBottom:20,
-        height:200
+        height:200,
+        fontSize:18,
+        maxHeight:'120%',
+        minHeight:'70%'
     },
     fieldtitle:{
         padding :10
