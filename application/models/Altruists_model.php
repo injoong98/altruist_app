@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author CIBoard (develop@ciboard.co.kr)
  */
 
-class Altruists_model extends CB_Model
+class Altruists_model extends Stat_count_board_model
 {
 
 	/**
