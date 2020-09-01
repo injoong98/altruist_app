@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,TextInput} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal, OverflowMenu, MenuItem,Popover} from '@ui-kitten/components'
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
@@ -12,6 +12,12 @@ const BackIcon =  (props) =>(
 )
 const ThumbIcon =  (props) =>(
     <Icon {...props} fill ="#63579D"name = "thumb-up" pack="alticons"/>
+)
+const BendedIcon =  (props) =>(
+    <Icon {...props} fill ="#63579D"name = "arrow-bended" pack="alticons"/>
+)
+const UploadCircleIcon =  (props) =>(
+    <Icon  fill ="#63579D"name = "upload-circle" pack="alticons" {...props}/>
 )
 const MoreIcon =  (props) =>(
     <Icon {...props} fill ="#63579D"name = "more-vertical-outline"/>
@@ -61,13 +67,40 @@ class GominContent extends React.Component{
             post:'',
             comment:'',
             cmt_content:'',
+            cmt_id:'',
+            replying:false,
             isLoading:true,
+            inputFocusing:false,
             refreshing:false,
             modalVisible:false,
-            popoverVisibel:false
+            popoverVisibel:false,
+            
         }
     }
-    
+    commentWrite= ()=>{
+        this.setState({replying:false,cmt_id:''})
+        this.refs.commentInput.blur()
+        console.log(this.refs)
+    }
+    cmtReply = (cmt_id) =>{
+        Alert.alert(
+            "댓글",
+            "대댓글을 작성하시겠습니까?",
+            [
+                {
+                    text: "취소",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "확인", 
+                    onPress: ()=> {
+                    this.setState({replying:true,cmt_id:cmt_id})
+                    this.refs.commentInput.focus()}
+                }
+            ],
+            { cancelable: false }
+        );
+    }
     postscrap = async()=>{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
@@ -80,13 +113,16 @@ class GominContent extends React.Component{
             alert(`${JSON.stringify(error)}`)
         })
     }
-
+    
     commentUpload= async()=>{
-        const {cmt_content,post}=this.state;
+        const {cmt_content,post,cmt_id}=this.state;
         var formdata = new FormData();
         formdata.append("post_id",post.post_id);
         formdata.append("cmt_content",cmt_content);
-
+        cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+        
+        this.commentWrite()
+        
         await Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
         .then(response=>{
             const {status,message}=response.data;
@@ -334,7 +370,23 @@ class GominContent extends React.Component{
     }
 
     renderCommentsList=({item,index})=>(
-        <View style ={{paddingHorizontal:30,paddingTop:10}}>
+        <View style={{marginVertical:3}}>
+        {item.cmt_reply==""?
+        null
+        :
+        <View style={{position:'absolute',left:0,paddingLeft:25}}>
+            <BendedIcon />
+        </View> 
+        }
+        <View 
+            style ={{
+                borderRadius:8,
+                paddingRight:15,
+                marginRight:15,
+                paddingTop:10,
+                paddingLeft: 15,
+                marginLeft:item.cmt_reply==""?15:50,
+                backgroundColor:item.cmt_reply==""? item.cmt_id==this.state.cmt_id?'#EAB0B3': '#ffffff':'#f4f4f4'}}>
             <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <View style={{flexDirection:"row"}}>
                     <StarIcon />
@@ -356,16 +408,23 @@ class GominContent extends React.Component{
                 <Text category="s1">{item.content}</Text>
             </View>
             <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
+                {item.cmt_reply ==""?
+                <TouchableOpacity style= {{marginHorizontal:5}}onPress={()=>this.cmtReply(item.cmt_id)}>
+                    <BendedIcon />
+                </TouchableOpacity>
+                :null
+                }
                 <TouchableOpacity style= {{marginHorizontal:5}}onPress={()=>this.cmtLike(item.cmt_id)}>
                     <ThumbIcon />
                 </TouchableOpacity>
                 <Text>{item.cmt_like}</Text>
             </View>
         </View>
+        </View>
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_content,post,comment,modalVisible} = this.state
+        const {cmt_content,post,comment,modalVisible,replying,inputFocusing} = this.state
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -387,15 +446,29 @@ class GominContent extends React.Component{
                     style={{backgroundColor:'#ffffff'}}
                     />
             </Layout>
-            <Input
-                style={{margin:15,position:'relative',bottom:0}}
-                size='large'
-                placeholder='댓글을 입력하세요.'
-                value={cmt_content}
-                multiline={true}
-                accessoryRight={this.UploadButton}
-                onChangeText={nextValue => this.setState({cmt_content:nextValue})}
-            />
+            <View style={{backgroundColor:'#ffffff',padding:8}}>
+                {this.state.replying ?
+                <TouchableOpacity onPress={this.commentWrite}>
+                    <Text category="h2" style={{color:'#63579D'}}>X</Text>
+                </TouchableOpacity>
+                :
+                null
+                }
+                <TextInput
+                    ref="commentInput"
+                    style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                    value={cmt_content}
+                    placeholder={ replying?"대댓글" :"댓글"}
+                    placeholderTextColor='#A897C2'
+                    plac
+                    multiline={true}
+                    onChangeText={nextValue => this.setState({cmt_content:nextValue})}
+                />
+                <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
+                    <UploadCircleIcon style={{width:'100%',height:'100%'}}/>
+                </TouchableOpacity>
+                
+            </View>
             <Modal
                 visible={modalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
