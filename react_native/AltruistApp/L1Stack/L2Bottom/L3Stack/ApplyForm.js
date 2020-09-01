@@ -12,26 +12,22 @@ const BackIcon =  (props) =>(
 )
 
 
-
-
-
 class AltApplyFormScreen extends React.Component{
     constructor(props){
         super(props)
         this.state ={
-            // //기본사항
-            // aboutme : '',
-            // aboutmyself : '',
-            // answertype : '',
-            // photo : '',
-            // //경력사항
-            // type : '',
-            // year: [],
-            // contents:[],
-            // final : '',
-            // files:[],
-            // status:[],
-            // open: ''
+            mem_id : '',
+            alt_aboutme : '',
+            alt_content : '',
+            alt_answertype : '',
+            alt_status : '',
+            alt_honor : '',
+            acv_type : '',
+            acv_year : '',
+            acv_content : '',
+            acv_status : '',
+            acv_open : '',
+            act_id : '',
 
         }
     }
@@ -53,61 +49,64 @@ class AltApplyFormScreen extends React.Component{
 
 
     setAltruist = async() => {
-        console.log(this.state);
-//        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary} = this.state;
+        const {
+            mem_id,
+            alt_aboutme,
+            alt_content,
+            alt_answertype,
+            alt_status,
+            alt_honor,
+            acv_type,
+            acv_year,
+            acv_content,
+            acv_status,
+            acv_open,
+            act_id,
+        } = this.state;
 
         let formdata = new FormData();
-        formdata.append("mem_id", "106");
-        formdata.append("alt_aboutme",'언택트 주부 9단');
-        formdata.append("alt_content", '안녕하세요 적당히 바람이 시원해 언택트 주부 9단이 왔어요 ');
-        formdata.append("alt_answertype", '2');
+        formdata.append("mem_id", mem_id);
+        formdata.append("alt_aboutme", alt_aboutme);
+        formdata.append("alt_content", alt_content);
+        formdata.append("alt_answertype", alt_answertype);
         formdata.append("alt_status", 'R');
-        formdata.append("alt_honor", '0');
-        formdata.append("acv_type[]", 'J');
-        formdata.append("acv_type[]", 'J');
-        formdata.append("acv_year[]", '2021');
-        formdata.append("acv_year[]", '2022');
-        formdata.append("acv_content[]", '2021초보주부론 편찬의원회');
-        formdata.append("acv_content[]", '2020초보주부론 편찬의원회');
-        formdata.append("acv_status[]", '0');
-        formdata.append("acv_status[]", '0');
-        formdata.append("acv_open[]", '1');
-        formdata.append("acv_open[]", '1');
-        formdata.append("act_id[]", '1');
-        formdata.append("act_id[]", '1');
-        
+        formdata.append("alt_honor", alt_honor);
         // formdata.append("acv_type[]", 'J');
-        // formdata.append("acv_year[]", '2020');
+        formdata.append("acv_type[]", acv_type);
+        // formdata.append("acv_year[]", '2021');
+        formdata.append("acv_year[]", acv_year);
+        // formdata.append("acv_content[]", '2021초보주부론 편찬의원회');
+        formdata.append("acv_content[]", acv_content);
+        // formdata.append("acv_status[]", '0');
+        formdata.append("acv_status[]", acv_status);
+        // formdata.append("acv_open[]", '1');
+        formdata.append("acv_open[]", acv_open);
+        // formdata.append("act_id[]", '1');
+        formdata.append("act_id[]", act_id);
+
+        // formdata.append("mem_id", "106");
+        // formdata.append("alt_aboutme",'언택트 주부 9단');
+        // formdata.append("alt_content", '안녕하세요 적당히 바람이 시원해 언택트 주부 9단이 왔어요 ');
+        // formdata.append("alt_answertype", '2');
+        // formdata.append("alt_status", 'R');
+        // formdata.append("alt_honor", '0');
+        // formdata.append("acv_type[]", 'J');
+        // formdata.append("acv_type[]", 'J');
+        // formdata.append("acv_year[]", '2021');
+        // formdata.append("acv_year[]", '2022');
+        // formdata.append("acv_content[]", '2021초보주부론 편찬의원회');
         // formdata.append("acv_content[]", '2020초보주부론 편찬의원회');
         // formdata.append("acv_status[]", '0');
+        // formdata.append("acv_status[]", '0');
         // formdata.append("acv_open[]", '1');
+        // formdata.append("acv_open[]", '1');
+        // formdata.append("act_id[]", '1');
         // formdata.append("act_id[]", '1');
     
         console.log(formdata);
         
         await axios.post('http://10.0.2.2/api/altruists/apply', formdata,
           {'Content-Type':'application/form-data'}
-        //   formdata
-        // { 
-        //     'mem_id' : 5,
-        //     'alt_aboutme' : '언택트 주부 9단',
-        //     'alt_content' : '안녕하세요 적당히 바람이 시원해 언택트 주부 9단이 왔어요 ',
-        //     'alt_answertype' : '2',
-        //     'alt_status' : 'R',
-        //     'alt_honor' : '0',
-        //     // 'acv_type' : ['J','J'],
-        //     // 'acv_year' : ['2020', '2019'],
-        //     // 'acv_content' : ['초보주부론 편찬의원회', '언택트 주부 9단 초대강의 강사'],
-        //     // 'acv_status' : ['0', '0'],
-        //     // 'acv_open' : ['1','1'],
-        //     // 'act_id' : ['1','1']
-        //     'acv_type' : ['J'],
-        //     'acv_year' : ['2020'],
-        //     'acv_content' : ['초보주부론 편찬의원회'],
-        //     'acv_status' : ['0'],
-        //     'acv_open' : ['1'],
-        //     'act_id' : ['1']
-        // }
         )
         .then(response=>{
             console.log(response)
@@ -158,46 +157,15 @@ class AltApplyFormScreen extends React.Component{
         this.getAreaCat()
     }
 
-    
-
-    getCategory = (category) => {
-        const category_name = category.act_id
-        const category_content = category.act_content
-        const category_use = category.act_use
-        console.log(category_content)
-        return (
-            <View>
-                <Text>
-                    {category_name}
-                </Text>
-                <Text>
-                    {category_content}
-                </Text>
-                <Text>
-                    {category_use}
-                </Text>
-            </View>
-        )
-    }
+    // renderItem = ({item, key}) => {
+    //     console.log(item);
+    // }
 
     render(){ 
-
-        // const {aboutme
-        // ,aboutmyself
-        // ,answertype
-        // ,status
-        // ,honor
-        // ,careertype
-        // ,careeryear
-        // ,careerfinal
-        // ,careerfile
-        // ,careerstatus
-        // ,careeropen
-        // ,categoryid, 
+        
         const {category} = this.state
         console.log('cat : '+this.props)
-        return(
-            
+        return(            
             <SafeAreaView style={styles.container}>
                 <TopNavigation 
                 title="이타주의자" accessoryLeft={this.BackAction} /> 
@@ -205,8 +173,57 @@ class AltApplyFormScreen extends React.Component{
                         <Text> 이타주의자 지원하기 FORM </Text>
                     </View>
                     <ScrollView>
-                        <View><this.getCategory/></View>
-                        <View style={{flexDirection:'row', justifyContent:'center'}}>
+                        <View style={{flexDirection:'row'}}>
+                            <Text>자기PR</Text>
+                            <TextInput style={styles.contentInput} value={alt_aboutme} onChangeText={text =>this.setState({alt_aboutme:alt_aboutme})}/>
+                        </View>
+                        <View style={{flexDirection:'row'}}>
+                            <Text>자기소개</Text>
+                            <TextInput style={styles.contentInput} value={alt_content} onChangeText={text =>this.setState({alt_content:alt_content})}/>
+                        </View>
+                        <View style={{flexDirection:'row'}}>
+                            <Text>답변대기</Text>
+                            <TextInput style={styles.contentInput} value={alt_answertype} onChangeText={text =>this.setState({alt_answertype:alt_answertype})}/>
+                        </View>
+                        {/* <View style={{flexDirection:'row'}}>
+                            <Text>상태</Text>
+                            <TextInput style={styles.contentInput} value={alt_status} onChangeText={text =>this.setState({alt_status:alt_status})}/>
+                        </View> */}
+                        <View style={{flexDirection:'row'}}>
+                            <Text>명예여부</Text>
+                            <TextInput style={styles.contentInput} value={alt_honor} onChangeText={text =>this.setState({alt_honor:alt_honor})}/>
+                        </View>
+
+                        {/* 경력구분 */}
+                        <View style={{flexDirection:'row'}}>
+                            <Text>경력년도</Text>
+                            <TextInput style={styles.contentInput} value={acv_type} onChangeText={text =>this.setState({careertype:text})}/>
+                        </View>
+                        <View style={{flexDirection:'row'}}>
+                            <Text>경력내용</Text>
+                            <TextInput style={styles.contentInput} value={acv_year} onChangeText={text =>this.setState({careeryear:text})}/>
+                        </View>
+                        <View style={{flexDirection:'row'}}>
+                            <Text>최종경력여부</Text>
+                            <TextInput style={styles.contentInput} value={acv_content} onChangeText={text =>this.setState({careerfinal:text})}/>
+                        </View>
+                        {/* <View style={{flexDirection:'row'}}>
+                            <Text>증빙용첨부파일</Text>
+                            <TextInput style={styles.contentInput} value={acv_content} onChangeText={text =>this.setState({careerfile:text})}/>
+                        </View> */}
+                        <View style={{flexDirection:'row'}}>
+                            <Text>경력인증상태</Text>
+                            <TextInput style={styles.contentInput} value={acv_status} onChangeText={text =>this.setState({careerstatus:text})}/>
+                        </View>
+                        <View style={{flexDirection:'row'}}>
+                            <Text>공개여부</Text>
+                            <TextInput style={styles.contentInput} value={acv_open} onChangeText={text =>this.setState({careeropen:text})}/>
+                        </View>
+                        <View style={{flexDirection:'row'}}>
+                            <Text>경력 카테고리코드	</Text>
+                            <TextInput style={styles.contentInput} value={act_id} onChangeText={text =>this.setState({categoryid:text})}/>
+                        </View>
+                        <View>
                             <Button style={{margin:10}}>취소</Button>
                             {/* <Button style={{margin:10}} onPress={()=>navigation.navigate('AltApplyComplete')}>완료</Button> */}
                             <Button style={{margin:10}} onPress={()=>this.setAltruist()}>완료</Button>
@@ -258,6 +275,3 @@ const styles = StyleSheet.create({
 
 
 export default AltApplyFormScreen;
-
-
-{/*  */}
