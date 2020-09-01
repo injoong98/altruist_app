@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { StyleSheet, View, Image, Dimensions } from 'react-native';
+import { StyleSheet, View, Image, Dimensionsm, ScrollView  } from 'react-native';
 import { Button, Card, List, Layout, Text,Icon, StyleService, Spinner, Divider} from '@ui-kitten/components'
 import { HeartIcon, PlusIcon } from '../../../assets/icons/icons';
 import { getPostList } from "./extra/getPost";
@@ -19,8 +19,9 @@ function JauHeader(props){
       <View style={styles.itemHeaderTop}>
           {/*     text-overflow: ellipsis; */}
           <View>
-              <Text category='s2'>{props.category}
-              </Text>
+              <View>
+               <Text>{props.category}</Text>
+              </View>
               <Text category='h4'>{props.title}
               </Text>
           </View>
@@ -55,14 +56,12 @@ function JauFooter(onDetailButtonPress) {
                   status='danger'
                   accessoryLeft={AltsIcon} />
           </View>
-          <Button
+          {/* <Button
               style={styles.itemAddButton}
               appearance='ghost'
               onPress={onDetailButtonPress}
               accessoryLeft={ArrowIcon}>
-                          더보기
-
-          </Button>
+          </Button> */}
       </View>
   );
 }
@@ -84,16 +83,24 @@ class JauScreen extends React.Component {
       isLoading : true,
       lists : '',
       image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+      categorys: ''
     }
   }
 
   getPostList = async() =>{
     await axios.get(`http://10.0.2.2/api/board_post/lists/ilban`)
     .then( response =>{
+      console.log(response)
+      if(response.data.view.list.board.category !== 0) {
+      
+      }
         this.setState({
           lists : response.data.view.list.data.list,
+          categorys : response.data.view.list.board.category[0],
           isLoading : false
         })
+        console.log('list' + response.data.view.list.data.list)
+        console.log('cate' + response.data.view.list.board.category[0])
     })
     .catch((error)=>{
         alert('error')
@@ -135,11 +142,26 @@ class JauScreen extends React.Component {
         </View>
   );
   
+  renderCategory = ({item}) =>{
+  
+    return (
+    <View>
+      <Text>{item.bca_value}</Text>
+    </View>
+    )
+  }
 
   render(){
     return (
     <>
       <View style={{flex:10}}>
+        <ScrollView text = {'하이'} horizontal={true} alwaysBounceHorizontal={true}>
+          <List
+          horizontal={true}
+          data={this.state.categorys}
+          renderItem = {this.renderCategory}
+          />
+        </ScrollView >
         <List
           contentContainerStyle={styles.contentContainer}
           data={this.state.lists}
