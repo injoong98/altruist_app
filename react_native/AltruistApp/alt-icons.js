@@ -22,5 +22,6 @@ export const AltIconsPack = {
     'upload': IconProvider(require('./assets/icons/upload.png')),
     'view-filled': IconProvider(require('./assets/icons/view-filled.png')),
     'write': IconProvider(require('./assets/icons/write.png')),
+    'back-arrow': IconProvider(require('./assets/icons/back-arrow.png')),
   },
 };
