@@ -9,6 +9,12 @@ import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, C
 import ToggleTune from '../../components/ToggleTune';
 import LoginScreen from './Login'
 
+import Homesvg from '../../assets/icons/home.svg'
+import Communitysvg from '../../assets/icons/community.svg'
+import Altsvg from '../../assets/icons/altruist.svg'
+import Bellsvg from '../../assets/icons/bell.svg'
+import Mysvg from '../../assets/icons/mypage.svg'
+
 const HomeIcon = (props) => (
     <Icon {...props} name= 'home' pack='alticons'/>
 )
@@ -64,11 +70,16 @@ const BottomTabBar = ({ navigation, state }) => (
     <BottomNavigation
       selectedIndex={state.index}
       onSelect={index => navigation.navigate(state.routeNames[index])}>
-      <BottomNavigationTab title={()=><HomeIcon/>}/>
-      <BottomNavigationTab title={()=><AltruistIcon/>}/>
-      <BottomNavigationTab title={()=><CommunityIcon/>}/>
-      <BottomNavigationTab title={()=><BellIcon/>}/>  
-      <BottomNavigationTab title={()=><MypageIcon/>}/>
+      <BottomNavigationTab title={()=><Homesvg height={35} width ={35}/>}/>
+      <BottomNavigationTab title={()=><Altsvg height={35} />}/>
+      <BottomNavigationTab title={()=><Communitysvg height={35} />}/>
+      <BottomNavigationTab title={()=><Bellsvg height={35} />}/>  
+      <BottomNavigationTab title={()=><Mysvg height={35} />}/>
+      {/* <BottomNavigationTab title={()=><HomeIcon />}/>
+      <BottomNavigationTab title={()=><AltruistIcon  />}/>
+      <BottomNavigationTab title={()=><CommunityIcon  />}/>
+      <BottomNavigationTab title={()=><BellIcon  />}/>  
+      <BottomNavigationTab title={()=><MypageIcon  />}/> */}
     </BottomNavigation>
   );
 

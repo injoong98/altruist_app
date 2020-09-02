@@ -1,6 +1,7 @@
 import React from 'react';
 import {View,StyleSheet,TouchableOpacity} from 'react-native';
 import {Text,Icon} from '@ui-kitten/components'
+import Bellsvg from '../assets/icons/bell.svg'
 
 const BellIcon =(props)=> (
     <Icon {...props} fill='#B09BDE' name="bell" pack="alticons"/>
@@ -44,7 +45,8 @@ export class TopBarTune extends React.Component {
                                 </TouchableOpacity>
                             :
                                 <TouchableOpacity onPress={this.props.func}>
-                                    <BellIcon style={styles.topicon}/>
+                                    {/* <BellIcon style={styles.topicon}/> */}
+                                    <Bellsvg/>
                                 </TouchableOpacity>
                             }
                         </View>
