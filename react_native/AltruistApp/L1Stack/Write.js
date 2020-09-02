@@ -217,13 +217,15 @@ class MarketWrite extends React.Component {
             formdata.append("post_nickname", 'Edward');
             formdata.append("post_email", 'Edward@sogang.ac.kr');
             formdata.append("post_password", '0000');
-            formdata.append('post_file[]',
-                {
-                    uri:image.path,
-                    type:image.mime,
-                    name:'image.jpg',
-                }
-            )
+            images.map(item=>{
+                formdata.append('post_file[]',
+                    {
+                        uri:item.path,
+                        type:item.mime,
+                        name:'image.jpg',
+                    }
+                )
+            })
               
             
             // formdata.append("deal_price", deal_price);
@@ -231,7 +233,7 @@ class MarketWrite extends React.Component {
             // formdata.append("deal_status", Data.deal_status);
             
         await axios.post(
-            'http://10.0.2.2/api/board_write/write/b-a-2',
+            'http://dev.unyict.org/api/board_write/write/b-a-2',
             formdata
         )
         .then(response=>{
@@ -417,7 +419,7 @@ class MarketWrite extends React.Component {
                             />
                         </Layout>
                         <Button onPress={()=>this.submitPost()}>등 록</Button>
-                        <Button onPress={()=>console.log(this.state.image)}>콘솔</Button>
+                        <Button onPress={()=>console.log(this.state.images)}>콘솔</Button>
                     </Layout>
                 </ScrollView>
             </SafeAreaView>
