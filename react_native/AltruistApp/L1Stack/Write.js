@@ -739,8 +739,8 @@ class IlbanWrite extends React.Component{
    getCategory = async() =>{
     await axios.get( 'http://dev.unyict.org/api/board_post/lists/ilban' )
        .then(res => {
-           console.log(res.data.view.list.board.category)
-           this.setState({post_category:res.data.view.list.board.category})
+           console.log(res.data.view.list.board.category[0])
+           this.setState({post_category:res.data.view.list.board.category[0]})
        })
        .catch(err => {
            console.log(err)
@@ -768,6 +768,7 @@ class IlbanWrite extends React.Component{
        )
        .then(response=>{
            console.log(response)
+           
            Alert.alert(
                "게시글",
                "게시글 작성 완료",
@@ -871,22 +872,31 @@ class IlbanWrite extends React.Component{
        >글작성</Button>
    )
 
-   SelectItems(post_category){
-        return(
-            <Select
-            style={{flex:1, width:10}}
-        //    value={this.props.post_category.bca_id}
-          //  selectedIndex={this.props.post_category.bca_id}
-            //onSelect={(index)=>{this.setState({post_category:index})}}
-            placeholder='게시판 선택'
-            //selectedIndex={selectedIndex}
-            //onSelect={index => setSelectedIndex(index)}
-            >
-                {/* <SelectItem title={evaProps => <Text {...evaProps}>{this.props.post_category.bca_value}</Text>} />  */}
-                <SelectItem title={evaProps => <Text {...evaProps}>option</Text>} /> 
-            </Select>
-        )
-   }
+   renderOption = (title) => (
+    <SelectItem title={title}/>
+  );
+
+//    SelectItems = () =>{
+//         return(
+//             <Select
+//             style={{flex:1, width:10}}
+//             children = {() => <SelectItem>{this.state.post_category}</SelectItem>}
+//             value={this.state.post_category.bca_id}
+//           //  selectedIndex={this.props.post_category.bca_id}
+//             //onSelect={(index)=>{this.setState({post_category:index})}}
+//             placeholder='게시판 선택'
+//             //selectedIndex={selectedIndex}
+//             //onSelect={index => setSelectedIndex(index)}
+//             >
+//                 {/* <SelectItem title={evaProps => <Text {...evaProps}>{this.props.post_category.bca_value}</Text>} />  */}
+            
+//             </Select>
+//             //  value={this.Salary_Type[this.state.alba_salary_type.row]}
+//             //  selectedIndex={this.state.alba_salary_type}
+//             //  onSelect={(index)=>{this.setState({alba_salary_type:index})}}
+//             //  disabled={this.state.isFollowUp}
+//         )
+//    }
 
    componentDidMount(){
     this.getCategory()
@@ -895,8 +905,7 @@ class IlbanWrite extends React.Component{
 
    //end: header
    render(){
-       const {post_category} = this.state
-    console.log(`ㅇ라ㅣㅁㄴㅇㄹ`+this.state.post_category)
+//       const {post_category} = this.state
        return(
            <Root>
            <SafeAreaView style={{flex:1}}>
@@ -907,7 +916,20 @@ class IlbanWrite extends React.Component{
                   
                    <View style={{flexDirection: 'row'}} >
                        {/* 카테고리 */}
-                       <this.SelectItems />
+                        <this.SelectItems />
+                       <Select
+                        style={{flex:1, width:10}}
+                        children = {this.state.post_category}
+                        value={this.state.post_category.bca_id}
+                        selectedIndex={this.state.post_category.bca_id}
+                        //onSelect={(index)=>{this.setState({post_category:index})}}
+                        placeholder='게시판 선택'
+                        //selectedIndex={selectedIndex}
+                        //onSelect={index => setSelectedIndex(index)}
+                        >
+                            <SelectItem title={evaProps => <Text {...evaProps}>{this.state.post_category}</Text>} /> 
+                        
+                        </Select>
                        {/* 제목 */}
                        <Input style={{ flex:1, width:90}}
                        onChangeText = {post_title=>this.setState({post_title:post_title})}/>
