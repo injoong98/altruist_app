@@ -40,7 +40,7 @@ export default class Slider extends React.Component {
                                 <Image
                                     style={slide_style.image}
                                     key={item.id}
-                                    source={{uri : 'http://10.0.2.2'+item.url}}
+                                    source={{uri : 'http://dev.unyict.org'+item.url}}
                                     style={{width, height, resizeMode: 'cover'}}
                                 />
                             ))

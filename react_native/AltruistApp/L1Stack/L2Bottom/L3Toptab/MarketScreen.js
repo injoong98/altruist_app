@@ -18,7 +18,7 @@ class MarketScreen extends React.Component {
 
 
   getPostList = async() =>{
-    await axios.get('http://10.0.2.2/api/board_post/lists/b-a-2')
+    await axios.get('http://dev.unyict.org/api/board_post/lists/b-a-2')
     .then((response)=>{
         this.setState({list:response.data.view.list.data.list,isLoading:false})
     })
@@ -38,7 +38,7 @@ class MarketScreen extends React.Component {
   renderItem = ({item}) => (
     <TouchableOpacity style={styles.item} onPress={() => {this.props.navigation.navigate('MarketContent', item.post_id)}}>
         <View style={{width:100}}>
-            <Image source={item.origin_image_url? {uri : 'http://10.0.2.2'+item.origin_image_url}:{uri : 'http://10.0.2.2'+item.thumb_url}} style={{flex : 1, width:'100%', resizeMode:'cover'}}/>
+            <Image source={item.origin_image_url? {uri : 'http://dev.unyict.org'+item.origin_image_url}:{uri : 'http://dev.unyict.org'+item.thumb_url}} style={{flex : 1, width:'100%', resizeMode:'cover'}}/>
         </View>
         <Layout style={styles.textArea}>
             <Layout style={styles.textTop}>
