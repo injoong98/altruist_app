@@ -1,16 +1,31 @@
 import React, { Fragment } from 'react';
-import { StyleSheet, View, Image, Dimensionsm, ScrollView  } from 'react-native';
+import { StyleSheet, View, Image, Dimensionsm, ScrollView, TouchableOpacity } from 'react-native';
 import { Button, Card, List, Layout, Text,Icon, StyleService, Spinner, Divider} from '@ui-kitten/components'
-import { HeartIcon, PlusIcon } from '../../../assets/icons/icons';
+import { PlusIcon } from '../../../assets/icons/icons';
 import { getPostList } from "./extra/getPost";
 import axios from 'axios';
 import HTML from 'react-native-render-html';
 import { IGNORED_TAGS } from 'react-native-render-html/src/HTMLUtils';
+import {PostTime} from '../../../components/PostTime'
 
 
 const AltsIcon = (props) => <Icon {...props} name="star" />;
 const ShareIcon = (props) => <Icon {...props} name="share-outline" />;
 const ArrowIcon = (props) => <Icon {...props} name="arrow-forward-outline" />;
+
+const  ViewIcon = (props)=>(
+  <Icon style={styles.icon} fill='#8F9BB3' name="view-filled" pack="alticons"/>
+)
+const CommentIcon = (props)=>(
+  <Icon  style={styles.icon} fill='#8F9BB3' name="message-circle" {...props}/>
+)
+const HeartIcon = (props)=>(
+  <Icon style={styles.icon} fill='#8F9BB3' name="heart-filled" pack="alticons"/>
+)
+const WriteIcon = (props)=>(
+  <Icon style={styles.icon} fill='#8F9BB3' name="write" pack="alticons"/>
+)
+
 
 function JauHeader(props){
   return(
@@ -108,35 +123,44 @@ class JauScreen extends React.Component {
   componentDidMount(){
     this.getPostList();
   } 
-   
+  
   renderItem = ({item, index}) => (
-    
-     
-    //  <View>
-    //    <JauCard props={item}></JauCard>
-       
-    //   </View>
-
-        <View>
-          <JauHeader 
-              category = {item.category.bca_value}
-              title={item.post_title} 
-              nickname={item.post_nickname} 
-              datetime={item.post_datetime} 
-              hit={item.post_hit} 
-            />
-          {/* 서버에 올라가는거 보고 진행 */}
-         <View>
-           <Divider />
-          <Text ellipsizeMode='tail'
-            numberOfLines = {3}>
-            {item.post_content}
-          </Text>
-          <Divider />
+    <View>
+      {/* header */}
+      <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
+        {/*카테고리(이미지)/ 제목 / 공유*/}
+        {/* */}
+        <View style={{display:'flex', flexDirection:'row'}}>
+          <Text>{`category`}</Text>
+          <Text>{item.post_category}</Text>
+          <Text>{item.post_title}</Text>
         </View>
-          <JauFooter />
-          <Divider />
+        <Text>{`shareicon`}</Text>
+      </View>
+      {/* image */}
+      <View style={{flexDirection:'row'}}>
+        <Text>{item.post_content}</Text>
+        <View style={{flexDirection:'row'}}>
+          <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+          <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+          <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
         </View>
+      </View>
+      <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+        <View style={{flexDirection:'row'}}>
+          <Text>{item.display_name}</Text> 
+          <PostTime datetime = {item.post_datetime} />
+        </View>
+        <View style={{flexDirection:'row'}}>
+          <HeartIcon />
+          <Text>{item.post_like}</Text>
+          <CommentIcon />
+          <Text>{item.post_comment_count}</Text>
+          <ViewIcon />
+          <Text>{item.post_hit}</Text>
+        </View>
+      </View>
+    </View>
   );
   
   renderCategory = ({item}) =>{
@@ -166,7 +190,7 @@ class JauScreen extends React.Component {
           contentContainerStyle={styles.contentContainer}
           data={this.state.lists}
           renderItem={this.renderItem}
-          // refreshing={this.state.isLoading}
+          refreshing={this.state.isLoading}
           // onRefresh={this.getPostList()}
           />
       </View>
@@ -235,8 +259,12 @@ const styles = StyleSheet.create({
       paddingHorizontal: 0,
   },
   followButton: {
-      marginTop: 24,
-      },
+    marginTop: 24,
+  },
+  infotext:{
+    color:'#141552',
+    fontSize:9
+  },
   })
 
 export {JauScreen} ;
