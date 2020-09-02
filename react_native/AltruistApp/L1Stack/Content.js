@@ -511,7 +511,7 @@ class MarketContent extends React.Component {
     }
 
     getPostData = async(post_id)=>{
-        await Axios.get(`http://10.0.2.2/api/board_post/post/${post_id}`)
+        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
@@ -530,7 +530,7 @@ class MarketContent extends React.Component {
     }
     
     getCommentData = async (post_id)=>{
-        await Axios.get(`http://10.0.2.2/api/comment_list/lists/${post_id}`)
+        await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
         })
@@ -550,8 +550,9 @@ class MarketContent extends React.Component {
     )
 
     renderImage = ({item}) => {
+        console.log(item.url)
         return (
-        <Image source={{uri : 'http://10.0.2.2'+item.url}} style={{flex : 1, width:394, resizeMode:'cover'}}/>
+        <Image source={{uri : 'http://dev.unyict.org/'+item.url}} style={{flex : 1, width:394, resizeMode:'cover'}}/>
         );
     }
 
