@@ -34,8 +34,8 @@ function JauHeader(props){
       <View style={styles.itemHeaderTop}>
           {/*     text-overflow: ellipsis; */}
           <View>
-              <Text category='h4'>[{props.category}]{props.title}
-              </Text>
+              {/* <Text category='h4'>[{props.category}]{props.title}
+              </Text> */}
           </View>
           <Button
                   style={styles.iconButton}
@@ -138,7 +138,7 @@ class JauScreen extends React.Component {
         <Text>{`shareicon`}</Text>
       </View>
       {/* image */}
-      <View style={{flexDirection:'row'}}>
+      <View>
         <Text>{item.post_content}</Text>
         <View style={{flexDirection:'row'}}>
           <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
@@ -166,20 +166,15 @@ class JauScreen extends React.Component {
   renderCategory = ({item}) =>{
   
     return (
-    <View style={{flex:3}}>
-    <View>
-      <Text category='h4'> {item.bca_value} </Text>
-    </View>
-    
-    </View>
-    )
+        <Text category='h4'> {item.bca_value} </Text>
+      )  
   }
 
   render(){
     return (
-    <>
-      <View style={{flex:10}}>
-        <ScrollView horizontal={true} >
+    <View>
+      <View style={{flex:1}}>
+        <ScrollView horizontal={true}>
           <List
           horizontal={true}
           data={this.state.categorys}
@@ -187,14 +182,13 @@ class JauScreen extends React.Component {
           />
         </ScrollView >
         <List
-          contentContainerStyle={styles.contentContainer}
+          // contentContainerStyle={styles.contentContainer}
           data={this.state.lists}
           renderItem={this.renderItem}
-          refreshing={this.state.isLoading}
+          // refreshing={this.state.isLoading}
           // onRefresh={this.getPostList()}
           />
       </View>
-      
       <View style={styles.bottomView}>
         <Button
           style={styles.bottomButton}
@@ -202,7 +196,7 @@ class JauScreen extends React.Component {
           글쓰기
         </Button>
       </View>
-      </>
+    </View >
     );
   }
 };
