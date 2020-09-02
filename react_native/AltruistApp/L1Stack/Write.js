@@ -69,7 +69,7 @@ class GominWrite extends React.Component {
             formdata.append("post_anoymous_yn", post_anoymous_yn);
             formdata.append("brd_key", "b-a-1");
         await axios.post(
-            'http://10.0.2.2/api/board_write/write/b-a-1',
+            'http://dev.unyict.org/api/board_write/write/b-a-1',
             formdata
             )
         .then(response=>{
@@ -99,7 +99,7 @@ class GominWrite extends React.Component {
         formdata.append("csrf_test_name", '');
         
     
-        await axios.post('http://10.0.2.2/api/postact/filter_spam_keyword',formdata)
+        await axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {message,status}=response.data
             if(status=='500'){
@@ -200,13 +200,14 @@ class MarketWrite extends React.Component {
             deal_type: 2, // 0: 직거래, 1: 배송, 2: 둘다가능
             deal_status: 1, // 0: 판매완료, 1: 판매중
             images: [],
+            image:''
         }
     }
 
     submitPost = async() => {
 
         console.log(this.state);
-        const {post_title, post_content, post_location, deal_price, deal_type} = this.state;
+        const {post_title, post_content, post_location, deal_price, deal_type,images,image} = this.state;
 
         let formdata = new FormData();
             formdata.append("brd_key", 'b-a-2');
@@ -216,6 +217,15 @@ class MarketWrite extends React.Component {
             formdata.append("post_nickname", 'Edward');
             formdata.append("post_email", 'Edward@sogang.ac.kr');
             formdata.append("post_password", '0000');
+            formdata.append('post_file[]',
+                {
+                    uri:image.path,
+                    type:image.mime,
+                    name:'image.jpg',
+                }
+            )
+              
+            
             // formdata.append("deal_price", deal_price);
             // formdata.append("deal_type", deal_type);
             // formdata.append("deal_status", Data.deal_status);
@@ -227,18 +237,19 @@ class MarketWrite extends React.Component {
         .then(response=>{
             Alert.alert(
                 "게시글",
-                "게시글 작성 완료",
+                JSON.stringify(response.data),
                 [
                     { 
                         text: "OK", 
-                        onPress: ()=> {this.gobackfunc()}
+                        onPress: ()=> {}
                     }
                 ],
                 { cancelable: false }
             );
         })
         .catch(error=>{
-            alert('BYE:(')
+            console.log(error)
+            alert(JSON.stringify(error))
         })    
     }
     
@@ -277,7 +288,7 @@ class MarketWrite extends React.Component {
             cropping: true,
           }).then(image => {
             this.onSelectedImage(image);
-            console.log(image);
+          //  console.log(image);
           });
     }
 
@@ -288,26 +299,30 @@ class MarketWrite extends React.Component {
             includeExif: false,
         }).then(image => {
             image.map(item => this.onSelectedImage(item));
-            console.log(image);
+            //console.log(image);
         });
     }
 
     //불러온 사진의 정보를 this.state에 저장
     onSelectedImage(image) {
-        console.log(image);
+        //console.log(image);
         let newImages = this.state.images;
         const source = {uri: image.path};
         let item = {
             id: Date.now(),
             url: source,
+            mime:image.mime,
+            path:image.path,
             content: image.data
         };
+        console.log(item)
         newImages.push(item);
         this.setState({images: newImages})
+        this.setState({image: item})
     };
     
     renderImage(image) {
-        console.log(image);
+        //console.log(image);
         return (
             <View key={image.uri}>
                 <Image style={styles.market_RenderImage} source={image.url}/>
@@ -402,6 +417,7 @@ class MarketWrite extends React.Component {
                             />
                         </Layout>
                         <Button onPress={()=>this.submitPost()}>등 록</Button>
+                        <Button onPress={()=>console.log(this.state.image)}>콘솔</Button>
                     </Layout>
                 </ScrollView>
             </SafeAreaView>
