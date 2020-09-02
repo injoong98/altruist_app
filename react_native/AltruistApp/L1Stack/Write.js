@@ -889,11 +889,11 @@ class IlbanWrite extends React.Component{
        >글작성</Button>
    )
 
-   SelectItems(post_category){
+   SelectItems = (props) => {
         return(
             <Select
             style={{flex:1, width:10}}
-        //    value={this.props.post_category.bca_id}
+           // value={this.props.post_category.bca_id}
           //  selectedIndex={this.props.post_category.bca_id}
             //onSelect={(index)=>{this.setState({post_category:index})}}
             placeholder='게시판 선택'
@@ -901,7 +901,7 @@ class IlbanWrite extends React.Component{
             //onSelect={index => setSelectedIndex(index)}
             >
                 {/* <SelectItem title={evaProps => <Text {...evaProps}>{this.props.post_category.bca_value}</Text>} />  */}
-                <SelectItem title={evaProps => <Text {...evaProps}>option</Text>} /> 
+                {/* <SelectItem title={evaProps => <Text {...evaProps}>option</Text>} />  */}
             </Select>
         )
    }
@@ -925,7 +925,11 @@ class IlbanWrite extends React.Component{
                   
                    <View style={{flexDirection: 'row'}} >
                        {/* 카테고리 */}
-                       <this.SelectItems />
+                       {/* <this.SelectItems /> */}
+                        {/* <Select>
+                            <SelectItem><Text>HIcd</Text></SelectItem>
+                            <SelectItem><Text>HI</Text></SelectItem>
+                        </Select> */}
                        {/* 제목 */}
                        <Input style={{ flex:1, width:90}}
                        onChangeText = {post_title=>this.setState({post_title:post_title})}/>
