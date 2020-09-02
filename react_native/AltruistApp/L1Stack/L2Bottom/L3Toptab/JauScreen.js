@@ -19,10 +19,7 @@ function JauHeader(props){
       <View style={styles.itemHeaderTop}>
           {/*     text-overflow: ellipsis; */}
           <View>
-              <View>
-               <Text>{props.category}</Text>
-              </View>
-              <Text category='h4'>{props.title}
+              <Text category='h4'>[{props.category}]{props.title}
               </Text>
           </View>
           <Button
@@ -145,8 +142,11 @@ class JauScreen extends React.Component {
   renderCategory = ({item}) =>{
   
     return (
+    <View style={{flex:3}}>
     <View>
-      <Text>{item.bca_value}</Text>
+      <Text category='h4'> {item.bca_value} </Text>
+    </View>
+    
     </View>
     )
   }
@@ -155,7 +155,7 @@ class JauScreen extends React.Component {
     return (
     <>
       <View style={{flex:10}}>
-        <ScrollView text = {'하이'} horizontal={true} alwaysBounceHorizontal={true}>
+        <ScrollView horizontal={true} >
           <List
           horizontal={true}
           data={this.state.categorys}
