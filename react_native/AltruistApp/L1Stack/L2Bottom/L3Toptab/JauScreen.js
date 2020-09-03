@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { StyleSheet, View, Image, Dimensionsm, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Image, Dimensionsm, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Button, Card, List, Layout, Text,Icon, StyleService, Spinner, Divider} from '@ui-kitten/components'
 import { PlusIcon } from '../../../assets/icons/icons';
 import { getPostList } from "./extra/getPost";
@@ -103,16 +103,26 @@ class JauScreen extends React.Component {
     await axios.get(`http://10.0.2.2/api/board_post/lists/ilban`)
     .then( response =>{
       console.log(response)
-      if(response.data.view.list.board.category !== 0) {
-      
-      }
         this.setState({
           lists : response.data.view.list.data.list,
-          categorys : response.data.view.list.board.category[0],
           isLoading : false
         })
         console.log('list' + response.data.view.list.data.list)
-        console.log('cate' + response.data.view.list.board.category[0])
+    })
+    .catch((error)=>{
+        alert('error')
+    })
+  }
+
+  getCategory = async() =>{
+    await axios.get(`http://10.0.2.2/api/board_post/lists/ilban`)
+    .then( res =>{
+      console.log(res)
+        this.setState({
+          categorys : res.data.view.list.board.category[0],
+          isLoading : false
+        })
+        console.log('cate' + res.data.view.list.board.category[0])
     })
     .catch((error)=>{
         alert('error')
@@ -122,16 +132,17 @@ class JauScreen extends React.Component {
   //LIFECYCLE
   componentDidMount(){
     this.getPostList();
+    this.getCategory();
   } 
   
   renderItem = ({item, index}) => (
-    <View>
+    
+    <View style={{flex:1}}>
       {/* header */}
-      <View style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
+      <View style={{flexDirection:'row', justifyContent:'space-between'}}>
         {/*카테고리(이미지)/ 제목 / 공유*/}
         {/* */}
-        <View style={{display:'flex', flexDirection:'row'}}>
-          <Text>{`category`}</Text>
+        <View style={{flexDirection:'row'}}>
           <Text>{item.post_category}</Text>
           <Text>{item.post_title}</Text>
         </View>
@@ -163,40 +174,38 @@ class JauScreen extends React.Component {
     </View>
   );
   
-  renderCategory = ({item}) =>{
-  
-    return (
-        <Text category='h4'> {item.bca_value} </Text>
-      )  
-  }
+  renderCategory = ({item}) =>(
+    <Button category='h4'> {item.bca_value} </Button>
+  )  
 
   render(){
     return (
-    <View>
+    <>
       <View style={{flex:1}}>
         <ScrollView horizontal={true}>
           <List
-          horizontal={true}
-          data={this.state.categorys}
-          renderItem = {this.renderCategory}
+            horizontal={true}
+            data={this.state.categorys}
+            renderItem = {this.renderCategory}
           />
-        </ScrollView >
+        </ScrollView>
+      </View>
+      <SafeAreaView style={{flex:10,backgroundColor:"#ffffff"}}>
         <List
           // contentContainerStyle={styles.contentContainer}
           data={this.state.lists}
           renderItem={this.renderItem}
-          // refreshing={this.state.isLoading}
-          // onRefresh={this.getPostList()}
+          refreshing={this.state.isLoading}
+          onRefresh={this.getPostList}
           />
-      </View>
-      <View style={styles.bottomView}>
-        <Button
-          style={styles.bottomButton}
-          onPress={()=>{this.props.navigation.navigate('IlbanWrite')}}>
-          글쓰기
-        </Button>
-      </View>
-    </View >
+        <TouchableOpacity 
+            style={{position:'absolute', right:20,bottom:14}} 
+            onPress={()=>{this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})}} 
+        >
+            <WriteIcon />
+        </TouchableOpacity>
+      </SafeAreaView>
+    </>
     );
   }
 };
