@@ -849,6 +849,7 @@ class Board_write extends CB_Controller
 
 			$updatedata['post_device']	= ($this->cbconfig->get_device_type() === 'mobile') ? 'mobile' : 'desktop';
 		
+			$updatedata['post_anoymous_yn'] = $this->input->post('post_anoymous_yn', null, '');
 			$updatedata['post_location'] = $this->input->post('post_location', null, '');
 			$updatedata['alba_type'] = $this->input->post('alba_type', null, '');
 			$updatedata['alba_salary_type'] = $this->input->post('alba_salary_type', null, '');
@@ -2295,6 +2296,7 @@ class Board_write extends CB_Controller
 				}
 			}
 
+			$updatedata['post_anoymous_yn'] = $this->input->post('post_anoymous_yn', null, '');
 			
 			//알바천일국 컬럼
 			$metadata['post_location'] = $this->input->post('post_location', null, '');
