@@ -926,6 +926,17 @@ class AlbaContent extends React.Component {
     }
 }
 
+class IlbanContent extends Component {
+    render(){
+        return(
+            <View>
+                <Text>HI</Text>
+            </View>
+        )
+    }
+}
+
+
 const styles = StyleSheet.create({
     commentBlock: {
         flexDirection: 'row',
@@ -988,4 +999,4 @@ const styles = StyleSheet.create({
 });
 
 
-export {defaultContent, MarketContent, AlbaContent, GominContent}
+export {defaultContent, MarketContent, AlbaContent, GominContent, IlbanContent}
