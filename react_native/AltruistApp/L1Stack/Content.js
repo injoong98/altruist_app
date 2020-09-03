@@ -78,6 +78,7 @@ class GominContent extends React.Component{
         this.state={
             post:'',
             comment:'',
+            content:'',
             cmt_content:'',
             cmt_id:'',
             replying:false,
@@ -202,6 +203,19 @@ class GominContent extends React.Component{
                     <Text category='h3'>신고</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
+                    onPress={()=>{
+                        this.setState({popoverVisibel:false});
+                        this.props.navigation.navigate('GominWrite',
+                            {
+                                statefunction:this.statefunction,
+                                mode:'edit',
+                                post:this.state.post,
+                                content:this.state.content,
+                            })}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>수정</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
                     onPress={()=>{this.setState({popoverVisibel:false,deleteModalVisible:true})}}
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
                     <Text category='h3'>삭제</Text>
@@ -209,6 +223,10 @@ class GominContent extends React.Component{
             </View>
         </Popover>
     )
+    statefunction=(str)=>{
+        this.setState({isLoading:true});
+        this.componentDidMount()    
+    }
     postBlame = ()=>{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
@@ -321,10 +339,13 @@ class GominContent extends React.Component{
     getPostData = async (post_id)=>{
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post})
+            this.setState({post:response.data.view.post});
+            const regexf = /(<([^>]+)>)|&nbsp;/ig;
+            const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
+            this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert('error')
+            alert(JSON.stringify(error))
         })
     }
      onRefresh=()=>{
@@ -343,7 +364,6 @@ class GominContent extends React.Component{
         
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
-
         return (
             <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10}} >
                 <View style={{marginLeft:15,marginTop:10,marginBottom:13}}>

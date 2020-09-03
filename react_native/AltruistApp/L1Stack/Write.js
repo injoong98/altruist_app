@@ -51,16 +51,15 @@ class GominWrite extends React.Component {
         super(props);
         this.state={
             isLoading :true,
-            post_title:'title from avd',
-            post_content:'content from avd 익명,카테고리 1',
-            post_anoymous_yn:1,
+            post_title:this.props.route.params.mode=='edit' ? this.props.route.params.post.post_title:'',
+            post_content:this.props.route.params.mode=='edit' ? this.props.route.params.content:'',
+            post_anoymous_yn:this.props.route.params.mode=='edit' ? this.props.route.params.post.post_anoymous_yn:1,
             post_category:1,
-            checked:true
-            
+            checked:this.props.route.params.mode=='edit' ? this.props.route.params.post.post_anoymous_yn==0 ? false: true :true,
         }
     }
-    
     submitPost= async()=>{
+        const url = this.props.route.params.mode=='edit' ?'http://dev.unyict.org/api/board_write/modify' :'http://dev.unyict.org/api/board_write/write/b-a-1'
         const {post_title,post_content,post_anoymous_yn,post_category} =this.state
         let formdata = new FormData();
             formdata.append("post_title", post_title);
@@ -68,13 +67,20 @@ class GominWrite extends React.Component {
             formdata.append("post_category", post_category);
             formdata.append("post_anoymous_yn", post_anoymous_yn);
             formdata.append("brd_key", "b-a-1");
-        await axios.post(
-            'http://dev.unyict.org/api/board_write/write/b-a-1',
-            formdata
-            )
+        
+            this.props.route.params.mode=='edit' ?
+            formdata.append('post_id',this.props.route.params.post.post_id)            
+            :
+            null
+        
+        
+        await axios.post(url,formdata)
         .then(response=>{
             Alert.alert(
                 "게시글",
+                this.props.route.params.mode=='edit' ?
+                `"게시글 수정 완료"\n${JSON.stringify(response.data)}`
+                :
                 `"게시글 작성 완료"\n${JSON.stringify(response.data)}`,
                 [
                     { 
@@ -86,7 +92,7 @@ class GominWrite extends React.Component {
             );
         })
         .catch(error=>{
-            alert('BYE:(')
+            alert(JSON.stringify(error))
         })    
     
     }
@@ -107,7 +113,7 @@ class GominWrite extends React.Component {
             }else if(status=="200"){
                 Alert.alert(
                     "게시글",
-                    "게시글을 작성하시겠습니까?",
+                    this.props.route.params.mode=='edit' ?'게시글을 수정하시겠습니까?':"게시글을 작성하시겠습니까?",
                     [
                         { 
                             text: "작성", 
@@ -142,15 +148,15 @@ class GominWrite extends React.Component {
     )
     render(){
         const {navigation} = this.props;
-        const {post_title,post_category,post_anoymous_yn,post_content,checked} =this.state;
+        const {post_title,post_category,post_anoymous_yn,post_content,checked,content} =this.state;
         return(
 
             // <SafeAreaView style={{flex:1}}>
                 <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
                 <TopBarTune 
-                    text="이타주의자" 
+                    text="고민 작성" 
                     func={() =>{this.filterSpamKeyword()}} 
-                    right="upload"
+                    right={this.props.route.params.mode=='edit' ?'edit' : "upload"}
                     gbckfunc={()=>{navigation.goBack()}} 
                     gbckuse={true}
                 />
@@ -160,8 +166,10 @@ class GominWrite extends React.Component {
                             placeholder="제목"
                             onChangeText={nextValue => this.setState({post_title:nextValue})}
                             placeholderTextColor='#A897C2'
+                            value={post_title}
                         />
                         <TextInput
+                            value={post_content}
                             style={{ height:'80%',maxHeight:'50%',backgroundColor:'#ffffff',borderRadius:8.5, marginHorizontal:12,marginBottom:14,fontSize:18}}
                             placeholder="내용"
                             onChangeText={nextValue => this.setState({post_content:nextValue})}

@@ -1,7 +1,6 @@
 import React from 'react';
 import {View,StyleSheet,TouchableOpacity} from 'react-native';
-import {Text,Icon} from '@ui-kitten/components'
-import Bellsvg from '../assets/icons/bell.svg'
+import {Text,Icon,Button} from '@ui-kitten/components'
 import BellLargesvg from '../assets/icons/bell-large.svg'
 import Uploadsvg from '../assets/icons/upload.svg'
 import Backsvg from '../assets/icons/back-arrow-white.svg'
@@ -23,7 +22,7 @@ export class TopBarTune extends React.Component {
     }
 
     render(){
-        const bckclr = this.props.right =='upload'? '#f4f4f4': '#ffffff'
+        const bckclr = this.props.right =='upload'||this.props.right =='edit'? '#f4f4f4': '#ffffff'
         return(
             <View style={styles.container}>
                 <View 
@@ -47,6 +46,12 @@ export class TopBarTune extends React.Component {
                                     <Uploadsvg height={35} width={35}/>
                                 </TouchableOpacity>
                             :
+                            this.props.right =='edit' ?
+                                <Button onPress={this.props.func}>
+                                    수정
+                                </Button>
+                            :
+
                                 <TouchableOpacity onPress={this.props.func}>
                                     {/* <BellIcon style={styles.topicon}/> */}
                                     <BellLargesvg height={35} width={35}/>
