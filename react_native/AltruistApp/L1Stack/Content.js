@@ -7,7 +7,7 @@ import {ActionSheet, Root, Container} from 'native-base';
 import Slider from '../components/slider.component'
 import { Alert } from 'react-native';
 import {PostTime} from '../components/PostTime'
-
+import Confirm from '../components/confirm.component'
 import ReplyLsvg from '../assets/icons/arrow-bended-large.svg'
 import ReplySsvg from '../assets/icons/arrow-bended-small.svg'
 import MoreLsvg from '../assets/icons/dotdotdot-large.svg'
@@ -480,28 +480,13 @@ class GominContent extends React.Component{
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                 onBackdropPress={() => this.setState({replyModalVisible:false})}
             >
-                <View style ={{width:200,height:175,borderRadius:23,backgroundColor:'#ffffff'}}>
-                    <View style={{flex:3 ,justifyContent:'center',alignItems:'center'}}>
-                        <Text category='h1' style={{color:'#63579D',fontSize:13}}>
-                        대댓글을 작성하시겠습니까?
-                        </Text>   
-                    </View>
-                    <View style={{flex:1,display:'flex',flexDirection:'row',alignItems:'center'}}>
-                        <TouchableOpacity 
-                            onPress={() =>{this.setState({replying:true,replyModalVisible:false}); this.refs.commentInput.focus()}}
-                            style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{color:'#63579D',fontSize:13,fontWeight:'400'}}>예</Text>
-                        </TouchableOpacity>
-                        <View style={{borderWidth:1,height:'80%',borderColor:"#F0F0F0"}}></View>
-                        <TouchableOpacity 
-                            onPress={() => this.setState({replyModalVisible:false,cmt_id:''})}
-                            style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{fontWeight:'400',color:'#63579D',fontSize:13}}>아니요</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                </View>
-
+                <Confirm 
+                    confirmText="대댓글을 작성하시겠습니까?"
+                    frstText="예"
+                    OnFrstPress={() =>{this.setState({replying:true,replyModalVisible:false}); this.refs.commentInput.focus()}}
+                    scndText="아니오"
+                    OnScndPress={() => this.setState({replyModalVisible:false,cmt_id:''})}
+                />
             </Modal>
         </SafeAreaView>
          )
