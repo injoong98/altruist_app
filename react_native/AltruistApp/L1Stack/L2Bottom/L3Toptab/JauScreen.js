@@ -7,7 +7,7 @@ import axios from 'axios';
 import HTML from 'react-native-render-html';
 import { IGNORED_TAGS } from 'react-native-render-html/src/HTMLUtils';
 import {PostTime} from '../../../components/PostTime'
-
+import { WebView } from 'react-native-webview';
 
 const AltsIcon = (props) => <Icon {...props} name="star" />;
 const ShareIcon = (props) => <Icon {...props} name="share-outline" />;
@@ -102,7 +102,7 @@ class JauScreen extends React.Component {
   getPostList = async() =>{
     await axios.get(`http://10.0.2.2/api/board_post/lists/ilban`)
     .then( response =>{
-      console.log(response)
+      // console.log(response)
         this.setState({
           lists : response.data.view.list.data.list,
           isLoading : false
@@ -117,7 +117,7 @@ class JauScreen extends React.Component {
   getCategory = async() =>{
     await axios.get(`http://10.0.2.2/api/board_post/lists/ilban`)
     .then( res =>{
-      console.log(res)
+      // console.log(res)
         this.setState({
           categorys : res.data.view.list.board.category[0],
           isLoading : false
@@ -135,7 +135,7 @@ class JauScreen extends React.Component {
     this.getCategory();
   } 
   
-  renderItem = ({item, index}) => (
+ renderItem = ({item, index}) => (
     
     <View style={{flex:1}}>
       {/* header */}
@@ -149,12 +149,30 @@ class JauScreen extends React.Component {
         <Text>{`shareicon`}</Text>
       </View>
       {/* image */}
+      
       <View>
-        <Text>{item.post_content}</Text>
+     
+        {/* <WebView
+          originWhitelist={['*']}
+          source={{ html: item.post_content }} 
+          //html = {item.post_content}
+          />*/}
+          {/* <Text>{item.post_content}</Text> */}
+         {/* <WebView 
+         html ={() => (<Text>{item.post_content}</Text>)}
+         /> */}
+         {/* <WebView
+         source={{ html:item.post_content }}
+         style={{marginTop: 20}}
+       /> */}
         <View style={{flexDirection:'row'}}>
-          <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
-          <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
-          <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+        <WebView
+        // source={{ html: item.post_content }}
+        originWhitelist={['*']}
+        source={{ html: '<h1>Hello world</h1>' }}
+        // html = { item.post_content }
+        style={{height: 500 }}
+      /> 
         </View>
       </View>
       <View style={{flexDirection:'row', justifyContent:'space-between'}}>
@@ -180,7 +198,9 @@ class JauScreen extends React.Component {
 
   render(){
     return (
+      
     <>
+    
       <View style={{flex:1}}>
         <ScrollView horizontal={true}>
           <List
@@ -198,11 +218,12 @@ class JauScreen extends React.Component {
           refreshing={this.state.isLoading}
           onRefresh={this.getPostList}
           />
+          
         <TouchableOpacity 
             style={{position:'absolute', right:20,bottom:14}} 
             onPress={()=>{this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})}} 
         >
-            <WriteIcon />
+          <WriteIcon />
         </TouchableOpacity>
       </SafeAreaView>
     </>
