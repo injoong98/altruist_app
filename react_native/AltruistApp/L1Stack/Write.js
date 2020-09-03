@@ -145,7 +145,8 @@ class GominWrite extends React.Component {
         const {post_title,post_category,post_anoymous_yn,post_content,checked} =this.state;
         return(
 
-            <SafeAreaView style={{flex:1}}>
+            // <SafeAreaView style={{flex:1}}>
+                <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
                 <TopBarTune 
                     text="이타주의자" 
                     func={() =>{this.filterSpamKeyword()}} 
@@ -153,7 +154,6 @@ class GominWrite extends React.Component {
                     gbckfunc={()=>{navigation.goBack()}} 
                     gbckuse={true}
                 />
-                <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
                     {/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
                         <TextInput
                             style={{backgroundColor:'#ffffff',borderRadius:8.5, marginTop:18,marginHorizontal:12,marginBottom:14,fontSize:18}}
@@ -162,7 +162,7 @@ class GominWrite extends React.Component {
                             placeholderTextColor='#A897C2'
                         />
                         <TextInput
-                            style={{maxHeight:'120%', minHeight:'70%',backgroundColor:'#ffffff',borderRadius:8.5, marginHorizontal:12,marginBottom:14,fontSize:18}}
+                            style={{ height:'80%',maxHeight:'50%',backgroundColor:'#ffffff',borderRadius:8.5, marginHorizontal:12,marginBottom:14,fontSize:18}}
                             placeholder="내용"
                             onChangeText={nextValue => this.setState({post_content:nextValue})}
                             multiline={true}
@@ -181,7 +181,7 @@ class GominWrite extends React.Component {
                             </CheckBox>
                         </View>
                     </KeyboardAvoidingView>
-            </SafeAreaView>
+            // {/* </SafeAreaView> */}
     
         )
     }

@@ -7,6 +7,18 @@ import {ActionSheet, Root, Container} from 'native-base';
 import Slider from '../components/slider.component'
 import { Alert } from 'react-native';
 import {PostTime} from '../components/PostTime'
+
+import ReplyLsvg from '../assets/icons/arrow-bended-large.svg'
+import ReplySsvg from '../assets/icons/arrow-bended-small.svg'
+import MoreLsvg from '../assets/icons/dotdotdot-large.svg'
+import MoreSsvg from '../assets/icons/dotdotdot-small.svg'
+import Backsvg from '../assets/icons/back-arrow-color.svg'
+import Thumbsvg from '../assets/icons/thumb-up.svg'
+import UploadCirclesvg from '../assets/icons/upload-circle.svg'
+
+
+
+
 const BackIcon =  (props) =>(
     <Icon {...props} fill ="#63579D"name = "back-arrow" pack="alticons"/>
 )
@@ -70,9 +82,9 @@ class GominContent extends React.Component{
             cmt_id:'',
             replying:false,
             isLoading:true,
-            inputFocusing:false,
             refreshing:false,
             modalVisible:false,
+            replyModalVisible:false,
             popoverVisibel:false,
             
         }
@@ -167,12 +179,12 @@ class GominContent extends React.Component{
     )
 
     renderPostMore=()=>(
-        <TouchableOpacity style={{height:35,width:35}} onPress={()=>this.setState({popoverVisibel:true})}>
-            <MoreIcon />
+        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisibel:true})}>
+            <MoreLsvg height={24} width={24}/>
         </TouchableOpacity>
     )
     BackAction = () =>(
-        <TopNavigationAction icon={()=><BackIcon style={{width:35,height:35}}/>} onPress={() =>{this.props.navigation.goBack()}}/>
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack()}}/>
     )
     MoreAction = () =>(
         // <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{this.setState({modalVisible:true})}}/>
@@ -331,7 +343,7 @@ class GominContent extends React.Component{
         const post_remove_tags = post.post_content.replace(regex, '\n');
 
         return (
-            <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:20,marginBottom:10}} >
+            <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10}} >
                 <View style={{marginLeft:15,marginTop:10,marginBottom:13}}>
                     <View style={{display:"flex",flexDirection:'row'}}>
                         <StarIcon />
@@ -351,10 +363,10 @@ class GominContent extends React.Component{
                 </View>
                 <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
-                        <TouchableOpacity onPress={()=>this.postLike()} style={{flexDirection:'row',alignItems:"flex-end",justifyContent:'space-between'}}>
-                            <ThumbIcon style={{marginHorizontal:5}} />
-                            <Text>{post.post_like}</Text>
+                        <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
+                            <Thumbsvg/>
                         </TouchableOpacity>
+                        <Text>{post.post_like}</Text>
                         {/* <TouchableOpacity onPress={()=>alert("저장!")}>
                             <PlusIcon />
                             <Text>{post.scrap_count}</Text>
@@ -375,7 +387,7 @@ class GominContent extends React.Component{
         null
         :
         <View style={{position:'absolute',left:0,paddingLeft:25}}>
-            <BendedIcon />
+            <ReplyLsvg />
         </View> 
         }
         <View 
@@ -383,7 +395,7 @@ class GominContent extends React.Component{
                 borderRadius:8,
                 paddingRight:15,
                 marginRight:15,
-                paddingTop:10,
+                paddingVertical:10,
                 paddingLeft: 15,
                 marginLeft:item.cmt_reply==""?15:50,
                 backgroundColor:item.cmt_reply==""? item.cmt_id==this.state.cmt_id?'#EAB0B3': '#ffffff':'#f4f4f4'}}>
@@ -400,7 +412,7 @@ class GominContent extends React.Component{
                         <BlameIcon />
                     </TouchableOpacity> */}
                     <TouchableOpacity onPress={()=>this.setState({modalVisible:true})}>
-                        <MoreLightIcon style={{width:15,height:20}} />
+                        <MoreSsvg/>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -409,22 +421,22 @@ class GominContent extends React.Component{
             </View>
             <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                 {item.cmt_reply ==""?
-                <TouchableOpacity style= {{marginHorizontal:5}}onPress={()=>this.cmtReply(item.cmt_id)}>
-                    <BendedIcon />
+                <TouchableOpacity style= {{marginHorizontal:6}}onPress={()=>this.cmtReply(item.cmt_id)}>
+                    <ReplySsvg />
                 </TouchableOpacity>
                 :null
                 }
-                <TouchableOpacity style= {{marginHorizontal:5}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                    <ThumbIcon />
+                <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
+                    <Thumbsvg />
                 </TouchableOpacity>
-                <Text>{item.cmt_like}</Text>
+                    <Text>{item.cmt_like}</Text>
             </View>
         </View>
         </View>
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_content,post,comment,modalVisible,replying,inputFocusing} = this.state
+        const {cmt_content,post,comment,modalVisible,replying,replyModalVisible} = this.state
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -465,7 +477,7 @@ class GominContent extends React.Component{
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                 />
                 <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
-                    <UploadCircleIcon style={{width:'100%',height:'100%'}}/>
+                    <UploadCirclesvg width={50} height={50}/>
                 </TouchableOpacity>
                 
             </View>
@@ -479,6 +491,19 @@ class GominContent extends React.Component{
                         onPress={()=>{this.cmtBlameConfirm();this.setState({modalVisible:false})}}
                         style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
                         <Text category='h3'>댓글 신고하기</Text>
+                    </TouchableOpacity>
+                </View>   
+            </Modal>
+            <Modal
+                visible={replyModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({replyModalVisible:false})}
+            >
+                <View>
+                    <TouchableOpacity 
+                        onPress={()=>{this.cmtBlameConfirm();this.setState({replyModalVisible:false})}}
+                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
+                        <Text category='h3'>대댓글 달기</Text>
                     </TouchableOpacity>
                 </View>   
             </Modal>

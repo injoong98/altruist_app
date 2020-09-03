@@ -4,16 +4,11 @@ import { Icon,Layout,Button,Text,ListItem,List, Divider,Card,Spinner} from '@ui-
 import axios from 'axios';
 import {PostTime} from '../../../components/PostTime'
 
+import Heartsvg from '../../../assets/icons/heart.svg'
+import Viewsvg from '../../../assets/icons/view.svg'
+import Commentsvg from '../../../assets/icons/comment.svg'
+import Writesvg from '../../../assets/icons/write.svg'
 
-    const  ViewIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="view-filled" pack="alticons"/>
-    )
-    const CommentIcon = (props)=>(
-        <Icon  style={styles.icon} fill='#8F9BB3' name="message-circle" {...props}/>
-    )
-    const HeartIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="heart-filled" pack="alticons"/>
-    )
     const WriteIcon = (props)=>(
         <Icon style={styles.icon} fill='#8F9BB3' name="write" pack="alticons"/>
     )
@@ -71,15 +66,15 @@ class GominScreen extends React.Component {
                 </View>
                 <View style={styles.infocontainer}>
                     <View style={{alignItems:'center',}}>
-                        <HeartIcon />
+                        <Heartsvg />
                         <Text style={styles.infotext} category="s1">{item.post_like}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
-                        <CommentIcon style={{height:10,width:10}} />
+                        <Commentsvg />
                         <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
-                        <ViewIcon />
+                        <Viewsvg />
                         <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                     </View>
 
@@ -177,7 +172,7 @@ class GominScreen extends React.Component {
                     style={{position:'absolute', right:20,bottom:14}} 
                     onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} 
                 >
-                    <WriteIcon />
+                    <Writesvg />
                 </TouchableOpacity>
                 {/* <Button onPress={searchOpenClose ? this.searchClose : this.searchOpen}>
                     검색
