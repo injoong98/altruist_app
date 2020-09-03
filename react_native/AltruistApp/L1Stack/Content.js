@@ -295,6 +295,40 @@ class GominContent extends React.Component{
             { cancelable: false }
         );
     }
+    cmtDelete = (cmt_id) =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',cmt_id)
+        
+        Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+                alert(`${JSON.stringify(response.data.message)}`)
+                this.getCommentData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    cmtDeleteConfirm = (cmt_id) =>{
+        Alert.alert(
+            "댓글",
+            "이 댓글을 삭제하시겠습니까?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "OK", 
+                    onPress: ()=> this.cmtDelete(cmt_id)
+                }
+            ],
+            { cancelable: false }
+        );
+    }
     postLike = () =>{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
@@ -420,7 +454,7 @@ class GominContent extends React.Component{
                 paddingVertical:10,
                 paddingLeft: 15,
                 marginLeft:item.cmt_reply==""?15:50,
-                backgroundColor:item.cmt_reply==""? item.cmt_id==this.state.cmt_id?'#EAB0B3': '#ffffff':'#f4f4f4'}}>
+                backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
             <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <View style={{flexDirection:"row"}}>
                     <StarIcon />
@@ -433,7 +467,7 @@ class GominContent extends React.Component{
                     {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                         <BlameIcon />
                     </TouchableOpacity> */}
-                    <TouchableOpacity onPress={()=>this.setState({modalVisible:true})}>
+                    <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
                         <MoreSsvg/>
                     </TouchableOpacity>
                 </View>
@@ -458,7 +492,7 @@ class GominContent extends React.Component{
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_content,post,comment,modalVisible,replying,replyModalVisible,deleteModalVisible,spinnerModalVisible} = this.state
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,replyModalVisible,deleteModalVisible,spinnerModalVisible} = this.state
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -506,13 +540,18 @@ class GominContent extends React.Component{
             <Modal
                 visible={modalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({modalVisible:false})}
+                onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}
             >
                 <View>
                     <TouchableOpacity 
-                        onPress={()=>{this.cmtBlameConfirm();this.setState({modalVisible:false})}}
+                        onPress={()=>{this.cmtBlameConfirm(cmt_id);this.setState({modalVisible:false,cmt_id:''})}}
                         style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
-                        <Text category='h3'>댓글 신고하기</Text>
+                        <Text category='h3'>댓글 신고</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        onPress={()=>{this.cmtDeleteConfirm(cmt_id);this.setState({modalVisible:false,cmt_id:''})}}
+                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
+                        <Text category='h3'>댓글 삭제</Text>
                     </TouchableOpacity>
                 </View>   
             </Modal>
