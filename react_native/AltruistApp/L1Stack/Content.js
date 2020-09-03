@@ -94,25 +94,6 @@ class GominContent extends React.Component{
         this.refs.commentInput.blur()
         console.log(this.refs)
     }
-    cmtReply = (cmt_id) =>{
-        Alert.alert(
-            "댓글",
-            "대댓글을 작성하시겠습니까?",
-            [
-                {
-                    text: "취소",
-                    onPress: () => alert('취소했습니다.')
-                },
-                { 
-                    text: "확인", 
-                    onPress: ()=> {
-                    this.setState({replying:true,cmt_id:cmt_id})
-                    this.refs.commentInput.focus()}
-                }
-            ],
-            { cancelable: false }
-        );
-    }
     postscrap = async()=>{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
@@ -421,7 +402,7 @@ class GominContent extends React.Component{
             </View>
             <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                 {item.cmt_reply ==""?
-                <TouchableOpacity style= {{marginHorizontal:6}}onPress={()=>this.cmtReply(item.cmt_id)}>
+                <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replyModalVisible:true,cmt_id:item.cmt_id})}>
                     <ReplySsvg />
                 </TouchableOpacity>
                 :null
@@ -499,13 +480,28 @@ class GominContent extends React.Component{
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                 onBackdropPress={() => this.setState({replyModalVisible:false})}
             >
-                <View>
-                    <TouchableOpacity 
-                        onPress={()=>{this.cmtBlameConfirm();this.setState({replyModalVisible:false})}}
-                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
-                        <Text category='h3'>대댓글 달기</Text>
-                    </TouchableOpacity>
-                </View>   
+                <View style ={{width:200,height:175,borderRadius:23,backgroundColor:'#ffffff'}}>
+                    <View style={{flex:3 ,justifyContent:'center',alignItems:'center'}}>
+                        <Text category='h1' style={{color:'#63579D',fontSize:13}}>
+                        대댓글을 작성하시겠습니까?
+                        </Text>   
+                    </View>
+                    <View style={{flex:1,display:'flex',flexDirection:'row',alignItems:'center'}}>
+                        <TouchableOpacity 
+                            onPress={() =>{this.setState({replying:true,replyModalVisible:false}); this.refs.commentInput.focus()}}
+                            style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                            <Text style={{color:'#63579D',fontSize:13,fontWeight:'400'}}>예</Text>
+                        </TouchableOpacity>
+                        <View style={{borderWidth:1,height:'80%',borderColor:"#F0F0F0"}}></View>
+                        <TouchableOpacity 
+                            onPress={() => this.setState({replyModalVisible:false,cmt_id:''})}
+                            style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                            <Text style={{fontWeight:'400',color:'#63579D',fontSize:13}}>아니요</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                </View>
+
             </Modal>
         </SafeAreaView>
          )
