@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
-import { StyleSheet, View, Image, Dimensionsm, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import { Button, Card, List, Layout, Text,Icon, StyleService, Spinner, Divider} from '@ui-kitten/components'
+import { StyleSheet, View, Image, Dimensions, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Button, Card, List, Layout, Text, Icon, StyleService, Spinner, Divider} from '@ui-kitten/components'
 import { PlusIcon } from '../../../assets/icons/icons';
 import { getPostList } from "./extra/getPost";
 import axios from 'axios';
-import HTML from 'react-native-render-html';
+import {HTML, HTMLView} from 'react-native-render-html';
 import { IGNORED_TAGS } from 'react-native-render-html/src/HTMLUtils';
 import {PostTime} from '../../../components/PostTime'
 import { WebView } from 'react-native-webview';
@@ -26,67 +26,6 @@ const WriteIcon = (props)=>(
   <Icon style={styles.icon} fill='#8F9BB3' name="write" pack="alticons"/>
 )
 
-
-function JauHeader(props){
-  return(
-    <View>
-      {/* 카테고리, 제목, 작성자, 시간, 공유 */}
-      <View style={styles.itemHeaderTop}>
-          {/*     text-overflow: ellipsis; */}
-          <View>
-              {/* <Text category='h4'>[{props.category}]{props.title}
-              </Text> */}
-          </View>
-          <Button
-                  style={styles.iconButton}
-                  appearance='ghost'
-                  status='basic'
-                  accessoryLeft={ShareIcon} 
-                  />
-      </View>
-      <View style={styles.itemHeaderBottom}>
-          <Text category='s2'>{props.nickname}</Text>
-          <Text category='s2'> | {props.datetime}</Text>
-          <Text category='s2'> | {props.hit}</Text>
-      </View>
-  </View>
-  )
-}
-
-function JauFooter(onDetailButtonPress) {
-  return (
-    <View style={styles.itemFooter}>
-          <View style={styles.itemReactionsContainer}>
-              <Button
-                  style={styles.iconButton}
-                  appearance='ghost'
-                  status='basic'
-                  accessoryLeft={HeartIcon} />
-              <Button
-                  style={styles.iconButton}
-                  appearance='ghost'
-                  status='danger'
-                  accessoryLeft={AltsIcon} />
-          </View>
-          {/* <Button
-              style={styles.itemAddButton}
-              appearance='ghost'
-              onPress={onDetailButtonPress}
-              accessoryLeft={ArrowIcon}>
-          </Button> */}
-      </View>
-  );
-}
-
-
-function JauCard(props){
-  return (
-    <Card header=  {() => JauHeader(props)}
-    footer={() => JauFooter()}>
-    </Card>
-  );
-}
-
 class JauScreen extends React.Component {
 
   constructor(props){
@@ -94,10 +33,14 @@ class JauScreen extends React.Component {
     this.state={
       isLoading : true,
       lists : '',
+      post_content : '',
       image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
       categorys: ''
     }
   }
+
+  ignoredTags = [ ...IGNORED_TAGS, 'img']
+
 
   getPostList = async() =>{
     await axios.get(`http://10.0.2.2/api/board_post/lists/ilban`)
@@ -105,6 +48,7 @@ class JauScreen extends React.Component {
       // console.log(response)
         this.setState({
           lists : response.data.view.list.data.list,
+          post_content : response.data.view.list.data.list.post_content,
           isLoading : false
         })
         console.log('list' + response.data.view.list.data.list)
@@ -134,48 +78,40 @@ class JauScreen extends React.Component {
     this.getPostList();
     this.getCategory();
   } 
-  
+
+
+
  renderItem = ({item, index}) => (
-    
     <View style={{flex:1}}>
       {/* header */}
-      <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+      <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
         {/*카테고리(이미지)/ 제목 / 공유*/}
         {/* */}
         <View style={{flexDirection:'row'}}>
           <Text>{item.post_category}</Text>
           <Text>{item.post_title}</Text>
         </View>
-        <Text>{`shareicon`}</Text>
+          <Text>{`shareIcon`}</Text>
+          <ShareIcon/>
       </View>
-      {/* image */}
-      
-      <View>
-     
-        {/* <WebView
-          originWhitelist={['*']}
-          source={{ html: item.post_content }} 
-          //html = {item.post_content}
-          />*/}
-          {/* <Text>{item.post_content}</Text> */}
-         {/* <WebView 
-         html ={() => (<Text>{item.post_content}</Text>)}
-         /> */}
-         {/* <WebView
-         source={{ html:item.post_content }}
-         style={{marginTop: 20}}
-       /> */}
+      <View style={{flex:2}}>
+        {/* content */}
+        <View>
+        <HTMLView
+          html = {this.state.post_content}
+          ignoredTags ={this.ignoredTags}
+          renderers = {this.renderers}
+
+          /> 
+          <WebView
+          
+          />  
+        </View>
         <View style={{flexDirection:'row'}}>
-        <WebView
-        // source={{ html: item.post_content }}
-        originWhitelist={['*']}
-        source={{ html: '<h1>Hello world</h1>' }}
-        // html = { item.post_content }
-        style={{height: 500 }}
-      /> 
+          <Image source={{uri:'http://10.0.2.2'+this.state.image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
         </View>
       </View>
-      <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+      <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
         <View style={{flexDirection:'row'}}>
           <Text>{item.display_name}</Text> 
           <PostTime datetime = {item.post_datetime} />
@@ -190,17 +126,13 @@ class JauScreen extends React.Component {
         </View>
       </View>
     </View>
-  );
+ )
   
-  renderCategory = ({item}) =>(
-    <Button category='h4'> {item.bca_value} </Button>
-  )  
+  renderCategory = ({item}) =>(<Button category='h4'> {item.bca_value} </Button>)  
 
   render(){
     return (
-      
     <>
-    
       <View style={{flex:1}}>
         <ScrollView horizontal={true}>
           <List
