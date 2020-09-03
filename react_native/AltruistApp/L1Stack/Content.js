@@ -85,9 +85,25 @@ class GominContent extends React.Component{
             refreshing:false,
             modalVisible:false,
             replyModalVisible:false,
+            deleteModalVisible:false,
+            spinnerModalVisible:false,
             popoverVisibel:false,
             
         }
+    }
+    postDelete = async () => {
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        .then(res=>{
+            this.setState({spinnerModalVisible:false})
+            this.props.navigation.goBack();
+            this.props.route.params.OnGoback();
+            alert(JSON.stringify(res.data))
+        })
+        .catch(err=>{
+            alert(JSON.stringify(err))
+        })
     }
     commentWrite= ()=>{
         this.setState({replying:false,cmt_id:''})
@@ -183,7 +199,12 @@ class GominContent extends React.Component{
                 <TouchableOpacity 
                     onPress={()=>{this.postBlameConfirm();this.setState({popoverVisibel:false})}}
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>신고하기</Text>
+                    <Text category='h3'>신고</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{this.setState({popoverVisibel:false,deleteModalVisible:true})}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>삭제</Text>
                 </TouchableOpacity>
             </View>
         </Popover>
@@ -417,7 +438,7 @@ class GominContent extends React.Component{
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_content,post,comment,modalVisible,replying,replyModalVisible} = this.state
+        const {cmt_content,post,comment,modalVisible,replying,replyModalVisible,deleteModalVisible,spinnerModalVisible} = this.state
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -488,6 +509,26 @@ class GominContent extends React.Component{
                     OnScndPress={() => this.setState({replyModalVisible:false,cmt_id:''})}
                 />
             </Modal>
+            <Modal
+                visible={deleteModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({deleteModalVisible:false})}
+            >
+                <Confirm 
+                    confirmText="게시글을 삭제하시겠습니까?"
+                    frstText="예"
+                    OnFrstPress={() =>{this.setState({deleteModalVisible:false,spinnerModalVisible:true});this.postDelete()}}
+                    scndText="아니오"
+                    OnScndPress={() => this.setState({deleteModalVisible:false})}
+                />
+            </Modal>
+            <Modal
+                visible={spinnerModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
+            >
+                <Spinner size='giant'/>
+            </Modal>
+            
         </SafeAreaView>
          )
      }
