@@ -5,16 +5,6 @@ import BellLargesvg from '../assets/icons/bell-large.svg'
 import Uploadsvg from '../assets/icons/upload.svg'
 import Backsvg from '../assets/icons/back-arrow-white.svg'
 
-const BellIcon =(props)=> (
-    <Icon {...props} fill='#B09BDE' name="bell" pack="alticons"/>
-)
-const BackIcon =(props)=> (
-    <Icon {...props} fill='#ffffff' name="arrow-ios-back-outline"/>
-)
-const UploadIcon =(props)=> (
-    <Icon {...props} fill='#B09BDE' name="upload" pack="alticons"/>
-)
-
 export class TopBarTune extends React.Component {
     constructor(props){
         super(props)
