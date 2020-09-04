@@ -927,7 +927,7 @@ class IlbanWrite extends React.Component{
    //end: header
    render(){
        const {post_category} = this.state
-    console.log(`ㅇ라ㅣㅁㄴㅇㄹ`+this.state.post_category)
+    console.log(`ㅇ라ㅣㅁㄴㅇㄹ` + this.state.post_category)
        return(
            <Root>
            <SafeAreaView style={{flex:4}}>
