@@ -1,19 +1,17 @@
 import React from 'react';
-import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity,Animated} from 'react-native';
+import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity,Animated,YellowBox} from 'react-native';
 import { Icon,Layout,Button,Text,ListItem,List, Divider,Card,Spinner} from '@ui-kitten/components';
 import axios from 'axios';
 import {PostTime} from '../../../components/PostTime'
 
+import Heartsvg from '../../../assets/icons/heart.svg'
+import Viewsvg from '../../../assets/icons/view.svg'
+import Commentsvg from '../../../assets/icons/comment.svg'
+import Writesvg from '../../../assets/icons/write.svg'
 
-    const  ViewIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="view-filled" pack="alticons"/>
-    )
-    const CommentIcon = (props)=>(
-        <Icon  style={styles.icon} fill='#8F9BB3' name="message-circle" {...props}/>
-    )
-    const HeartIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="heart-filled" pack="alticons"/>
-    )
+YellowBox.ignoreWarnings([
+  'Non-serializable values were found in the navigation state',
+]);
     const WriteIcon = (props)=>(
         <Icon style={styles.icon} fill='#8F9BB3' name="write" pack="alticons"/>
     )
@@ -59,7 +57,7 @@ class GominScreen extends React.Component {
         const post_remove_tags = item.post_content.replace(regex, '');
         
         return(
-        <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{title:`${index+1}th post_id=${item.post_id}`,post_id:item.post_id})}}>
+        <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}}>
             <View>
                 <Text style ={styles.headtext}category="h4" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
                 <Text style={styles.subtext}category="s2" numberOfLines={1}>{post_remove_tags}</Text>
@@ -71,15 +69,15 @@ class GominScreen extends React.Component {
                 </View>
                 <View style={styles.infocontainer}>
                     <View style={{alignItems:'center',}}>
-                        <HeartIcon />
+                        <Heartsvg />
                         <Text style={styles.infotext} category="s1">{item.post_like}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
-                        <CommentIcon style={{height:10,width:10}} />
+                        <Commentsvg />
                         <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
-                        <ViewIcon />
+                        <Viewsvg />
                         <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                     </View>
 
@@ -140,6 +138,7 @@ class GominScreen extends React.Component {
         this.setState({isLoading:true});
         this.componentDidMount()    
     }
+    
     load_more_data = () => {
         if(!this.state.isNoMoreData){
             this.setState({
@@ -177,7 +176,7 @@ class GominScreen extends React.Component {
                     style={{position:'absolute', right:20,bottom:14}} 
                     onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} 
                 >
-                    <WriteIcon />
+                    <Writesvg />
                 </TouchableOpacity>
                 {/* <Button onPress={searchOpenClose ? this.searchClose : this.searchOpen}>
                     검색

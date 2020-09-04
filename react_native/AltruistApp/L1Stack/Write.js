@@ -51,16 +51,15 @@ class GominWrite extends React.Component {
         super(props);
         this.state={
             isLoading :true,
-            post_title:'title from avd',
-            post_content:'content from avd 익명,카테고리 1',
-            post_anoymous_yn:1,
+            post_title:this.props.route.params.mode=='edit' ? this.props.route.params.post.post_title:'',
+            post_content:this.props.route.params.mode=='edit' ? this.props.route.params.content:'',
+            post_anoymous_yn:this.props.route.params.mode=='edit' ? this.props.route.params.post.post_anoymous_yn:1,
             post_category:1,
-            checked:true
-            
+            checked:this.props.route.params.mode=='edit' ? this.props.route.params.post.post_anoymous_yn==0 ? false: true :true,
         }
     }
-    
     submitPost= async()=>{
+        const url = this.props.route.params.mode=='edit' ?'http://dev.unyict.org/api/board_write/modify' :'http://dev.unyict.org/api/board_write/write/b-a-1'
         const {post_title,post_content,post_anoymous_yn,post_category} =this.state
         let formdata = new FormData();
             formdata.append("post_title", post_title);
@@ -68,13 +67,20 @@ class GominWrite extends React.Component {
             formdata.append("post_category", post_category);
             formdata.append("post_anoymous_yn", post_anoymous_yn);
             formdata.append("brd_key", "b-a-1");
-        await axios.post(
-            'http://dev.unyict.org/api/board_write/write/b-a-1',
-            formdata
-            )
+        
+            this.props.route.params.mode=='edit' ?
+            formdata.append('post_id',this.props.route.params.post.post_id)            
+            :
+            null
+        
+        
+        await axios.post(url,formdata)
         .then(response=>{
             Alert.alert(
                 "게시글",
+                this.props.route.params.mode=='edit' ?
+                `"게시글 수정 완료"\n${JSON.stringify(response.data)}`
+                :
                 `"게시글 작성 완료"\n${JSON.stringify(response.data)}`,
                 [
                     { 
@@ -86,7 +92,7 @@ class GominWrite extends React.Component {
             );
         })
         .catch(error=>{
-            alert('BYE:(')
+            alert(JSON.stringify(error))
         })    
     
     }
@@ -107,7 +113,7 @@ class GominWrite extends React.Component {
             }else if(status=="200"){
                 Alert.alert(
                     "게시글",
-                    "게시글을 작성하시겠습니까?",
+                    this.props.route.params.mode=='edit' ?'게시글을 수정하시겠습니까?':"게시글을 작성하시겠습니까?",
                     [
                         { 
                             text: "작성", 
@@ -142,27 +148,29 @@ class GominWrite extends React.Component {
     )
     render(){
         const {navigation} = this.props;
-        const {post_title,post_category,post_anoymous_yn,post_content,checked} =this.state;
+        const {post_title,post_category,post_anoymous_yn,post_content,checked,content} =this.state;
         return(
 
-            <SafeAreaView style={{flex:1}}>
+            // <SafeAreaView style={{flex:1}}>
+                <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
                 <TopBarTune 
-                    text="이타주의자" 
+                    text="고민 작성" 
                     func={() =>{this.filterSpamKeyword()}} 
-                    right="upload"
+                    right={this.props.route.params.mode=='edit' ?'edit' : "upload"}
                     gbckfunc={()=>{navigation.goBack()}} 
                     gbckuse={true}
                 />
-                <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
                     {/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
                         <TextInput
                             style={{backgroundColor:'#ffffff',borderRadius:8.5, marginTop:18,marginHorizontal:12,marginBottom:14,fontSize:18}}
                             placeholder="제목"
                             onChangeText={nextValue => this.setState({post_title:nextValue})}
                             placeholderTextColor='#A897C2'
+                            value={post_title}
                         />
                         <TextInput
-                            style={{maxHeight:'120%', minHeight:'70%',backgroundColor:'#ffffff',borderRadius:8.5, marginHorizontal:12,marginBottom:14,fontSize:18}}
+                            value={post_content}
+                            style={{ height:'80%',maxHeight:'50%',backgroundColor:'#ffffff',borderRadius:8.5, marginHorizontal:12,marginBottom:14,fontSize:18}}
                             placeholder="내용"
                             onChangeText={nextValue => this.setState({post_content:nextValue})}
                             multiline={true}
@@ -181,7 +189,7 @@ class GominWrite extends React.Component {
                             </CheckBox>
                         </View>
                     </KeyboardAvoidingView>
-            </SafeAreaView>
+            // {/* </SafeAreaView> */}
     
         )
     }
@@ -442,11 +450,12 @@ class AlbaWrite extends React.Component{
             alba_type : 0,
             alba_salary_type : new IndexPath(0),
             alba_salary : '',
-            post_image : null,
+            post_image : [],
             imagesource : {},
-            images : null,
+            images : [],
             isTipVisible:false,
             isFollowUp:false,
+            image:''
         }
     }
 
@@ -470,7 +479,7 @@ class AlbaWrite extends React.Component{
     }
     submit_alba_post = async() => {
         console.log(this.state);
-        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary} = this.state;
+        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary,images} = this.state;
         let formdata = new FormData();
         formdata.append("brd_key", 'b-a-3');
         formdata.append("post_title", post_title);
@@ -483,7 +492,15 @@ class AlbaWrite extends React.Component{
         formdata.append("alba_type", alba_type);
         formdata.append("alba_salary_type", alba_salary_type.row);
         formdata.append("alba_salary", alba_salary);
-        
+        images.map(item=>{
+            formdata.append('post_file[]',
+                {
+                    uri:item.path,
+                    type:item.mime,
+                    name:'image.jpg',
+                }
+            )
+        })
         // post_image.forEach(element => {
         //     console.log(element);
         //     formdata.append("file", element);
@@ -573,6 +590,33 @@ class AlbaWrite extends React.Component{
     pickMultiple() {
         ImagePicker.openPicker({
             multiple: true,
+          //  includeExif: false,
+        }).then(image => {
+            image.map(item => this.onSelectedImage(item));
+            //console.log(image);
+        });
+    }
+
+      //불러온 사진의 정보를 this.state에 저장
+      onSelectedImage(image) {
+        //console.log(image);
+        let newImages = this.state.images;
+        const source = {uri: image.path};
+        let item = {
+            id: Date.now(),
+            url: source,
+            mime:image.mime,
+            path:image.path,
+            content: image.data
+        };
+        console.log(item)
+        newImages.push(item);
+        this.setState({images: newImages})
+        this.setState({image: item})
+    };
+    /* pickMultiple() {
+        ImagePicker.openPicker({
+            multiple: true,
             // includeExif: true,
         }).then(images => {
             this.setState({
@@ -582,12 +626,19 @@ class AlbaWrite extends React.Component{
                 })
             });
         }).catch(e => console.log(e));
-    }
+    } */
 
-    renderImage(image) {
+   /*  renderImage(image) {
         return <Image style={{width: 150, height: 150, resizeMode: 'contain', borderWidth: 0.5, margin : 5}} source={image}/>
+    } */
+    renderImage(image) {
+        //console.log(image);
+        return (
+            <View key={image.uri}>
+                <Image style={styles.market_RenderImage} source={image.url}/>
+            </View>
+        )
     }
-
     renderAsset(image) {
         if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
             return this.renderVideo(image);
@@ -700,7 +751,7 @@ class AlbaWrite extends React.Component{
                                 onPress={()=>this.pickMultiple()}/>
                         </View>
                         <ScrollView horizontal style={{height : 150}}>
-                            {this.state.post_image ? this.state.post_image.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
+                            {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
                         </ScrollView>
                     </Layout>
                 </ScrollView>
