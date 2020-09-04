@@ -139,7 +139,7 @@ class GominContent extends React.Component{
             if(status=='200'){
                 alert(`성공 : ${message}`);
                 Keyboard.dismiss();
-                this.setState({cmt_content:''});
+                this.setState({cmt_content:'',relpying:false,cmt_id:''});
                 this.getCommentData(post.post_id);
                 this.refs.pstcmtlist.scrollToEnd();
             }else if(status=="500"){
