@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { StyleSheet, View, Image, Dimensions, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Root, StyleSheet, View, Image, Dimensions, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Button, Card, List, Layout, Text, Icon, StyleService, Spinner, Divider} from '@ui-kitten/components'
 import { PlusIcon } from '../../../assets/icons/icons';
 import { getPostList } from "./extra/getPost";
@@ -82,9 +82,9 @@ class JauScreen extends React.Component {
 
 
  renderItem = ({item, index}) => (
-    <View style={{flex:1}}>
+    <View style={styles.itembox}>
       {/* header */}
-      <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
+      <View style={{flex:1, flexDirection:'row', justifyContent:'space-between', maringLeft:10, marginRight:10}}>
         {/*카테고리(이미지)/ 제목 / 공유*/}
         {/* */}
         <View style={{flexDirection:'row'}}>
@@ -100,7 +100,8 @@ class JauScreen extends React.Component {
           ignoredTags = {this.ignoredTags}
           /> */}
         <View style={{flexDirection:'row'}}>
-          <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+          <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} 
+          style={{width:100,height:100, }}/>
         </View>
       </View>
       <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
@@ -125,8 +126,8 @@ class JauScreen extends React.Component {
   render(){
     return (
     <>
-      <View style={{flex:1}}>
-        <ScrollView horizontal={true}>
+      <View style={{flex:2}}>
+        <ScrollView style ={styles.category} horizontal={true}>
           <List
             horizontal={true}
             data={this.state.categorys}
@@ -134,7 +135,7 @@ class JauScreen extends React.Component {
           />
         </ScrollView>
       </View>
-      <SafeAreaView style={{flex:10,backgroundColor:"#ffffff"}}>
+      <SafeAreaView style={{flex:11,backgroundColor:"#ffffff"}}>
         <List
           // contentContainerStyle={styles.contentContainer}
           data={this.state.lists}
@@ -157,8 +158,12 @@ class JauScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
+  
   renderers: {
 
+  },
+  root:{
+    backgroundColor : '#FFFFFF'
   },
   list: {
       flex: 1,
@@ -213,6 +218,35 @@ const styles = StyleSheet.create({
     color:'#141552',
     fontSize:9
   },
+  //ita geasipan
+    itembox :{
+      flex: 1,
+      backgroundColor: '#F4F4F4',
+      borderTopRightRadius : 20,
+      borderTopLeftRadius : 20,
+      borderBottomRightRadius : 20 ,
+      borderBottomLeftRadius : 20 ,
+      marginLeft:20,
+      marginRight:20,
+      paddingTop: 10 ,
+      paddingEnd: 10 ,
+      paddingBottom: 10 ,
+      borderWidth:5
+    },
+    itemContent : {
+      marginTop:10,
+      marginBottom:10
+    },
+    category : {
+      paddingTop: 10 ,
+      paddingBottom:10
+
+    }
   })
 
 export {JauScreen} ;
+
+
+
+
+
