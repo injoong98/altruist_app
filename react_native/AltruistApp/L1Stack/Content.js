@@ -405,7 +405,15 @@ class GominContent extends React.Component{
                         <StarIcon />
                         <View>
                             <Text>{post.display_name}</Text>
-                            <PostTime datetime={post.post_datetime}/>
+                            <View style={{display:"flex",flexDirection:'row'}}>
+                                <PostTime datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
+                                {
+                                    post.post_datetime ==post.post_updated_datetime?
+                                    null
+                                    :
+                                    <Text category="s2"> 수정됨</Text>
+                                }
+                            </View>
                         </View>
                     </View>
                 </View>
@@ -473,7 +481,7 @@ class GominContent extends React.Component{
                 </View>
             </View>
             <View style={{padding:5}}>
-                <Text category="s1">{item.content}</Text>
+                <Text category="s1">{item.cmt_content}</Text>
             </View>
             <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                 {item.cmt_reply ==""?
