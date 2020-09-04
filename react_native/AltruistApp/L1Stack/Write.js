@@ -450,11 +450,12 @@ class AlbaWrite extends React.Component{
             alba_type : 0,
             alba_salary_type : new IndexPath(0),
             alba_salary : '',
-            post_image : null,
+            post_image : [],
             imagesource : {},
-            images : null,
+            images : [],
             isTipVisible:false,
             isFollowUp:false,
+            image:''
         }
     }
 
@@ -478,7 +479,7 @@ class AlbaWrite extends React.Component{
     }
     submit_alba_post = async() => {
         console.log(this.state);
-        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary} = this.state;
+        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary,images} = this.state;
         let formdata = new FormData();
         formdata.append("brd_key", 'b-a-3');
         formdata.append("post_title", post_title);
@@ -491,7 +492,15 @@ class AlbaWrite extends React.Component{
         formdata.append("alba_type", alba_type);
         formdata.append("alba_salary_type", alba_salary_type.row);
         formdata.append("alba_salary", alba_salary);
-        
+        images.map(item=>{
+            formdata.append('post_file[]',
+                {
+                    uri:item.path,
+                    type:item.mime,
+                    name:'image.jpg',
+                }
+            )
+        })
         // post_image.forEach(element => {
         //     console.log(element);
         //     formdata.append("file", element);
@@ -581,6 +590,33 @@ class AlbaWrite extends React.Component{
     pickMultiple() {
         ImagePicker.openPicker({
             multiple: true,
+          //  includeExif: false,
+        }).then(image => {
+            image.map(item => this.onSelectedImage(item));
+            //console.log(image);
+        });
+    }
+
+      //불러온 사진의 정보를 this.state에 저장
+      onSelectedImage(image) {
+        //console.log(image);
+        let newImages = this.state.images;
+        const source = {uri: image.path};
+        let item = {
+            id: Date.now(),
+            url: source,
+            mime:image.mime,
+            path:image.path,
+            content: image.data
+        };
+        console.log(item)
+        newImages.push(item);
+        this.setState({images: newImages})
+        this.setState({image: item})
+    };
+    /* pickMultiple() {
+        ImagePicker.openPicker({
+            multiple: true,
             // includeExif: true,
         }).then(images => {
             this.setState({
@@ -590,12 +626,19 @@ class AlbaWrite extends React.Component{
                 })
             });
         }).catch(e => console.log(e));
-    }
+    } */
 
-    renderImage(image) {
+   /*  renderImage(image) {
         return <Image style={{width: 150, height: 150, resizeMode: 'contain', borderWidth: 0.5, margin : 5}} source={image}/>
+    } */
+    renderImage(image) {
+        //console.log(image);
+        return (
+            <View key={image.uri}>
+                <Image style={styles.market_RenderImage} source={image.url}/>
+            </View>
+        )
     }
-
     renderAsset(image) {
         if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
             return this.renderVideo(image);
@@ -708,7 +751,7 @@ class AlbaWrite extends React.Component{
                                 onPress={()=>this.pickMultiple()}/>
                         </View>
                         <ScrollView horizontal style={{height : 150}}>
-                            {this.state.post_image ? this.state.post_image.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
+                            {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
                         </ScrollView>
                     </Layout>
                 </ScrollView>
