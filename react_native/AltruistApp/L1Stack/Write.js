@@ -809,7 +809,7 @@ class IlbanWrite extends React.Component{
     this.cleanupImages();
     const {navigation,route} = this.props;
     navigation.goBack();
-    route.params.statefunction();
+    // route.params.statefunction();
     }
     
     cleanupImages() {
@@ -930,12 +930,12 @@ class IlbanWrite extends React.Component{
     console.log(`ㅇ라ㅣㅁㄴㅇㄹ`+this.state.post_category)
        return(
            <Root>
-           <SafeAreaView style={{flex:1}}>
-               <TopNavigation title="일반게시판" alignment="center" accessoryLeft={this.BackAction} 
+           <SafeAreaView style={{flex:4}}>
+               <TopNavigation title="이타게시판" alignment="center" accessoryLeft={this.BackAction} 
                accessoryRight={this.SubmitButtom} 
                /> 
-                   <Divider />
-                  
+                <Divider />
+                <View style={{flex:4}}>
                    <View style={{flexDirection: 'row'}} >
                        {/* 카테고리 */}
                        {/* <this.SelectItems /> */}
@@ -961,20 +961,19 @@ class IlbanWrite extends React.Component{
                    </View>
                    <Divider />
                    {/* <View style={{flex:1, justifyContent: "center"}}> */}
-                   
                        {/* 사진 */}
-                       <Layout style={styles.container}>
-                           <Text>사진</Text>
-                           <ScrollView horizontal={true} style={styles.input}>
-                               <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
-                                   <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
-                               </TouchableOpacity>
-                               {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
-                           </ScrollView>                                   
-                       </Layout>
-                   {/* </View>    */}
+                    <Layout>
+                        <Text>사진</Text>
+                        <ScrollView horizontal={true} style={styles.input}>
+                            <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
+                                <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                            </TouchableOpacity>
+                            {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
+                        </ScrollView>                                   
+                    </Layout>
+                </View>
            </SafeAreaView>
-           </Root>
+        </Root>
        )
    }
 }
