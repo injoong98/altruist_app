@@ -89,7 +89,7 @@ class AltQueType extends React.Component{
                     <TouchableOpacity style={{flex:1,backgroundColor:'#A7D4DE',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{navigation.navigate('AltList');}}>
                         <Text category ="h2" style={{fontSize:30}}>1대1 질문하기</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{flex:1,backgroundColor:'#EAB0B3',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{navigation.navigate('AltAreaList');}}>
+                    <TouchableOpacity style={{flex:1,backgroundColor:'#EAB0B3',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{navigation.navigate('AltQuestionWrite',{anser_mem_id:false});}}>
                         <Text category ="h2" style={{fontSize:30}}>여러명에게 질문하기</Text>
                     </TouchableOpacity>
                 </View>
@@ -177,8 +177,7 @@ class AltQuestionWrite extends React.Component
         this.state={
             title:'',
             content:'',
-            answer_mem_id:this.props.route.params.answer_mem_id,
-            brd_key:this.props.route.params.brd_key,
+            answer_mem_id:this.props.route.params.answer_mem_id ?this.props.route.params.answer_mem_id :null,
             filterModalVisible:false,
             actSelected:[],
             act_array:[]
@@ -187,14 +186,23 @@ class AltQuestionWrite extends React.Component
     }
 
     sendQue = () => {
-        const {title,content,answer_mem_id,brd_key} = this.state;
+        const brd_key = this.props.route.params.answer_mem_id ? 'indi':'opq';
+
+        const {title,content,answer_mem_id} = this.state;
         var formdata = new FormData();
         formdata.append('brd_key',brd_key);
         formdata.append('post_title',title);
         formdata.append('post_content',content);
-        formdata.append('answer_mem_id',answer_mem_id);
+        this.props.route.params.answer_mem_id ?
+        formdata.append('answer_mem_id',answer_mem_id)
+        :
+        formdata.append('answer_expire_date','2020-09-09');
+        this.state.actSelected.map(act =>{
+            formdata.append('act_id[]',act.act_id)
+        })
+        ;
         
-        axios.post('http://10.0.2.2/api/board_write/write',formdata)
+        axios.post('http://dev.unyict.org/api/board_write/write',formdata)
         .then(response=>{
             Alert.alert(
                 "이타주의자",
@@ -279,8 +287,8 @@ class AltQuestionWrite extends React.Component
         <SafeAreaView style={{flex:1}}>
             <TopBarTune 
                 text={ item ? `${item.mem_basic_info.mem_username}님께 질문`: '모두에게 질문'} 
-                func={() =>{this.filterSpamKeyword()}} 
                 right="upload"
+                func={() =>{this.filterSpamKeyword()}} 
                 gbckfunc={()=>{this.props.navigation.goBack()}} 
                 gbckuse={true}
             />
@@ -289,25 +297,7 @@ class AltQuestionWrite extends React.Component
                     behavior={Platform.OS == "ios" ? "padding" : "height"}
             >
                 <View style={{ flex:1,backgroundColor:"#f4f4f4",padding:10}}>
-                    <View>
-                        {
-                            this.state.actSelected.length >0 ?
-                            <ScrollView horizontal={true} style={{}} >
-                                    {this.state.actSelected.map((act,index) => (
-                                        <Tag style={{marginVertical : 5}}
-                                            key = {act.act_content}
-                                            onPress ={()=>{this.state.actSelected.splice(index,1);this.setState({actSelected:this.state.actSelected})}}>
-                                            {act.act_content}
-                                        </Tag>
-                                    ))}
-                            </ScrollView >
-                            :
-                            <View style={{padding:5}}>
-                                <Text style={{marginVertical:9}} category = 'c2'>알림을 보낼 이타주의자 분야를 선택할 수 있습니다.</Text>
-                            </View>
-
-                        }
-                    </View>
+                    <View style={{display:'flex',flexDirection:'row'}}>
                     {
                         this.props.route.params.answer_mem_id ? 
                         null
@@ -319,6 +309,27 @@ class AltQuestionWrite extends React.Component
                             <Text category='h2' style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
                         </TouchableOpacity>
                     }
+                    {
+                        this.state.actSelected.length >0 ?
+                        <ScrollView horizontal={true} style={{}} >
+                                {this.state.actSelected.map((act,index) => (
+                                    <Tag style={{marginVertical : 5}}
+                                        key = {act.act_content}
+                                        onPress ={()=>{this.state.actSelected.splice(index,1);this.setState({actSelected:this.state.actSelected})}}>
+                                        {act.act_content}
+                                    </Tag>
+                                ))}
+                        </ScrollView >
+                        :
+                        this.props.route.params.answer_mem_id ? 
+                        null:
+                        <View>
+                            <Text style={{marginVertical:9,fontSize:15}} category = 'c2'>알림을 보낼 이타주의자 분야를 선택할 수 있습니다.</Text>
+                        </View>
+
+                    }
+                    </View>
+                    
                     <View>
                         <TextInput 
                             style={styles.titleInput} 
