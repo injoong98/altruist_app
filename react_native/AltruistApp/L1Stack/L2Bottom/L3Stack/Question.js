@@ -1,7 +1,7 @@
 import React from 'react';
-import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity, Modal,KeyboardAvoidingView,Alert} from 'react-native'
+import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity,KeyboardAvoidingView,Alert, ScrollView} from 'react-native'
 
-import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,Divider} from '@ui-kitten/components'
+import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,Divider,Modal} from '@ui-kitten/components'
 import axios from 'axios'
 import Tag from '../../../components/tag.component'
 import {TopBarTune} from '../../../components/TopBarTune'
@@ -179,6 +179,10 @@ class AltQuestionWrite extends React.Component
             content:'',
             answer_mem_id:this.props.route.params.answer_mem_id,
             brd_key:this.props.route.params.brd_key,
+            filterModalVisible:false,
+            actSelected:[],
+            act_array:[]
+
         }
     }
 
@@ -251,14 +255,30 @@ class AltQuestionWrite extends React.Component
         <TopNavigationAction icon={BackIcon} onPress={() => {this.props.navigation.goBack()}}/>
     )
 
+    getAreaCategory= async()=>{
+        await axios.get('http://dev.unyict.org/api/altruists/area_category')
+        .then(res=>{
+            this.setState({act_array:res.data.data});
+        })
+        .then(()=>{
+            this.setState({isLoading:false});
+        })
+        .catch(err=>{
+            alert('area 불러오기 실패! ㅜ')
+        })
+    }
+    componentDidMount(){
+        this.getAreaCategory()
+    }
+
     render(){
-        const {title,content} = this.state;
-        const {act,answer_mem_id,brd_key,item} = this.props.route.params
+        const {title,content,filterModalVisible} = this.state;
+        const {act,answer_mem_id,brd_key,item,} = this.props.route.params
 
         return(
         <SafeAreaView style={{flex:1}}>
             <TopBarTune 
-                text={`${item.mem_basic_info.mem_username}님께 질문`} 
+                text={ item ? `${item.mem_basic_info.mem_username}님께 질문`: '모두에게 질문'} 
                 func={() =>{this.filterSpamKeyword()}} 
                 right="upload"
                 gbckfunc={()=>{this.props.navigation.goBack()}} 
@@ -270,6 +290,36 @@ class AltQuestionWrite extends React.Component
             >
                 <View style={{ flex:1,backgroundColor:"#f4f4f4",padding:10}}>
                     <View>
+                        {
+                            this.state.actSelected.length >0 ?
+                            <ScrollView horizontal={true} style={{}} >
+                                    {this.state.actSelected.map((act,index) => (
+                                        <Tag style={{marginVertical : 5}}
+                                            key = {act.act_content}
+                                            onPress ={()=>{this.state.actSelected.splice(index,1);this.setState({actSelected:this.state.actSelected})}}>
+                                            {act.act_content}
+                                        </Tag>
+                                    ))}
+                            </ScrollView >
+                            :
+                            <View style={{padding:5}}>
+                                <Text style={{marginVertical:9}} category = 'c2'>알림을 보낼 이타주의자 분야를 선택할 수 있습니다.</Text>
+                            </View>
+
+                        }
+                    </View>
+                    {
+                        this.props.route.params.answer_mem_id ? 
+                        null
+                        :
+                        <TouchableOpacity 
+                            style = {{height:35,width:35,backgroundColor:'#B09BDE',borderRadius:10,justifyContent:'center'}} 
+                            onPress={()=>this.setState({filterModalVisible:true})}
+                        >
+                            <Text category='h2' style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
+                        </TouchableOpacity>
+                    }
+                    <View>
                         <TextInput 
                             style={styles.titleInput} 
                             value={title} 
@@ -278,7 +328,7 @@ class AltQuestionWrite extends React.Component
                             placeholderTextColor='#A897C2'
                         />
                     </View>
-                    <View>
+                    <View style={{height:'40%'}}>
                         <TextInput 
                             style={styles.contentInput} 
                             value={content} 
@@ -291,6 +341,45 @@ class AltQuestionWrite extends React.Component
                     </View>
                 </View>
            </KeyboardAvoidingView>
+           <Modal
+                visible={filterModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({filterModalVisible:false,cmt_id:''})}
+            >
+                <View style = {{flex:1,justifyContent:'space-evenly',backgroundColor:'#ffffff'}}>
+                    <View style = {{flexDirection : 'row', flexWrap: 'wrap',}}>
+                        {this.state.actSelected.map((act,index) => (
+                            <Tag style={{marginVertical : 5}}
+                                key = {act.act_content}
+                                onPress ={()=>{this.state.actSelected.splice(index,1);this.setState({actSelected:this.state.actSelected})}}>
+                                {act.act_content}
+                            </Tag>
+                        ))}
+                    </View>
+                    <Divider />
+                    <View style = {{flexDirection : 'row', flexWrap: 'wrap',}}>
+                        {this.state.act_array.map(act => (
+                            <Tag 
+                                key = {act.act_content}
+                                onPress ={()=>this.setState({actSelected:this.state.actSelected.concat(act)})}
+                                disabled ={this.state.actSelected.includes(act) ? true: false}
+                                style={this.state.actSelected.includes(act) ? styles.tagDisabled:{marginVertical : 2}}
+                            >
+                                {act.act_content}
+                                
+                            </Tag>
+                        ))}
+                    </View>
+                    <View style={{padding:10,}}>
+                        <Text category='h2' style={{fontSize:18}}>
+                            !!1대다 질문은 모든 이타주의자들이 조회하고 답변할 수 있습니다.
+                        </Text>
+                        <Text category='h2' style={{fontSize:18}}>
+                            !!분야를 선택하면 해당 이타주의자들에게 질문 등록에 대한 알림이 갑니다.
+                        </Text>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
         )
 
@@ -302,7 +391,7 @@ const styles = StyleSheet.create({
         backgroundColor:'#ffffff',
         borderRadius:15,
         marginHorizontal:10,
-        marginBottom:20,
+        marginVertical:20,
         fontSize:18,
         minHeight:45
     },
@@ -311,16 +400,19 @@ const styles = StyleSheet.create({
         borderRadius:15,
         marginHorizontal:10,
         marginBottom:20,
-        height:200,
         fontSize:18,
-        maxHeight:'120%',
-        minHeight:'70%'
+        height:'100%'
     },
     fieldtitle:{
         padding :10
     },
     indicatorStyle:{
         height:0
+    },
+    tagDisabled:{
+        backgroundColor:'#8D8D8D',
+        marginVertical : 2,
+        borderRadius:20
     }
 
 })
