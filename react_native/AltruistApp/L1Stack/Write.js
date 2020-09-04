@@ -774,7 +774,7 @@ class IlbanWrite extends React.Component{
        let formdata = new FormData();
            formdata.append("brd_key", 'ilban');
            formdata.append("post_title", post_title);
-           formdata.append("post_category", post_category.bca_id);
+           formdata.append("post_category", '1');
            formdata.append("post_content", post_content);
            formdata.append("post_nickname", 'ryeMhi');
            formdata.append("post_email", 'yhr0901@gmail.com');
@@ -804,8 +804,21 @@ class IlbanWrite extends React.Component{
            //alert('')
        })    
    }
-   
 
+   gobackfunc = () =>{
+    this.cleanupImages();
+    const {navigation,route} = this.props;
+    navigation.goBack();
+    route.params.statefunction();
+    }
+    
+    cleanupImages() {
+        ImagePicker.clean().then(() => {
+            console.log('Temporary images history cleared')
+        }).catch(e => {
+            console.log(e);
+        });
+    }
    onClickAddImage() {
        const buttons = ['사진 촬영', '갤러리에서 사진 가져오기', '취소'];
        ActionSheet.show(
@@ -931,7 +944,9 @@ class IlbanWrite extends React.Component{
                             <SelectItem><Text>HI</Text></SelectItem>
                         </Select> */}
                        {/* 제목 */}
+                      
                        <Input style={{ flex:1, width:90}}
+                       placeholder='제목'
                        onChangeText = {post_title=>this.setState({post_title:post_title})}/>
                    </View>
                    <View style={{ flex: 2}}>
@@ -940,6 +955,7 @@ class IlbanWrite extends React.Component{
                            style={{padding:0}}
                            multiline={true}
                            textStyle={{ minHeight: 350 }}
+                           placeholder='본문'
                            onChangeText = {post_content=>this.setState({post_content:post_content})}
                            />
                    </View>
