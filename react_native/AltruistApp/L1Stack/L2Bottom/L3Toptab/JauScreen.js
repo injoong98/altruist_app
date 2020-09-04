@@ -4,7 +4,7 @@ import { Button, Card, List, Layout, Text, Icon, StyleService, Spinner, Divider}
 import { PlusIcon } from '../../../assets/icons/icons';
 import { getPostList } from "./extra/getPost";
 import axios from 'axios';
-import {HTML, HTMLView} from 'react-native-render-html';
+import {HTML,} from 'react-native-render-html';
 import { IGNORED_TAGS } from 'react-native-render-html/src/HTMLUtils';
 import {PostTime} from '../../../components/PostTime'
 import { WebView } from 'react-native-webview';
@@ -48,7 +48,7 @@ class JauScreen extends React.Component {
       // console.log(response)
         this.setState({
           lists : response.data.view.list.data.list,
-          post_content : response.data.view.list.data.list.post_content,
+          // post_content : response.data.view.list.data.list.post_content,
           isLoading : false
         })
         console.log('list' + response.data.view.list.data.list)
@@ -92,23 +92,15 @@ class JauScreen extends React.Component {
           <Text>{item.post_title}</Text>
         </View>
           <Text>{`shareIcon`}</Text>
-          <ShareIcon/>
       </View>
       <View style={{flex:2}}>
         {/* content */}
-        <View>
-        <HTMLView
-          html = {this.state.post_content}
-          ignoredTags ={this.ignoredTags}
-          renderers = {this.renderers}
-
-          /> 
-          <WebView
-          
-          />  
-        </View>
+        {/* <HTML
+          html = {item.post_content}
+          ignoredTags = {this.ignoredTags}
+          /> */}
         <View style={{flexDirection:'row'}}>
-          <Image source={{uri:'http://10.0.2.2'+this.state.image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
+          <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
         </View>
       </View>
       <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
