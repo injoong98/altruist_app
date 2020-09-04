@@ -825,7 +825,7 @@ class IlbanWrite extends React.Component{
        let formdata = new FormData();
            formdata.append("brd_key", 'ilban');
            formdata.append("post_title", post_title);
-           formdata.append("post_category", post_category.bca_id);
+           formdata.append("post_category", '1');
            formdata.append("post_content", post_content);
            formdata.append("post_nickname", 'ryeMhi');
            formdata.append("post_email", 'yhr0901@gmail.com');
@@ -855,8 +855,21 @@ class IlbanWrite extends React.Component{
            //alert('')
        })    
    }
-   
 
+   gobackfunc = () =>{
+    this.cleanupImages();
+    const {navigation,route} = this.props;
+    navigation.goBack();
+    // route.params.statefunction();
+    }
+    
+    cleanupImages() {
+        ImagePicker.clean().then(() => {
+            console.log('Temporary images history cleared')
+        }).catch(e => {
+            console.log(e);
+        });
+    }
    onClickAddImage() {
        const buttons = ['사진 촬영', '갤러리에서 사진 가져오기', '취소'];
        ActionSheet.show(
@@ -965,15 +978,15 @@ class IlbanWrite extends React.Component{
    //end: header
    render(){
        const {post_category} = this.state
-    console.log(`ㅇ라ㅣㅁㄴㅇㄹ`+this.state.post_category)
+    console.log(`ㅇ라ㅣㅁㄴㅇㄹ` + this.state.post_category)
        return(
            <Root>
-           <SafeAreaView style={{flex:1}}>
-               <TopNavigation title="일반게시판" alignment="center" accessoryLeft={this.BackAction} 
+           <SafeAreaView style={{flex:4}}>
+               <TopNavigation title="이타게시판" alignment="center" accessoryLeft={this.BackAction} 
                accessoryRight={this.SubmitButtom} 
                /> 
-                   <Divider />
-                  
+                <Divider />
+                <View style={{flex:4}}>
                    <View style={{flexDirection: 'row'}} >
                        {/* 카테고리 */}
                        {/* <this.SelectItems /> */}
@@ -982,7 +995,9 @@ class IlbanWrite extends React.Component{
                             <SelectItem><Text>HI</Text></SelectItem>
                         </Select> */}
                        {/* 제목 */}
+                      
                        <Input style={{ flex:1, width:90}}
+                       placeholder='제목'
                        onChangeText = {post_title=>this.setState({post_title:post_title})}/>
                    </View>
                    <View style={{ flex: 2}}>
@@ -991,25 +1006,25 @@ class IlbanWrite extends React.Component{
                            style={{padding:0}}
                            multiline={true}
                            textStyle={{ minHeight: 350 }}
+                           placeholder='본문'
                            onChangeText = {post_content=>this.setState({post_content:post_content})}
                            />
                    </View>
                    <Divider />
                    {/* <View style={{flex:1, justifyContent: "center"}}> */}
-                   
                        {/* 사진 */}
-                       <Layout style={styles.container}>
-                           <Text>사진</Text>
-                           <ScrollView horizontal={true} style={styles.input}>
-                               <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
-                                   <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
-                               </TouchableOpacity>
-                               {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
-                           </ScrollView>                                   
-                       </Layout>
-                   {/* </View>    */}
+                    <Layout>
+                        <Text>사진</Text>
+                        <ScrollView horizontal={true} style={styles.input}>
+                            <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
+                                <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                            </TouchableOpacity>
+                            {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
+                        </ScrollView>                                   
+                    </Layout>
+                </View>
            </SafeAreaView>
-           </Root>
+        </Root>
        )
    }
 }
