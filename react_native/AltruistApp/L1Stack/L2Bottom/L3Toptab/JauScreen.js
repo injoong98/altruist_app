@@ -163,6 +163,7 @@ class JauScreen extends React.Component {
           <Text>{`전체`}</Text>
           </TouchableOpacity>
           <List
+            style={{backgroundColor:"white"}}
             horizontal={true}
             data={this.state.categorys}
             renderItem = {this.renderCategory}
