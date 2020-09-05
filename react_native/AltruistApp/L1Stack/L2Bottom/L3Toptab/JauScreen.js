@@ -26,6 +26,7 @@ class JauScreen extends React.Component {
       image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
       categorys: '',
       post_category:'',
+      no_post : false,
     }
   }
 
@@ -38,12 +39,15 @@ class JauScreen extends React.Component {
       console.log(response)
       if(response.data.view.list.data.list == ''){
         this.setState({
-          no_post : '게시글이 없습니다 ㅠ0ㅠ'
+          no_post : true,
+          no_post_memo : '게시글의 첫 주인공이 되어주세요!'
         })
       }else{
         this.setState({
           lists : response.data.view.list.data.list,
-          isLoading : false
+          isLoading : false,
+          no_post : false
+
         })
       }
     })
@@ -167,7 +171,7 @@ class JauScreen extends React.Component {
       </View>
       <SafeAreaView style={{flex:10, backgroundColor:"white"}}>
         {this.state.no_post ? 
-          <Text style={{flex:10, textAlign:"center",textAlignVertical:"center"}}>{this.state.no_post}</Text>
+          <Text style={{flex:10, textAlign:"center",textAlignVertical:"center"}}>{this.state.no_post_memo}</Text>
         :
           <List
             data={this.state.lists}
