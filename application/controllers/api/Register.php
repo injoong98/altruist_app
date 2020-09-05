@@ -1669,8 +1669,43 @@ class Register extends CB_Controller
 		response_result($result,'success',$result['reason']);	
 	}
 
+	//RN 패스워드 체크
+	public function password_check()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_register_ajax_password_check';
+		$this->load->event($eventname);
 
+		$result = array();
+		$this->output->set_content_type('application/json');
 
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('before', $eventname);
+
+		$password = trim($this->input->post('password'));
+		if (empty($password)) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '패스워드값이 넘어오지 않았습니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		if ($this->_mem_password_check($password) === false) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '패스워드는 최소 1개 이상의 숫자를 포함해야 합니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		$result = array(
+			'password' => $password,
+			'result' => 'available',
+			'reason' => '사용 가능한 패스워드입니다',
+		);
+		response_result($result,'success',$result['reason']);	
+	}
 
 
 
