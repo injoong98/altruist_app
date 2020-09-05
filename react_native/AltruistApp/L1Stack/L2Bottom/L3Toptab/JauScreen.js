@@ -174,6 +174,7 @@ class JauScreen extends React.Component {
           <Text style={{flex:10, textAlign:"center",textAlignVertical:"center"}}>{this.state.no_post_memo}</Text>
         :
           <List
+            style={{backgroundColor:"white"}}
             data={this.state.lists}
             contentContainerStyle={styles.contentContainer}
             renderItem={this.renderItem}
