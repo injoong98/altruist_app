@@ -63,7 +63,7 @@ class AltMainScreen extends React.Component{
                         <View style={{marginVertical:20,flexDirection:'row',justifyContent:'space-evenly',width:'100%'}}>
                             <Button onPress={()=>navigation.navigate('AltApply')}>지원</Button>
                             <Button onPress={()=>navigation.navigate('AltList')}>멘토리스트</Button>
-                            <Button onPress={()=>navigation.navigate('AltQueList')}>질문리스트</Button>
+                            <Button onPress={()=>navigation.navigate('AltOpqQueList')}>오픈 질문</Button>
                         </View>
                         <Slider
                             height={110} 
