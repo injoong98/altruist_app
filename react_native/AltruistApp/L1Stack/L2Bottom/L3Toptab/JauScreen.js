@@ -24,7 +24,8 @@ class JauScreen extends React.Component {
       lists : '',
       post_content : '',
       image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
-      categorys: ''
+      categorys: '',
+      post_category:'',
     }
   }
 
@@ -32,15 +33,19 @@ class JauScreen extends React.Component {
 
 
   getPostList = async() =>{
-    await axios.get(`http://10.0.2.2/api/board_post/lists/ilban`)
+    await axios.get(`http://10.0.2.2/api/board_post/lists/ilban?category_id=${this.state.post_category}`)
     .then( response =>{
-      // console.log(response)
+      console.log(response)
+      if(response.data.view.list.data.list == ''){
+        this.setState({
+          no_post : '게시글이 없습니다 ㅠ0ㅠ'
+        })
+      }else{
         this.setState({
           lists : response.data.view.list.data.list,
-          // post_content : response.data.view.list.data.list.post_content,
           isLoading : false
         })
-        console.log('list' + response.data.view.list.data.list)
+      }
     })
     .catch((error)=>{
         alert('error')
@@ -55,7 +60,6 @@ class JauScreen extends React.Component {
           categorys : res.data.view.list.board.category[0],
           isLoading : false
         })
-        console.log('cate' + res.data.view.list.board.category[0])
     })
     .catch((error)=>{
         alert('error')
@@ -68,10 +72,15 @@ class JauScreen extends React.Component {
     this.getCategory();
   } 
 
+  componentDidUpdate(){
+  }
 
-
- renderItem = ({item, index}) => (
-    <View style={styles.itembox}>
+ renderItem = ({item, index}) => {
+  const regex = /(<([^>]+)>)|&nbsp;/ig;
+  const post_remove_tags = item.post_content.replace(regex, '');
+   return(
+    <TouchableOpacity style={styles.itembox}
+    onPress = {()=>{this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}}>
       {/* 헤더 */}
       <View style={{flex:1, flexDirection:'row', justifyContent:'space-between', marginLeft:10, marginRight:10}}>
         {/*카테고리(이미지)/ 제목 / 공유*/}
@@ -88,7 +97,7 @@ class JauScreen extends React.Component {
           numberOfLines = {3}
           ellipsizeMode = 'tail'
           AccessibilityRole ='button'
-          >{item.post_content}</Text>
+          >{post_remove_tags}</Text>
           {item.origin_image_url 
             ? 
             <View style={{flexDirection:'row'}}>
@@ -123,20 +132,32 @@ class JauScreen extends React.Component {
           </View>
         </View>
       </View>
-    </View>
- )
+    </TouchableOpacity>
+   )
+ }
 
   
   renderCategory = ({item}) =>(
-  <TouchableOpacity style = {{alignContent:"center", marginHorizontal: 4, borderWidth:1, padding: 10, marginRight:10, marginLeft:10}}>
-    <Text>{item.bca_value}</Text>
-    </TouchableOpacity>)  
+      <TouchableOpacity 
+      style = {{alignContent:"center", marginHorizontal: 4, borderWidth:1, padding: 10, marginRight:10, marginLeft:10}}
+      onPress = {() => {this.setState({post_category:item.bca_key}, this.getPostList)}}
+      >
+        <Text>{item.bca_value}</Text>
+      </TouchableOpacity>
+    )  
 
   render(){
     return (
     <>
-      <View style={{ backgroundColor:'white'}}>
+      <View style={{ backgroundColor:'white'}}
+      refreshing={this.state.isLoading}>
         <ScrollView style ={styles.category} horizontal={true}>
+          <TouchableOpacity 
+          style = {{alignContent:"center", marginHorizontal: 4, borderWidth:1, padding: 10, marginRight:10, marginLeft:10}}
+          onPress = {() => {this.setState({post_category:''}, this.getPostList)}}
+          >
+          <Text>{`전체`}</Text>
+          </TouchableOpacity>
           <List
             horizontal={true}
             data={this.state.categorys}
@@ -145,15 +166,17 @@ class JauScreen extends React.Component {
         </ScrollView>
       </View>
       <SafeAreaView style={{flex:10, backgroundColor:"white"}}>
-        <List
-          data={this.state.lists}
-          contentContainerStyle={styles.contentContainer}
-          renderItem={this.renderItem}
-          refreshing={this.state.isLoading}
-          onRefresh={this.getPostList}
-          
-          />
-          
+        {this.state.no_post ? 
+          <Text style={{flex:10, textAlign:"center",textAlignVertical:"center"}}>{this.state.no_post}</Text>
+        :
+          <List
+            data={this.state.lists}
+            contentContainerStyle={styles.contentContainer}
+            renderItem={this.renderItem}
+            refreshing={this.state.isLoading}
+            onRefresh={this.getPostList}
+            />
+          }
         <TouchableOpacity 
             style={{position:'absolute', right:20,bottom:14}} 
             onPress={()=>{this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})}}>
