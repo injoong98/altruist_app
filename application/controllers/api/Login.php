@@ -41,10 +41,10 @@ class Login extends CB_Controller
 		$eventname = 'event_login_index';
 		$this->load->event($eventname);
 
-		if ($this->member->is_member() !== false && ! ($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))) {
+	/* 	if ($this->member->is_member() !== false && ! ($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))) {
 			redirect();
 		}
-
+ */
 		$view = array();
 		$view['view'] = array();
 
@@ -91,12 +91,17 @@ class Login extends CB_Controller
 		);
 
 		$this->form_validation->set_rules($config);
+		$form_validation = $this->form_validation->run();
+		$view['view']['form_validation'] = $form_validation;
+		if(!$form_validation) {
+			response_result($view,'Err',validation_errors('', ''));
+		}
 		/**
 		 * 유효성 검사를 하지 않는 경우, 또는 유효성 검사에 실패한 경우입니다.
 		 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
 		 */
-		if ($this->form_validation->run() === false) {
-
+		if ($form_validation === false) {
+			
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formrunfalse'] = Events::trigger('formrunfalse', $eventname);
 
@@ -210,8 +215,6 @@ class Login extends CB_Controller
 					redirect('membermodify/password_modify');
 				}
 			}
-			response_result($_SESSION);
-			return true;
 
 			$url_after_login = $this->cbconfig->item('url_after_login');
 			if ($url_after_login) {
@@ -224,7 +227,9 @@ class Login extends CB_Controller
 			// 이벤트가 존재하면 실행합니다
 			Events::trigger('after', $eventname);
 
-			redirect($url_after_login);
+			//redirect($url_after_login);
+			$view['session'] = $_SESSION;
+			response_result($view,'success','로그인 성공');
 		}
 	}
 
