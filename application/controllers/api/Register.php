@@ -1376,6 +1376,7 @@ class Register extends CB_Controller
 		Events::trigger('after', $eventname);
 
 		$result = array(
+			'userid' => $userid,
 			'result' => 'available',
 			'reason' => '사용 가능한 아이디입니다',
 		);
