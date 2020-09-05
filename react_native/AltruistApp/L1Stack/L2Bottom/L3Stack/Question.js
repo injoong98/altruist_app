@@ -1,15 +1,54 @@
 import React from 'react';
 import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity,KeyboardAvoidingView,Alert, ScrollView} from 'react-native'
-
-import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,Divider,Modal} from '@ui-kitten/components'
+import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,Divider,Modal,Popover} from '@ui-kitten/components'
 import axios from 'axios'
+
+import {PostTime} from '../../../components/PostTime'
+
+import Confirm from '../../../components/confirm.component'
+import ReplyLsvg from '../../../assets/icons/arrow-bended-large.svg'
+import ReplySsvg from '../../../assets/icons/arrow-bended-small.svg'
+import MoreLsvg from '../../../assets/icons/dotdotdot-large.svg'
+import MoreSsvg from '../../../assets/icons/dotdotdot-small.svg'
+import Backsvg from '../../../assets/icons/back-arrow-color.svg'
+import Thumbsvg from '../../../assets/icons/thumb-up.svg'
+import UploadCirclesvg from '../../../assets/icons/upload-circle.svg'
 import Tag from '../../../components/tag.component'
 import {TopBarTune} from '../../../components/TopBarTune'
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
-
-class AltQueList extends React.Component{
+const StarIcon =  (props) =>(
+    <Icon {...props} name = "star"/>
+)
+class AltQueReply extends React.Component{
+    
+    constructor(props){
+        super(props);
+        this.state={
+            
+        }
+    }
+    render(){
+       return(
+        <SafeAreaView>
+            <TopBarTune 
+                text='질문' 
+                right="bell"
+                func={() =>{this.props.navigation.navigate('Meet')}} 
+                gbckfunc={()=>{this.props.navigation.goBack()}} 
+                gbckuse={true}
+            />
+            <View>
+                <Text>
+       {this.props.route.params.post_id}하이
+                </Text>
+            </View>
+        </SafeAreaView>
+       ) 
+    }
+}
+class AltOpqQueList extends React.Component{
     
     constructor(props){
         super(props)
@@ -22,7 +61,7 @@ class AltQueList extends React.Component{
     }
 
     getQuestions = ()=>{
-        axios.get('http://dev.unyict.org/api/board_post/lists/indi')
+        axios.get('http://dev.unyict.org/api/board_post/lists/opq')
         .then(res=>{
             this.setState({list:res.data.view.list.data.list,list_showing:res.data.view.list.data.list});
         })
@@ -37,7 +76,7 @@ class AltQueList extends React.Component{
 
     renderQueList = ({item,list}) =>{
         return(
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=>{this.props.navigation.navigate('AltQueReply',{post_id:item.post_id})}}>
                 <Text>보낸 사람 {item.post_userid}</Text>
                 <Text>질문 제목 {item.post_title}</Text>
                 <Text>받는 사람 {item.answer_mem_id}</Text>
@@ -58,6 +97,13 @@ class AltQueList extends React.Component{
                 <Spinner size='giant'/>
             </View>:
             <SafeAreaView>
+                <TopBarTune 
+                    text='오픈 질문' 
+                    right="bell"
+                    func={() =>{this.filterSpamKeyword()}} 
+                    gbckfunc={()=>{this.props.navigation.goBack()}} 
+                    gbckuse={true}
+                />
                 <View>
                     <Text>필터 위치</Text>
                 </View>
@@ -424,8 +470,11 @@ const styles = StyleSheet.create({
         backgroundColor:'#8D8D8D',
         marginVertical : 2,
         borderRadius:20
-    }
+    },
+    topbar : {
+        backgroundColor : '#ffffff',
+    },
 
 })
 
-export {AltQuestionWrite,AltQueType,AltAreaList,AltQueList};
+export {AltQuestionWrite,AltQueType,AltAreaList,AltOpqQueList,AltQueReply};
