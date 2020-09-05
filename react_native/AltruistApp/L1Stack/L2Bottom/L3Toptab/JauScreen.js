@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
-import { Root, StyleSheet, View, Image, Dimensions, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import { Button, Card, List, Layout, Text, Icon, StyleService, Spinner, Divider} from '@ui-kitten/components'
+import {Root, StyleSheet, View, Image, Dimensions, ScrollView, TouchableOpacity, SafeAreaView, TouchableWithoutFeedback, Layout } from 'react-native';
+import {Button, Card, List, Text, Icon, StyleService, Spinner, Divider} from '@ui-kitten/components'
 import { PlusIcon } from '../../../assets/icons/icons';
 import { getPostList } from "./extra/getPost";
 import axios from 'axios';
@@ -9,22 +9,11 @@ import { IGNORED_TAGS } from 'react-native-render-html/src/HTMLUtils';
 import {PostTime} from '../../../components/PostTime'
 import { WebView } from 'react-native-webview';
 
-const AltsIcon = (props) => <Icon {...props} name="star" />;
-const ShareIcon = (props) => <Icon {...props} name="share-outline" />;
-const ArrowIcon = (props) => <Icon {...props} name="arrow-forward-outline" />;
-
-const  ViewIcon = (props)=>(
-  <Icon style={styles.icon} fill='#8F9BB3' name="view-filled" pack="alticons"/>
-)
-const CommentIcon = (props)=>(
-  <Icon  style={styles.icon} fill='#8F9BB3' name="message-circle" {...props}/>
-)
-const HeartIcon = (props)=>(
-  <Icon style={styles.icon} fill='#8F9BB3' name="heart-filled" pack="alticons"/>
-)
-const WriteIcon = (props)=>(
-  <Icon style={styles.icon} fill='#8F9BB3' name="write" pack="alticons"/>
-)
+import Heartsvg from '../../../assets/icons/heart.svg'
+import Viewsvg from '../../../assets/icons/view.svg'
+import Commentsvg from '../../../assets/icons/comment.svg'
+import Writesvg from '../../../assets/icons/write.svg'
+import Sharesvg from '../../../assets/icons/share.svg'
 
 class JauScreen extends React.Component {
 
@@ -35,7 +24,9 @@ class JauScreen extends React.Component {
       lists : '',
       post_content : '',
       image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
-      categorys: ''
+      categorys: '',
+      post_category:'',
+      no_post : false,
     }
   }
 
@@ -43,15 +34,22 @@ class JauScreen extends React.Component {
 
 
   getPostList = async() =>{
-    await axios.get(`http://10.0.2.2/api/board_post/lists/ilban`)
+    await axios.get(`http://10.0.2.2/api/board_post/lists/ilban?category_id=${this.state.post_category}`)
     .then( response =>{
-      // console.log(response)
+      console.log(response)
+      if(response.data.view.list.data.list == ''){
+        this.setState({
+          no_post : true,
+          no_post_memo : '게시글의 첫 주인공이 되어주세요!'
+        })
+      }else{
         this.setState({
           lists : response.data.view.list.data.list,
-          // post_content : response.data.view.list.data.list.post_content,
-          isLoading : false
+          isLoading : false,
+          no_post : false
+
         })
-        console.log('list' + response.data.view.list.data.list)
+      }
     })
     .catch((error)=>{
         alert('error')
@@ -66,7 +64,6 @@ class JauScreen extends React.Component {
           categorys : res.data.view.list.board.category[0],
           isLoading : false
         })
-        console.log('cate' + res.data.view.list.board.category[0])
     })
     .catch((error)=>{
         alert('error')
@@ -79,76 +76,117 @@ class JauScreen extends React.Component {
     this.getCategory();
   } 
 
+  componentDidUpdate(){
+  }
 
-
- renderItem = ({item, index}) => (
-    <View style={styles.itembox}>
-      {/* header */}
-      <View style={{flex:1, flexDirection:'row', justifyContent:'space-between', maringLeft:10, marginRight:10}}>
+ renderItem = ({item, index}) => {
+  const regex = /(<([^>]+)>)|&nbsp;/ig;
+  const post_remove_tags = item.post_content.replace(regex, '');
+   return(
+    <TouchableOpacity style={styles.itembox}
+    onPress = {()=>{this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}}>
+      {/* 헤더 */}
+      <View style={{flex:1, flexDirection:'row', justifyContent:'space-between', marginLeft:10, marginRight:10}}>
         {/*카테고리(이미지)/ 제목 / 공유*/}
         {/* */}
         <View style={{flexDirection:'row'}}>
           <Text>{item.post_category}</Text>
           <Text>{item.post_title}</Text>
         </View>
-          <Text>{`shareIcon`}</Text>
+          <Sharesvg />
       </View>
-      <View style={{flex:2}}>
-        {/* content */}
-        {/* <HTML
-          html = {item.post_content}
-          ignoredTags = {this.ignoredTags}
-          /> */}
-        <View style={{flexDirection:'row'}}>
-          <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} 
-          style={{width:100,height:100, }}/>
-        </View>
+      {/* 본문 */}
+      <View style={{flex:2, marginTop:20, marginBottom:20, marginLeft:20, marginRight:20, alignContent:'center'}}>
+          <Text 
+          numberOfLines = {3}
+          ellipsizeMode = 'tail'
+          AccessibilityRole ='button'
+          >{post_remove_tags}</Text>
+          {item.origin_image_url 
+            ? 
+            <View style={{flexDirection:'row'}}>
+              <Image source={{uri:'http://10.0.2.2'+item.origin_image_url}} /> 
+            </View>
+            :
+            <View style={{flexDirection:'row'}}>
+            </View>
+            }
+          
       </View>
-      <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
-        <View style={{flexDirection:'row'}}>
-          <Text>{item.display_name}</Text> 
+      {/* 푸터 */}
+      <View style={{flex:1, flexDirection:'row', justifyContent:'space-between', marginLeft:10, marginRight:10}}>
+        <View style={{flexDirection:'row', alignSelf:"center"}}>
+          <Text category="s2" style={{fontWeight:'100', marginRight:10}}>{item.display_name}</Text> 
           <PostTime datetime = {item.post_datetime} />
         </View>
-        <View style={{flexDirection:'row'}}>
-          <HeartIcon />
-          <Text>{item.post_like}</Text>
-          <CommentIcon />
-          <Text>{item.post_comment_count}</Text>
-          <ViewIcon />
-          <Text>{item.post_hit}</Text>
+        <View>
+          <View style={{flexDirection:'row'}}>  
+            <View>  
+              <Heartsvg />
+              <Text>{item.post_like}</Text>
+            </View>
+            <View>  
+              <Commentsvg />
+              <Text>{item.post_comment_count}</Text>
+            </View>
+            <View>  
+              <Viewsvg />
+              <Text>{item.post_hit}</Text>
+            </View>
+          </View>
         </View>
       </View>
-    </View>
- )
+    </TouchableOpacity>
+   )
+ }
+
   
-  renderCategory = ({item}) =>(<Button category='h4'> {item.bca_value} </Button>)  
+  renderCategory = ({item}) =>(
+      <TouchableOpacity 
+      style = {{alignContent:"center", marginHorizontal: 4, borderWidth:1, padding: 10, marginRight:10, marginLeft:10}}
+      onPress = {() => {this.setState({post_category:item.bca_key}, this.getPostList)}}
+      >
+        <Text>{item.bca_value}</Text>
+      </TouchableOpacity>
+    )  
 
   render(){
     return (
     <>
-      <View style={{flex:2}}>
+      <View style={{ backgroundColor:'white'}}
+      refreshing={this.state.isLoading}>
         <ScrollView style ={styles.category} horizontal={true}>
+          <TouchableOpacity 
+          style = {{alignContent:"center", marginHorizontal: 4, borderWidth:1, padding: 10, marginRight:10, marginLeft:10}}
+          onPress = {() => {this.setState({post_category:''}, this.getPostList)}}
+          >
+          <Text>{`전체`}</Text>
+          </TouchableOpacity>
           <List
+            style={{backgroundColor:"white"}}
             horizontal={true}
             data={this.state.categorys}
             renderItem = {this.renderCategory}
           />
         </ScrollView>
       </View>
-      <SafeAreaView style={{flex:11,backgroundColor:"#ffffff"}}>
-        <List
-          // contentContainerStyle={styles.contentContainer}
-          data={this.state.lists}
-          renderItem={this.renderItem}
-          refreshing={this.state.isLoading}
-          onRefresh={this.getPostList}
-          />
-          
+      <SafeAreaView style={{flex:10, backgroundColor:"white"}}>
+        {this.state.no_post ? 
+          <Text style={{flex:10, textAlign:"center",textAlignVertical:"center"}}>{this.state.no_post_memo}</Text>
+        :
+          <List
+            style={{backgroundColor:"white"}}
+            data={this.state.lists}
+            contentContainerStyle={styles.contentContainer}
+            renderItem={this.renderItem}
+            refreshing={this.state.isLoading}
+            onRefresh={this.getPostList}
+            />
+          }
         <TouchableOpacity 
             style={{position:'absolute', right:20,bottom:14}} 
-            onPress={()=>{this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})}} 
-        >
-          <WriteIcon />
+            onPress={()=>{this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})}}>
+          <Writesvg />
         </TouchableOpacity>
       </SafeAreaView>
     </>
@@ -158,68 +196,20 @@ class JauScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
-  
+  contentContainer: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
   renderers: {
 
   },
   root:{
     backgroundColor : '#FFFFFF'
   },
-  list: {
-      flex: 1,
-  },
-  listContent: {
-      paddingHorizontal: 16,
-      paddingVertical: 8,
-  },
-  item: {
-      marginVertical: 8,
-  },
-  itemHeader: {
-      minHeight: 220,
-  },
-
-  itemTitle: {
-      position: 'absolute',
-      left: 24,
-      bottom: 24,
-  },
-  itemDescription: {
-      marginHorizontal: -8,
-  },
-  itemFooter: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-  },
-  itemHeaderTop: {
-      marginLeft : 10,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-  },
-  itemHeaderBottom: {
-      marginRight : 10,
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-  },
-  itemReactionsContainer: {
-      flexDirection: 'row',
-  },
-  itemAddButton: {
-      flexDirection: 'row-reverse',
-      paddingHorizontal: 0,
-  },
-  iconButton: {
-      paddingHorizontal: 0,
-  },
-  followButton: {
-    marginTop: 24,
-  },
-  infotext:{
-    color:'#141552',
-    fontSize:9
-  },
+  
   //ita geasipan
     itembox :{
+      
       flex: 1,
       backgroundColor: '#F4F4F4',
       borderTopRightRadius : 20,
@@ -229,9 +219,7 @@ const styles = StyleSheet.create({
       marginLeft:20,
       marginRight:20,
       paddingTop: 10 ,
-      paddingEnd: 10 ,
-      paddingBottom: 10 ,
-      borderWidth:5
+      marginVertical: 4,
     },
     itemContent : {
       marginTop:10,

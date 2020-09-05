@@ -117,7 +117,7 @@ class AltListScreen extends React.Component{
                 </View>
                 <Button 
                     style = {{height : 20}}
-                    onPress={()=>{console.log(this.state.filterTag);this.props.navigation.navigate('AltQuestionWrite',{item,brd_key:'indi',answer_mem_id:item.alt_profile.mem_id})}}>질문하기</Button>
+                    onPress={()=>{console.log(this.state.filterTag);this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:item.alt_profile.mem_id,title:this.props.route.params.title})}}>질문하기</Button>
             </View>
         </Card>
     );
@@ -133,7 +133,7 @@ class AltListScreen extends React.Component{
                 <View style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>
                     <TouchableOpacity 
                         style={{padding:10,backgroundColor:'#B09BDE',borderRadius:10,marginVertical : 4}}
-                        onPress={()=>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false})}
+                        onPress={()=>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:this.props.route.params.title})}
                     >
                         <Text category='h2' style={{color:'#ffffff',textAlign:'center'}}>
                             모두에게 질문 던지기

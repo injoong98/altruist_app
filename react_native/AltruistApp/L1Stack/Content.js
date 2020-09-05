@@ -22,29 +22,8 @@ import UploadCirclesvg from '../assets/icons/upload-circle.svg'
 const BackIcon =  (props) =>(
     <Icon {...props} fill ="#63579D"name = "back-arrow" pack="alticons"/>
 )
-const ThumbIcon =  (props) =>(
-    <Icon {...props} fill ="#63579D"name = "thumb-up" pack="alticons"/>
-)
-const BendedIcon =  (props) =>(
-    <Icon {...props} fill ="#63579D"name = "arrow-bended" pack="alticons"/>
-)
-const UploadCircleIcon =  (props) =>(
-    <Icon  fill ="#63579D"name = "upload-circle" pack="alticons" {...props}/>
-)
-const MoreIcon =  (props) =>(
-    <Icon {...props} fill ="#63579D"name = "more-vertical-outline"/>
-)
-const MoreLightIcon =  (props) =>(
-    <Icon {...props} fill ="#BBB5D9"name = "more-vertical-outline"/>
-)
 const CommentIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="message-circle"/>
-)
-const PlusIcon = (props)=>(
-    <Icon style={styles.icon} fill='#8F9BB3' name="plus-square"/>
-)
-const BlameIcon = (props)=>(
-    <Icon style={styles.icon} fill='#8F9BB3' name="archive"/>
 )
 const HeartIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="heart"/>
@@ -52,7 +31,6 @@ const HeartIcon = (props)=>(
 const StarIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="star" {...props} />
 )
-
 const UploadIcon = (props) => (
       <Icon {...props} name='arrow-circle-up'/>
 )
@@ -708,7 +686,7 @@ class MarketContent extends React.Component {
     render(){
 
         const {post} = this.state;
-        
+        const { width } = Dimensions.get("window");
         return(
             this.state.isLoading ?
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -721,7 +699,7 @@ class MarketContent extends React.Component {
                 <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
                     <ScrollView>
                         <View>
-                            <Slider image={this.state.image} navigation={this.props.navitation}/>
+                            <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
                         </View>
                         <View style={{}}>
                             <Layout>

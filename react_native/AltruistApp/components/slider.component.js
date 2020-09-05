@@ -6,14 +6,13 @@ import { Layout } from '@ui-kitten/components';
 // 이미지 데이터는 테그 안에 <Slider image={/*이미지데이터*/} /> 이런식으로 넣어주시면 됩니다. 'id', 'url' 키를 가진 객체로 보내주세용 />
 
 const { width } = Dimensions.get("window");
-const height = width
 
 
 export default class Slider extends React.Component {
     state = {
         activeDot: 0
     }
-
+    
     
     changeDot = ({nativeEvent}) => {
         const slide = Math.ceil(nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width);
@@ -21,9 +20,10 @@ export default class Slider extends React.Component {
             this.setState({activeDot : slide});
         }
     }
-
-
+    
+    
     render() {
+        const height = this.props.height ?this.props.height :width
         return (
             <Layout>
                 <View style={slide_style.container}>
@@ -41,13 +41,13 @@ export default class Slider extends React.Component {
                                     style={slide_style.image}
                                     key={item.id}
                                     source={{uri : 'http://dev.unyict.org'+item.url}}
-                                    style={{width, height, resizeMode: 'cover'}}
+                                    style={{width, height, resizeMode: 'contain'}}
                                 />
                             ))
                         }
                     </ScrollView>
                 </View>
-                <View style={slide_style.pagination}>
+                <View style={[slide_style.pagination,this.props.dotStyle]}>
                     {
                         this.props.image.map((item, index) => (
                             <Text key={index} style={index==this.state.activeDot ? slide_style.pagingActiveText : slide_style.pagingText}>⬤</Text>
@@ -62,11 +62,9 @@ export default class Slider extends React.Component {
 const slide_style = StyleSheet.create({
     container: { 
         width, 
-        height 
     },
     image: { 
-        width, 
-        height, 
+        width,  
         resizeMode:'cover' 
     },
     pagination: { 
