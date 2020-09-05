@@ -1459,7 +1459,7 @@ class Altruists extends CB_Controller
 
 
 		/** 첨부 파일 업로드  */
-		/*
+		
 		if ($form_validation) {
 			$this->load->library('upload');
 			if ($this->cbconfig->item('use_member_photo') && $this->cbconfig->item('member_photo_width') > 0 && $this->cbconfig->item('member_photo_height') > 0) {
@@ -1561,7 +1561,7 @@ class Altruists extends CB_Controller
 				}
 			}
 		}
-		*/
+		
 		/** 첨부 파일 업로드  끝 */
 
 		/**
