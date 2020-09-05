@@ -31,7 +31,31 @@ class Login extends CB_Controller
 
 	}
 
-
+	//세션 클리어
+	public	function session_clear()
+		{
+			$_SESSION['mem_id'] = '';
+			$_SESSION['mem_userid'] = '';
+			$_SESSION['mem_username'] = '';
+			$_SESSION['mem_lastname'] = '';
+			$_SESSION['mem_nickname'] = '';
+			$_SESSION['mem_photo'] = '';
+			$view['session'] = $_SESSION;
+			response_result($view,'success','세션 정보 리셋.');
+		}
+	//세션 체크, 없으면 로그인 페이지로 이동
+		function session_check()
+		{
+			$view['session'] = '';
+			if($_SESSION['mem_id'] == "") {
+				$view['session'] = 'N';
+				response_result($view,'Err','로그인 정보가 없습니다.');
+			}else {
+				$view['session'] = $_SESSION;
+				response_result($view,'success','로그인 상태 입니다.');
+			}
+				
+		}
 	/**
 	 * 로그인 페이지입니다
 	 */
