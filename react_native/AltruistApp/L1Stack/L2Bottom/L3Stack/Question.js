@@ -175,7 +175,7 @@ class AltQuestionWrite extends React.Component
     constructor(props){
         super(props);
         this.state={
-            title:'',
+            title:this.props.route.params.title ?this.props.route.params.title :null,
             content:'',
             answer_mem_id:this.props.route.params.answer_mem_id ?this.props.route.params.answer_mem_id :null,
             filterModalVisible:false,
