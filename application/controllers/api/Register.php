@@ -1610,6 +1610,64 @@ class Register extends CB_Controller
 		response_result($result,'success',$result['reason']);	
 	}
 
+	//RN 닉네임 검사
+	public function nickname_check()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_register_ajax_nickname_check';
+		$this->load->event($eventname);
+
+		$result = array();
+		$this->output->set_content_type('application/json');
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('before', $eventname);
+
+		$nickname = trim($this->input->post('nickname'));
+		if (empty($nickname)) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '닉네임값이 넘어오지 않았습니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		if ($this->member->item('mem_nickname')
+			&& $this->member->item('mem_nickname') === $nickname) {
+			$result = array(
+				'result' => 'available',
+				'reason' => '사용 가능한 닉네임입니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		$where = array(
+			'mem_nickname' => $nickname,
+		);
+		$count = $this->Member_model->count_by($where);
+		if ($count > 0) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '이미 사용중인 닉네임입니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		if ($this->_mem_nickname_check($nickname) === false) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '이미 사용중인 닉네임입니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		$result = array(
+			'nickname' => $nickname,
+			'result' => 'available',
+			'reason' => '사용 가능한 닉네임입니다',
+		);
+		response_result($result,'success',$result['reason']);	
+	}
 
 
 
