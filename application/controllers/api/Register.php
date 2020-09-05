@@ -177,6 +177,20 @@ class Register extends CB_Controller
 		}
 	}
 
+	/**
+	 * 회원 약관 가져와기
+	 * 
+	 * 	 
+	 * */
+
+	public function get_register_policy()
+	{
+
+			$view['view']['member_register_policy1'] = $this->cbconfig->item('member_register_policy1');
+			$view['view']['member_register_policy2'] = $this->cbconfig->item('member_register_policy2');
+			response_result($view,'success','OK');
+	}
+
 
 	/**
 	 * 회원가입 폼 페이지입니다
