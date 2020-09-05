@@ -39,9 +39,8 @@ class Login extends CB_Controller
 			$_SESSION['mem_username'] = '';
 			$_SESSION['mem_lastname'] = '';
 			$_SESSION['mem_nickname'] = '';
-			$_SESSION['mem_photo'] = '';
-			$view['session'] = $_SESSION;
-			response_result($view,'success','세션 정보 리셋.');
+			//$view['session'] = $_SESSION;
+			response_result($view,'success','세션 정보 리셋 성공');
 		}
 	//세션 체크, 없으면 로그인 페이지로 이동
 		function session_check()
