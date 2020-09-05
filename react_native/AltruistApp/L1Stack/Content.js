@@ -139,7 +139,7 @@ class GominContent extends React.Component{
             if(status=='200'){
                 alert(`성공 : ${message}`);
                 Keyboard.dismiss();
-                this.setState({cmt_content:''});
+                this.setState({cmt_content:'',relpying:false,cmt_id:''});
                 this.getCommentData(post.post_id);
                 this.refs.pstcmtlist.scrollToEnd();
             }else if(status=="500"){
@@ -405,7 +405,15 @@ class GominContent extends React.Component{
                         <StarIcon />
                         <View>
                             <Text>{post.display_name}</Text>
-                            <PostTime datetime={post.post_datetime}/>
+                            <View style={{display:"flex",flexDirection:'row'}}>
+                                <PostTime datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
+                                {
+                                    post.post_datetime ==post.post_updated_datetime?
+                                    null
+                                    :
+                                    <Text category="s2"> 수정됨</Text>
+                                }
+                            </View>
                         </View>
                     </View>
                 </View>
@@ -473,7 +481,7 @@ class GominContent extends React.Component{
                 </View>
             </View>
             <View style={{padding:5}}>
-                <Text category="s1">{item.content}</Text>
+                <Text category="s1">{item.cmt_content}</Text>
             </View>
             <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                 {item.cmt_reply ==""?

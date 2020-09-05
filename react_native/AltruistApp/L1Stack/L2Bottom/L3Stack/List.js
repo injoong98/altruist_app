@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {StyleSheet, SafeAreaView, Image, View, ScrollView} from 'react-native'
+import {StyleSheet, SafeAreaView, Image, View, ScrollView, TouchableOpacity} from 'react-native'
 import {Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal, Spinner} from '@ui-kitten/components'
 import axios from 'axios';
 import Tag from '../../../components/tag.component';
@@ -127,9 +127,24 @@ class AltListScreen extends React.Component{
 
             <SafeAreaView style={{flex:1}}>
                 <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/>
-                <ScrollView horizontal style={{flex : 1, marginVertical : 4}}>
-                    <Tag onPress={()=>this.setState({isFilterVisible:true})}>  +  </Tag>
-                </ScrollView>
+                {
+                //task#628 decription 참고해주세요
+                }
+                <View style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>
+                    <TouchableOpacity 
+                        style={{padding:10,backgroundColor:'#B09BDE',borderRadius:10,marginVertical : 4}}
+                        onPress={()=>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false})}
+                    >
+                        <Text category='h2' style={{color:'#ffffff',textAlign:'center'}}>
+                            모두에게 질문 던지기
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{height:40}}>
+                    <ScrollView horizontal={true} style={{flex : 1, marginVertical : 4}}>
+                        <Tag onPress={()=>this.setState({isFilterVisible:true})}>  +  </Tag>
+                    </ScrollView>
+                </View>
                 <View style={{flex: 25}}>
                     <List
                     contentContainerStyle={styles.contentContainer}
