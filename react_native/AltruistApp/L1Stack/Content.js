@@ -764,7 +764,7 @@ class AlbaContent extends React.Component {
             visible : false,
             OF_visible : false,
             post : {} ,
-            thumb_image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+            thumb_image : '/react_native/AltruistApp/assets/images/noimage.png',
             file_images : null,
             phoneNumber : '010 9999 9999',
             isLoading : true,
@@ -823,7 +823,10 @@ class AlbaContent extends React.Component {
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
     UD_Action = () =>(
-        <TopNavigationAction icon={HeartIcon} onPress={() =>{this.onClick_UD_Action()}}/>
+        // <TopNavigationAction icon={HeartIcon} onPress={() =>{this.onClick_UD_Action()}}/>
+        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.onClick_UD_Action()}>
+            <MoreLsvg height={24} width={24}/>
+        </TouchableOpacity>
     )
     onClick_UD_Action = () => {
         const buttons = ['수정', '삭제', '취소'];
@@ -976,7 +979,7 @@ class AlbaContent extends React.Component {
                         </Card>
                     </ScrollView>
                     <Button style={styles.bottomButton} onPress={()=>this.setVisible(true)}>
-                            지원하기
+                        지원하기
                     </Button>
                     <Modal
                             visible={this.state.visible}
