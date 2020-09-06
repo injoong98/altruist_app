@@ -18,20 +18,156 @@ import {TopBarTune} from '../../../components/TopBarTune'
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
-const StarIcon =  (props) =>(
-    <Icon {...props} name = "star"/>
-)
 class AltQueReply extends React.Component{
     
     constructor(props){
         super(props);
         this.state={
-            
+            isLoading:true,
+            post:'',
+            comment:'',
+            refreshing:false,
+
         }
     }
+    renderCommentsList=({item,index})=>(
+        <View style={{marginVertical:3}}>
+        {item.cmt_reply==""?
+        null
+        :
+        <View style={{position:'absolute',left:0,paddingLeft:25}}>
+            <ReplyLsvg />
+        </View> 
+        }
+        <View 
+            style ={{
+                borderRadius:8,
+                paddingRight:15,
+                marginRight:15,
+                paddingVertical:10,
+                paddingLeft: 15,
+                marginLeft:item.cmt_reply==""?15:50,
+                backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
+            <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <View style={{flexDirection:"row"}}>
+                    <View>
+                        <Text category="s2">{item.cmt_nickname}</Text>
+                        <PostTime datetime={item.cmt_datetime}/>
+                    </View>
+                </View>
+                <View style={{display:'flex',flexDirection:'row'}}>
+                    {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
+                        <BlameIcon />
+                    </TouchableOpacity> */}
+                    <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
+                        <MoreSsvg/>
+                    </TouchableOpacity>
+                </View>
+            </View>
+            <View style={{padding:5}}>
+                <Text category="s1">{item.cmt_content}</Text>
+            </View>
+            <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
+                {item.cmt_reply ==""?
+                <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replyModalVisible:true,cmt_id:item.cmt_id})}>
+                    <ReplySsvg />
+                </TouchableOpacity>
+                :null
+                }
+                <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
+                    <Thumbsvg />
+                </TouchableOpacity>
+                    <Text>{item.cmt_like}</Text>
+            </View>
+        </View>
+        </View>
+    )
+    renderPostBody = (post)=>{
+        console.log(JSON.stringify(post))
+        
+        const regex = /(<([^>]+)>)|&nbsp;/ig;
+        const post_remove_tags = post.post_content.replace(regex, '\n');
+        return (
+            <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10}} >
+                <View style={{marginLeft:15,marginTop:10,marginBottom:13}}>
+                    <View style={{display:"flex",flexDirection:'row'}}>
+                        <View>
+                            <Text>{post.display_name}</Text>
+                            <View style={{display:"flex",flexDirection:'row'}}>
+                                <PostTime datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
+                                {
+                                    post.post_datetime ==post.post_updated_datetime?
+                                    null
+                                    :
+                                    <Text category="s2"> 수정됨</Text>
+                                }
+                            </View>
+                        </View>
+                    </View>
+                </View>
+                <View style={{marginLeft:15,paddingBottom:5}}>
+                    <Text style={{fontSize:14,fontWeight:'bold'}}>{post.post_title}</Text>
+                </View>
+                <View style={{marginLeft:15,marginBottom:16}}>
+                    <Text style={{fontSize:12,fontWeight:'800'}}>
+                    {post_remove_tags}
+                    </Text>
+                </View>
+                <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
+                    <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
+                        <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
+                            <Thumbsvg/>
+                        </TouchableOpacity>
+                        <Text>{post.post_like}</Text>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+    getCommentData = async (post_id)=>{
+        await axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
+        .then((response)=>{
+            this.setState({comment:response.data.view.data.list})
+        })
+        .catch((error)=>{
+            alert('error')
+        })
+    }
+    getPostData = async (post_id)=>{
+        await axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
+        .then((response)=>{
+            this.setState({post:response.data.view.post});
+            const regexf = /(<([^>]+)>)|&nbsp;/ig;
+            const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
+            this.setState({content:post_remove_tagsf})
+        })
+        .catch((error)=>{
+            alert(JSON.stringify(error))
+        })
+    }
+    onRefresh=()=>{
+        const {post_id} = this.props.route.params
+        this.getCommentData(post_id)
+    } 
+
+    async componentDidMount(){
+        const {post_id} = this.props.route.params
+        await this.getPostData(post_id)
+        .then(()=>this.getCommentData(post_id))
+        .then(()=>{this.setState({isLoading:false})})
+
+    }
+
     render(){
+        const {isLoading,post,comment} = this.state;
        return(
-        <SafeAreaView>
+        isLoading?
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+            <Spinner size='giant'/>
+        </View>
+        :
+
+        <SafeAreaView style={{flex:1}}>
             <TopBarTune 
                 text='질문' 
                 right="bell"
@@ -39,10 +175,16 @@ class AltQueReply extends React.Component{
                 gbckfunc={()=>{this.props.navigation.goBack()}} 
                 gbckuse={true}
             />
-            <View>
-                <Text>
-       {this.props.route.params.post_id}하이
-                </Text>
+            <View style={{flex:1}}>
+                <List
+                    ref={"pstcmtlist"} 
+                    data={comment}
+                    ListHeaderComponent={this.renderPostBody(post)}
+                    renderItem={this.renderCommentsList}
+                    onRefresh={this.onRefresh}
+                    refreshing={this.state.refreshing}
+                    style={{backgroundColor:'#ffffff'}}
+                    />
             </View>
         </SafeAreaView>
        ) 
