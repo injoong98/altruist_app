@@ -395,13 +395,13 @@ class Register extends CB_Controller
 			'rules' => 'trim|alphanumunder|min_length[3]|max_length[20]|callback__mem_recommend_check',
 		);
 
-		if ($this->member->is_admin() === false && ! $this->session->userdata('registeragree')) {
+		/* if ($this->member->is_admin() === false && ! $this->session->userdata('registeragree')) {
 			$this->session->set_flashdata(
 				'message',
 				'회원가입약관동의와 개인정보취급방침동의후 회원가입이 가능합니다'
 			);
 			redirect('register');
-		}
+		} */
 
 		$registerform = $this->cbconfig->item('registerform');
 		$form = json_decode($registerform, true);
@@ -458,7 +458,7 @@ class Register extends CB_Controller
 			}
 		}
 
-		if ($this->cbconfig->item('use_recaptcha')) {
+		/* if ($this->cbconfig->item('use_recaptcha')) {
 			$config[] = array(
 				'field' => 'g-recaptcha-response',
 				'label' => '자동등록방지문자',
@@ -470,7 +470,7 @@ class Register extends CB_Controller
 				'label' => '자동등록방지문자',
 				'rules' => 'trim|required|callback__check_captcha',
 			);
-		}
+		} */
 		$this->form_validation->set_rules($config);
 
 		$form_validation = $this->form_validation->run();
@@ -478,6 +478,12 @@ class Register extends CB_Controller
 		$updatephoto = '';
 		$file_error2 = '';
 		$updateicon = '';
+
+		$view['view']['form_validation'] = $form_validation;
+		
+		if(!$form_validation) {
+			response_result($view,'Err',validation_errors('', ''));
+		}
 
 		if ($form_validation) {
 			$this->load->library('upload');
@@ -1201,8 +1207,8 @@ class Register extends CB_Controller
 					$mem_id
 				);
 			}
-
-			redirect('register/result');
+			response_result($view,'success','정상적으로 가입되었습니다.');
+			//redirect('register/result');
 		}
 	}
 

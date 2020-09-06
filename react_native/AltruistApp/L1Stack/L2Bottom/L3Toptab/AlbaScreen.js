@@ -1,8 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, Image, Layout, ActivityIndicator} from 'react-native';
+import { StyleSheet, View, Image, Layout, ActivityIndicator, YellowBox, TouchableOpacity} from 'react-native';
 import { Card, List, Text, Divider, Button, Spinner} from '@ui-kitten/components';
 import axios from 'axios';
 import {PostTime} from '../../../components/PostTime';
+import Writesvg from '../../../assets/icons/write.svg'
+
+YellowBox.ignoreWarnings([
+  'Non-serializable values were found in the navigation state',
+]);
+
 class AlbaScreen extends React.Component {
 
   constructor(props){
@@ -13,7 +19,7 @@ class AlbaScreen extends React.Component {
       isListLoading : false,
       isNoMoreData : false,
       lists : [],
-      image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+      image_url : '/react_native/AltruistApp/assets/images/noimage.png',
       refreshing : false,
     }
   }
@@ -149,11 +155,13 @@ class AlbaScreen extends React.Component {
           ListFooterComponent={this.renderFooter}
           />
       </View>
-      <Button 
-          style={styles.bottomButton}
-          onPress={()=>{this.props.navigation.navigate('AlbaWrite',{statefunction:this.statefunction});}}>
-            + 
-      </Button>
+      <TouchableOpacity 
+        style={styles.bottomButton}
+        onPress={()=>{this.props.navigation.navigate('AlbaWrite',{statefunction:this.statefunction});}}
+        >
+        <Writesvg />
+      </TouchableOpacity>
+
       </>
     );
   }

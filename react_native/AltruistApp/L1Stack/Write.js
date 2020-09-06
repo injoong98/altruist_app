@@ -9,6 +9,9 @@ import {Picker} from '@react-native-community/picker';
 import {ActionSheet, Root} from 'native-base';
 import { TopBarTune } from '../components/TopBarTune';
 
+import Camsvg from '../assets/icons/Icon_Cam.svg'
+import Tooltipsvg from '../assets/icons/tooltip.svg'
+
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -465,12 +468,14 @@ class AlbaWrite extends React.Component{
         '주',
         '월'
     ]
-    BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
-    )
-    SubmitButton = () =>(
-        <TopNavigationAction icon={UpIcon} onPress={() =>{this.submit_alba_Alert()}}/>
-    )
+
+    // BackAction = () =>(
+    //     <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
+    // )
+    // SubmitButton = () =>(
+
+    //     <TopNavigationAction icon={UpIcon} onPress={() =>{this.submit_alba_Alert()}}/>
+    // )
 
     setTipVisible = (bool) => {this.setState({isTipVisible:bool});}
     setFollowUp = (nextChecked) => {
@@ -501,12 +506,6 @@ class AlbaWrite extends React.Component{
                 }
             )
         })
-        // post_image.forEach(element => {
-        //     console.log(element);
-        //     formdata.append("file", element);
-        // });
-
-        // console.log(post_image);
         console.log(formdata);
         await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
         .then(response=>{
@@ -526,32 +525,6 @@ class AlbaWrite extends React.Component{
         .catch(error=>{
             alert(error);
         })
-        // await axios({
-        //     method : 'post',
-        //     url : 'http://10.0.2.2/api/board_write/write/b-a-3',
-        //     data : formdata,
-        //     header : {
-        //         'Accept' : 'application/json',
-        //         'Content-Type' : 'multipart/form-data',
-        //     },
-        // })
-        // .then(response=>{
-        //         console.log(response);
-        //         Alert.alert(
-        //             "게시글",
-        //             "게시글 작성 완료",
-        //             [
-        //                 { 
-        //                     text: "OK", 
-        //                     onPress: ()=> {this.gobackfunc()}
-        //                 }
-        //             ],
-        //             { cancelable: false }
-        //         );
-        // })
-        // .catch(error=>{
-        //         alert(error);
-        // })
     }
 
     submit_alba_Alert= () => {
@@ -648,16 +621,23 @@ class AlbaWrite extends React.Component{
     }
 
     renderToggleButton = () => (
-        <Button
-            appearance='ghost'
-            accessoryLeft={HeartIcon}
-            onPress={()=>this.setTipVisible(true)}/>
+        <TouchableOpacity style={{justifyContent : 'center', alignItems : 'center'}} onPress={()=>this.setTipVisible(true)}>
+            <Tooltipsvg height={24} width={24}/>
+        </TouchableOpacity>
     );
 
     render(){
+        const {navigation} = this.props;
         return(
             <SafeAreaView style={{flex:1,}}>
-                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.SubmitButton} style={styles.topbar}/> 
+                <TopBarTune 
+                    text="채용 정보 작성" 
+                    right={this.props.route.params.mode=='edit' ?'edit' : "upload"}
+                    func={() =>{this.submit_alba_Alert()}}
+                    gbckfunc={()=>{navigation.goBack()}} 
+                    gbckuse={true}
+                />
+                {/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
                 <Divider />
                 <Layout style={{flex:10, backgroundColor : '#F4F4F4'}}>
                     <ScrollView>
@@ -745,10 +725,9 @@ class AlbaWrite extends React.Component{
                     <Layout style={styles.picture}>
                         <View style={{flexDirection : 'row', flex: 1, alignItems : 'center', justifyContent : 'space-between', marginVertical : 10}}>
                             <Text category='h4'> 사진</Text>
-                            <Button
-                                appearance='ghost'
-                                accessoryLeft={HeartIcon}
-                                onPress={()=>this.pickMultiple()}/>
+                            <TouchableOpacity onPress={()=>this.pickMultiple()}>
+                                <Camsvg/>
+                            </TouchableOpacity>
                         </View>
                         <ScrollView horizontal style={{height : 150}}>
                             {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
