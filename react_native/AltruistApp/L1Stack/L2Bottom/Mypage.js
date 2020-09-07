@@ -10,7 +10,8 @@ class Mypage extends React.Component{
         this.state={
             mem_userid:'',
             mem_password:'',
-            storedLoginInfo:'',
+            logininfo:'',
+            autologin:false,
             isLogined:false
         }
     }
@@ -24,11 +25,12 @@ class Mypage extends React.Component{
         console.log('Done.')
       }
       
-    getData = async () => {
+    getData = async (key) => {
         try {
-          const value = await AsyncStorage.getItem('logininfo')
+          const value = await AsyncStorage.getItem(key)
           if(value !== null) {
-            this.setState({storedLoginInfo:JSON.parse(value)})
+            var objstr= `{"${key}":${value}}`
+            this.setState(JSON.parse(objstr))
             console.log(value)
           }
         } catch(e) {
@@ -66,14 +68,14 @@ class Mypage extends React.Component{
     }
     
     componentDidMount(){
-        this.getData();
+        // this.getData();
     }
     render(){
         return(
             <View style={{flex:1,justifyContent:"center",alignItems:'center'}}>
                 <Button onPress={()=>{this.doLogout();this.removeValue();this.props.navigation.navigate('Login')}}>간단로그아웃</Button>
                 <Button onPress={()=>{this.sessionChk();}}>session chk</Button>
-                <Button onPress={()=>{this.getData()}} >AsyncStorage check</Button>
+                <Button onPress={()=>{this.getData('logininfo');this.getData('autologin')}} >AsyncStorage check</Button>
             </View>
         )
     }

@@ -28,12 +28,12 @@ class LoginScreen extends React.Component{
         console.log('Done.')
       }
       
-    getData = async (key) => {
+      getData = async (key) => {
         try {
           const value = await AsyncStorage.getItem(key)
           if(value !== null) {
-              console.log(value)
-              return value;
+            var objstr= `{"${key}":${value}}`
+            this.setState(JSON.parse(objstr))
           }else{
               console.log('null')
           }
@@ -56,7 +56,6 @@ class LoginScreen extends React.Component{
         axios.post('http://dev.unyict.org/api/login',formdata)
         .then(response=>{
             this.setState({isLogined:true,mem_password:'',mem_userid:''})
-            alert(`성공 : ${JSON.stringify(response.data)}`)
             this.storeData('logininfo',JSON.stringify({mem_userid:mem_userid,mem_password:mem_password}));
             this.storeData('autologin',JSON.stringify(this.state.autologin));
             this.props.navigation.navigate('Bottom')
@@ -67,10 +66,13 @@ class LoginScreen extends React.Component{
     }
     
     componentDidMount(){
-        var logininfo = this.getData('logininfo');
-        var autologin = this.getData('autologin');
-        console.log(logininfo);
-        console.log(autologin);
+        this.getData('logininfo');
+        this.getData('autologin');
+        const {logininfo,autologin} = this.state
+        logininfo && autologin ?
+        this.dologin(logininfo.mem_userid,logininfo.mem_password)
+        :
+        null
     }
     render(){
         const {mem_userid,mem_password} = this.state;
@@ -85,12 +87,12 @@ class LoginScreen extends React.Component{
                 <Input value ={mem_userid} onChangeText ={(nextValue)=>this.setState({mem_userid:nextValue})}></Input>
                 <Text>password</Text>
                 <Input value ={mem_password} onChangeText ={(nextValue)=>this.setState({mem_password:nextValue})}></Input>
-                {/* <CheckBox
+                <CheckBox
                     checked={this.state.autologin}
                     onChange={(checked)=>{this.setState({autologin:checked}),console.log(this.state.autologin)}}    
                 >
                 자동로그인{`${this.state.autologin}`}
-                </CheckBox> */}
+                </CheckBox>
                 <Button onPress={()=>this.dologin(mem_userid,mem_password)}>로그인</Button>
                 <Button onPress={()=>{this.getData('logininfo'),this.getData('autologin')}} >AsyncStorage check</Button>
                 <Button onPress={()=>{console.log(this.state)}} >statecheck</Button>
