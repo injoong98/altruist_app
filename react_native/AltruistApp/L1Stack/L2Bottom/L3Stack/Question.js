@@ -15,6 +15,7 @@ import Thumbsvg from '../../../assets/icons/thumb-up.svg'
 import UploadCirclesvg from '../../../assets/icons/upload-circle.svg'
 import Tag from '../../../components/tag.component'
 import {TopBarTune} from '../../../components/TopBarTune'
+
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -25,32 +26,80 @@ class AltReplying extends React.Component{
         super(props);
         this.state={
             isLoading:true,
-            post:'',
-            comment:'',
+            post:this.props.route.params.post,
+            title:this.props.route.params.post_title,
+            comment:this.props.route.params.comment ?this.props.route.params.comment.cmt_content : '',
             refreshing:false,
-    
         }
     }
+    commentUpload= async()=>{
+        const {comment,post}=this.state;
+        var formdata = new FormData();
+        formdata.append("post_id",post.post_id);
+        formdata.append("cmt_content",comment);
+        this.props.route.params.mode=='cu' ? formdata.append("mode",'cu') : null;
+        this.props.route.params.comment ? formdata.append("cmt_id",this.props.route.params.comment.cmt_id) : null;
+        
+        await axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
+        .then(response=>{
+            const {status,message}=response.data;
+            if(status=='200'){
+                alert(`성공 : ${message}`);
+                this.setState({comment:'',relpying:false,cmt_id:''});
+                this.props.navigation.goBack();
+                this.props.route.params.onGoBack();
+            }else if(status=="500"){
+                alert(`실패 : ${message}`)
+            }
+        })
+    }
 
+    commentValid =async() =>{
+        const {comment} =this.state;
+        var formdata = new FormData();
+        formdata.append("content",comment);
+        
+        await axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        .then(response=>{
+            const {status,message} = response.data;
+            if(status=='500'){
+                alert(message);
+            }else if(status=="200"){
+                this.commentUpload();
+            }
+        })
+        .catch(error=>{
+            alert('error')
+        })
+    }
     render(){
+        const {post,title,comment} = this.state
         return(
             <SafeAreaView>
+                <TopBarTune 
+                    text='답변보내기' 
+                    right="upload"
+                    func={() =>{this.commentValid()}} 
+                    gbckfunc={()=>{this.props.navigation.goBack()}} 
+                    gbckuse={true}
+                />
                 <View>
                     <View>
                         <Text>
-                            질문제목
+                            {title}
                         </Text>
                     </View>
                     <View>
                         <Text>
-                            작성자 정보
+                            {post.display_name}
                         </Text>
                     </View>
                 </View>
                 <View>
-                    <Text>
-                        답변 입력창
-                    </Text>
+                    <TextInput
+                        value = {comment}
+                        onChangeText={(text)=>this.setState({comment:text})}
+                        placeholder = '답변해주세요! 이타주의자님'/>
                 </View>
 
             </SafeAreaView>
@@ -66,14 +115,49 @@ class AltQueContent extends React.Component{
             post:'',
             comment:[],
             refreshing:false,
+            modalVisible:false,
+            cmt_id:''
 
         }
+    }
+    cmtDelete = (cmt_id) =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',cmt_id)
+        
+        axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+                alert(`${JSON.stringify(response.data.message)}`)
+            }
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    cmtDeleteConfirm = (cmt_id) =>{
+        Alert.alert(
+            "답변",
+            "이 답변을 삭제하시겠습니까?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "OK", 
+                    onPress: ()=> this.cmtDelete(cmt_id)
+                }
+            ],
+            { cancelable: false }
+        );
     }
     renderCommentsList=({item,index})=>{
         return(
         item==false? 
         <View>
-            <Button onPress = {()=>{this.props.navigation.navigate('AltReplying')}}>
+            <Button onPress = {()=>{this.props.navigation.navigate('AltReplying',{post:this.state.post,onGoBack:this.onRefresh})}}>
                 답변하기
             </Button>
         </View>
@@ -207,7 +291,7 @@ class AltQueContent extends React.Component{
     }
 
     render(){
-        const {isLoading,post,comment} = this.state;
+        const {isLoading,post,comment,modalVisible,cmt_id} = this.state;
         console.log(this.state.comment.length);
         
        return(
@@ -236,6 +320,24 @@ class AltQueContent extends React.Component{
                     style={{backgroundColor:'#ffffff'}}
                     />
             </View>
+            <Modal
+                visible={modalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}
+            >
+                <View>
+                    <TouchableOpacity 
+                        onPress={()=>{this.props.navigation.navigate('AltReplying',{mode:'cu',comment:comment[0],post:post,onGoBack:this.onRefresh}),this.setState({modalVisible:false,cmt_id:''})}}
+                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
+                        <Text category='h3'>답변 수정</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        onPress={()=>{this.cmtDeleteConfirm(cmt_id);this.setState({modalVisible:false,cmt_id:''})}}
+                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
+                        <Text category='h3'>답변 삭제</Text>
+                    </TouchableOpacity>
+                </View>   
+            </Modal>
         </SafeAreaView>
        ) 
     }
