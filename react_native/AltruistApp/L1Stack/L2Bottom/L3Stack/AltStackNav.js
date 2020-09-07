@@ -7,7 +7,7 @@ import AltMainScreen from './Main';
 import AltApplyScreen from './Apply';
 import AltListScreen from './List';
 import AltProfileScreen from './Profile';
-import {AltQuestionWrite,AltQueType,AltAreaList,AltQueReply,AltOpqQueList} from './Question';
+import {AltQuestionWrite,AltQueType,AltAreaList,AltQueContent,AltOpqQueList,AltReplying} from './Question';
 import AltApplyFormScreen from './ApplyForm';
 import ApplyCompleteScreen from './ApplyComplete';
 
@@ -45,6 +45,7 @@ export const AltStackNav = () =>(
         <Screen name = "AltAreaList" component={AltAreaList}/>
         <Screen name = "AltQuestionWrite" component={AltQuestionWrite}/>
         <Screen name = "AltOpqQueList" component={AltOpqQueList}/>
-        <Screen name = "AltQueReply" component={AltQueReply}/>
+        <Screen name = "AltQueContent" component={AltQueContent}/>
+        <Screen name = "AltReplying" component={AltReplying}/>
     </Navigator>
 )

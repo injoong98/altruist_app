@@ -18,7 +18,8 @@ import {TopBarTune} from '../../../components/TopBarTune'
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
-class AltQueReply extends React.Component{
+
+class AltReplying extends React.Component{
     
     constructor(props){
         super(props);
@@ -27,10 +28,56 @@ class AltQueReply extends React.Component{
             post:'',
             comment:'',
             refreshing:false,
+    
+        }
+    }
+
+    render(){
+        return(
+            <SafeAreaView>
+                <View>
+                    <View>
+                        <Text>
+                            질문제목
+                        </Text>
+                    </View>
+                    <View>
+                        <Text>
+                            작성자 정보
+                        </Text>
+                    </View>
+                </View>
+                <View>
+                    <Text>
+                        답변 입력창
+                    </Text>
+                </View>
+
+            </SafeAreaView>
+        )
+    }
+}
+class AltQueContent extends React.Component{
+    
+    constructor(props){
+        super(props);
+        this.state={
+            isLoading:true,
+            post:'',
+            comment:[],
+            refreshing:false,
 
         }
     }
-    renderCommentsList=({item,index})=>(
+    renderCommentsList=({item,index})=>{
+        return(
+        item==false? 
+        <View>
+            <Button onPress = {()=>{this.props.navigation.navigate('AltReplying')}}>
+                답변하기
+            </Button>
+        </View>
+        :
         <View style={{marginVertical:3}}>
         {item.cmt_reply==""?
         null
@@ -81,9 +128,8 @@ class AltQueReply extends React.Component{
             </View>
         </View>
         </View>
-    )
+    )}
     renderPostBody = (post)=>{
-        console.log(JSON.stringify(post))
         
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
@@ -127,7 +173,9 @@ class AltQueReply extends React.Component{
     getCommentData = async (post_id)=>{
         await axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
-            this.setState({comment:response.data.view.data.list})
+            this.setState({comment: response.data.view.data.total_rows>0 ? response.data.view.data.list : [false]})
+            
+        console.log(this.state.comment);
         })
         .catch((error)=>{
             alert('error')
@@ -160,6 +208,8 @@ class AltQueReply extends React.Component{
 
     render(){
         const {isLoading,post,comment} = this.state;
+        console.log(this.state.comment.length);
+        
        return(
         isLoading?
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
@@ -175,7 +225,7 @@ class AltQueReply extends React.Component{
                 gbckfunc={()=>{this.props.navigation.goBack()}} 
                 gbckuse={true}
             />
-            <View style={{flex:1}}>
+            <View style={{}}>
                 <List
                     ref={"pstcmtlist"} 
                     data={comment}
@@ -218,7 +268,7 @@ class AltOpqQueList extends React.Component{
 
     renderQueList = ({item,list}) =>{
         return(
-            <TouchableOpacity onPress={()=>{this.props.navigation.navigate('AltQueReply',{post_id:item.post_id})}}>
+            <TouchableOpacity onPress={()=>{this.props.navigation.navigate('AltQueContent',{post_id:item.post_id})}}>
                 <Text>보낸 사람 {item.post_userid}</Text>
                 <Text>질문 제목 {item.post_title}</Text>
                 <Text>받는 사람 {item.answer_mem_id}</Text>
@@ -619,4 +669,4 @@ const styles = StyleSheet.create({
 
 })
 
-export {AltQuestionWrite,AltQueType,AltAreaList,AltOpqQueList,AltQueReply};
+export {AltQuestionWrite,AltQueType,AltAreaList,AltOpqQueList,AltQueContent,AltReplying};
