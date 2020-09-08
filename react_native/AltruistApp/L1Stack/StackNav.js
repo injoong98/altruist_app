@@ -8,6 +8,7 @@ import {defaultWrite, MarketWrite, AlbaWrite,GominWrite, IlbanWrite} from './Wri
 import {SafeAreaView} from 'react-native'
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
 import LoginScreen from './Login'
+import RegisterScreen from './Register'
 const {Navigator,Screen} = createStackNavigator();
 
 const SpareScreen =() =>(
@@ -32,5 +33,6 @@ export const StackNav = () =>(
         <Screen name = "MarketWrite" component={MarketWrite}/>
         <Screen name = "AlbaWrite" component={AlbaWrite}/>
         <Screen name = "GominWrite" component={GominWrite}/>
+        <Screen name = "RegisterScreen" component={RegisterScreen}/>
     </Navigator>
 )

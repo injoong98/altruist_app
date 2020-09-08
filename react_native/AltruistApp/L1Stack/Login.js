@@ -96,6 +96,7 @@ class LoginScreen extends React.Component{
                 <Button onPress={()=>this.dologin(mem_userid,mem_password)}>로그인</Button>
                 <Button onPress={()=>{this.getData('logininfo'),this.getData('autologin')}} >AsyncStorage check</Button>
                 <Button onPress={()=>{console.log(this.state)}} >statecheck</Button>
+                <Button onPress={()=>this.props.navigation.navigate('RegisterScreen')}>회원가입</Button>
             </View>
         )
     }
