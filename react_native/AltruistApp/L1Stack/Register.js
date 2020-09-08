@@ -1,6 +1,7 @@
 import React from 'react';
 import {View,StyleSheet, SafeAreaView} from 'react-native';
 import {Text,Input,Button,CheckBox, TopNavigation, TopNavigationAction, Icon} from '@ui-kitten/components';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -25,13 +26,19 @@ class RegisterScreen extends React.Component{
   
     render(){
         return(
-            <SafeAreaView>
-                <TopNavigation 
-            title="회원가입" alignment="center" accessoryLeft={this.BackAction} /> 
-                <View style={{flex:1,justifyContent:"center",alignItems:'center'}}>
-                    <Text>Hii</Text>
-                </View>
-            </SafeAreaView>
+            <>
+            <TopNavigation title="회원가입" alignment="center" accessoryLeft={this.BackAction} /> 
+                <SafeAreaView style={{flex:1}}>
+                    <View style={{flex:1, justifyContent:"center",alignItems:'center', padding:50}}>
+                        <Input placeholder="이메일"></Input>
+                        <Input placeholder="아이디"></Input>
+                        <Input placeholder="비밀번호"></Input>
+                        <Input placeholder="비밀번호 확인"></Input> 
+                        <Input placeholder="닉네임"></Input>
+                        <Button onPress={()=>this.props.navigation.navigate('QuestionScreen')}>다음</Button>
+                    </View>
+                </SafeAreaView>
+            </>
         )
     }
 }
