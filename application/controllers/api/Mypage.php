@@ -49,7 +49,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$view = array();
 		$view['view'] = array();
@@ -74,7 +74,7 @@ class Mypage extends CB_Controller
 				$view['view']['member_group_name'] .= element('mgr_title', $item);
 			}
 		}
-
+ 
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
 
@@ -103,7 +103,7 @@ class Mypage extends CB_Controller
 			'meta_author' => $meta_author,
 			'page_name' => $page_name,
 		);
-		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
+		//$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
 		response_result($view);
 
 		// $this->data = $view;
