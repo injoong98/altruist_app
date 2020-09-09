@@ -1,46 +1,164 @@
 import React from 'react';
-import {View,StyleSheet, SafeAreaView} from 'react-native';
-import {Text,Input,Button,CheckBox, TopNavigation, TopNavigationAction, Icon} from '@ui-kitten/components';
-import { ScrollView } from 'react-native-gesture-handler';
+import {View, StyleSheet, SafeAreaView} from 'react-native';
+import {
+  Text,
+  Input,
+  Button,
+  CheckBox,
+  TopNavigation,
+  TopNavigationAction,
+  Icon,
+  TextInput,
+} from '@ui-kitten/components';
+import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+import PropTypes from 'prop-types';
 
-const BackIcon =  (props) =>(
-    <Icon {...props} name = "arrow-back"/>
-)
+const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
+const Calender = (props) => <Icon {...props} name="calendar-outline" />;
 
+class RegisterScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      mem_userid: '',
+      mem_password: '',
+      logininfo: '',
+      isLogined: false,
+      autologin: false,
+    };
+  }
 
-class RegisterScreen extends React.Component{
-    constructor(props){
-        super(props);
-        this.state={
-            mem_userid:'',
-            mem_password:'',
-            logininfo:'',
-            isLogined:false,
-            autologin:false
-        }
-    }
-    
-    BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() => {this.props.navigation.goBack()}}/>
-    )
-  
-    render(){
-        return(
-            <>
-            <TopNavigation title="회원가입" alignment="center" accessoryLeft={this.BackAction} /> 
-                <SafeAreaView style={{flex:1}}>
-                    <View style={{flex:1, justifyContent:"center",alignItems:'center', padding:50}}>
-                        <Input placeholder="이메일"></Input>
-                        <Input placeholder="아이디"></Input>
-                        <Input placeholder="비밀번호"></Input>
-                        <Input placeholder="비밀번호 확인"></Input> 
-                        <Input placeholder="닉네임"></Input>
-                        <Button onPress={()=>this.props.navigation.navigate('QuestionScreen')}>다음</Button>
-                    </View>
-                </SafeAreaView>
-            </>
-        )
-    }
+  BackAction = () => (
+    <TopNavigationAction
+      icon={BackIcon}
+      onPress={() => {
+        this.props.navigation.goBack();
+      }}
+    />
+  );
+
+  //   TODO : 생년월일
+
+  UselessTextInput = ({key, placeholder}) => {
+    const [textInputValue, setTextInputValue] = React.useState('');
+
+    return (
+      <Input
+        key={key}
+        onChangeText={(text) => setTextInputValue(text)}
+        value={textInputValue}
+        placeholder={placeholder}
+      />
+    );
+  };
+  //   TODO : 성별
+
+  //   TODO : 휴대폰 번호
+
+  componentDidUpdate() {
+    console.log('');
+  }
+  render() {
+    return (
+      <>
+        <TopNavigation
+          title="회원가입"
+          alignment="center"
+          accessoryLeft={this.BackAction}
+        />
+        <SafeAreaView style={{flex: 1}}>
+          <View style={{flex: 1, justifyContent: 'center', padding: 50}}>
+            <this.UselessTextInput
+              style={{padding: 3}}
+              placeholder="이메일 / ID로 사용합니다"
+              placeholder="mem_email"
+            />
+            <this.UselessTextInput
+              style={{padding: 3}}
+              placeholder="비밀번호"
+            />
+            <this.UselessTextInput
+              style={{padding: 3}}
+              placeholder="비밀번호 확인"
+            />
+            <this.UselessTextInput style={{padding: 3}} placeholder="닉네임" />
+            <this.UselessTextInput
+              style={{padding: 3}}
+              placeholder="휴대전화"
+            />
+            <View
+              style={{
+                padding: 3,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <this.UselessTextInput placeholder="주민번호 앞 6자리" />
+              <Text>-</Text>
+              <this.UselessTextInput placeholder="1" />
+              <Text>******</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                alignItems: 'stretch',
+                alignContent: 'stretch',
+              }}>
+              <Button
+                style={{alignSelf: 'stretch'}}
+                onPress={() =>
+                  this.props.navigation.navigate('QuestionScreen')
+                }>
+                여성
+              </Button>
+              <Button
+                style={{alignSelf: 'stretch'}}
+                onPress={() =>
+                  this.props.navigation.navigate('QuestionScreen')
+                }>
+                남성
+              </Button>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                padding: 3,
+              }}>
+              <CheckBox></CheckBox>
+              <Text
+                onPress={() =>
+                  this.props.navigation.navigate('AgreementScreen')
+                }>
+                {' '}
+                개인정보 취급방침
+              </Text>
+              <Text>에 동의합니다</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                padding: 3,
+              }}>
+              <CheckBox></CheckBox>
+              <Text
+                onPress={() =>
+                  this.props.navigation.navigate('AgreementScreen')
+                }>
+                {' '}
+                이용약관
+              </Text>
+              <Text>에 동의합니다</Text>
+            </View>
+            <Button
+              onPress={() => this.props.navigation.navigate('QuestionScreen')}>
+              다음
+            </Button>
+          </View>
+        </SafeAreaView>
+      </>
+    );
+  }
 }
 
 export default RegisterScreen;
