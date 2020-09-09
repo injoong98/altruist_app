@@ -10,6 +10,8 @@ target 'testAltruistApp' do
 
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
 
+  pod 'react-native-cookies', :path => '../node_modules/@react-native-community/cookies'
+
   target 'testAltruistAppTests' do
     inherit! :complete
     # Pods for testing

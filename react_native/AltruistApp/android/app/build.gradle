@@ -133,6 +133,7 @@ android {
         applicationId "com.testaltruistapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         versionCode 1
         versionName "1.0"
