@@ -49,7 +49,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$view = array();
 		$view['view'] = array();
@@ -74,7 +74,7 @@ class Mypage extends CB_Controller
 				$view['view']['member_group_name'] .= element('mgr_title', $item);
 			}
 		}
-
+ 
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
 
@@ -103,10 +103,11 @@ class Mypage extends CB_Controller
 			'meta_author' => $meta_author,
 			'page_name' => $page_name,
 		);
-		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		response_result($view);
-
-		// $this->data = $view;
+		//$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
+		
+		 //$this->data = $view;
+		 $view['data']['myinfo']  = $this->member->get_member();
+		response_result($view['data']);
 		// $this->layout = element('layout_skin_file', element('layout', $view));
 		// $this->view = element('view_skin_file', element('layout', $view));
 	}
@@ -124,7 +125,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -219,9 +220,10 @@ class Mypage extends CB_Controller
 			'page_name' => $page_name,
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		$this->data = $view;
+		response_result($view);
+		/* 	$this->data = $view;
 		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		$this->view = element('view_skin_file', element('layout', $view)); */
 	}
 
 
@@ -237,7 +239,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -320,9 +322,10 @@ class Mypage extends CB_Controller
 			'page_name' => $page_name,
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		$this->data = $view;
+		response_result($view);
+		/* $this->data = $view;
 		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		$this->view = element('view_skin_file', element('layout', $view)); */
 	}
 
 
@@ -338,7 +341,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -427,9 +430,10 @@ class Mypage extends CB_Controller
 			'page_name' => $page_name,
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		$this->data = $view;
+		response_result($view);
+		/* $this->data = $view;
 		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		$this->view = element('view_skin_file', element('layout', $view)); */
 	}
 
 
@@ -445,7 +449,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -535,9 +539,10 @@ class Mypage extends CB_Controller
 			'page_name' => $page_name,
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		$this->data = $view;
+		response_result($view);
+		/* $this->data = $view;
 		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		$this->view = element('view_skin_file', element('layout', $view)); */
 	}
 
 
@@ -553,7 +558,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -642,9 +647,10 @@ class Mypage extends CB_Controller
 			'page_name' => $page_name,
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		$this->data = $view;
+		response_result($view);
+		/* $this->data = $view;
 		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		$this->view = element('view_skin_file', element('layout', $view)); */
 	}
 
 
@@ -660,7 +666,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -754,9 +760,12 @@ class Mypage extends CB_Controller
 			'page_name' => $page_name,
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
+		
+		response_result($view);
+		/* 
 		$this->data = $view;
 		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		$this->view = element('view_skin_file', element('layout', $view)); */
 	}
 
 
@@ -772,7 +781,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -856,9 +865,10 @@ class Mypage extends CB_Controller
 			'page_name' => $page_name,
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		$this->data = $view;
+		response_result($view);
+		/* $this->data = $view;
 		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		$this->view = element('view_skin_file', element('layout', $view)); */
 	}
 
 
@@ -874,7 +884,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -1009,16 +1019,19 @@ class Mypage extends CB_Controller
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
 		$this->data = $view;
-		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		response_result($view);
+		/* $this->layout = element('layout_skin_file', element('layout', $view));
+		$this->view = element('view_skin_file', element('layout', $view)); */
 	}
 
 
 	/**
 	 * 마이페이지>스크랩삭제 입니다
 	 */
-	public function scrap_delete($scr_id = 0)
+	public function scrap_delete()
 	{
+		$scr_id = 0;
+		$scr_id =  $this->input->post('scr_id');
 		// 이벤트 라이브러리를 로딩합니다
 		$eventname = 'event_mypage_scrap_delete';
 		$this->load->event($eventname);
@@ -1026,7 +1039,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -1035,17 +1048,20 @@ class Mypage extends CB_Controller
 
 		$scr_id = (int) $scr_id;
 		if (empty($scr_id) OR $scr_id < 1) {
-			show_404();
+			response_result($view,'Err','처리 도중 에러 empty($scr_id) OR $scr_id');
+			//show_404();
 		}
 
 		$this->load->model('Scrap_model');
 		$scrap = $this->Scrap_model->get_one($scr_id);
 
 		if ( ! element('scr_id', $scrap)) {
-			show_404();
+			response_result($view,'Err','조회된 스크랩 정보 없음.('.$scr_id.')');
+			//show_404();
 		}
 		if ((int) element('mem_id', $scrap) !== $mem_id) {
-			show_404();
+			response_result($view,'Err','처리 도중 에러 mem_id 없음.' );
+			//show_404();
 		}
 
 		$this->Scrap_model->delete($scr_id);
@@ -1061,8 +1077,8 @@ class Mypage extends CB_Controller
 			'정상적으로 삭제되었습니다'
 		);
 		$param =& $this->querystring;
-
-		redirect('mypage/scrap?' . $param->output());
+		response_result($view,'success','정상적으로 삭제되었습니다');
+		//redirect('mypage/scrap?' . $param->output());
 	}
 
 
@@ -1078,7 +1094,7 @@ class Mypage extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -1165,8 +1181,9 @@ class Mypage extends CB_Controller
 			'page_name' => $page_name,
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		$this->data = $view;
+		response_result($view);
+	/* 	$this->data = $view;
 		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		$this->view = element('view_skin_file', element('layout', $view)) */;
 	}
 }

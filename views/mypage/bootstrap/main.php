@@ -67,9 +67,11 @@
 			</div>
 		</div>
 		<?php
-		/* if (element('member_group_name', $view)) {
-		 * 회원에게 자신이 어떤 그룹에 속해있는지 보여주고 싶으면 여기 주석을 해제해주세요
+		 if (element('member_group_name', $view)) {
+		/*
+			* 회원에게 자신이 어떤 그룹에 속해있는지 보여주고 싶으면 여기 주석을 해제해주세요
 		 * 웹사이트 운영 정책에 따라 결정해주시면 됩니다
+		 * */
 		?>
 			<div class="form-group">
 			<label class="col-sm-3 control-label">회원그룹</label>
@@ -77,7 +79,7 @@
 				<p class="form-control-static"><?php echo element('member_group_name', $view); ?></p>
 			</div>
 			</div>
-		<?php } */ ?>
+		<?php }  ?>
 		<div class="form-group">
 			<label class="col-sm-3 control-label">가입일</label>
 			<div class="col-sm-9">

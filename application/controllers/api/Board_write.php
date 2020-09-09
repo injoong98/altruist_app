@@ -51,13 +51,13 @@ class Board_write extends CB_Controller
 		
 		if (empty($brd_key)) {
 			response_result($r,'Err','게시판 키(brd_key) 누락');
-			//show_404();
 		}
 
+		//board_id 에 따라서 일반게시판 글 작성과 질문하기로 나뉘게 됩니다
+		//이타주의자들 질문 게시판 아이디 : indi(개별), opq (오픈) 
 		$board_id = $this->board->item_key('brd_id', $brd_key);
 		if (empty($board_id)) {
 			response_result($r,'Err','게시판 키'.$brd_key.'로 게시판을 조회하지 못했습니다.');
-			//show_404();
 		}
 
 		$board = $this->board->item_all($board_id);
@@ -320,6 +320,29 @@ class Board_write extends CB_Controller
 				'rules' => 'trim|required',
 			),
 		);
+
+		//이타주의자들 질문하기관련 필수 항목
+		/* $config[] = array(
+			'field' => 'answer_expire_date',
+			'label' => '질문의 유효기간',
+			'rules' => 'required',
+		); */
+		/* $config[] = array(
+			'field' => 'question_solved',
+			'label' => '질문 해결여부',
+			'rules' => 'trim|required',
+		); */
+
+		if(element('brd_key', $board) =='indi' ){
+
+			$config[] = array(
+				'field' => 'answer_mem_id',
+				'label' => '질문대상사지정',
+				'rules' => 'trim|required',
+			);
+
+		};
+
 		if ($form && is_array($form)) {
 			foreach ($form as $key => $value) {
 				if ( ! element('use', $value)) {
@@ -857,11 +880,31 @@ class Board_write extends CB_Controller
 			$updatedata['alba_salary'] = $this->input->post('alba_salary', null, '');
 			$updatedata['post_hp'] = $this->input->post('post_hp', null, '');
 			
+			//이타주의자 질문관련 추가된 항목
+			$updatedata['answer_expire_date'] = $this->input->post('answer_expire_date', null, '');
+			$updatedata['question_solved'] = $this->input->post('question_solved', null, '');
+			$updatedata['answer_mem_id'] = $this->input->post('answer_mem_id', null, '');
+
 			
-			
+
+
 			
 			// 글작성 
 			$post_id = $this->Post_model->insert($updatedata);
+
+			//일대다 질문글일 경우 질문에 해당하는 전문 영역을 넣어 준다..
+			if (element('brd_key', $board) == 'opq') {
+				// insert post_alt_area
+				//전문영역 저장
+				$area_insert = array();
+				if(isset($_POST['act_id'])  && is_array($_POST['act_id']) && count($_POST['act_id']) > 0 ) {
+					for( $i= 0 ; count($_POST['act_id'])-1 >= $i; $i++ ) {
+						$area_insert[$i]['post_id']      = 	$post_id;
+						$area_insert[$i]['act_id']    =    $_POST['act_id'][$i];
+					}
+				}
+				$area_result = $this->db->insert_batch('post_alt_area',$area_insert);
+			}
 
 			if ($can_post_secret && $this->input->post('post_secret')) {
 				$this->session->set_userdata(
@@ -870,7 +913,7 @@ class Board_write extends CB_Controller
 				);
 			}
 
-			if ($mem_id > 0 && element('use_point', $board)) {
+			if ($mem_id > 0 && element('use_point', $board)) {	
 				$point = $this->point->insert_point(
 					$mem_id,
 					element('point_write', $board),
@@ -1307,7 +1350,13 @@ class Board_write extends CB_Controller
 
 			//불필요한 값 제거 
 			unset($view['view']);
-			response_result($view,'success','게시물이 정상적으로 입력되었습니다');
+			if(element('brd_key', $board) == 'indi' or element('brd_key', $board) == 'opq') {
+
+				response_result($view,'success','질문이 정상적으로 입력되었습니다');
+			} else {
+
+				response_result($view,'success','게시물이 정상적으로 입력되었습니다');
+			}
 
 			/**
 			 * 게시물의 신규입력 또는 수정작업이 끝난 후 뷰 페이지로 이동합니다
@@ -2306,7 +2355,12 @@ class Board_write extends CB_Controller
 			$metadata['alba_salary'] = $this->input->post('alba_salary', null, '');
 			$metadata['post_hp'] = $this->input->post('post_hp', null, '');
 					
-			
+			//이타주의자 질문관련 추가된 항목
+			$metadata['answer_expire_date'] = $this->input->post('answer_expire_date', null, '');
+			$metadata['question_solved'] = $this->input->post('question_solved', null, '');
+			$metadata['answer_mem_id'] = $this->input->post('answer_mem_id', null, '');
+
+
 			
 			// 이벤트가 존재하면 실행합니다
 			Events::trigger('before_post_update', $eventname);
