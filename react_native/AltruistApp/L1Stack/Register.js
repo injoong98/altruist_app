@@ -12,6 +12,7 @@ import {
 } from '@ui-kitten/components';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
+import Axios from 'axios';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const Calender = (props) => <Icon {...props} name="calendar-outline" />;
@@ -22,11 +23,17 @@ class RegisterScreen extends React.Component {
     this.state = {
       mem_userid: '',
       mem_password: '',
-      logininfo: '',
-      isLogined: false,
-      autologin: false,
+      mem_password_confirm: '',
+      mem_nickname: '',
+      mem_email: '',
     };
   }
+
+  //   proptypes
+  //   registerScreen.PropTypes = {
+  //     mem_userid : PropTypes.string.isRequired,
+
+  //   };
 
   BackAction = () => (
     <TopNavigationAction
@@ -55,8 +62,12 @@ class RegisterScreen extends React.Component {
 
   //   TODO : 휴대폰 번호
 
+  componentDidMount() {
+    // console.log('mount됌');
+    // Axios.post(' dev.unyict.org/api/register/form', formdata);
+  }
   componentDidUpdate() {
-    console.log('');
+    console.log('update됌');
   }
   render() {
     return (
@@ -71,20 +82,23 @@ class RegisterScreen extends React.Component {
             <this.UselessTextInput
               style={{padding: 3}}
               placeholder="이메일 / ID로 사용합니다"
-              placeholder="mem_email"
+              key="mem_email"
             />
             <this.UselessTextInput
               style={{padding: 3}}
               placeholder="비밀번호"
+              key={mem_password}
             />
             <this.UselessTextInput
               style={{padding: 3}}
               placeholder="비밀번호 확인"
+              key={mem_password_confirm}
             />
             <this.UselessTextInput style={{padding: 3}} placeholder="닉네임" />
             <this.UselessTextInput
               style={{padding: 3}}
               placeholder="휴대전화"
+              key={mem_phone}
             />
             <View
               style={{
@@ -93,9 +107,12 @@ class RegisterScreen extends React.Component {
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}>
-              <this.UselessTextInput placeholder="주민번호 앞 6자리" />
+              <this.UselessTextInput
+                placeholder="주민번호 앞 6자리"
+                key={mem_birthday}
+              />
               <Text>-</Text>
-              <this.UselessTextInput placeholder="1" />
+              <this.UselessTextInput placeholder="1" key={mem_sex} />
               <Text>******</Text>
             </View>
             <View
