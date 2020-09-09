@@ -3,6 +3,8 @@ import {View,StyleSheet} from 'react-native';
 import {Text,Input,Button,CheckBox} from '@ui-kitten/components';
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
+import CookieManager from '@react-native-community/cookies';
+import {Signing} from '../L1Stack/StackNav'
 
 class LoginScreen extends React.Component{
     constructor(props){
@@ -15,6 +17,8 @@ class LoginScreen extends React.Component{
             autologin:false
         }
     }
+    static contextType = Signing;
+
     removeValue = async () => {
         try {
           await AsyncStorage.removeItem('logininfo')
@@ -64,7 +68,12 @@ class LoginScreen extends React.Component{
             alert(`에러 : ${JSON.stringify(error)}`)
         })
     }
-    
+    cookie=()=>{
+      CookieManager.get('http://dev.unyict.org')
+      .then((cookies) => {
+        console.log('CookieManager.get =>', cookies);
+      });
+    }
     componentDidMount(){
         this.getData('logininfo');
         this.getData('autologin');
@@ -75,8 +84,9 @@ class LoginScreen extends React.Component{
         null
     }
     render(){
-        const {mem_userid,mem_password} = this.state;
-
+        const {mem_userid,mem_password,autologin} = this.state;
+        const { signIn } = this.context
+        console.log(signIn)
         return(
             <View style={{flex:1,justifyContent:"center",alignItems:'center'}}>
                 <View style={{padding:10,borderWidth:1,borderColor:'#35367B',borderRadius:23,margin:10}}>
@@ -93,13 +103,14 @@ class LoginScreen extends React.Component{
                 >
                 자동로그인{`${this.state.autologin}`}
                 </CheckBox>
-                <Button onPress={()=>this.dologin(mem_userid,mem_password)}>로그인</Button>
+                <Button onPress={()=>signIn(mem_userid,mem_password,autologin)}>로그인</Button>
                 <Button onPress={()=>{this.getData('logininfo'),this.getData('autologin')}} >AsyncStorage check</Button>
-                <Button onPress={()=>{console.log(this.state)}} >statecheck</Button>
+                <Button onPress={()=>{this.cookie()}} >cookie chk</Button>
                 <Button onPress={()=>this.props.navigation.navigate('RegisterScreen')}>회원가입</Button>
             </View>
         )
     }
 }
+
 
 export default LoginScreen;

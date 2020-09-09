@@ -3,7 +3,7 @@ import {View,StyleSheet, SafeAreaView, TouchableOpacity} from 'react-native';
 import {Input,Button,Text} from '@ui-kitten/components';
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
-
+import {Signing} from '../StackNav'
 import MoreSvg from '../../assets/icons/dotdotdot-large.svg'
 import ThumbSvg from '../../assets/icons/thumb-up-filled.svg'
 import PencilSvg from '../../assets/icons/pencil-outline.svg'
@@ -21,6 +21,9 @@ class Mypage extends React.Component{
             isLogined:false
         }
     }
+
+    static contextType = Signing;
+
     removeValue = async () => {
         try {
           await AsyncStorage.removeItem('logininfo')
@@ -77,6 +80,7 @@ class Mypage extends React.Component{
         // this.getData();
     }
     render(){
+      const {signOut} = this.context
         return(
           <SafeAreaView style={{flex:1}}>
               <View style={{flex:1,backgroundColor:'#ffffff'}}>
@@ -149,7 +153,7 @@ class Mypage extends React.Component{
                     </View>
                   </View>
                   <View style={{display:'flex',flexDirection:'row',position:'relative'}}>
-                      <Button onPress={()=>{this.doLogout();this.removeValue();this.props.navigation.navigate('Login')}}>간단로그아웃</Button>
+                      <Button onPress={()=>{signOut()}}>간단로그아웃</Button>
                       <Button onPress={()=>{this.sessionChk();}}>session chk</Button>
                       <Button onPress={()=>{this.getData('logininfo');this.getData('autologin')}} >AsyncStorage check</Button>
                   </View>
