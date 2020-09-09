@@ -104,9 +104,10 @@ class Mypage extends CB_Controller
 			'page_name' => $page_name,
 		);
 		//$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		response_result($view);
-
-		// $this->data = $view;
+		
+		 //$this->data = $view;
+		 $view['data']['myinfo']  = $this->member->get_member();
+		response_result($view['data']);
 		// $this->layout = element('layout_skin_file', element('layout', $view));
 		// $this->view = element('view_skin_file', element('layout', $view));
 	}
