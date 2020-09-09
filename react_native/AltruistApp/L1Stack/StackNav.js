@@ -2,11 +2,15 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {ComBottomNav} from './L2Bottom/ComBottomNav'
-import {defaultContent, GominContent, MarketContent, AlbaContent} from './Content'
+import {defaultContent, IlbanContent, GominContent, MarketContent, AlbaContent} from './Content'
 import {defaultWrite, MarketWrite, AlbaWrite,GominWrite, IlbanWrite} from './Write'
 
 import {SafeAreaView} from 'react-native'
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
+import LoginScreen from './Login'
+import RegisterScreen from './Register'
+import QuestionScreen from './Question'
+import FinishScreen from './Finish'
 
 const {Navigator,Screen} = createStackNavigator();
 
@@ -20,9 +24,11 @@ const SpareScreen =() =>(
 )
 export const StackNav = () =>(
     <Navigator headerMode="none">
+        <Screen name = "Login" component={LoginScreen}/>
         <Screen name = "Bottom" component={ComBottomNav}/>
         <Screen name = "Write" component={defaultWrite}/>
         <Screen name = "Content" component={defaultContent}/>
+        <Screen name = "IlbanContent" component={IlbanContent}/>
         <Screen name = "GominContent" component={GominContent}/>
         <Screen name = "MarketContent" component={MarketContent}/>
         <Screen name = "IlbanWrite" component={IlbanWrite}/>
@@ -30,5 +36,8 @@ export const StackNav = () =>(
         <Screen name = "MarketWrite" component={MarketWrite}/>
         <Screen name = "AlbaWrite" component={AlbaWrite}/>
         <Screen name = "GominWrite" component={GominWrite}/>
+        <Screen name = "RegisterScreen" component={RegisterScreen}/>
+        <Screen name = "QuestionScreen" component={QuestionScreen}/>
+        <Screen name = "FinishScreen" component={FinishScreen}/>
     </Navigator>
 )

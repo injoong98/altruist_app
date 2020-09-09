@@ -14,42 +14,58 @@ const BackIcon =  (props) =>(
 class AltApplyScreen extends React.Component{
     constructor(props){
         super(props)
+        this.state = {
+            checkboxes : [],
+            
+        }
     }
     
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() => {this.props.navigation.goBack()}}/>
     )
 
-    
-
-    CheckAgrees = ({num}) => {
+    CheckAgrees = ({i}) => {
 
         const [checked, setChecked] = useState(false);
         
         return (
           <CheckBox
             checked={checked}
-            onChange={nextChecked => setChecked(nextChecked)}>
-            {`${num}에 동의합니다.${checked}`}
+            onChange={nextChecked =>{setChecked(nextChecked); this.handleClick(i, nextChecked)}}
+            
+            // onChange={()=>this.handleChange()}
+            >
+                {this.checked}
+            {`${i}에 동의합니다.${checked}`}
+            {/* {`${i}에 동의합니다.${this.nextChecked}`}
+            {`${i}에 동의합니다.${this.state.isChecked[i]}`} */}
             </CheckBox>
         );
       };
+
+    handleClick(i, checked){
+        console.log(i)
+        console.log(checked)
+        const checkboxes = this.state.checkboxes;
+        checkboxes[i] = checked == true ? true : false
+        this.setState({checkboxes : checkboxes}) 
+        console.log(this.state)
+    }
+
+    goNextStep(){
+        for(let j=0; j < this.state.checkboxes.length; j++){
+            if(this.state.checkboxes[j] == false){
+                // console.log('동의 눌러줘')
+                // return false
+                this.props.navigation.navigate('AltMain')
+                alert('동의가 필요합니다.')
+            }else{
+                this.props.navigation.navigate('AltApplyForm')
+                
+            }
+        }
+    }
     
-      CheckContent = ({content}) => {
-
-        return (
-                <Text>{`${content}`}</Text>
-        );
-      };
-    
-      ifCheckeer = () =>{
-        
-      }
-
-      componentDidUpdate(){
-       console.log('hye');
-      }
-
     render(){ 
         const {navigation} =this.props
         return(
@@ -63,25 +79,22 @@ class AltApplyScreen extends React.Component{
                     <View>
                         <Card>
                             {/* <this.CheckContent content = {`하이`} /> */}
-                            <Text>이타주의자 활동에 대해서 설명해주는 곳입니다. 이타주의자 활동은 질답 형식이며 용어라든지 규칙이 있으면 여기서 미리 알려주고 가입을 할 수 있도록 하려고 합니다.</Text>
-                            <this.CheckAgrees num={1}/>
+                            <this.CheckAgrees i = {0} />
                         </Card>
                         <Card>
-                            <Text>이타주의자 활동은 이렇게 이렇게 진행이 됩니다. 일대일로도 질문을 받을 수 있고 일대다로도 질문을 받을 수 있습니다. 둘중 택일 하면 됩니다. 원한다면 두개다 선택하여도 좋습니다. 다만, 질문받지 않을 수는 없습니다.이타주의자 활동은 이렇게 이렇게 진행이 됩니다. 일대일로도 질문을 받을 수 있고 일대다로도 질문을 받을 수 있습니다. 둘중 택일 하면 됩니다. 원한다면 두개다 선택하여도 좋습니다. 다만, 질문받지 않을 수는 없습니다.이타주의자 활동은 이렇게 이렇게 진행이 됩니다. 일대일로도 질문을 받을 수 있고 일대다로도 질문을 받을 수 있습니다. 둘중 택일 하면 됩니다. 원한다면 두개다 선택하여도 좋습니다. 다만, 질문받지 않을 수는 없습니다.이타주의자 활동은 이렇게 이렇게 진행이 됩니다. 일대일로도 질문을 받을 수 있고 일대다로도 질문을 받을 수 있습니다. 둘중 택일 하면 됩니다. 원한다면 두개다 선택하여도 좋습니다. 다만, 질문받지 않을 수는 없습니다.이타주의자 활동은 이렇게 이렇게 진행이 됩니다. 일대일로도 질문을 받을 수 있고 일대다로도 질문을 받을 수 있습니다. 둘중 택일 하면 됩니다. 원한다면 두개다 선택하여도 좋습니다. 다만, 질문받지 않을 수는 없습니다.</Text>
-                            <this.CheckAgrees num={2}/>
+                            <this.CheckAgrees i = {1} />
                         </Card>
                         <Card>
-                            <Text>이타주의자 화이팅 !</Text>
-                            <this.CheckAgrees num={3}/>
+                            <this.CheckAgrees i = {2} />
                         </Card>
-                        <Button onPress={()=>navigation.navigate('AltApplyForm')}>지원하기</Button>
+                        {/* <Button onPress={()=>navigation.navigate('AltApplyForm')}>지원하기</Button> */}
+                        <Button onPress={()=>this.goNextStep()}>지원하기</Button>
                     </View>
                 </ScrollView>
             </SafeAreaView>
         )
     }
 }
-
 
 
 const styles = StyleSheet.create({
@@ -105,6 +118,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
       }
 });
+
 
 export default AltApplyScreen;
 

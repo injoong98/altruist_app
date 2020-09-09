@@ -1,16 +1,9 @@
 import React from 'react';
 import {View,StyleSheet,TouchableOpacity} from 'react-native';
-import {Text,Icon} from '@ui-kitten/components'
-
-const BellIcon =(props)=> (
-    <Icon {...props} fill='#B09BDE' name="bell"/>
-)
-const BackIcon =(props)=> (
-    <Icon {...props} fill='#ffffff' name="arrow-ios-back-outline"/>
-)
-const UploadIcon =(props)=> (
-    <Icon {...props} fill='#B09BDE' name="arrowhead-up-outline"/>
-)
+import {Text,Icon,Button} from '@ui-kitten/components'
+import BellLargesvg from '../assets/icons/bell-large.svg'
+import Uploadsvg from '../assets/icons/upload.svg'
+import Backsvg from '../assets/icons/back-arrow-white.svg'
 
 export class TopBarTune extends React.Component {
     constructor(props){
@@ -19,26 +12,39 @@ export class TopBarTune extends React.Component {
     }
 
     render(){
+        const bckclr = this.props.right =='upload'||this.props.right =='edit'? '#f4f4f4': '#ffffff'
         return(
             <View style={styles.container}>
-                <View style={styles.leftside}>
+                <View 
+                    style={{backgroundColor:bckclr,width:"59%",height:"100%"}}
+                >
                     <View style={styles.leftinner}>
                         <Text category='h2' style={styles.toptext}>{this.props.text}</Text>
                     </View>
                     <TouchableOpacity onPress={this.props.gbckfunc} style={this.props.gbckuse? styles.bckicon:{display:'none'}}>
-                        <BackIcon style={{width:35,height:35}}/>
+                        <Backsvg width={26} height={26}/>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.rightside}>
-                    <View style={styles.rightinner}>
+                    <View 
+                        style={{
+                            borderTopLeftRadius:16,backgroundColor:bckclr,width:"100%",height:"100%"}}
+                    >
                         <View style={styles.iconcontainer}>
                             {this.props.right =='upload' ? 
                                 <TouchableOpacity onPress={this.props.func}>
-                                    <UploadIcon style={styles.topicon}/>
+                                    <Uploadsvg height={35} width={35}/>
                                 </TouchableOpacity>
                             :
+                            this.props.right =='edit' ?
+                                <Button onPress={this.props.func}>
+                                    수정
+                                </Button>
+                            :
+
                                 <TouchableOpacity onPress={this.props.func}>
-                                    <BellIcon style={styles.topicon}/>
+                                    {/* <BellIcon style={styles.topicon}/> */}
+                                    <BellLargesvg height={35} width={35}/>
                                 </TouchableOpacity>
                             }
                         </View>
@@ -90,8 +96,8 @@ const styles = StyleSheet.create({
         // borderWidth:1
     },
     topicon:{
-        height:40,
-        width:40
+        height:35,
+        width:35
     },
     iconcontainer:{
         height:"100%",
@@ -101,7 +107,9 @@ const styles = StyleSheet.create({
     },
     bckicon:{
         position:'absolute',
-        top:5,
-        width:35,height:35
+        height:'100%',
+        justifyContent:'center',
+        alignItems:'center',
+        paddingLeft:21
     }
 })

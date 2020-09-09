@@ -48,8 +48,8 @@ class Postact extends CB_Controller
 
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
-
-		$post_id = $this->Post_model->get_one($post_id);
+		$post_id = $this->input->post('post_id');
+		$post = $this->Post_model->get_one($post_id);
 
 		if ( ! element('post_id', $post)) {
 			response_result($view,'Err','post id 가 없습니다..');

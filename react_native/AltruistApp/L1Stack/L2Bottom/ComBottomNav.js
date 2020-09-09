@@ -7,7 +7,29 @@ import {SafeAreaView,View, Image} from 'react-native';
 import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, Card, Icon} from '@ui-kitten/components';
 
 import ToggleTune from '../../components/ToggleTune';
-import LoginScreen from './Login'
+import Mypage from './Mypage'
+
+import Homesvg from '../../assets/icons/home.svg'
+import Communitysvg from '../../assets/icons/community.svg'
+import Altsvg from '../../assets/icons/altruist.svg'
+import Bellsvg from '../../assets/icons/bell.svg'
+import Mysvg from '../../assets/icons/mypage.svg'
+
+const HomeIcon = (props) => (
+    <Icon {...props} name= 'home' pack='alticons'/>
+)
+const AltruistIcon = (props) => (
+    <Icon {...props} name= 'altruist' pack='alticons'/>
+)
+const CommunityIcon = (props) => (
+    <Icon {...props} name= 'community' pack='alticons'/>
+)
+const BellIcon = (props) => (
+    <Icon {...props} name= 'bell' pack='alticons'/>
+)
+const MypageIcon = (props) => (
+    <Icon {...props} name= 'mypage' pack='alticons'/>
+)
 
 const {Navigator,Screen} = createBottomTabNavigator();
 
@@ -48,11 +70,16 @@ const BottomTabBar = ({ navigation, state }) => (
     <BottomNavigation
       selectedIndex={state.index}
       onSelect={index => navigation.navigate(state.routeNames[index])}>
-      <BottomNavigationTab title='홈'/>
-      <BottomNavigationTab title='잍자'/>
-      <BottomNavigationTab title='커뮤니티'/>
-      <BottomNavigationTab title='알림?'/>  
-      <BottomNavigationTab title='프로필'/>
+      <BottomNavigationTab title={()=><Homesvg height={35} width ={35}/>}/>
+      <BottomNavigationTab title={()=><Altsvg height={35} />}/>
+      <BottomNavigationTab title={()=><Communitysvg height={35} />}/>
+      <BottomNavigationTab title={()=><Bellsvg height={35} />}/>  
+      <BottomNavigationTab title={()=><Mysvg height={35} />}/>
+      {/* <BottomNavigationTab title={()=><HomeIcon />}/>
+      <BottomNavigationTab title={()=><AltruistIcon  />}/>
+      <BottomNavigationTab title={()=><CommunityIcon  />}/>
+      <BottomNavigationTab title={()=><BellIcon  />}/>  
+      <BottomNavigationTab title={()=><MypageIcon  />}/> */}
     </BottomNavigation>
   );
 
@@ -63,6 +90,6 @@ export const ComBottomNav = () =>(
         <Screen name = "Alt" component={AltStackNav}/>
         <Screen name = "Commu" component={ComToptabNav}/>
         <Screen name = "Meet" component={SpareScreen}/>
-        <Screen name = "Prof" component={LoginScreen}/>
+        <Screen name = "Prof" component={Mypage}/>
     </Navigator>
 )

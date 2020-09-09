@@ -1,18 +1,19 @@
 import React from 'react';
-import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity,Animated} from 'react-native';
+import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity,Animated,YellowBox} from 'react-native';
 import { Icon,Layout,Button,Text,ListItem,List, Divider,Card,Spinner} from '@ui-kitten/components';
 import axios from 'axios';
 import {PostTime} from '../../../components/PostTime'
 
+import Heartsvg from '../../../assets/icons/heart.svg'
+import Viewsvg from '../../../assets/icons/view.svg'
+import Commentsvg from '../../../assets/icons/comment.svg'
+import Writesvg from '../../../assets/icons/write.svg'
 
-    const  EyeIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="eye-outline"/>
-    )
-    const CommentIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="message-circle-outline"/>
-    )
-    const HeartIcon = (props)=>(
-        <Icon style={styles.icon} fill='#8F9BB3' name="heart-outline"/>
+YellowBox.ignoreWarnings([
+  'Non-serializable values were found in the navigation state',
+]);
+    const WriteIcon = (props)=>(
+        <Icon style={styles.icon} fill='#8F9BB3' name="write" pack="alticons"/>
     )
 
 class GominScreen extends React.Component {
@@ -56,7 +57,7 @@ class GominScreen extends React.Component {
         const post_remove_tags = item.post_content.replace(regex, '');
         
         return(
-        <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{title:`${index+1}th post_id=${item.post_id}`,post_id:item.post_id})}}>
+        <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}}>
             <View>
                 <Text style ={styles.headtext}category="h4" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
                 <Text style={styles.subtext}category="s2" numberOfLines={1}>{post_remove_tags}</Text>
@@ -67,16 +68,16 @@ class GominScreen extends React.Component {
                     <PostTime datetime = {item.post_datetime}/>
                 </View>
                 <View style={styles.infocontainer}>
-                    <View style={{alignItems:'center'}}>
-                        <HeartIcon />
+                    <View style={{alignItems:'center',}}>
+                        <Heartsvg />
                         <Text style={styles.infotext} category="s1">{item.post_like}</Text>
                     </View>
-                    <View style={{alignItems:'center'}}>
-                        <CommentIcon />
+                    <View style={{alignItems:'center',}}>
+                        <Commentsvg />
                         <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
                     </View>
-                    <View style={{alignItems:'center'}}>
-                        <EyeIcon />
+                    <View style={{alignItems:'center',}}>
+                        <Viewsvg />
                         <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                     </View>
 
@@ -94,7 +95,7 @@ class GominScreen extends React.Component {
         )
       }
       getPostList = async() =>{
-        await axios.get(`http://10.0.2.2/api/board_post/lists/b-a-1?page=${this.state.current_page}`)
+        await axios.get(`http://dev.unyict.org/api/board_post/lists/b-a-1?page=${this.state.current_page}`)
         .then((response)=>{
           if(response.data.view.list.data.list.length > 0){
             this.setState({
@@ -114,7 +115,7 @@ class GominScreen extends React.Component {
       }
     
       getPostFirst = async() => {
-        await axios.get('http://10.0.2.2/api/board_post/lists/b-a-1')
+        await axios.get('http://dev.unyict.org/api/board_post/lists/b-a-1')
         .then((response)=>{
             this.setState({
               lists:response.data.view.list.data.list,
@@ -137,6 +138,7 @@ class GominScreen extends React.Component {
         this.setState({isLoading:true});
         this.componentDidMount()    
     }
+    
     load_more_data = () => {
         if(!this.state.isNoMoreData){
             this.setState({
@@ -170,14 +172,15 @@ class GominScreen extends React.Component {
                 ListFooterComponent={this.renderFooter}
                 style={{backgroundColor:'#ffffff'}}
             />
-            <View style ={styles.buttoncontainer}>
-                <Button style={{width:"100%"}} onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} >
-                    글쓰기
-                </Button>
+                <TouchableOpacity 
+                    style={{position:'absolute', right:20,bottom:14}} 
+                    onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} 
+                >
+                    <Writesvg />
+                </TouchableOpacity>
                 {/* <Button onPress={searchOpenClose ? this.searchClose : this.searchOpen}>
                     검색
                 </Button> */}
-            </View>
         </SafeAreaView>
         )
         }
@@ -204,7 +207,8 @@ const styles = StyleSheet.create({
         alignItems:"center"
     },
     icon:{
-        width: 15,height: 15
+        // width: 15,
+        // height: 15
     },
     subtitle:{
         marginTop:10, display:"flex",flexDirection:"row", justifyContent:"space-between",

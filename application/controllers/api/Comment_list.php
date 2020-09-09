@@ -240,6 +240,11 @@ class Comment_list extends CB_Controller
 			'post_id' => $post_id,
 			'cmt_del <>' => 2,
 		);
+		//오픈 질문함일 때 로그인 멤버의 댓글만 가져오기
+		if($board['brd_key']=='opq'){
+			$where='`post_id`='.$post_id.' AND `cmt_del` <> 2'.' AND `cb_member`.`mem_id` = '.$mem_id;
+		}
+
 		$result = $this->Comment_model
 			->get_comment_list($per_page, $offset, $where, '', $findex, $sfield = '', $skeyword = '');
 		$list_num = $result['total_rows'] - ($page - 1) * $per_page;

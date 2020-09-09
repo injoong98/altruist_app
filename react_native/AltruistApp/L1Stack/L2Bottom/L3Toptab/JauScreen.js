@@ -1,80 +1,19 @@
 import React, { Fragment } from 'react';
-import { StyleSheet, View, Image, Dimensions } from 'react-native';
-import { Button, Card, List, Layout, Text,Icon, StyleService, Spinner, Divider} from '@ui-kitten/components'
-import { HeartIcon, PlusIcon } from '../../../assets/icons/icons';
+import {Root, StyleSheet, View, Image, Dimensions, ScrollView, TouchableOpacity, SafeAreaView, TouchableWithoutFeedback, Layout } from 'react-native';
+import {Button, Card, List, Text, Icon, StyleService, Spinner, Divider} from '@ui-kitten/components'
+import { PlusIcon } from '../../../assets/icons/icons';
 import { getPostList } from "./extra/getPost";
 import axios from 'axios';
-import HTML from 'react-native-render-html';
+import {HTML,} from 'react-native-render-html';
 import { IGNORED_TAGS } from 'react-native-render-html/src/HTMLUtils';
+import {PostTime} from '../../../components/PostTime'
+import { WebView } from 'react-native-webview';
 
-
-const AltsIcon = (props) => <Icon {...props} name="star" />;
-const ShareIcon = (props) => <Icon {...props} name="share-outline" />;
-const ArrowIcon = (props) => <Icon {...props} name="arrow-forward-outline" />;
-
-function JauHeader(props){
-  return(
-    <View>
-      {/* 카테고리, 제목, 작성자, 시간, 공유 */}
-      <View style={styles.itemHeaderTop}>
-          {/*     text-overflow: ellipsis; */}
-          <View>
-              <Text category='s2'>{props.category}
-              </Text>
-              <Text category='h4'>{props.title}
-              </Text>
-          </View>
-          <Button
-                  style={styles.iconButton}
-                  appearance='ghost'
-                  status='basic'
-                  accessoryLeft={ShareIcon} 
-                  />
-      </View>
-      <View style={styles.itemHeaderBottom}>
-          <Text category='s2'>{props.nickname}</Text>
-          <Text category='s2'> | {props.datetime}</Text>
-          <Text category='s2'> | {props.hit}</Text>
-      </View>
-  </View>
-  )
-}
-
-function JauFooter(onDetailButtonPress) {
-  return (
-    <View style={styles.itemFooter}>
-          <View style={styles.itemReactionsContainer}>
-              <Button
-                  style={styles.iconButton}
-                  appearance='ghost'
-                  status='basic'
-                  accessoryLeft={HeartIcon} />
-              <Button
-                  style={styles.iconButton}
-                  appearance='ghost'
-                  status='danger'
-                  accessoryLeft={AltsIcon} />
-          </View>
-          <Button
-              style={styles.itemAddButton}
-              appearance='ghost'
-              onPress={onDetailButtonPress}
-              accessoryLeft={ArrowIcon}>
-                          더보기
-
-          </Button>
-      </View>
-  );
-}
-
-
-function JauCard(props){
-  return (
-    <Card header=  {() => JauHeader(props)}
-    footer={() => JauFooter()}>
-    </Card>
-  );
-}
+import Heartsvg from '../../../assets/icons/heart.svg'
+import Viewsvg from '../../../assets/icons/view.svg'
+import Commentsvg from '../../../assets/icons/comment.svg'
+import Writesvg from '../../../assets/icons/write.svg'
+import Sharesvg from '../../../assets/icons/share.svg'
 
 class JauScreen extends React.Component {
 
@@ -83,15 +22,46 @@ class JauScreen extends React.Component {
     this.state={
       isLoading : true,
       lists : '',
+      post_content : '',
       image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+      categorys: '',
+      post_category:'',
+      no_post : false,
     }
   }
 
+  ignoredTags = [ ...IGNORED_TAGS, 'img']
+
+
   getPostList = async() =>{
-    await axios.get(`http://10.0.2.2/api/board_post/lists/ilban`)
+    await axios.get(`http://10.0.2.2/api/board_post/lists/ilban?category_id=${this.state.post_category}`)
     .then( response =>{
+      console.log(response)
+      if(response.data.view.list.data.list == ''){
+        this.setState({
+          no_post : true,
+          no_post_memo : '게시글의 첫 주인공이 되어주세요!'
+        })
+      }else{
         this.setState({
           lists : response.data.view.list.data.list,
+          isLoading : false,
+          no_post : false
+
+        })
+      }
+    })
+    .catch((error)=>{
+        alert('error')
+    })
+  }
+
+  getCategory = async() =>{
+    await axios.get(`http://10.0.2.2/api/board_post/lists/ilban`)
+    .then( res =>{
+      // console.log(res)
+        this.setState({
+          categorys : res.data.view.list.board.category[0],
           isLoading : false
         })
     })
@@ -103,125 +73,168 @@ class JauScreen extends React.Component {
   //LIFECYCLE
   componentDidMount(){
     this.getPostList();
+    this.getCategory();
   } 
-   
-  renderItem = ({item, index}) => (
-    
-     
-    //  <View>
-    //    <JauCard props={item}></JauCard>
-       
-    //   </View>
 
+  componentDidUpdate(){
+  }
+
+ renderItem = ({item, index}) => {
+  const regex = /(<([^>]+)>)|&nbsp;/ig;
+  const post_remove_tags = item.post_content.replace(regex, '');
+   return(
+    <TouchableOpacity style={styles.itembox}
+    onPress = {()=>{this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}}>
+      {/* 헤더 */}
+      <View style={{flex:1, flexDirection:'row', justifyContent:'space-between', marginLeft:10, marginRight:10}}>
+        {/*카테고리(이미지)/ 제목 / 공유*/}
+        {/* */}
+        <View style={{flexDirection:'row'}}>
+          <Text>{item.post_category}</Text>
+          <Text>{item.post_title}</Text>
+        </View>
+          <Sharesvg />
+      </View>
+      {/* 본문 */}
+      <View style={{flex:2, marginTop:20, marginBottom:20, marginLeft:20, marginRight:20, alignContent:'center'}}>
+          <Text 
+          numberOfLines = {3}
+          ellipsizeMode = 'tail'
+          AccessibilityRole ='button'
+          >{post_remove_tags}</Text>
+          {item.origin_image_url 
+            ? 
+            <View style={{flexDirection:'row'}}>
+              <Image source={{uri:'http://10.0.2.2'+item.origin_image_url}} /> 
+            </View>
+            :
+            <View style={{flexDirection:'row'}}>
+            </View>
+            }
+          
+      </View>
+      {/* 푸터 */}
+      <View style={{flex:1, flexDirection:'row', justifyContent:'space-between', marginLeft:10, marginRight:10}}>
+        <View style={{flexDirection:'row', alignSelf:"center"}}>
+          <Text category="s2" style={{fontWeight:'100', marginRight:10}}>{item.display_name}</Text> 
+          <PostTime datetime = {item.post_datetime} />
+        </View>
         <View>
-          <JauHeader 
-              category = {item.category.bca_value}
-              title={item.post_title} 
-              nickname={item.post_nickname} 
-              datetime={item.post_datetime} 
-              hit={item.post_hit} 
-            />
-          {/* 서버에 올라가는거 보고 진행 */}
-         <View>
-           <Divider />
-          <Text ellipsizeMode='tail'
-            numberOfLines = {3}>
-            0% WAITING Transforming artifact memory-type-java-2.2.0.aar (com.facebook.fresco:memory-type-java:2.2.0) with AarTransform
-            Transforming artifact imagepipeline-native-2.2.0.aar (com.facebook.fresco:imagepipeline-native:2.2.0) with ExtractAarTransform
-            Transforming artifact lifecycle-livedata-core-2.0.0.aar (androidx.lifecycle:lifecycle-livedata-core:2.0.0) with ExtractAarTransform
-            Transforming artifact imagepipeline-2.2.0.aar (com.facebook.fresco:imagepipeline:2.2.0) with ExtractAarTransform
-            Transforming artifact soloader-0.8.2.aar (com.facebook.soloader:soloader:0.8.2) with JetifyTransform > JetifyTransform soloader-0.8.2.aar
-            Transforming artifact core-1.0.1.aar (androidx.core:core:1.0.1) with ExtractAarTransform
-            Transforming artifact android-jsc-r245459.aar (org.webkit:android-jsc:r245459) with ExtractAarTransform
-            info Connecting to the development server...
-          </Text>
-          <Divider />
+          <View style={{flexDirection:'row'}}>  
+            <View>  
+              <Heartsvg />
+              <Text>{item.post_like}</Text>
+            </View>
+            <View>  
+              <Commentsvg />
+              <Text>{item.post_comment_count}</Text>
+            </View>
+            <View>  
+              <Viewsvg />
+              <Text>{item.post_hit}</Text>
+            </View>
+          </View>
         </View>
-          <JauFooter />
-          <Divider />
-        </View>
-  );
+      </View>
+    </TouchableOpacity>
+   )
+ }
+
   
+  renderCategory = ({item}) =>(
+      <TouchableOpacity 
+      style = {{alignContent:"center", marginHorizontal: 4, borderWidth:1, padding: 10, marginRight:10, marginLeft:10}}
+      onPress = {() => {this.setState({post_category:item.bca_key}, this.getPostList)}}
+      >
+        <Text>{item.bca_value}</Text>
+      </TouchableOpacity>
+    )  
 
   render(){
     return (
     <>
-      <View style={{flex:10}}>
-        <List
-          contentContainerStyle={styles.contentContainer}
-          data={this.state.lists}
-          renderItem={this.renderItem}
-          // refreshing={this.state.isLoading}
-          // onRefresh={this.getPostList()}
+      <View style={{ backgroundColor:'white'}}
+      refreshing={this.state.isLoading}>
+        <ScrollView style ={styles.category} horizontal={true}>
+          <TouchableOpacity 
+          style = {{alignContent:"center", marginHorizontal: 4, borderWidth:1, padding: 10, marginRight:10, marginLeft:10}}
+          onPress = {() => {this.setState({post_category:''}, this.getPostList)}}
+          >
+          <Text>{`전체`}</Text>
+          </TouchableOpacity>
+          <List
+            style={{backgroundColor:"white"}}
+            horizontal={true}
+            data={this.state.categorys}
+            renderItem = {this.renderCategory}
           />
+        </ScrollView>
       </View>
-      
-      <View style={styles.bottomView}>
-        <Button
-          style={styles.bottomButton}
-          onPress={()=>{this.props.navigation.navigate('IlbanWrite')}}>
-          글쓰기
-        </Button>
-      </View>
-      </>
+      <SafeAreaView style={{flex:10, backgroundColor:"white"}}>
+        {this.state.no_post ? 
+          <Text style={{flex:10, textAlign:"center",textAlignVertical:"center"}}>{this.state.no_post_memo}</Text>
+        :
+          <List
+            style={{backgroundColor:"white"}}
+            data={this.state.lists}
+            contentContainerStyle={styles.contentContainer}
+            renderItem={this.renderItem}
+            refreshing={this.state.isLoading}
+            onRefresh={this.getPostList}
+            />
+          }
+        <TouchableOpacity 
+            style={{position:'absolute', right:20,bottom:14}} 
+            onPress={()=>{this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})}}>
+          <Writesvg />
+        </TouchableOpacity>
+      </SafeAreaView>
+    </>
     );
   }
 };
 
 
 const styles = StyleSheet.create({
+  contentContainer: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
   renderers: {
 
   },
-  list: {
+  root:{
+    backgroundColor : '#FFFFFF'
+  },
+  
+  //ita geasipan
+    itembox :{
+      
       flex: 1,
-  },
-  listContent: {
-      paddingHorizontal: 16,
-      paddingVertical: 8,
-  },
-  item: {
-      marginVertical: 8,
-  },
-  itemHeader: {
-      minHeight: 220,
-  },
+      backgroundColor: '#F4F4F4',
+      borderTopRightRadius : 20,
+      borderTopLeftRadius : 20,
+      borderBottomRightRadius : 20 ,
+      borderBottomLeftRadius : 20 ,
+      marginLeft:20,
+      marginRight:20,
+      paddingTop: 10 ,
+      marginVertical: 4,
+    },
+    itemContent : {
+      marginTop:10,
+      marginBottom:10
+    },
+    category : {
+      paddingTop: 10 ,
+      paddingBottom:10
 
-  itemTitle: {
-      position: 'absolute',
-      left: 24,
-      bottom: 24,
-  },
-  itemDescription: {
-      marginHorizontal: -8,
-  },
-  itemFooter: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-  },
-  itemHeaderTop: {
-      marginLeft : 10,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-  },
-  itemHeaderBottom: {
-      marginRight : 10,
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-  },
-  itemReactionsContainer: {
-      flexDirection: 'row',
-  },
-  itemAddButton: {
-      flexDirection: 'row-reverse',
-      paddingHorizontal: 0,
-  },
-  iconButton: {
-      paddingHorizontal: 0,
-  },
-  followButton: {
-      marginTop: 24,
-      },
+    }
   })
 
 export {JauScreen} ;
+
+
+
+
+

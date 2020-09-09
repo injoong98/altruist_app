@@ -1,26 +1,29 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,} from 'react-native';
-import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal, OverflowMenu, MenuItem} from '@ui-kitten/components'
+import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,TextInput} from 'react-native';
+import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal, OverflowMenu, MenuItem,Popover} from '@ui-kitten/components'
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
 import {ActionSheet, Root, Container} from 'native-base';
 import Slider from '../components/slider.component'
 import { Alert } from 'react-native';
+import {PostTime} from '../components/PostTime'
+import Confirm from '../components/confirm.component'
+import ReplyLsvg from '../assets/icons/arrow-bended-large.svg'
+import ReplySsvg from '../assets/icons/arrow-bended-small.svg'
+import MoreLsvg from '../assets/icons/dotdotdot-large.svg'
+import MoreSsvg from '../assets/icons/dotdotdot-small.svg'
+import Backsvg from '../assets/icons/back-arrow-color.svg'
+import Thumbsvg from '../assets/icons/thumb-up.svg'
+import UploadCirclesvg from '../assets/icons/upload-circle.svg'
+
+
+
 
 const BackIcon =  (props) =>(
-    <Icon {...props} fill ="#63579D"name = "arrow-ios-back-outline"/>
-)
-const MoreIcon =  (props) =>(
-    <Icon {...props} fill ="#63579D"name = "more-vertical-outline"/>
+    <Icon {...props} fill ="#63579D"name = "back-arrow" pack="alticons"/>
 )
 const CommentIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="message-circle"/>
-)
-const PlusIcon = (props)=>(
-    <Icon style={styles.icon} fill='#8F9BB3' name="plus-square"/>
-)
-const BlameIcon = (props)=>(
-    <Icon style={styles.icon} fill='#8F9BB3' name="archive"/>
 )
 const HeartIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="heart"/>
@@ -28,7 +31,6 @@ const HeartIcon = (props)=>(
 const StarIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="star" {...props} />
 )
-
 const UploadIcon = (props) => (
       <Icon {...props} name='arrow-circle-up'/>
 )
@@ -54,25 +56,68 @@ class GominContent extends React.Component{
         this.state={
             post:'',
             comment:'',
+            content:'',
             cmt_content:'',
+            cmt_id:'',
+            replying:false,
             isLoading:true,
-            refreshing:false
+            refreshing:false,
+            modalVisible:false,
+            replyModalVisible:false,
+            deleteModalVisible:false,
+            spinnerModalVisible:false,
+            popoverVisibel:false,
+            
         }
+    }
+    postDelete = async () => {
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        .then(res=>{
+            this.setState({spinnerModalVisible:false})
+            this.props.navigation.goBack();
+            this.props.route.params.OnGoback();
+            alert(JSON.stringify(res.data))
+        })
+        .catch(err=>{
+            alert(JSON.stringify(err))
+        })
+    }
+    commentWrite= ()=>{
+        this.setState({replying:false,cmt_id:''})
+        this.refs.commentInput.blur()
+        console.log(this.refs)
+    }
+    postscrap = async()=>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        
+        Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        .then(response=>{
+            alert(`${JSON.stringify(response.data)}`)
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
     }
     
     commentUpload= async()=>{
-        const {cmt_content,post}=this.state;
+        const {cmt_content,post,cmt_id}=this.state;
         var formdata = new FormData();
         formdata.append("post_id",post.post_id);
         formdata.append("cmt_content",cmt_content);
-
-        await Axios.post('http://10.0.2.2/api/comment_write/update',formdata)
+        cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+        
+        this.commentWrite()
+        
+        await Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
         .then(response=>{
             const {status,message}=response.data;
             if(status=='200'){
                 alert(`성공 : ${message}`);
                 Keyboard.dismiss();
-                this.setState({cmt_content:''});
+                this.setState({cmt_content:'',relpying:false,cmt_id:''});
                 this.getCommentData(post.post_id);
                 this.refs.pstcmtlist.scrollToEnd();
             }else if(status=="500"){
@@ -89,7 +134,7 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append("content",cmt_content);
         
-        await Axios.post('http://10.0.2.2/api/postact/filter_spam_keyword',formdata)
+        await Axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {status,message} = response.data;
             if(status=='500'){
@@ -109,22 +154,68 @@ class GominContent extends React.Component{
         </TouchableOpacity>
     )
 
+    renderPostMore=()=>(
+        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisibel:true})}>
+            <MoreLsvg height={24} width={24}/>
+        </TouchableOpacity>
+    )
     BackAction = () =>(
-        <TopNavigationAction icon={()=><BackIcon style={{width:35,height:35}}/>} onPress={() =>{this.props.navigation.goBack()}}/>
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack()}}/>
     )
     MoreAction = () =>(
-        <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{alert('신고,스크랩')}}/>
+        // <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{this.setState({modalVisible:true})}}/>
+        <Popover
+        anchor={this.renderPostMore}
+        visible={this.state.popoverVisibel}
+        placement='bottom start'
+        onBackdropPress={() => this.setState({popoverVisibel:false})}>
+            <View>
+                <TouchableOpacity 
+                    onPress={()=>{this.postscrap();this.setState({popoverVisibel:false})}} 
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>스크랩</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{this.postBlameConfirm();this.setState({popoverVisibel:false})}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>신고</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{
+                        this.setState({popoverVisibel:false});
+                        this.props.navigation.navigate('GominWrite',
+                            {
+                                statefunction:this.statefunction,
+                                mode:'edit',
+                                post:this.state.post,
+                                content:this.state.content,
+                            })}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>수정</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{this.setState({popoverVisibel:false,deleteModalVisible:true})}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>삭제</Text>
+                </TouchableOpacity>
+            </View>
+        </Popover>
     )
+    statefunction=(str)=>{
+        this.setState({isLoading:true});
+        this.componentDidMount()    
+    }
     postBlame = ()=>{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         
-        Axios.post('http://10.0.2.2/api/postact/post_blame',formdata)
+        Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 alert(`${JSON.stringify(response.data.message)}`)
             }else{
                 this.getPostData(this.state.post.post_id)
+                alert(`${JSON.stringify(response.data.message)}`)
             }
         })
         .catch(error=>{
@@ -152,7 +243,7 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         
-        Axios.post('http://10.0.2.2/api/postact/comment_blame',formdata)
+        Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 alert(`${JSON.stringify(response.data.message)}`)
@@ -182,11 +273,45 @@ class GominContent extends React.Component{
             { cancelable: false }
         );
     }
+    cmtDelete = (cmt_id) =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',cmt_id)
+        
+        Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+                alert(`${JSON.stringify(response.data.message)}`)
+                this.getCommentData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    cmtDeleteConfirm = (cmt_id) =>{
+        Alert.alert(
+            "댓글",
+            "이 댓글을 삭제하시겠습니까?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "OK", 
+                    onPress: ()=> this.cmtDelete(cmt_id)
+                }
+            ],
+            { cancelable: false }
+        );
+    }
     postLike = () =>{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         formdata.append('like_type',1)
-        Axios.post('http://10.0.2.2/api/postact/post_like',formdata)
+        Axios.post('http://dev.unyict.org/api/postact/post_like',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 alert(`${JSON.stringify(response.data.message)}`)
@@ -202,7 +327,7 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post('http://10.0.2.2/api/postact/comment_like',formdata)
+        Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 alert(`${JSON.stringify(response.data.message)}`)
@@ -215,7 +340,7 @@ class GominContent extends React.Component{
     }
     
     getCommentData = async (post_id)=>{
-        await Axios.get(`http://10.0.2.2/api/comment_list/lists/${post_id}`)
+        await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
         })
@@ -224,12 +349,15 @@ class GominContent extends React.Component{
         })
     }
     getPostData = async (post_id)=>{
-        await Axios.get(`http://10.0.2.2/api/board_post/post/${post_id}`)
+        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post})
+            this.setState({post:response.data.view.post});
+            const regexf = /(<([^>]+)>)|&nbsp;/ig;
+            const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
+            this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert('error')
+            alert(JSON.stringify(error))
         })
     }
      onRefresh=()=>{
@@ -248,42 +376,47 @@ class GominContent extends React.Component{
         
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
-
         return (
-            <View >
-                <View style={{paddingLeft:15}}>
-                    <Text style={{marginBottom:10}} category="h5">{post.post_title}</Text>
-                    <Divider/>
-                </View>
-                <View style={{paddingLeft:10}}>
-                    <View style={{display:"flex",paddingVertical:5,flexDirection:"row"}}>
-                        <StarIcon /><Text>{`${post.display_name} | ${post.post_datetime}`} </Text>
+            <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10}} >
+                <View style={{marginLeft:15,marginTop:10,marginBottom:13}}>
+                    <View style={{display:"flex",flexDirection:'row'}}>
+                        <StarIcon />
+                        <View>
+                            <Text>{post.display_name}</Text>
+                            <View style={{display:"flex",flexDirection:'row'}}>
+                                <PostTime datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
+                                {
+                                    post.post_datetime ==post.post_updated_datetime?
+                                    null
+                                    :
+                                    <Text category="s2"> 수정됨</Text>
+                                }
+                            </View>
+                        </View>
                     </View>
-                    <Divider/>
                 </View>
-                <View style={{padding:10}}>
-                    <Text category="h6">
+                <View style={{marginLeft:15,paddingBottom:5}}>
+                    <Text style={{fontSize:14,fontWeight:'bold'}}>{post.post_title}</Text>
+                </View>
+                <View style={{marginLeft:15,marginBottom:16}}>
+                    <Text style={{fontSize:12,fontWeight:'800'}}>
                     {post_remove_tags}
                     </Text>
                 </View>
-                <View style={{paddingHorizontal:10,paddingVertical:5,display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
-                    <View>
-                        <CommentIcon />
-                        <Text>{post.post_comment_count}</Text>
-                    </View>
+                <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
-                        <TouchableOpacity onPress={()=>this.postLike()}>
-                            <HeartIcon />
-                            <Text>{post.post_like}</Text>
+                        <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
+                            <Thumbsvg/>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>alert("저장!")}>
+                        <Text>{post.post_like}</Text>
+                        {/* <TouchableOpacity onPress={()=>alert("저장!")}>
                             <PlusIcon />
                             <Text>{post.scrap_count}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={()=>this.postBlameConfirm()}>
                             <BlameIcon />
                             <Text>{post.post_blame}</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                 </View>
             </View>
@@ -291,34 +424,61 @@ class GominContent extends React.Component{
     }
 
     renderCommentsList=({item,index})=>(
-        <Card>
+        <View style={{marginVertical:3}}>
+        {item.cmt_reply==""?
+        null
+        :
+        <View style={{position:'absolute',left:0,paddingLeft:25}}>
+            <ReplyLsvg />
+        </View> 
+        }
+        <View 
+            style ={{
+                borderRadius:8,
+                paddingRight:15,
+                marginRight:15,
+                paddingVertical:10,
+                paddingLeft: 15,
+                marginLeft:item.cmt_reply==""?15:50,
+                backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
             <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <View style={{flexDirection:"row"}}>
-                <StarIcon />
-                <Text category="s2">{item.cmt_nickname}</Text>
+                    <StarIcon />
+                    <View>
+                        <Text category="s2">{item.cmt_nickname}</Text>
+                        <PostTime datetime={item.cmt_datetime}/>
+                    </View>
                 </View>
                 <View style={{display:'flex',flexDirection:'row'}}>
-                    <TouchableOpacity onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <HeartIcon />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
+                    {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                         <BlameIcon />
+                    </TouchableOpacity> */}
+                    <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
+                        <MoreSsvg/>
                     </TouchableOpacity>
                 </View>
             </View>
             <View style={{padding:5}}>
-                <Text category="s1">{item.content}</Text>
+                <Text category="s1">{item.cmt_content}</Text>
             </View>
-            <View style={{display:"flex", justifyContent:"flex-start",flexDirection:"row",alignItems:"center"}}>
-                <Text category="s2">{item.cmt_datetime}</Text>
-                <HeartIcon style ={{width:10,heigth:10}} />
-                <Text>{item.cmt_like}</Text>
+            <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
+                {item.cmt_reply ==""?
+                <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replyModalVisible:true,cmt_id:item.cmt_id})}>
+                    <ReplySsvg />
+                </TouchableOpacity>
+                :null
+                }
+                <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
+                    <Thumbsvg />
+                </TouchableOpacity>
+                    <Text>{item.cmt_like}</Text>
             </View>
-        </Card>
+        </View>
+        </View>
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_content,post,comment} = this.state
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,replyModalVisible,deleteModalVisible,spinnerModalVisible} = this.state
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -327,8 +487,8 @@ class GominContent extends React.Component{
         </View>
         :
         <SafeAreaView style={{flex:1}}>
-            <TopNavigation title="고민있어요" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.MoreAction} style={styles.topbar}/> 
-            <Divider/>
+            <TopNavigation title="" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.MoreAction} style={styles.topbar}/> 
+            
             <Layout style={{flex:1}}>
                     <List
                     ref={"pstcmtlist"} 
@@ -337,17 +497,83 @@ class GominContent extends React.Component{
                     renderItem={this.renderCommentsList}
                     onRefresh={this.onRefresh}
                     refreshing={this.state.refreshing}
+                    style={{backgroundColor:'#ffffff'}}
                     />
             </Layout>
-            <Input
-                style={{margin:15,position:'relative',bottom:0}}
-                size='large'
-                placeholder='댓글을 입력하세요.'
-                value={cmt_content}
-                multiline={true}
-                accessoryRight={this.UploadButton}
-                onChangeText={nextValue => this.setState({cmt_content:nextValue})}
-            />
+            <View style={{backgroundColor:'#ffffff',padding:8}}>
+                {this.state.replying ?
+                <TouchableOpacity onPress={this.commentWrite}>
+                    <Text category="h2" style={{color:'#63579D'}}>X</Text>
+                </TouchableOpacity>
+                :
+                null
+                }
+                <TextInput
+                    ref="commentInput"
+                    style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                    value={cmt_content}
+                    placeholder={ replying?"대댓글" :"댓글"}
+                    placeholderTextColor='#A897C2'
+                    plac
+                    multiline={true}
+                    onChangeText={nextValue => this.setState({cmt_content:nextValue})}
+                />
+                <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
+                    <UploadCirclesvg width={50} height={50}/>
+                </TouchableOpacity>
+                
+            </View>
+            <Modal
+                visible={modalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}
+            >
+                <View>
+                    <TouchableOpacity 
+                        onPress={()=>{this.cmtBlameConfirm(cmt_id);this.setState({modalVisible:false,cmt_id:''})}}
+                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
+                        <Text category='h3'>댓글 신고</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        onPress={()=>{this.cmtDeleteConfirm(cmt_id);this.setState({modalVisible:false,cmt_id:''})}}
+                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
+                        <Text category='h3'>댓글 삭제</Text>
+                    </TouchableOpacity>
+                </View>   
+            </Modal>
+            <Modal
+                visible={replyModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({replyModalVisible:false})}
+            >
+                <Confirm 
+                    confirmText="대댓글을 작성하시겠습니까?"
+                    frstText="예"
+                    OnFrstPress={() =>{this.setState({replying:true,replyModalVisible:false}); this.refs.commentInput.focus()}}
+                    scndText="아니오"
+                    OnScndPress={() => this.setState({replyModalVisible:false,cmt_id:''})}
+                />
+            </Modal>
+            <Modal
+                visible={deleteModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({deleteModalVisible:false})}
+            >
+                <Confirm 
+                    confirmText="게시글을 삭제하시겠습니까?"
+                    frstText="예"
+                    OnFrstPress={() =>{this.setState({deleteModalVisible:false,spinnerModalVisible:true});this.postDelete()}}
+                    scndText="아니오"
+                    OnScndPress={() => this.setState({deleteModalVisible:false})}
+                />
+            </Modal>
+            <Modal
+                visible={spinnerModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
+            >
+                <Spinner size='giant'/>
+            </Modal>
+            
         </SafeAreaView>
          )
      }
@@ -377,7 +603,7 @@ class MarketContent extends React.Component {
     }
 
     getPostData = async(post_id)=>{
-        await Axios.get(`http://10.0.2.2/api/board_post/post/${post_id}`)
+        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
@@ -396,7 +622,7 @@ class MarketContent extends React.Component {
     }
     
     getCommentData = async (post_id)=>{
-        await Axios.get(`http://10.0.2.2/api/comment_list/lists/${post_id}`)
+        await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
         })
@@ -416,8 +642,9 @@ class MarketContent extends React.Component {
     )
 
     renderImage = ({item}) => {
+        console.log(item.url)
         return (
-        <Image source={{uri : 'http://10.0.2.2'+item.url}} style={{flex : 1, width:394, resizeMode:'cover'}}/>
+        <Image source={{uri : 'http://dev.unyict.org/'+item.url}} style={{flex : 1, width:394, resizeMode:'cover'}}/>
         );
     }
 
@@ -459,7 +686,7 @@ class MarketContent extends React.Component {
     render(){
 
         const {post} = this.state;
-        
+        const { width } = Dimensions.get("window");
         return(
             this.state.isLoading ?
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -472,7 +699,7 @@ class MarketContent extends React.Component {
                 <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
                     <ScrollView>
                         <View>
-                            <Slider image={this.state.image} navigation={this.props.navitation}/>
+                            <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
                         </View>
                         <View style={{}}>
                             <Layout>
@@ -537,7 +764,7 @@ class AlbaContent extends React.Component {
             visible : false,
             OF_visible : false,
             post : {} ,
-            thumb_image : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
+            thumb_image : '/react_native/AltruistApp/assets/images/noimage.png',
             file_images : null,
             phoneNumber : '010 9999 9999',
             isLoading : true,
@@ -596,7 +823,10 @@ class AlbaContent extends React.Component {
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
     UD_Action = () =>(
-        <TopNavigationAction icon={HeartIcon} onPress={() =>{this.onClick_UD_Action()}}/>
+        // <TopNavigationAction icon={HeartIcon} onPress={() =>{this.onClick_UD_Action()}}/>
+        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.onClick_UD_Action()}>
+            <MoreLsvg height={24} width={24}/>
+        </TouchableOpacity>
     )
     onClick_UD_Action = () => {
         const buttons = ['수정', '삭제', '취소'];
@@ -749,7 +979,7 @@ class AlbaContent extends React.Component {
                         </Card>
                     </ScrollView>
                     <Button style={styles.bottomButton} onPress={()=>this.setVisible(true)}>
-                            지원하기
+                        지원하기
                     </Button>
                     <Modal
                             visible={this.state.visible}
@@ -790,6 +1020,17 @@ class AlbaContent extends React.Component {
             )
     }
 }
+
+class IlbanContent extends Component {
+    render(){
+        return(
+            <View>
+                <Text>HI</Text>
+            </View>
+        )
+    }
+}
+
 
 const styles = StyleSheet.create({
     commentBlock: {
@@ -853,4 +1094,4 @@ const styles = StyleSheet.create({
 });
 
 
-export {defaultContent, MarketContent, AlbaContent, GominContent}
+export {defaultContent, MarketContent, AlbaContent, GominContent, IlbanContent}

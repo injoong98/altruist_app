@@ -2,14 +2,14 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {SafeAreaView} from 'react-native'
-import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction} from '@ui-kitten/components'
-import AltMainScreen from './Main'
-import AltApplyScreen from './Apply'
-import AltListScreen from './List'
-import AltProfileScreen from './Profile'
-import {AltQuestionWrite,AltQueType,AltAreaList} from './Question'
-import AltApplyFormScreen from './ApplyForm'
-import ApplyCompleteScreen from './ApplyComplete'
+import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction} from '@ui-kitten/components';
+import AltMainScreen from './Main';
+import AltApplyScreen from './Apply';
+import AltListScreen from './List';
+import AltProfileScreen from './Profile';
+import {AltQuestionWrite,AltQueType,AltAreaList,AltQueContent,AltOpqQueList,AltReplying} from './Question';
+import AltApplyFormScreen from './ApplyForm';
+import ApplyCompleteScreen from './ApplyComplete';
 
 const {Navigator,Screen} = createStackNavigator();
 
@@ -44,5 +44,8 @@ export const AltStackNav = () =>(
         <Screen name = "AltQueType" component={AltQueType}/>
         <Screen name = "AltAreaList" component={AltAreaList}/>
         <Screen name = "AltQuestionWrite" component={AltQuestionWrite}/>
+        <Screen name = "AltOpqQueList" component={AltOpqQueList}/>
+        <Screen name = "AltQueContent" component={AltQueContent}/>
+        <Screen name = "AltReplying" component={AltReplying}/>
     </Navigator>
 )

@@ -521,7 +521,7 @@ class Board_write extends CB_Controller
 		if ($use_upload === true && $form_validation && element('use_upload_file', $board)) {
 
 			$this->load->library('upload');
-
+//파일 업로드 하는 부분
 			if (isset($_FILES) && isset($_FILES['post_file']) && isset($_FILES['post_file']['name']) && is_array($_FILES['post_file']['name'])) {
 				$filecount = count($_FILES['post_file']['name']);
 				$upload_path = config_item('uploads_dir') . '/post/';

@@ -177,6 +177,20 @@ class Register extends CB_Controller
 		}
 	}
 
+	/**
+	 * 회원 약관 가져와기
+	 * 
+	 * 	 
+	 * */
+
+	public function get_register_policy()
+	{
+
+			$view['view']['member_register_policy1'] = $this->cbconfig->item('member_register_policy1');
+			$view['view']['member_register_policy2'] = $this->cbconfig->item('member_register_policy2');
+			response_result($view,'success','OK');
+	}
+
 
 	/**
 	 * 회원가입 폼 페이지입니다
@@ -381,13 +395,13 @@ class Register extends CB_Controller
 			'rules' => 'trim|alphanumunder|min_length[3]|max_length[20]|callback__mem_recommend_check',
 		);
 
-		if ($this->member->is_admin() === false && ! $this->session->userdata('registeragree')) {
+		/* if ($this->member->is_admin() === false && ! $this->session->userdata('registeragree')) {
 			$this->session->set_flashdata(
 				'message',
 				'회원가입약관동의와 개인정보취급방침동의후 회원가입이 가능합니다'
 			);
 			redirect('register');
-		}
+		} */
 
 		$registerform = $this->cbconfig->item('registerform');
 		$form = json_decode($registerform, true);
@@ -444,7 +458,7 @@ class Register extends CB_Controller
 			}
 		}
 
-		if ($this->cbconfig->item('use_recaptcha')) {
+		/* if ($this->cbconfig->item('use_recaptcha')) {
 			$config[] = array(
 				'field' => 'g-recaptcha-response',
 				'label' => '자동등록방지문자',
@@ -456,7 +470,7 @@ class Register extends CB_Controller
 				'label' => '자동등록방지문자',
 				'rules' => 'trim|required|callback__check_captcha',
 			);
-		}
+		} */
 		$this->form_validation->set_rules($config);
 
 		$form_validation = $this->form_validation->run();
@@ -464,6 +478,12 @@ class Register extends CB_Controller
 		$updatephoto = '';
 		$file_error2 = '';
 		$updateicon = '';
+
+		$view['view']['form_validation'] = $form_validation;
+		
+		if(!$form_validation) {
+			response_result($view,'Err',validation_errors('', ''));
+		}
 
 		if ($form_validation) {
 			$this->load->library('upload');
@@ -1187,8 +1207,8 @@ class Register extends CB_Controller
 					$mem_id
 				);
 			}
-
-			redirect('register/result');
+			response_result($view,'success','정상적으로 가입되었습니다.');
+			//redirect('register/result');
 		}
 	}
 
@@ -1308,7 +1328,7 @@ class Register extends CB_Controller
 		);
 		exit(json_encode($result));
 	}
-
+	
 
 	public function ajax_email_check()
 	{
@@ -1369,7 +1389,7 @@ class Register extends CB_Controller
 		);
 		exit(json_encode($result));
 	}
-
+	
 
 	public function ajax_password_check()
 	{
@@ -1464,6 +1484,236 @@ class Register extends CB_Controller
 		);
 		exit(json_encode($result));
 	}
+
+
+
+
+
+
+
+
+
+	//RN 사용자 아이디 검사
+	public function userid_check()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_register_ajax_userid_check';
+		$this->load->event($eventname);
+
+		$result = array();
+		$this->output->set_content_type('application/json');
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('before', $eventname);
+
+		$userid = trim($this->input->post('userid'));
+		if (empty($userid)) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '아이디값이 넘어오지 않았습니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		if ( ! preg_match("/^([a-z0-9_])+$/i", $userid)) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		$where = array(
+			'mem_userid' => $userid,
+		);
+		$count = $this->Member_userid_model->count_by($where);
+		if ($count > 0) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '이미 사용중인 아이디입니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		if ($this->_mem_userid_check($userid) === false) {
+			$result = array(
+				'result' => 'no',
+				'reason' => $userid . '은(는) 예약어로 사용하실 수 없는 회원아이디입니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('after', $eventname);
+
+		$result = array(
+			'userid' => $userid,
+			'result' => 'available',
+			'reason' => '사용 가능한 아이디입니다',
+		);
+		response_result($result,'success',$result['reason']);	
+	}
+
+	//RN 회원이메일 체크
+	public function email_check()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_register_ajax_email_check';
+		$this->load->event($eventname);
+
+		$result = array();
+		$this->output->set_content_type('application/json');
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('before', $eventname);
+
+		$email = trim($this->input->post('email'));
+		if (empty($email)) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '이메일값이 넘어오지 않았습니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		if ($this->member->item('mem_email')
+			&& $this->member->item('mem_email') === $email) {
+			$result = array(
+				'result' => 'available',
+				'reason' => '사용 가능한 이메일입니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		$where = array(
+			'mem_email' => $email,
+		);
+		$count = $this->Member_model->count_by($where);
+		if ($count > 0) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '이미 사용중인 이메일입니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		if ($this->_mem_email_check($email) === false) {
+			$result = array(
+				'result' => 'no',
+				'reason' => $email . '은(는) 예약어로 사용하실 수 없는 이메일입니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('before', $eventname);
+
+		$result = array(
+			'email' => $email,
+			'result' => 'available',
+			'reason' => '사용 가능한 이메일입니다',
+		);
+		response_result($result,'success',$result['reason']);	
+	}
+
+	//RN 닉네임 검사
+	public function nickname_check()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_register_ajax_nickname_check';
+		$this->load->event($eventname);
+
+		$result = array();
+		$this->output->set_content_type('application/json');
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('before', $eventname);
+
+		$nickname = trim($this->input->post('nickname'));
+		if (empty($nickname)) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '닉네임값이 넘어오지 않았습니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		if ($this->member->item('mem_nickname')
+			&& $this->member->item('mem_nickname') === $nickname) {
+			$result = array(
+				'result' => 'available',
+				'reason' => '사용 가능한 닉네임입니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		$where = array(
+			'mem_nickname' => $nickname,
+		);
+		$count = $this->Member_model->count_by($where);
+		if ($count > 0) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '이미 사용중인 닉네임입니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		if ($this->_mem_nickname_check($nickname) === false) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '이미 사용중인 닉네임입니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		$result = array(
+			'nickname' => $nickname,
+			'result' => 'available',
+			'reason' => '사용 가능한 닉네임입니다',
+		);
+		response_result($result,'success',$result['reason']);	
+	}
+
+	//RN 패스워드 체크
+	public function password_check()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_register_ajax_password_check';
+		$this->load->event($eventname);
+
+		$result = array();
+		$this->output->set_content_type('application/json');
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('before', $eventname);
+
+		$password = trim($this->input->post('password'));
+		if (empty($password)) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '패스워드값이 넘어오지 않았습니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		if ($this->_mem_password_check($password) === false) {
+			$result = array(
+				'result' => 'no',
+				'reason' => '패스워드는 최소 1개 이상의 숫자를 포함해야 합니다',
+			);
+			response_result($result,'Err',$result['reason']);	
+		}
+
+		$result = array(
+			'password' => $password,
+			'result' => 'available',
+			'reason' => '사용 가능한 패스워드입니다',
+		);
+		response_result($result,'success',$result['reason']);	
+	}
+
+
 
 
 	/**

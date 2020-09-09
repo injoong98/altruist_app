@@ -9,6 +9,9 @@ import {Picker} from '@react-native-community/picker';
 import {ActionSheet, Root} from 'native-base';
 import { TopBarTune } from '../components/TopBarTune';
 
+import Camsvg from '../assets/icons/Icon_Cam.svg'
+import Tooltipsvg from '../assets/icons/tooltip.svg'
+
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -51,16 +54,15 @@ class GominWrite extends React.Component {
         super(props);
         this.state={
             isLoading :true,
-            post_title:'title from avd',
-            post_content:'content from avd 익명,카테고리 1',
-            post_anoymous_yn:1,
+            post_title:this.props.route.params.mode=='edit' ? this.props.route.params.post.post_title:'',
+            post_content:this.props.route.params.mode=='edit' ? this.props.route.params.content:'',
+            post_anoymous_yn:this.props.route.params.mode=='edit' ? this.props.route.params.post.post_anoymous_yn:1,
             post_category:1,
-            checked:true
-            
+            checked:this.props.route.params.mode=='edit' ? this.props.route.params.post.post_anoymous_yn==0 ? false: true :true,
         }
     }
-    
     submitPost= async()=>{
+        const url = this.props.route.params.mode=='edit' ?'http://dev.unyict.org/api/board_write/modify' :'http://dev.unyict.org/api/board_write/write/b-a-1'
         const {post_title,post_content,post_anoymous_yn,post_category} =this.state
         let formdata = new FormData();
             formdata.append("post_title", post_title);
@@ -68,13 +70,20 @@ class GominWrite extends React.Component {
             formdata.append("post_category", post_category);
             formdata.append("post_anoymous_yn", post_anoymous_yn);
             formdata.append("brd_key", "b-a-1");
-        await axios.post(
-            'http://10.0.2.2/api/board_write/write/b-a-1',
-            formdata
-            )
+        
+            this.props.route.params.mode=='edit' ?
+            formdata.append('post_id',this.props.route.params.post.post_id)            
+            :
+            null
+        
+        
+        await axios.post(url,formdata)
         .then(response=>{
             Alert.alert(
                 "게시글",
+                this.props.route.params.mode=='edit' ?
+                `"게시글 수정 완료"\n${JSON.stringify(response.data)}`
+                :
                 `"게시글 작성 완료"\n${JSON.stringify(response.data)}`,
                 [
                     { 
@@ -86,7 +95,7 @@ class GominWrite extends React.Component {
             );
         })
         .catch(error=>{
-            alert('BYE:(')
+            alert(JSON.stringify(error))
         })    
     
     }
@@ -99,7 +108,7 @@ class GominWrite extends React.Component {
         formdata.append("csrf_test_name", '');
         
     
-        await axios.post('http://10.0.2.2/api/postact/filter_spam_keyword',formdata)
+        await axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {message,status}=response.data
             if(status=='500'){
@@ -107,7 +116,7 @@ class GominWrite extends React.Component {
             }else if(status=="200"){
                 Alert.alert(
                     "게시글",
-                    "게시글을 작성하시겠습니까?",
+                    this.props.route.params.mode=='edit' ?'게시글을 수정하시겠습니까?':"게시글을 작성하시겠습니까?",
                     [
                         { 
                             text: "작성", 
@@ -142,27 +151,29 @@ class GominWrite extends React.Component {
     )
     render(){
         const {navigation} = this.props;
-        const {post_title,post_category,post_anoymous_yn,post_content,checked} =this.state;
+        const {post_title,post_category,post_anoymous_yn,post_content,checked,content} =this.state;
         return(
 
-            <SafeAreaView style={{flex:1}}>
-                <TopBarTune 
-                    text="이타주의자" 
-                    func={() =>{this.filterSpamKeyword()}} 
-                    right="upload"
-                    gbckfunc={()=>{navigation.goBack()}} 
-                    gbckuse={false}
-                />
+            // <SafeAreaView style={{flex:1}}>
                 <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
+                <TopBarTune 
+                    text="고민 작성" 
+                    func={() =>{this.filterSpamKeyword()}} 
+                    right={this.props.route.params.mode=='edit' ?'edit' : "upload"}
+                    gbckfunc={()=>{navigation.goBack()}} 
+                    gbckuse={true}
+                />
                     {/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
                         <TextInput
                             style={{backgroundColor:'#ffffff',borderRadius:8.5, marginTop:18,marginHorizontal:12,marginBottom:14,fontSize:18}}
                             placeholder="제목"
                             onChangeText={nextValue => this.setState({post_title:nextValue})}
                             placeholderTextColor='#A897C2'
+                            value={post_title}
                         />
                         <TextInput
-                            style={{maxHeight:'120%', minHeight:'70%',backgroundColor:'#ffffff',borderRadius:8.5, marginHorizontal:12,marginBottom:14,fontSize:18}}
+                            value={post_content}
+                            style={{ height:'80%',maxHeight:'50%',backgroundColor:'#ffffff',borderRadius:8.5, marginHorizontal:12,marginBottom:14,fontSize:18}}
                             placeholder="내용"
                             onChangeText={nextValue => this.setState({post_content:nextValue})}
                             multiline={true}
@@ -181,7 +192,7 @@ class GominWrite extends React.Component {
                             </CheckBox>
                         </View>
                     </KeyboardAvoidingView>
-            </SafeAreaView>
+            // {/* </SafeAreaView> */}
     
         )
     }
@@ -200,13 +211,14 @@ class MarketWrite extends React.Component {
             deal_type: 2, // 0: 직거래, 1: 배송, 2: 둘다가능
             deal_status: 1, // 0: 판매완료, 1: 판매중
             images: [],
+            image:''
         }
     }
 
     submitPost = async() => {
 
         console.log(this.state);
-        const {post_title, post_content, post_location, deal_price, deal_type} = this.state;
+        const {post_title, post_content, post_location, deal_price, deal_type,images,image} = this.state;
 
         let formdata = new FormData();
             formdata.append("brd_key", 'b-a-2');
@@ -216,29 +228,41 @@ class MarketWrite extends React.Component {
             formdata.append("post_nickname", 'Edward');
             formdata.append("post_email", 'Edward@sogang.ac.kr');
             formdata.append("post_password", '0000');
+            images.map(item=>{
+                formdata.append('post_file[]',
+                    {
+                        uri:item.path,
+                        type:item.mime,
+                        name:'image.jpg',
+                    }
+                )
+            })
+              
+            
             // formdata.append("deal_price", deal_price);
             // formdata.append("deal_type", deal_type);
             // formdata.append("deal_status", Data.deal_status);
             
         await axios.post(
-            'http://10.0.2.2/api/board_write/write/b-a-2',
+            'http://dev.unyict.org/api/board_write/write/b-a-2',
             formdata
         )
         .then(response=>{
             Alert.alert(
                 "게시글",
-                "게시글 작성 완료",
+                JSON.stringify(response.data),
                 [
                     { 
                         text: "OK", 
-                        onPress: ()=> {this.gobackfunc()}
+                        onPress: ()=> {}
                     }
                 ],
                 { cancelable: false }
             );
         })
         .catch(error=>{
-            alert('BYE:(')
+            console.log(error)
+            alert(JSON.stringify(error))
         })    
     }
     
@@ -277,7 +301,7 @@ class MarketWrite extends React.Component {
             cropping: true,
           }).then(image => {
             this.onSelectedImage(image);
-            console.log(image);
+          //  console.log(image);
           });
     }
 
@@ -288,26 +312,30 @@ class MarketWrite extends React.Component {
             includeExif: false,
         }).then(image => {
             image.map(item => this.onSelectedImage(item));
-            console.log(image);
+            //console.log(image);
         });
     }
 
     //불러온 사진의 정보를 this.state에 저장
     onSelectedImage(image) {
-        console.log(image);
+        //console.log(image);
         let newImages = this.state.images;
         const source = {uri: image.path};
         let item = {
             id: Date.now(),
             url: source,
+            mime:image.mime,
+            path:image.path,
             content: image.data
         };
+        console.log(item)
         newImages.push(item);
         this.setState({images: newImages})
+        this.setState({image: item})
     };
     
     renderImage(image) {
-        console.log(image);
+        //console.log(image);
         return (
             <View key={image.uri}>
                 <Image style={styles.market_RenderImage} source={image.url}/>
@@ -402,6 +430,7 @@ class MarketWrite extends React.Component {
                             />
                         </Layout>
                         <Button onPress={()=>this.submitPost()}>등 록</Button>
+                        <Button onPress={()=>console.log(this.state.images)}>콘솔</Button>
                     </Layout>
                 </ScrollView>
             </SafeAreaView>
@@ -424,11 +453,12 @@ class AlbaWrite extends React.Component{
             alba_type : 0,
             alba_salary_type : new IndexPath(0),
             alba_salary : '',
-            post_image : null,
+            post_image : [],
             imagesource : {},
-            images : null,
+            images : [],
             isTipVisible:false,
             isFollowUp:false,
+            image:''
         }
     }
 
@@ -438,12 +468,14 @@ class AlbaWrite extends React.Component{
         '주',
         '월'
     ]
-    BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
-    )
-    SubmitButton = () =>(
-        <TopNavigationAction icon={UpIcon} onPress={() =>{this.submit_alba_Alert()}}/>
-    )
+
+    // BackAction = () =>(
+    //     <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
+    // )
+    // SubmitButton = () =>(
+
+    //     <TopNavigationAction icon={UpIcon} onPress={() =>{this.submit_alba_Alert()}}/>
+    // )
 
     setTipVisible = (bool) => {this.setState({isTipVisible:bool});}
     setFollowUp = (nextChecked) => {
@@ -452,7 +484,7 @@ class AlbaWrite extends React.Component{
     }
     submit_alba_post = async() => {
         console.log(this.state);
-        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary} = this.state;
+        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary,images} = this.state;
         let formdata = new FormData();
         formdata.append("brd_key", 'b-a-3');
         formdata.append("post_title", post_title);
@@ -465,13 +497,15 @@ class AlbaWrite extends React.Component{
         formdata.append("alba_type", alba_type);
         formdata.append("alba_salary_type", alba_salary_type.row);
         formdata.append("alba_salary", alba_salary);
-        
-        // post_image.forEach(element => {
-        //     console.log(element);
-        //     formdata.append("file", element);
-        // });
-
-        // console.log(post_image);
+        images.map(item=>{
+            formdata.append('post_file[]',
+                {
+                    uri:item.path,
+                    type:item.mime,
+                    name:'image.jpg',
+                }
+            )
+        })
         console.log(formdata);
         await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
         .then(response=>{
@@ -491,32 +525,6 @@ class AlbaWrite extends React.Component{
         .catch(error=>{
             alert(error);
         })
-        // await axios({
-        //     method : 'post',
-        //     url : 'http://10.0.2.2/api/board_write/write/b-a-3',
-        //     data : formdata,
-        //     header : {
-        //         'Accept' : 'application/json',
-        //         'Content-Type' : 'multipart/form-data',
-        //     },
-        // })
-        // .then(response=>{
-        //         console.log(response);
-        //         Alert.alert(
-        //             "게시글",
-        //             "게시글 작성 완료",
-        //             [
-        //                 { 
-        //                     text: "OK", 
-        //                     onPress: ()=> {this.gobackfunc()}
-        //                 }
-        //             ],
-        //             { cancelable: false }
-        //         );
-        // })
-        // .catch(error=>{
-        //         alert(error);
-        // })
     }
 
     submit_alba_Alert= () => {
@@ -555,6 +563,33 @@ class AlbaWrite extends React.Component{
     pickMultiple() {
         ImagePicker.openPicker({
             multiple: true,
+          //  includeExif: false,
+        }).then(image => {
+            image.map(item => this.onSelectedImage(item));
+            //console.log(image);
+        });
+    }
+
+      //불러온 사진의 정보를 this.state에 저장
+      onSelectedImage(image) {
+        //console.log(image);
+        let newImages = this.state.images;
+        const source = {uri: image.path};
+        let item = {
+            id: Date.now(),
+            url: source,
+            mime:image.mime,
+            path:image.path,
+            content: image.data
+        };
+        console.log(item)
+        newImages.push(item);
+        this.setState({images: newImages})
+        this.setState({image: item})
+    };
+    /* pickMultiple() {
+        ImagePicker.openPicker({
+            multiple: true,
             // includeExif: true,
         }).then(images => {
             this.setState({
@@ -564,12 +599,19 @@ class AlbaWrite extends React.Component{
                 })
             });
         }).catch(e => console.log(e));
-    }
+    } */
 
-    renderImage(image) {
+   /*  renderImage(image) {
         return <Image style={{width: 150, height: 150, resizeMode: 'contain', borderWidth: 0.5, margin : 5}} source={image}/>
+    } */
+    renderImage(image) {
+        //console.log(image);
+        return (
+            <View key={image.uri}>
+                <Image style={styles.market_RenderImage} source={image.url}/>
+            </View>
+        )
     }
-
     renderAsset(image) {
         if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
             return this.renderVideo(image);
@@ -579,16 +621,23 @@ class AlbaWrite extends React.Component{
     }
 
     renderToggleButton = () => (
-        <Button
-            appearance='ghost'
-            accessoryLeft={HeartIcon}
-            onPress={()=>this.setTipVisible(true)}/>
+        <TouchableOpacity style={{justifyContent : 'center', alignItems : 'center'}} onPress={()=>this.setTipVisible(true)}>
+            <Tooltipsvg height={24} width={24}/>
+        </TouchableOpacity>
     );
 
     render(){
+        const {navigation} = this.props;
         return(
             <SafeAreaView style={{flex:1,}}>
-                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.SubmitButton} style={styles.topbar}/> 
+                <TopBarTune 
+                    text="채용 정보 작성" 
+                    right={this.props.route.params.mode=='edit' ?'edit' : "upload"}
+                    func={() =>{this.submit_alba_Alert()}}
+                    gbckfunc={()=>{navigation.goBack()}} 
+                    gbckuse={true}
+                />
+                {/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
                 <Divider />
                 <Layout style={{flex:10, backgroundColor : '#F4F4F4'}}>
                     <ScrollView>
@@ -676,13 +725,12 @@ class AlbaWrite extends React.Component{
                     <Layout style={styles.picture}>
                         <View style={{flexDirection : 'row', flex: 1, alignItems : 'center', justifyContent : 'space-between', marginVertical : 10}}>
                             <Text category='h4'> 사진</Text>
-                            <Button
-                                appearance='ghost'
-                                accessoryLeft={HeartIcon}
-                                onPress={()=>this.pickMultiple()}/>
+                            <TouchableOpacity onPress={()=>this.pickMultiple()}>
+                                <Camsvg/>
+                            </TouchableOpacity>
                         </View>
                         <ScrollView horizontal style={{height : 150}}>
-                            {this.state.post_image ? this.state.post_image.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
+                            {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
                         </ScrollView>
                     </Layout>
                 </ScrollView>
@@ -709,6 +757,7 @@ class IlbanWrite extends React.Component{
            post_nickname:'',
            post_email:'',
            images: [],
+           post_category : []
        }
    }
 
@@ -735,6 +784,17 @@ class IlbanWrite extends React.Component{
    //     }
    // }
 
+   getCategory = async() =>{
+    await axios.get( 'http://dev.unyict.org/api/board_post/lists/ilban' )
+       .then(res => {
+           console.log(res.data.view.list.board.category)
+           this.setState({post_category:res.data.view.list.board.category})
+       })
+       .catch(err => {
+           console.log(err)
+       })
+   }
+
 
    submitPost = async() => {
 
@@ -744,7 +804,7 @@ class IlbanWrite extends React.Component{
        let formdata = new FormData();
            formdata.append("brd_key", 'ilban');
            formdata.append("post_title", post_title);
-           formdata.append("post_category", post_category);
+           formdata.append("post_category", '1');
            formdata.append("post_content", post_content);
            formdata.append("post_nickname", 'ryeMhi');
            formdata.append("post_email", 'yhr0901@gmail.com');
@@ -755,6 +815,7 @@ class IlbanWrite extends React.Component{
            formdata
        )
        .then(response=>{
+           console.log(response)
            Alert.alert(
                "게시글",
                "게시글 작성 완료",
@@ -768,17 +829,32 @@ class IlbanWrite extends React.Component{
            );
        })
        .catch(error=>{
-           alert('BYE:(')
+           console.log(error)
+           console.error();
+           //alert('')
        })    
    }
-   
 
+   gobackfunc = () =>{
+    this.cleanupImages();
+    const {navigation,route} = this.props;
+    navigation.goBack();
+    // route.params.statefunction();
+    }
+    
+    cleanupImages() {
+        ImagePicker.clean().then(() => {
+            console.log('Temporary images history cleared')
+        }).catch(e => {
+            console.log(e);
+        });
+    }
    onClickAddImage() {
-       const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
+       const buttons = ['사진 촬영', '갤러리에서 사진 가져오기', '취소'];
        ActionSheet.show(
            {options: buttons,
            cancelButtonIndex: 2,
-           title: 'Select a photo'},
+           title: '사진 선택'},
            buttonIndex => {
                switch (buttonIndex) {
                    case 0:
@@ -845,36 +921,6 @@ class IlbanWrite extends React.Component{
        return this.renderImage(image);
    }
 
-
-   // pickMultiple() {
-   //     ImagePicker.openPicker({
-   //         multiple: true,
-   //         maxFiles: 2,
-   //         includeExif: true,
-   //         compressImageQuality: 0.8
-   //     }).then(images => {
-   //         this.setState({
-   //         //     post_images: images.map(i => {
-   //         //         console.log('received image', i);
-   //         //         return {uri: i.path, name : i.path.split('/').pop(), type : i.mime};
-   //         //     })
-   //         // });
-   //         image: null,
-   //         images: images.map(i => {
-   //           console.log('received image', i);
-   //           return {uri: i.path, width: i.width, height: i.height, mime: i.mime};
-   //         })
-   //       });
-   //       this.props.onImagePicked({uri: images.map(i => {
-   //           return{uri: i.path}
-   //       })
-   //     })
-   //     }).catch(e => alert(e));
-   // }
-
-   //end : iamgeUpload
-   //header
-
    BackAction = () =>(
        <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
    )
@@ -882,33 +928,56 @@ class IlbanWrite extends React.Component{
    SubmitButtom = () =>(
        <Button 
        style={{width:100}}
-       onPress={()=>this.onClickAddImage()}
+       onPress={()=>this.submitPost()}
        >글작성</Button>
    )
 
+   SelectItems = (props) => {
+        return(
+            <Select
+            style={{flex:1, width:10}}
+           // value={this.props.post_category.bca_id}
+          //  selectedIndex={this.props.post_category.bca_id}
+            //onSelect={(index)=>{this.setState({post_category:index})}}
+            placeholder='게시판 선택'
+            //selectedIndex={selectedIndex}
+            //onSelect={index => setSelectedIndex(index)}
+            >
+                {/* <SelectItem title={evaProps => <Text {...evaProps}>{this.props.post_category.bca_value}</Text>} />  */}
+                {/* <SelectItem title={evaProps => <Text {...evaProps}>option</Text>} />  */}
+            </Select>
+        )
+   }
+
+   componentDidMount(){
+    this.getCategory()
+   }
+
+
    //end: header
    render(){
+       const {post_category} = this.state
+    console.log(`ㅇ라ㅣㅁㄴㅇㄹ` + this.state.post_category)
        return(
            <Root>
-           <SafeAreaView style={{flex:1}}>
-               <TopNavigation title="일반게시판" alignment="center" accessoryLeft={this.BackAction} 
+           <SafeAreaView style={{flex:4}}>
+               <TopNavigation title="이타게시판" alignment="center" accessoryLeft={this.BackAction} 
                accessoryRight={this.SubmitButtom} 
                /> 
-                   <Divider />
-                  
+                <Divider />
+                <View style={{flex:4}}>
                    <View style={{flexDirection: 'row'}} >
                        {/* 카테고리 */}
-                       <Select
-                       style={{flex:1, width:10}}
-                       placeholder='Default'
-                       // selectedIndex={selectedIndex}
-                       // onSelect={index => setSelectedIndex(index)}
-                       >
-                       {/* <SelectItem title={evaProps => <Text {...evaProps}>Option 1</Text>} /> */}
-                       </Select>
+                       {/* <this.SelectItems /> */}
+                        {/* <Select>
+                            <SelectItem><Text>HIcd</Text></SelectItem>
+                            <SelectItem><Text>HI</Text></SelectItem>
+                        </Select> */}
                        {/* 제목 */}
+                      
                        <Input style={{ flex:1, width:90}}
-                       onChangeText = {text=>this.setState({post_title:text})}/>
+                       placeholder='제목'
+                       onChangeText = {post_title=>this.setState({post_title:post_title})}/>
                    </View>
                    <View style={{ flex: 2}}>
                        {/* 본문 */}
@@ -916,25 +985,25 @@ class IlbanWrite extends React.Component{
                            style={{padding:0}}
                            multiline={true}
                            textStyle={{ minHeight: 350 }}
-                           onChangeText = {text=>this.setState({post_content:text})}
+                           placeholder='본문'
+                           onChangeText = {post_content=>this.setState({post_content:post_content})}
                            />
                    </View>
                    <Divider />
                    {/* <View style={{flex:1, justifyContent: "center"}}> */}
-                   
                        {/* 사진 */}
-                       <Layout style={styles.container}>
-                           <Text>사진</Text>
-                           <ScrollView horizontal={true} style={styles.input}>
-                               <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
-                                   <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
-                               </TouchableOpacity>
-                               {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
-                           </ScrollView>                                   
-                       </Layout>
-                   {/* </View>    */}
+                    <Layout>
+                        <Text>사진</Text>
+                        <ScrollView horizontal={true} style={styles.input}>
+                            <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
+                                <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                            </TouchableOpacity>
+                            {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
+                        </ScrollView>                                   
+                    </Layout>
+                </View>
            </SafeAreaView>
-           </Root>
+        </Root>
        )
    }
 }
