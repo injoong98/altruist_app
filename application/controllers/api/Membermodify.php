@@ -158,13 +158,13 @@ class Membermodify extends CB_Controller
 		$this->load->event($eventname);
 
 		if ( ! $this->session->userdata('membermodify')) {
-			redirect('membermodify');
+			//redirect('membermodify');
 		}
 
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -384,6 +384,15 @@ class Membermodify extends CB_Controller
 
 		$this->form_validation->set_rules($config);
 		$form_validation = $this->form_validation->run();
+		if(!$form_validation) {
+			response_result($view,'Err',validation_errors('', ''));
+		//	response_result($view,'Err',"유효성 검사(form_validation) 에 실패하였습니다. ");
+		}
+
+
+
+
+
 		$file_error = '';
 		$updatephoto = '';
 		$file_error2 = '';
