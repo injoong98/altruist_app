@@ -218,13 +218,16 @@ class MarketWrite extends React.Component {
     submitPost = async() => {
 
         console.log(this.state);
-        const {post_title, post_content, post_location, deal_price, deal_type,images,image} = this.state;
+        const {post_title, post_content, post_location, deal_price, deal_type, deal_status, images, image} = this.state;
 
         let formdata = new FormData();
             formdata.append("brd_key", 'b-a-2');
             formdata.append("post_title", post_title);
             formdata.append("post_content", post_content);
-            // formdata.append("post_location", post_location);
+            formdata.append("post_location", post_location);
+            formdata.append("deal_price", deal_price);
+            formdata.append("deal_type", deal_type);
+            formdata.append("deal_status", deal_status);
             formdata.append("post_nickname", 'Edward');
             formdata.append("post_email", 'Edward@sogang.ac.kr');
             formdata.append("post_password", '0000');
@@ -237,11 +240,6 @@ class MarketWrite extends React.Component {
                     }
                 )
             })
-              
-            
-            // formdata.append("deal_price", deal_price);
-            // formdata.append("deal_type", deal_type);
-            // formdata.append("deal_status", Data.deal_status);
             
         await axios.post(
             'http://dev.unyict.org/api/board_write/write/b-a-2',
@@ -385,7 +383,7 @@ class MarketWrite extends React.Component {
                                 />
                             </Layout>
                             <Layout style={{flex:1}}>
-                                <Text>지역</Text>
+                                <Text>거래희망지역</Text>
                                 <Input
                                     style={styles.input}
                                     onChangeText={text => this.setState({post_location : text})}
@@ -397,7 +395,7 @@ class MarketWrite extends React.Component {
                             <Text>사진</Text>
                             <ScrollView horizontal={true} style={styles.input}>
                                 <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
-                                    <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                                    <Image source={{uri : 'http://dev.unyict.org/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
                                 </TouchableOpacity>
                                 {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
                             </ScrollView>                                                 
@@ -507,7 +505,7 @@ class AlbaWrite extends React.Component{
             )
         })
         console.log(formdata);
-        await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
+        await axios.post('http://dev.unyict.org/api/board_write/write/b-a-3', formdata)
         .then(response=>{
             console.log(response);
             Alert.alert(
@@ -811,7 +809,7 @@ class IlbanWrite extends React.Component{
            formdata.append("post_password", '0000');
            
        await axios.post(
-           'http://10.0.2.2/api/board_write/write/ilban',
+           'http://dev.unyict.org/api/board_write/write/ilban',
            formdata
        )
        .then(response=>{
@@ -996,7 +994,7 @@ class IlbanWrite extends React.Component{
                         <Text>사진</Text>
                         <ScrollView horizontal={true} style={styles.input}>
                             <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
-                                <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                                <Image source={{uri : 'http://dev.unyict.org/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
                             </TouchableOpacity>
                             {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
                         </ScrollView>                                   

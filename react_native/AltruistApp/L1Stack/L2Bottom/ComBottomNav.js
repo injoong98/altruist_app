@@ -7,7 +7,7 @@ import {SafeAreaView,View, Image} from 'react-native';
 import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, Card, Icon} from '@ui-kitten/components';
 
 import ToggleTune from '../../components/ToggleTune';
-import Mypage from './Mypage'
+import {MyStackNav} from './L3MyStack/MyStackNav'
 
 import Homesvg from '../../assets/icons/home.svg'
 import Communitysvg from '../../assets/icons/community.svg'
@@ -90,6 +90,6 @@ export const ComBottomNav = () =>(
         <Screen name = "Alt" component={AltStackNav}/>
         <Screen name = "Commu" component={ComToptabNav}/>
         <Screen name = "Meet" component={SpareScreen}/>
-        <Screen name = "Prof" component={Mypage}/>
+        <Screen name = "Prof" component={MyStackNav}/>
     </Navigator>
 )

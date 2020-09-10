@@ -884,6 +884,10 @@ class Board_write extends CB_Controller
 			$updatedata['answer_expire_date'] = $this->input->post('answer_expire_date', null, '');
 			$updatedata['question_solved'] = $this->input->post('question_solved', null, '');
 			$updatedata['answer_mem_id'] = $this->input->post('answer_mem_id', null, '');
+			//수수마켓 추가 컬럼  
+			$updatedata['deal_price'] = $this->input->post('deal_price', null, '');
+			$updatedata['deal_type'] = $this->input->post('deal_type', null, '');
+			$updatedata['deal_status	'] = $this->input->post('deal_status', null, '');
 
 			
 
@@ -2359,6 +2363,10 @@ class Board_write extends CB_Controller
 			$metadata['answer_expire_date'] = $this->input->post('answer_expire_date', null, '');
 			$metadata['question_solved'] = $this->input->post('question_solved', null, '');
 			$metadata['answer_mem_id'] = $this->input->post('answer_mem_id', null, '');
+
+			$metadata['deal_price'] = $this->input->post('deal_price', null, '');
+			$metadata['deal_type'] = $this->input->post('deal_type', null, '');
+			$metadata['deal_status'] = $this->input->post('deal_status', null, '');
 
 
 			

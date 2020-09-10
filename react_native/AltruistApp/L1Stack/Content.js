@@ -596,7 +596,7 @@ class MarketContent extends React.Component {
     }
 
     async componentDidMount(){
-        const post_id = this.props.route.params;
+        const {post_id} = this.props.route.params;
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
@@ -617,7 +617,7 @@ class MarketContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert(error)
+            alert(JSON.stringify(error))
         })
     }
     
@@ -701,30 +701,32 @@ class MarketContent extends React.Component {
                         <View>
                             <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
                         </View>
-                        <View style={{}}>
+                        <Layout style={{padding : 10}}>
                             <Layout>
                             <Text category='h2'>{post.post_title}</Text>
                             </Layout>
-                            <Layout>
+                            <Layout style={{marginTop : 10, marginLeft : 5}}>
                             <Text category='h4'>{post.deal_price} 원</Text>
                             </Layout>
-                        </View>
+                        </Layout>
                         <Divider/>
-                        <Layout style={{height:50,flexDirection:'row'}}>
+                        <Layout style={{height:50,flexDirection:'row', paddingVertical : 10}}>
                             <Layout style={{width:50}}>
-                            <Image source={require('../market/asset/basic_user.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                            <Image source={require('../assets/images/icon-social-dark.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                             </Layout>
                             <Layout style={{justifyContent:'center'}}>
-                            <Text>{post.post_username}</Text>
+                            <Text>{post.post_nickname}</Text>
                             </Layout>
                         </Layout>
                         <Divider/>
-                        <Layout style={{height:200}}>
-                            <Text>Details</Text>
-                            <Text> Place : {post.post_place}</Text>
+                        <Layout style={{padding : 10}}>
+                            <Text style={{color : 'gray'}}>거래희망지역</Text>
+                            <Text style={{marginTop : 10, marginLeft : 10}}>{post.post_location}</Text>
+                            <Text style={{color : 'gray', marginTop : 10}}>상품설명</Text>
+                            <Text style={{marginTop : 10, marginLeft : 10}}>{post.post_content}</Text>
                         </Layout>
                         <Divider/>
-                        <Layout>
+                        <Layout style={{padding : 10}}>
                             <Text>Comment</Text>
                             <List
                                 ref={"pstcmtlist"} 
@@ -734,7 +736,7 @@ class MarketContent extends React.Component {
                                 refreshing={this.state.refreshing}
                             />
                             <Input
-                                style={{flex:1, margin:15}}
+                                style={{flex:1, margin:5}}
                                 size='large'
                                 placeholder='댓글을 입력하세요.'
                                 value={this.state.cmt_content}
@@ -788,7 +790,7 @@ class AlbaContent extends React.Component {
     }
 
     getPostData = async(post_id)=>{
-        await Axios.get(`http://10.0.2.2/api/board_post/post/${post_id}`)
+        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
@@ -796,7 +798,7 @@ class AlbaContent extends React.Component {
                 this.setState({
                     file_images : response.data.view.file_image.map(i => {
                         console.log('received image', i);
-                        return {uri : 'http://10.0.2.2'+i.origin_image_url, height : this.scaledHeight(i.pfi_width, i.pfi_height, Dimensions.get('window').width)};
+                        return {uri : 'http://dev.unyict.org'+i.origin_image_url, height : this.scaledHeight(i.pfi_width, i.pfi_height, Dimensions.get('window').width)};
                     })
                 })
                 console.log(this.state.file_images);
@@ -877,7 +879,7 @@ class AlbaContent extends React.Component {
 
 
     // getImageSize (uri, passProps) {
-    //     const img_url = "http://10.0.2.2"+uri;
+    //     const img_url = "http://dev.unyict.org"+uri;
     //     const imagesMaxWidth = Dimensions.get('window').width;
     //     Image.getSize(img_url,(originalWidth, originalHeight) => {
     //             const optimalWidth = imagesMaxWidth <= originalWidth ? imagesMaxWidth : originalWidth;
@@ -909,7 +911,9 @@ class AlbaContent extends React.Component {
                 <Layout style={styles.container}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
                         <Card disabled={true} style={styles.item}>
-                            <Text category='c2'>{post.post_datetime.substr(0,post.post_datetime.length-3)}</Text>
+                            <Text category='c2'>
+                                {JSON.stringify(post.post_datetime).substr(1,post.post_datetime.length-3)}
+                            </Text>
                             <View style={styles.title}>
                                 <Text style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
                             </View>
@@ -929,7 +933,7 @@ class AlbaContent extends React.Component {
                             </Layout>
                             <Divider/>
                             <Layout style={{flexDirection:'row', alignItems : 'center'}}>
-                                <Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.thumb_image}}/>
+                                <Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org'+this.state.thumb_image}}/>
                                 <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
                             {/* <Layout style ={styles.icons}>
