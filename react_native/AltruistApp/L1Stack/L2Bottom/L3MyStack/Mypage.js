@@ -57,7 +57,7 @@ class Mypage extends React.Component{
                           <NoimageSvg height={125} width={125}/>
                       </View>
                       <View style={{marginLeft:16,marginTop:13,marginBottom:24,justifyContent:'space-between'}}>
-                          <View style={{padding:8,flexDirection:'row',backgroundColor:'#ffffff',borderRadius:10}}>
+                          <TouchableOpacity style={{padding:8,flexDirection:'row',backgroundColor:'#ffffff',borderRadius:10}} onPress={()=>this.props.navigation.navigate('MyPoint')}>
                               <View style={{}}>
                                   <Text category='p2'style={{color:'#A897C2',fontSize:10,textAlignVertical:'bottom'}}>point{`\n`}score</Text>
                               </View>
@@ -66,7 +66,7 @@ class Mypage extends React.Component{
                               <View style={{marginLeft:10}}>
                                   <Text style={{fontSize:10,lineHeight:13,color:'#63579D'}}>누적 {mem_point}{`\n`}사용 {mem_point}</Text>
                               </View>
-                        </View>  
+                        </TouchableOpacity>  
                       <View style={{marginTop:15,display:'flex',flexDirection:'row', alignItems:'flex-end'}}>
                           <Text category='h2' style={{fontSize:24,color:'#63579D'}}>{mem_nickname}</Text>
                           <View style={{height:'80%',marginLeft:10,alignItems:'flex-end'}}>
@@ -91,7 +91,7 @@ class Mypage extends React.Component{
                         <Text style={styles.menuItem}>작성글</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'comment'})}}>
-                        <Text style={styles.menuItem}>작성 글</Text>
+                        <Text style={styles.menuItem}>작성 댓글</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'like_post'})}}>
                         <Text style={styles.menuItem}>좋아요한 글</Text>
@@ -109,10 +109,10 @@ class Mypage extends React.Component{
                       <Text category='h2' style={styles.menuTitle}>쪽지함</Text>
                     </View>
                     <View>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{alert('menu!')}} >
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{alert('받은 쪽지!')}} >
                         <Text style={styles.menuItem}>받은  쪽지함</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{alert('menu!')}}>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{alert('보낸 쪽지!')}}>
                         <Text style={styles.menuItem}>보낸 쪽지함</Text>
                       </TouchableOpacity>
                     </View>
