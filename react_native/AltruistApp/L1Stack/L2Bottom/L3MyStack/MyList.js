@@ -22,11 +22,12 @@ export class MyList extends React.Component{
           current_page:1,
           isListLoading : false,
           isNoMoreData : false,
+          type:''
       }
     }
     topTitle = () => (
         <Text category='h2'>
-            내가 쓴 글
+            {this.state.type=='post' ? '내가 쓴 글': '내가 쓴 댓글'}
         </Text>
     )
     BackAction = () =>(
@@ -42,10 +43,30 @@ export class MyList extends React.Component{
         this.props.navigation.navigate(brd,{post_id:post_id, OnGoback:() =>this.onRefresh()})
     }
 
-    renderItem = ({ item, index }) => {
+    renderCmtItem = ({ item, index }) => {
+        return(
+        <TouchableOpacity style={styles.container} onPress = {()=>{this.navigateToContent(item.brd_id,item.post_id)}}>
+            <View>
+                <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{ this.brdNm(item.brd_id)}</Text>
+                <Text style={[styles.subtext,{}]}category="s2" numberOfLines={1}>{item.cmt_content}</Text>
+            </View>
+            <View style={styles.subtitle}>
+                <View style={{display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4}}> 
+                    <PostTime datetime = {item.cmt_datetime}/>
+                </View>
+                <View style={styles.infocontainer}>
+                    <View style={{alignItems:'center',}}>
+                        <Heartsvg />
+                        <Text style={styles.infotext} category="s1">{item.cmt_like}</Text>
+                    </View>
+                </View>
+            </View>
+        </TouchableOpacity>
+        )
+    };
+    renderPostItem = ({ item, index }) => {
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = item.post_content.replace(regex, '');
-        
         return(
         <TouchableOpacity style={styles.container} onPress = {()=>{this.navigateToContent(item.brd_id,item.post_id)}}>
             <View>
@@ -86,7 +107,7 @@ export class MyList extends React.Component{
         )
     }
     getPostList = async() =>{
-        await axios.get(`http://dev.unyict.org/api/mypage/post?&page=${this.state.current_page}`)
+        await axios.get(`http://dev.unyict.org/api/mypage/${this.state.type}?&page=${this.state.current_page}`)
         .then((response)=>{
           if(response.data.view.data.list.length > 0){
             this.setState({
@@ -106,7 +127,7 @@ export class MyList extends React.Component{
     }
   
     getPostFirst = async() => {
-        await axios.get('http://dev.unyict.org/api/mypage/post')
+        await axios.get(`http://dev.unyict.org/api/mypage/${this.state.type}`)
         .then((response)=>{
             this.setState({
               lists:response.data.view.data.list,
@@ -119,7 +140,13 @@ export class MyList extends React.Component{
         })
     }
     componentDidMount(){
-        this.setState({current_page:1, isNoMoreData : false,}, this.getPostFirst);
+        this.setState(
+            {   
+                current_page:1, 
+                isNoMoreData : false,
+                type:this.props.route.params.type
+            }
+            , this.getPostFirst);
     }
   
     onRefresh= () =>{
@@ -140,9 +167,9 @@ export class MyList extends React.Component{
         }
     }
     render(){
-        // const {searchOpenClose} = this.state
+        const {isLoading,type} = this.state
             return(
-            this.state.isLoading ? 
+            isLoading ? 
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
                 <Text>
                     <Spinner size="giant" />
@@ -152,7 +179,7 @@ export class MyList extends React.Component{
             <TopNavigation title="" alignment="center" accessoryLeft={this.BackAction} title={this.topTitle} style={styles.topbar}/> 
                 <List
                     data ={this.state.lists}
-                    renderItem={this.renderItem} 
+                    renderItem={type =='post'? this.renderPostItem : this.renderCmtItem} 
                     onRefresh={this.onRefresh}
                     refreshing={this.state.refreshing}
                     onEndReached={this.load_more_data}

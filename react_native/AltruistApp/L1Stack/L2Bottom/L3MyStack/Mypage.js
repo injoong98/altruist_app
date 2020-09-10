@@ -87,10 +87,10 @@ class Mypage extends React.Component{
                       <Text category='h2' style={styles.menuTitle}>나의 활동</Text>
                     </View>
                     <View>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList')}} >
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'post'})}} >
                         <Text style={styles.menuItem}>작성글</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{alert('menu!')}}>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'comment'})}}>
                         <Text style={styles.menuItem}>댓글단 글</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{alert('menu!')}}>
