@@ -33,7 +33,7 @@ class LoadingScreen extends React.Component{
     fadeIn = () => {
         Animated.timing(this.state.opacity,{
             toValue:1,
-            duration: 300,
+            duration: 400,
             useNativeDriver: false
         }).start();
     }
@@ -81,7 +81,7 @@ export class StackNav extends React.Component{
         })
     }
     componentDidMount(){
-        setTimeout(this.session_chk,500)
+        setTimeout(this.session_chk,600)
     }
     render(){
         const context ={
