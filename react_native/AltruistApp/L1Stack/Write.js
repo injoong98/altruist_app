@@ -218,13 +218,16 @@ class MarketWrite extends React.Component {
     submitPost = async() => {
 
         console.log(this.state);
-        const {post_title, post_content, post_location, deal_price, deal_type,images,image} = this.state;
+        const {post_title, post_content, post_location, deal_price, deal_type, deal_status, images, image} = this.state;
 
         let formdata = new FormData();
             formdata.append("brd_key", 'b-a-2');
             formdata.append("post_title", post_title);
             formdata.append("post_content", post_content);
-            // formdata.append("post_location", post_location);
+            formdata.append("post_location", post_location);
+            formdata.append("deal_price", deal_price);
+            formdata.append("deal_type", deal_type);
+            formdata.append("deal_status", deal_status);
             formdata.append("post_nickname", 'Edward');
             formdata.append("post_email", 'Edward@sogang.ac.kr');
             formdata.append("post_password", '0000');
@@ -237,11 +240,6 @@ class MarketWrite extends React.Component {
                     }
                 )
             })
-              
-            
-            // formdata.append("deal_price", deal_price);
-            // formdata.append("deal_type", deal_type);
-            // formdata.append("deal_status", Data.deal_status);
             
         await axios.post(
             'http://dev.unyict.org/api/board_write/write/b-a-2',
@@ -385,7 +383,7 @@ class MarketWrite extends React.Component {
                                 />
                             </Layout>
                             <Layout style={{flex:1}}>
-                                <Text>지역</Text>
+                                <Text>거래희망지역</Text>
                                 <Input
                                     style={styles.input}
                                     onChangeText={text => this.setState({post_location : text})}
