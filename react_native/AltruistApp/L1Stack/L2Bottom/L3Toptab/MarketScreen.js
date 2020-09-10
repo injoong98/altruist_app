@@ -42,7 +42,7 @@ class MarketScreen extends React.Component {
         </View>
         <Layout style={styles.textArea}>
             <Layout style={styles.textTop}>
-            <Text style={styles.text} category='s1'>
+            <Text style={styles.text} category='h5'>
                 {item.title}
             </Text>
             </Layout>
