@@ -36,7 +36,7 @@ class MarketScreen extends React.Component {
   }
 
   renderItem = ({item}) => (
-    <TouchableOpacity style={styles.item} onPress={() => {this.props.navigation.navigate('MarketContent', item.post_id)}}>
+    <TouchableOpacity style={styles.item} onPress={() => {this.props.navigation.navigate('MarketContent', {post_id:item.post_id})}}>
         <View style={{width:100}}>
             <Image source={item.origin_image_url? {uri : 'http://dev.unyict.org'+item.origin_image_url}:{uri : 'http://dev.unyict.org'+item.thumb_url}} style={{flex : 1, width:'100%', resizeMode:'cover'}}/>
         </View>
