@@ -12,8 +12,9 @@ import LoginScreen from './Login'
 import RegisterScreen from './Register'
 import QuestionScreen from './Question'
 import FinishScreen from './Finish'
+import {Signing} from './Context'
 
-export const Signing = React.createContext({})
+
 
 const {Navigator,Screen} = createStackNavigator();
 
@@ -35,7 +36,7 @@ export class StackNav extends React.Component{
         }
         
     }
-        
+    static contextType = Signing
     
     session_chk= async()=>{
         await axios.get('http://dev.unyict.org/api/login/session_check')
@@ -97,24 +98,24 @@ export class StackNav extends React.Component{
                     {
                         !isSignedIn ? 
                         <>
-                        <Screen name = "Login" component={LoginScreen}/>
-                        <Screen name = "RegisterScreen" component={RegisterScreen}/>
-                        <Screen name = "QuestionScreen" component={QuestionScreen}/>
-                        <Screen name = "FinishScreen" component={FinishScreen}/>
+                            <Screen name = "Login" component={LoginScreen}/>
+                            <Screen name = "RegisterScreen" component={RegisterScreen}/>
+                            <Screen name = "QuestionScreen" component={QuestionScreen}/>
+                            <Screen name = "FinishScreen" component={FinishScreen}/>
                         </>
                         :
                         <>
-                        <Screen name = "Bottom" component={ComBottomNav}/>
-                        <Screen name = "Write" component={defaultWrite}/>
-                        <Screen name = "Content" component={defaultContent}/>
-                        <Screen name = "IlbanContent" component={IlbanContent}/>
-                        <Screen name = "GominContent" component={GominContent}/>
-                        <Screen name = "MarketContent" component={MarketContent}/>
-                        <Screen name = "IlbanWrite" component={IlbanWrite}/>
-                        <Screen name = "AlbaContent" component={AlbaContent}/>
-                        <Screen name = "MarketWrite" component={MarketWrite}/>
-                        <Screen name = "AlbaWrite" component={AlbaWrite}/>
-                        <Screen name = "GominWrite" component={GominWrite}/>
+                            <Screen name = "Bottom" component={ComBottomNav}/>
+                            <Screen name = "Write" component={defaultWrite}/>
+                            <Screen name = "Content" component={defaultContent}/>
+                            <Screen name = "IlbanContent" component={IlbanContent}/>
+                            <Screen name = "GominContent" component={GominContent}/>
+                            <Screen name = "MarketContent" component={MarketContent}/>
+                            <Screen name = "IlbanWrite" component={IlbanWrite}/>
+                            <Screen name = "AlbaContent" component={AlbaContent}/>
+                            <Screen name = "MarketWrite" component={MarketWrite}/>
+                            <Screen name = "AlbaWrite" component={AlbaWrite}/>
+                            <Screen name = "GominWrite" component={GominWrite}/>
                         </>
                     }
 

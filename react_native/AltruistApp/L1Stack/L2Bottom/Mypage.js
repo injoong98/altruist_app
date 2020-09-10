@@ -3,7 +3,7 @@ import {View,StyleSheet, SafeAreaView, TouchableOpacity} from 'react-native';
 import {Input,Button,Text} from '@ui-kitten/components';
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
-import {Signing} from '../StackNav'
+import {Signing} from '../Context'
 import MoreSvg from '../../assets/icons/dotdotdot-large.svg'
 import ThumbSvg from '../../assets/icons/thumb-up-filled.svg'
 import PencilSvg from '../../assets/icons/pencil-outline.svg'
@@ -14,45 +14,22 @@ class Mypage extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            mem_userid:'',
-            mem_password:'',
-            logininfo:'',
-            autologin:false,
-            isLogined:false
+            mem_info:[],
+            isLoading:true
         }
     }
 
     static contextType = Signing;
-
-    removeValue = async () => {
-        try {
-          await AsyncStorage.removeItem('logininfo')
-        } catch(e) {
-          // remove error
-        }
-      
-        console.log('Done.')
-      }
-      
-    getData = async (key) => {
-        try {
-          const value = await AsyncStorage.getItem(key)
-          if(value !== null) {
-            var objstr= `{"${key}":${value}}`
-            this.setState(JSON.parse(objstr))
-            console.log(value)
-          }
-        } catch(e) {
-        }
-    }
-    storeData = async (value) => {
-        try {
-          await AsyncStorage.setItem('logininfo', value)
-        } catch (e) {
-          console.log(e)
-        }
-      }
     
+    loadMemInfo = () => {
+      axios.get('http://dev.unyict.org/api/mypage')
+      .then(res=>{
+        this.setState({mem_info:res.data,isLoading:false})
+      })
+      .catch(err=>{
+        console.log(JSON.stringify(err))
+      })
+    }
     sessionChk = () =>{
       axios.get('http://dev.unyict.org/api/login/session_check')
       .then(res=>{
@@ -65,19 +42,9 @@ class Mypage extends React.Component{
         console.log(JSON.stringify(err))
       })
     }
-    doLogout=()=>{
-        axios.get('http://dev.unyict.org/api/login/logout/')
-        .then(response=>{
-            alert(`성공 : ${JSON.stringify(response.data)}`),
-            this.removeValue()
-        })
-        .catch(error =>{
-            alert(`성공 : ${JSON.stringify(error)}`)
-        })
-    }
     
     componentDidMount(){
-        // this.getData();
+        this.loadMemInfo();
     }
     render(){
       const {signOut} = this.context
@@ -155,7 +122,6 @@ class Mypage extends React.Component{
                   <View style={{display:'flex',flexDirection:'row',position:'relative'}}>
                       <Button onPress={()=>{signOut()}}>간단로그아웃</Button>
                       <Button onPress={()=>{this.sessionChk();}}>session chk</Button>
-                      <Button onPress={()=>{this.getData('logininfo');this.getData('autologin')}} >AsyncStorage check</Button>
                   </View>
               </View>
           </SafeAreaView>

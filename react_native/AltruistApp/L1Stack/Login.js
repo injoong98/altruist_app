@@ -4,7 +4,7 @@ import {Text,Input,Button,CheckBox} from '@ui-kitten/components';
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
 import CookieManager from '@react-native-community/cookies';
-import {Signing} from '../L1Stack/StackNav'
+import {Signing} from './Context'
 
 class LoginScreen extends React.Component{
     constructor(props){
@@ -86,7 +86,6 @@ class LoginScreen extends React.Component{
     render(){
         const {mem_userid,mem_password,autologin} = this.state;
         const { signIn } = this.context
-        console.log(signIn)
         return(
             <View style={{flex:1,justifyContent:"center",alignItems:'center'}}>
                 <View style={{padding:10,borderWidth:1,borderColor:'#35367B',borderRadius:23,margin:10}}>
