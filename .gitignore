@@ -39,3 +39,6 @@ uploads/captcha/*
 react_native/AltruistApp/L1Stack/L2Bottom/L3Toptab/JauScreen.tsx
 react_native/AltruistApp/ios/testAltruistApp.xcodeproj/project.pbxproj
 react_native/AltruistApp/ios/testAltruistApp/Info.plist
+.prettierrc
+.eslintrc.json
+package.json

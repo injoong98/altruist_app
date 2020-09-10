@@ -1,4 +1,5 @@
 import React from 'react';
+import {Dimensions,Animated,View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {ComBottomNav} from './L2Bottom/ComBottomNav'
@@ -13,19 +14,43 @@ import RegisterScreen from './Register'
 import QuestionScreen from './Question'
 import FinishScreen from './Finish'
 import {Signing} from './Context'
+import LogoSvg from '../assets/icons/logo.svg'
 
-
+const {width} = Dimensions.get('window')
+const wdithLogo = (width*0.47);
+const heightLogo = (wdithLogo*0.57);
 
 const {Navigator,Screen} = createStackNavigator();
 
-const LoadingScreen =() =>(
-    <SafeAreaView style={{flex:1}}>
-        <TopNavigation title="로딩중..." alignment="center"/> 
-        <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
-            <Text>로딩중...</Text>
-        </Layout>   
-    </SafeAreaView>
-)
+class LoadingScreen extends React.Component{
+    constructor(props){
+        super(props)
+        this.state={
+            opacity:new Animated.Value(0),
+        }
+    }
+
+    fadeIn = () => {
+        Animated.timing(this.state.opacity,{
+            toValue:1,
+            duration: 400,
+            useNativeDriver: false
+        }).start();
+    }
+    
+    componentDidMount(){
+        this.fadeIn();
+    }
+    render(){
+        return(
+            <SafeAreaView style={{flex:1}}>
+                <Animated.View 
+                    style={{flex:1,justifyContent:"center", alignItems:"center",backgroundColor:"#ffffff",opacity:this.state.opacity}}>
+                    <LogoSvg width={wdithLogo} heightLogo={heightLogo}/>
+                </Animated.View>   
+            </SafeAreaView>
+    )}
+}
 export class StackNav extends React.Component{
     constructor(props){
         super(props)
@@ -56,7 +81,7 @@ export class StackNav extends React.Component{
         })
     }
     componentDidMount(){
-        this.session_chk()
+        setTimeout(this.session_chk,600)
     }
     render(){
         const context ={

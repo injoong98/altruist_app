@@ -54,7 +54,7 @@ class JauScreen extends React.Component {
   getPostList = async () => {
     await axios
       .get(
-        `https://dev.unyict.org/api/board_post/lists/ilban?category_id=${this.state.post_category}`,
+        `http://dev.unyict.org/api/board_post/lists/ilban?category_id=${this.state.post_category}`,
       )
       .then((response) => {
         console.log(response);
@@ -72,13 +72,13 @@ class JauScreen extends React.Component {
         }
       })
       .catch((error) => {
-        alert('error');
+        alert('erdsadsaror');
       });
   };
 
   getCategory = async () => {
     await axios
-      .get(`https://dev.unyict.org/api/board_post/lists/ilban`)
+      .get(`http://dev.unyict.org/api/board_post/lists/ilban`)
       .then((res) => {
         // console.log(res)
         this.setState({
@@ -87,7 +87,7 @@ class JauScreen extends React.Component {
         });
       })
       .catch((error) => {
-        alert('error');
+        alert('erdsadsarorasddsa');
       });
   };
 

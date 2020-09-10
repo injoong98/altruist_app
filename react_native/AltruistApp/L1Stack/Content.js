@@ -596,7 +596,7 @@ class MarketContent extends React.Component {
     }
 
     async componentDidMount(){
-        const post_id = this.props.route.params;
+        const {post_id} = this.props.route.params;
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
@@ -617,7 +617,7 @@ class MarketContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert(error)
+            alert(JSON.stringify(error))
         })
     }
     
@@ -783,14 +783,14 @@ class AlbaContent extends React.Component {
 
 
     async componentDidMount(){
-        const post_id = this.props.route.params;
+        const {post_id} = this.props.route.params;
         console.log(post_id);
         await this.getPostData(post_id)
         .then(()=>{this.setState({isLoading:false})})
     }
 
     getPostData = async(post_id)=>{
-        await Axios.get(`http://10.0.2.2/api/board_post/post/${post_id}`)
+        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
@@ -798,7 +798,7 @@ class AlbaContent extends React.Component {
                 this.setState({
                     file_images : response.data.view.file_image.map(i => {
                         console.log('received image', i);
-                        return {uri : 'http://10.0.2.2'+i.origin_image_url, height : this.scaledHeight(i.pfi_width, i.pfi_height, Dimensions.get('window').width)};
+                        return {uri : 'http://dev.unyict.org'+i.origin_image_url, height : this.scaledHeight(i.pfi_width, i.pfi_height, Dimensions.get('window').width)};
                     })
                 })
                 console.log(this.state.file_images);
@@ -879,7 +879,7 @@ class AlbaContent extends React.Component {
 
 
     // getImageSize (uri, passProps) {
-    //     const img_url = "http://10.0.2.2"+uri;
+    //     const img_url = "http://dev.unyict.org"+uri;
     //     const imagesMaxWidth = Dimensions.get('window').width;
     //     Image.getSize(img_url,(originalWidth, originalHeight) => {
     //             const optimalWidth = imagesMaxWidth <= originalWidth ? imagesMaxWidth : originalWidth;
@@ -893,6 +893,7 @@ class AlbaContent extends React.Component {
 
     render(){
         const {post} = this.state;
+        console.log('post_id=>'+JSON.stringify(post))
         // const defaultRenderer ={
         //     renderers:{
         //         img : (htmlAttribs, children, convertedCSSStyles, passProps) => this.img_return(htmlAttribs, passProps)
@@ -911,7 +912,9 @@ class AlbaContent extends React.Component {
                 <Layout style={styles.container}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
                         <Card disabled={true} style={styles.item}>
-                            <Text category='c2'>{post.post_datetime.substr(0,post.post_datetime.length-3)}</Text>
+                            <Text category='c2'>
+                                {JSON.stringify(post.post_datetime).substr(1,post.post_datetime.length-3)}
+                            </Text>
                             <View style={styles.title}>
                                 <Text style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
                             </View>
@@ -931,7 +934,7 @@ class AlbaContent extends React.Component {
                             </Layout>
                             <Divider/>
                             <Layout style={{flexDirection:'row', alignItems : 'center'}}>
-                                <Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://10.0.2.2'+this.state.thumb_image}}/>
+                                <Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org'+this.state.thumb_image}}/>
                                 <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
                             {/* <Layout style ={styles.icons}>

@@ -1,10 +1,14 @@
 import React from 'react';
-import {View,StyleSheet} from 'react-native';
+import {View,TextInput,StyleSheet,Dimensions} from 'react-native';
 import {Text,Input,Button,CheckBox} from '@ui-kitten/components';
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
 import CookieManager from '@react-native-community/cookies';
 import {Signing} from './Context'
+import LogoSvg from '../assets/icons/logo.svg'
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
+const {width} = Dimensions.get('window')
 
 class LoginScreen extends React.Component{
     constructor(props){
@@ -86,30 +90,77 @@ class LoginScreen extends React.Component{
     render(){
         const {mem_userid,mem_password,autologin} = this.state;
         const { signIn } = this.context
+        const wdithLogo = (width*0.47);
+        const heightLogo = (wdithLogo*0.57);
         return(
-            <View style={{flex:1,justifyContent:"center",alignItems:'center'}}>
-                <View style={{padding:10,borderWidth:1,borderColor:'#35367B',borderRadius:23,margin:10}}>
-                    <Text category='h1' style={{color:'#35367B'}}>더불어 성장하는</Text>
-                    <Text category='h2' style={{fontSize:26,color:'#35367B'}}>이타주의자들</Text>
+            <View style={{flex:1,backgroundColor:'#ffffff'}}>
+              <View style={{alignItems:'center',position:'relative',top:'35%'}}>
+                <View style={{backgroundColor:'#ffffff'}}>
+                  <LogoSvg  width={wdithLogo} heightLogo={heightLogo}/>
                 </View>
-                <Text>ID</Text>
-                <Input value ={mem_userid} onChangeText ={(nextValue)=>this.setState({mem_userid:nextValue})}></Input>
-                <Text>password</Text>
-                <Input value ={mem_password} onChangeText ={(nextValue)=>this.setState({mem_password:nextValue})}></Input>
-                <CheckBox
-                    checked={this.state.autologin}
-                    onChange={(checked)=>{this.setState({autologin:checked}),console.log(this.state.autologin)}}    
-                >
-                자동로그인{`${this.state.autologin}`}
-                </CheckBox>
-                <Button onPress={()=>signIn(mem_userid,mem_password,autologin)}>로그인</Button>
-                <Button onPress={()=>{this.getData('logininfo'),this.getData('autologin')}} >AsyncStorage check</Button>
-                <Button onPress={()=>{this.cookie()}} >cookie chk</Button>
-                <Button onPress={()=>this.props.navigation.navigate('RegisterScreen')}>회원가입</Button>
+                <TextInput
+                    style={styles.testInput}
+                    placeholder="ID"
+                    onChangeText={nextValue => this.setState({mem_userid:nextValue})}
+                    placeholderTextColor='#A897C2'
+                    value={mem_userid}
+                />
+                <TextInput
+                    style={styles.testInput}
+                    placeholder="PW"
+                    onChangeText={nextValue => this.setState({mem_password:nextValue})}
+                    placeholderTextColor='#A897C2'
+                    value={mem_password}
+                />
+                <View style={{marginTop:10}}>
+                  <CheckBox
+                      checked={this.state.autologin}
+                      onChange={(checked)=>{this.setState({autologin:checked}),console.log(this.state.autologin)}}    
+                  >
+                    자동로그인
+                  </CheckBox>
+                </View>
+                <TouchableOpacity style={{marginTop:46}} onPress={()=>signIn(mem_userid,mem_password,autologin)}>
+                  <Text style={{fontSize:18,fontWeight:'bold',color:'#63579D'}}>
+                    로그인
+                  </Text>  
+                </TouchableOpacity>
+                <View style={{flexDirection:'row',marginTop:17}}>
+                <TouchableOpacity onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
+                  <Text style={styles.optionText}>
+                    회원 가입
+                  </Text>  
+                </TouchableOpacity>
+                <Text>/</Text>
+                <TouchableOpacity onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
+                  <Text style={styles.optionText}>
+                    비밀번호 찾기
+                  </Text>  
+                </TouchableOpacity>
+                </View>
+              </View>
+
             </View>
         )
     }
 }
 
-
 export default LoginScreen;
+
+const styles =StyleSheet.create({
+  testInput : {
+    backgroundColor:'#ffffff',
+    borderRadius:25,
+    borderWidth:4,
+    borderColor:'#63579D',
+    padding:8,
+    fontSize:18,
+    width:'60%',
+    marginTop:18
+  },
+  optionText:{
+    fontSize:10,
+    fontWeight:'bold',
+    color:'#63579D'
+  }
+})

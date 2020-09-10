@@ -42,7 +42,7 @@ class AlbaScreen extends React.Component {
   // );
 
   getPostList = async() =>{
-    await axios.get(`http://10.0.2.2/api/board_post/lists/b-a-3?page=${this.state.current_page}`)
+    await axios.get(`http://dev.unyict.org/api/board_post/lists/b-a-3?page=${this.state.current_page}`)
     .then((response)=>{
       if(response.data.view.list.data.list.length > 0){
         this.setState({
@@ -62,7 +62,7 @@ class AlbaScreen extends React.Component {
   }
 
   getPostFirst = async() => {
-    await axios.get('http://10.0.2.2/api/board_post/lists/b-a-3')
+    await axios.get('http://dev.unyict.org/api/board_post/lists/b-a-3')
     .then((response)=>{
         this.setState({
           lists:response.data.view.list.data.list,
@@ -107,7 +107,7 @@ class AlbaScreen extends React.Component {
 
   renderItem = ({item, index}) => (
       <Card
-      onPress={() => {this.props.navigation.navigate('AlbaContent', item.post_id)}}
+      onPress={() => {this.props.navigation.navigate('AlbaContent', {post_id:item.post_id})}}
       style={styles.carditem}>
         <View style={{flexDirection : 'row'}}>
             <View style={styles.Text}>
@@ -125,8 +125,8 @@ class AlbaScreen extends React.Component {
             </View>
             <View style={styles.image}>
               {item.origin_image_url?
-                <Image source={{uri:'http://10.0.2.2'+item.origin_image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
-                :<Image source={{uri:'http://10.0.2.2'+this.state.image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
+                <Image source={{uri:'http://dev.unyict.org'+item.origin_image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
+                :<Image source={{uri:'http://dev.unyict.org'+this.state.image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
               }
             </View>
         </View>

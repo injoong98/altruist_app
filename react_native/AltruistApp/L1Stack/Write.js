@@ -395,7 +395,7 @@ class MarketWrite extends React.Component {
                             <Text>사진</Text>
                             <ScrollView horizontal={true} style={styles.input}>
                                 <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
-                                    <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                                    <Image source={{uri : 'http://dev.unyict.org/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
                                 </TouchableOpacity>
                                 {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
                             </ScrollView>                                                 
@@ -505,7 +505,7 @@ class AlbaWrite extends React.Component{
             )
         })
         console.log(formdata);
-        await axios.post('http://10.0.2.2/api/board_write/write/b-a-3', formdata)
+        await axios.post('http://dev.unyict.org/api/board_write/write/b-a-3', formdata)
         .then(response=>{
             console.log(response);
             Alert.alert(
@@ -809,7 +809,7 @@ class IlbanWrite extends React.Component{
            formdata.append("post_password", '0000');
            
        await axios.post(
-           'http://10.0.2.2/api/board_write/write/ilban',
+           'http://dev.unyict.org/api/board_write/write/ilban',
            formdata
        )
        .then(response=>{
@@ -994,7 +994,7 @@ class IlbanWrite extends React.Component{
                         <Text>사진</Text>
                         <ScrollView horizontal={true} style={styles.input}>
                             <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
-                                <Image source={{uri : 'http://10.0.2.2/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                                <Image source={{uri : 'http://dev.unyict.org/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
                             </TouchableOpacity>
                             {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
                         </ScrollView>                                   
