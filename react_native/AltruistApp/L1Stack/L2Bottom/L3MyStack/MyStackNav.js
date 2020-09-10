@@ -5,6 +5,7 @@ import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction} from '@ui-ki
 import {IlbanContent, GominContent, MarketContent, AlbaContent} from '../../Content'
 import {Mypage} from './Mypage';
 import {MyList} from './MyList';
+import {MyPoint} from './MyPoint';
 
 const {Navigator,Screen} = createStackNavigator();
 
@@ -32,6 +33,7 @@ export const MyStackNav = () =>(
     <Navigator headerMode="none">
         <Screen name = "Mypage" component={Mypage}/>
         <Screen name = "MyList" component={MyList}/>
+        <Screen name = "MyPoint" component={MyPoint}/>
         <Screen name = "MyIlban" component={IlbanContent}/>
         <Screen name = "MyGomin" component={GominContent}/>
         <Screen name = "MyMarket" component={MarketContent}/>

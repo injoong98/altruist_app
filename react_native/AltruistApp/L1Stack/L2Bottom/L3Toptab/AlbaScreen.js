@@ -107,7 +107,7 @@ class AlbaScreen extends React.Component {
 
   renderItem = ({item, index}) => (
       <Card
-      onPress={() => {this.props.navigation.navigate('AlbaContent', item.post_id)}}
+      onPress={() => {this.props.navigation.navigate('AlbaContent', {post_id:item.post_id})}}
       style={styles.carditem}>
         <View style={{flexDirection : 'row'}}>
             <View style={styles.Text}>

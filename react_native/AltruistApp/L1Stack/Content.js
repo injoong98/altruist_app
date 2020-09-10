@@ -783,7 +783,7 @@ class AlbaContent extends React.Component {
 
 
     async componentDidMount(){
-        const post_id = this.props.route.params;
+        const {post_id} = this.props.route.params;
         console.log(post_id);
         await this.getPostData(post_id)
         .then(()=>{this.setState({isLoading:false})})
@@ -893,6 +893,7 @@ class AlbaContent extends React.Component {
 
     render(){
         const {post} = this.state;
+        console.log('post_id=>'+JSON.stringify(post))
         // const defaultRenderer ={
         //     renderers:{
         //         img : (htmlAttribs, children, convertedCSSStyles, passProps) => this.img_return(htmlAttribs, passProps)
