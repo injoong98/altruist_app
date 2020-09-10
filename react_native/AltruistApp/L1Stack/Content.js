@@ -701,30 +701,32 @@ class MarketContent extends React.Component {
                         <View>
                             <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
                         </View>
-                        <View style={{}}>
+                        <Layout style={{padding : 10}}>
                             <Layout>
                             <Text category='h2'>{post.post_title}</Text>
                             </Layout>
-                            <Layout>
+                            <Layout style={{marginTop : 10, marginLeft : 5}}>
                             <Text category='h4'>{post.deal_price} 원</Text>
                             </Layout>
-                        </View>
+                        </Layout>
                         <Divider/>
-                        <Layout style={{height:50,flexDirection:'row'}}>
+                        <Layout style={{height:50,flexDirection:'row', paddingVertical : 10}}>
                             <Layout style={{width:50}}>
-                            <Image source={require('../market/asset/basic_user.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                            <Image source={require('../assets/images/icon-social-dark.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                             </Layout>
                             <Layout style={{justifyContent:'center'}}>
-                            <Text>{post.post_username}</Text>
+                            <Text>{post.post_nickname}</Text>
                             </Layout>
                         </Layout>
                         <Divider/>
-                        <Layout style={{height:200}}>
-                            <Text>Details</Text>
-                            <Text> Place : {post.post_place}</Text>
+                        <Layout style={{padding : 10}}>
+                            <Text style={{color : 'gray'}}>거래희망지역</Text>
+                            <Text style={{marginTop : 10, marginLeft : 10}}>{post.post_location}</Text>
+                            <Text style={{color : 'gray', marginTop : 10}}>상품설명</Text>
+                            <Text style={{marginTop : 10, marginLeft : 10}}>{post.post_content}</Text>
                         </Layout>
                         <Divider/>
-                        <Layout>
+                        <Layout style={{padding : 10}}>
                             <Text>Comment</Text>
                             <List
                                 ref={"pstcmtlist"} 
@@ -734,7 +736,7 @@ class MarketContent extends React.Component {
                                 refreshing={this.state.refreshing}
                             />
                             <Input
-                                style={{flex:1, margin:15}}
+                                style={{flex:1, margin:5}}
                                 size='large'
                                 placeholder='댓글을 입력하세요.'
                                 value={this.state.cmt_content}
