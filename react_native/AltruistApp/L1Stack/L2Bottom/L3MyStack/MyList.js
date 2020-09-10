@@ -27,7 +27,7 @@ export class MyList extends React.Component{
     }
     topTitle = () => (
         <Text category='h2'>
-            {this.state.type=='post' ? '내가 쓴 글': '내가 쓴 댓글'}
+            {this.state.type=='post' ? '내가 쓴 글': this.state.type=='comment' ? '내가 쓴 댓글' : this.state.type=='like_post' ? '추천한 글' : '스크랩한 글 ' }
         </Text>
     )
     BackAction = () =>(
@@ -65,14 +65,19 @@ export class MyList extends React.Component{
         )
     };
     renderPostItem = ({ item, index }) => {
-        const regex = /(<([^>]+)>)|&nbsp;/ig;
-        const post_remove_tags = item.post_content.replace(regex, '');
+        
+            const regex = /(<([^>]+)>)|&nbsp;/ig;
         return(
         <TouchableOpacity style={styles.container} onPress = {()=>{this.navigateToContent(item.brd_id,item.post_id)}}>
             <View>
-                <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{ this.brdNm(item.brd_id)}</Text>
+                <Text category="s2" style={{fontWeight:'bold',marginRight:5,marginTop:5}}>{ this.brdNm(item.brd_id)}</Text>
                 <Text style ={styles.headtext}category="h4" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
-                <Text style={styles.subtext}category="s2" numberOfLines={1}>{post_remove_tags}</Text>
+            {
+                item.post_content?
+                <Text style={styles.subtext}category="s2" numberOfLines={1}>{item.post_content.replace(regex, '')}</Text>
+                :
+                null    
+            }
             </View>
             <View style={styles.subtitle}>
                 <View style={{display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4}}> 
@@ -179,7 +184,7 @@ export class MyList extends React.Component{
             <TopNavigation title="" alignment="center" accessoryLeft={this.BackAction} title={this.topTitle} style={styles.topbar}/> 
                 <List
                     data ={this.state.lists}
-                    renderItem={type =='post'? this.renderPostItem : this.renderCmtItem} 
+                    renderItem={type =='comment'? this.renderCmtItem : this.renderPostItem} 
                     onRefresh={this.onRefresh}
                     refreshing={this.state.refreshing}
                     onEndReached={this.load_more_data}

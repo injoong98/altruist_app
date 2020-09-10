@@ -91,15 +91,12 @@ class Mypage extends React.Component{
                         <Text style={styles.menuItem}>작성글</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'comment'})}}>
-                        <Text style={styles.menuItem}>댓글단 글</Text>
+                        <Text style={styles.menuItem}>작성 글</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{alert('menu!')}}>
-                        <Text style={styles.menuItem}>작성 댓글</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{alert('menu!')}}>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'like_post'})}}>
                         <Text style={styles.menuItem}>좋아요한 글</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{alert('menu!')}}>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'scrap'})}}>
                         <Text style={styles.menuItem}>스크랩</Text>
                       </TouchableOpacity>
                     </View>
