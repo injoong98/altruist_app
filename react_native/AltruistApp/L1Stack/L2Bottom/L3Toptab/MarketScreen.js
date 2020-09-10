@@ -42,24 +42,24 @@ class MarketScreen extends React.Component {
         </View>
         <Layout style={styles.textArea}>
             <Layout style={styles.textTop}>
-            <Text style={styles.text} category='s1'>
+            <Text style={styles.text} category='h4'>
                 {item.title}
             </Text>
             </Layout>
             <Layout style={{}}>
-            <Text style={{marginLeft:4}} category='s2'>
-                서울 노원구{item.place} 
+            <Text style={{marginLeft:4, color : 'gray'}} category='c2'>
+                {item.post_location} 
             </Text>
             </Layout>
             <Layout style={styles.textBottom}>
             <Layout style={{flex:1, justifyContent:'center'}}>
-                <Text style={styles.text} category='h6'>
-                    {item.post_content.replace(/(<([^>]+)>)/ig,"")} 원                 Edward
+                <Text style={styles.text} category='h5'>
+                    {item.deal_price.replace(/(<([^>]+)>)/ig,"")} 원
                 </Text>
             </Layout>
             <Layout style={{justifyContent: 'center'}}>
                 <Text style={styles.text}>
-                    {item.user}
+                    {item.post_nickname}
                 </Text>
             </Layout>
             </Layout>
