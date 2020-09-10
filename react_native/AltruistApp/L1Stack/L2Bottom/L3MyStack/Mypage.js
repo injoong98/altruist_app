@@ -57,7 +57,16 @@ class Mypage extends React.Component{
                           <NoimageSvg height={125} width={125}/>
                       </View>
                       <View style={{marginLeft:16,marginTop:13,marginBottom:24,justifyContent:'space-between'}}>
-                          <TouchableOpacity style={{padding:8,flexDirection:'row',backgroundColor:'#ffffff',borderRadius:10}} onPress={()=>this.props.navigation.navigate('MyPoint')}>
+                        <View style={{marginTop:15,display:'flex',flexDirection:'row', alignItems:'flex-end'}}>
+                            <Text category='h2' style={{fontSize:24,color:'#63579D'}}>{mem_nickname}</Text>
+                            <View style={{height:'80%',marginLeft:10,alignItems:'flex-end'}}>
+                                <ThumbSvg height={24} width={24}/>          
+                            </View>
+                        </View>  
+                        <View style={{marginTop:10}}>
+                            <Text style={{fontSize:9}}>팔로워 : {mem_followed} | 팔로잉 : {mem_following}</Text>          
+                        </View> 
+                        <TouchableOpacity style={{padding:8,flexDirection:'row',backgroundColor:'#ffffff',borderRadius:10}} onPress={()=>this.props.navigation.navigate('MyPoint')}>
                               <View style={{}}>
                                   <Text category='p2'style={{color:'#A897C2',fontSize:10,textAlignVertical:'bottom'}}>point{`\n`}score</Text>
                               </View>
@@ -67,15 +76,6 @@ class Mypage extends React.Component{
                                   <Text style={{fontSize:10,lineHeight:13,color:'#63579D'}}>누적 {mem_point}{`\n`}사용 {mem_point}</Text>
                               </View>
                         </TouchableOpacity>  
-                      <View style={{marginTop:15,display:'flex',flexDirection:'row', alignItems:'flex-end'}}>
-                          <Text category='h2' style={{fontSize:24,color:'#63579D'}}>{mem_nickname}</Text>
-                          <View style={{height:'80%',marginLeft:10,alignItems:'flex-end'}}>
-                              <ThumbSvg height={24} width={24}/>          
-                          </View>
-                      </View>  
-                      <View style={{marginTop:10}}>
-                          <Text style={{fontSize:9}}>팔로워 : {mem_followed} | 팔로잉 : {mem_following}</Text>          
-                      </View>  
                     </View>
                     <TouchableOpacity onPress={()=>{alert('more')}} style={{position:'absolute',top:8 }}>
                       <MoreSvg height={19} width={19}/>
