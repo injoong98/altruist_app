@@ -54,6 +54,7 @@
     "@ui-kitten/metro-config": "5.0.0",
     "babel-jest": "^24.9.0",
     "eslint": "^6.5.1",
+    "eslint-plugin-react-hooks": "4.1.0",
     "jest": "^24.9.0",
     "metro-react-native-babel-preset": "^0.58.0",
     "prettier": "^2.0.2",
