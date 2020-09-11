@@ -343,6 +343,26 @@ class AltQueContent extends React.Component{
     }
 }
 class AltOpqQueList extends React.Component{
+    constructor(props){
+        super(props)
+    }
+
+    render(){
+        return(
+            <SafeAreaView>
+                <TopBarTune 
+                    text='오픈 질문' 
+                    right="bell"
+                    func={() =>{this.filterSpamKeyword()}} 
+                    gbckfunc={()=>{this.props.navigation.goBack()}} 
+                    gbckuse={true}
+                />
+               <AltQueList {...this.props} type='opq'/>
+            </SafeAreaView>
+            )
+    }
+}
+class AltQueList extends React.Component{
     
     constructor(props){
         super(props)
@@ -355,7 +375,9 @@ class AltOpqQueList extends React.Component{
     }
 
     getQuestions = ()=>{
-        axios.get('http://dev.unyict.org/api/board_post/lists/opq')
+        const {type,scndType} = this.props
+        console.log(scndType)
+        axios.get(`http://dev.unyict.org/api/board_post/lists/${type}?type=${scndType}`)
         .then(res=>{
             this.setState({list:res.data.view.list.data.list,list_showing:res.data.view.list.data.list});
         })
@@ -389,24 +411,14 @@ class AltOpqQueList extends React.Component{
             isLoading ?
             <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
                 <Spinner size='giant'/>
-            </View>:
-            <SafeAreaView>
-                <TopBarTune 
-                    text='오픈 질문' 
-                    right="bell"
-                    func={() =>{this.filterSpamKeyword()}} 
-                    gbckfunc={()=>{this.props.navigation.goBack()}} 
-                    gbckuse={true}
-                />
-                <View>
-                    <Text>필터 위치</Text>
-                </View>
-                <List 
-                    ItemSeparatorComponent={Divider}
-                    data={list}
-                    renderItem={this.renderQueList}
-                />
-            </SafeAreaView>
+            </View>
+            :
+
+            <List 
+                ItemSeparatorComponent={Divider}
+                data={list}
+                renderItem={this.renderQueList}
+            />
             )
     }
 
@@ -771,4 +783,4 @@ const styles = StyleSheet.create({
 
 })
 
-export {AltQuestionWrite,AltQueType,AltAreaList,AltOpqQueList,AltQueContent,AltReplying};
+export {AltQuestionWrite,AltQueType,AltAreaList,AltQueList,AltQueContent,AltReplying,AltOpqQueList};
