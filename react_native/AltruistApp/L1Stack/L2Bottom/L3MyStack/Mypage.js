@@ -117,10 +117,23 @@ class Mypage extends React.Component{
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <View style={{display:'flex',flexDirection:'row',position:'relative'}}>
-                      <Button onPress={()=>{signOut()}}>간단로그아웃</Button>
-                      <Button onPress={()=>{this.sessionChk();}}>session chk</Button>
+                  <View style={{ marginHorizontal:40}}>
+                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:23}}>
+                      <View>
+                        <MoreSvg height={19} width={22}/>
+                      </View>
+                      <Text category='h2' style={styles.menuTitle}>계정</Text>
+                    </View>
+                    <View>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{signOut()}} >
+                        <Text style={styles.menuItem}>로그아웃</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{()=>{this.sessionChk();}}}>
+                        <Text style={styles.menuItem}>세션체크</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
+
               </View>
           </SafeAreaView>
         )

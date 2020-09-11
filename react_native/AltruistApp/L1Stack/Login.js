@@ -104,13 +104,16 @@ class LoginScreen extends React.Component{
                     onChangeText={nextValue => this.setState({mem_userid:nextValue})}
                     placeholderTextColor='#A897C2'
                     value={mem_userid}
+                    onEndEditing={()=>this.refs.pwinput.focus()}
                 />
                 <TextInput
+                    ref='pwinput'
                     style={styles.testInput}
                     placeholder="PW"
                     onChangeText={nextValue => this.setState({mem_password:nextValue})}
                     placeholderTextColor='#A897C2'
                     value={mem_password}
+                    onEndEditing={()=>signIn(mem_userid,mem_password,autologin)}
                 />
                 <View style={{marginTop:10}}>
                   <CheckBox
@@ -120,23 +123,23 @@ class LoginScreen extends React.Component{
                     자동로그인
                   </CheckBox>
                 </View>
-                <TouchableOpacity style={{marginTop:46}} onPress={()=>signIn(mem_userid,mem_password,autologin)}>
+                <TouchableOpacity style={{marginTop:36}} onPress={()=>signIn(mem_userid,mem_password,autologin)}>
                   <Text style={{fontSize:18,fontWeight:'bold',color:'#63579D'}}>
                     로그인
                   </Text>  
                 </TouchableOpacity>
                 <View style={{flexDirection:'row',marginTop:17}}>
-                <TouchableOpacity onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
-                  <Text style={styles.optionText}>
-                    회원 가입
-                  </Text>  
-                </TouchableOpacity>
-                <Text>/</Text>
-                <TouchableOpacity onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
-                  <Text style={styles.optionText}>
-                    비밀번호 찾기
-                  </Text>  
-                </TouchableOpacity>
+                  <TouchableOpacity onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
+                    <Text style={styles.optionText}>
+                      회원 가입
+                    </Text>  
+                  </TouchableOpacity>
+                  <Text>/</Text>
+                  <TouchableOpacity onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
+                    <Text style={styles.optionText}>
+                      비밀번호 찾기
+                    </Text>  
+                  </TouchableOpacity>
                 </View>
               </View>
 
