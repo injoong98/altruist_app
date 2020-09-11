@@ -26,6 +26,7 @@ class Mypage extends React.Component{
       axios.get('http://dev.unyict.org/api/mypage')
       .then(res=>{
         this.setState({mem_info:res.data.myinfo,isLoading:false})
+        
       })
       .catch(err=>{
         console.log(JSON.stringify(err))
@@ -77,12 +78,12 @@ class Mypage extends React.Component{
                               </View>
                         </TouchableOpacity>  
                     </View>
-                    <TouchableOpacity onPress={()=>{alert('more')}} style={{position:'absolute',top:8 }}>
+                    <TouchableOpacity onPress={()=>{alert('more')}} style={{position:'absolute',top:8,right:0 }}>
                       <MoreSvg height={19} width={19}/>
                     </TouchableOpacity > 
                   </View>
-                  <View style={{ marginHorizontal:40}}>
-                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:23}}>
+                  <View style={{ marginHorizontal:40,marginBottom:20}}>
+                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
                       <PencilSvg height={28} width={22}/>
                       <Text category='h2' style={styles.menuTitle}>나의 활동</Text>
                     </View>
@@ -101,8 +102,8 @@ class Mypage extends React.Component{
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <View style={{ marginHorizontal:40}}>
-                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:23}}>
+                  <View style={{ marginHorizontal:40,marginBottom:20}}>
+                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
                       <View style={{transform: [{ rotate: "25.69deg" }]}}>
                         <MessageSvg height={28} width={22}/>
                       </View>
@@ -117,8 +118,8 @@ class Mypage extends React.Component{
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <View style={{ marginHorizontal:40}}>
-                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:23}}>
+                  <View style={{ marginHorizontal:40,marginBottom:20}}>
+                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
                       <View>
                         <MoreSvg height={19} width={22}/>
                       </View>
@@ -149,13 +150,17 @@ const styles = StyleSheet.create({
     color:'#63579D'
   },
   menuContainer:{
-    paddingLeft:14
+    paddingLeft:14,
+    borderBottomWidth:1,
+    borderBottomColor:'#f4f4f4',
+    marginTop:10,
+    marginBottom:5
   },
   menuItem:{
     fontSize:12,
     lineHeight:13,
     color:'#63579D',
-    marginBottom:11
+    marginBottom:2
   }
 
 })
