@@ -104,12 +104,10 @@ export class StackNav extends React.Component{
             signOut:()=>{
                 axios.get('http://dev.unyict.org/api/login/logout/')
                 .then(response=>{
-                    alert(`성공 : ${JSON.stringify(response.data)}`),
                     this.setState({isSignedOut:true})
                     this.session_chk()
                 })
                 .catch(error =>{
-                    alert(`성공 : ${JSON.stringify(error)}`)
                 })
             }
         }

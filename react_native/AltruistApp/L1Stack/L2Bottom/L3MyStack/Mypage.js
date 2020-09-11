@@ -1,7 +1,8 @@
 import React from 'react';
 import {View,StyleSheet, SafeAreaView, TouchableOpacity} from 'react-native';
-import {Input,Button,Text} from '@ui-kitten/components';
+import {Input,Button,Text,Modal} from '@ui-kitten/components';
 import axios from 'axios'
+import Confirm from '../../../components/confirm.component'
 import AsyncStorage from '@react-native-community/async-storage';
 import {Signing} from '../../Context'
 import MoreSvg from '../../../assets/icons/dotdotdot-large.svg'
@@ -16,7 +17,8 @@ class Mypage extends React.Component{
         super(props);
         this.state={
             mem_info:[],
-            isLoading:true
+            isLoading:true,
+            logOutModalVisible:false
         }
     }
 
@@ -48,6 +50,7 @@ class Mypage extends React.Component{
     }
     render(){
       const {signOut} = this.context
+      const {logOutModalVisible} = this.state
       const {mem_point,mem_nickname,mem_following,mem_followed} = this.state.mem_info
       const {navigate} =this.props.navigation
         return(
@@ -126,7 +129,7 @@ class Mypage extends React.Component{
                       <Text category='h2' style={styles.menuTitle}>계정</Text>
                     </View>
                     <View>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{signOut()}} >
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{this.setState({logOutModalVisible:true})}} >
                         <Text style={styles.menuItem}>로그아웃</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{()=>{this.sessionChk();}}}>
@@ -136,6 +139,19 @@ class Mypage extends React.Component{
                   </View>
 
               </View>
+              <Modal
+                visible={logOutModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({logOutModalVisible:false})}
+            >
+                <Confirm 
+                    confirmText="정말 로그아웃 하시겠습니까?"
+                    frstText="예"
+                    OnFrstPress={() =>{signOut()}}
+                    scndText="아니오"
+                    OnScndPress={() => this.setState({logOutModalVisible:false})}
+                />
+            </Modal>
           </SafeAreaView>
         )
     }
