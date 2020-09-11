@@ -22,7 +22,7 @@ class AltListScreen extends React.Component{
     }
 
     getAltruistsList = async() => {
-        await axios.get('http://10.0.2.2/api/altruists/lists')
+        await axios.get('http://dev.unyict.org/api/altruists/lists')
         .then((response) => {
             this.setState({lists:response.data.view.data.list})
         })
@@ -95,7 +95,7 @@ class AltListScreen extends React.Component{
                 <Tag>{item.alt_profile.alt_title}</Tag>
             </View>
             <View style={{flexDirection : 'row', alignItems : 'flex-end', justifyContent : 'flex-start'}}>
-                <Image source = {{uri : 'http://10.0.2.2/uploads/noimage.gif'}} style = {{flex : 1, width : 100, height : 100, borderRadius : 30, resizeMode:'contain'}}/>
+                <Image source = {{uri : 'http://dev.unyict.org/uploads/noimage.gif'}} style = {{flex : 1, width : 100, height : 100, borderRadius : 30, resizeMode:'contain'}}/>
                 <View style={{marginLeft : 10, flex:3, maxHeight : 110}}>
                     <Text category = 'h1'>{item.mem_basic_info.mem_nickname}</Text>
                     <Text category = 'p2' numberOfLines={2}>{item.alt_profile.alt_aboutme}</Text>
