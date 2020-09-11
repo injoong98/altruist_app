@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import CookieManager from '@react-native-community/cookies';
 import {Signing} from './Context'
 import LogoSvg from '../assets/icons/logo.svg'
+import AltruistSvg from '../assets/icons/altruist.svg'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const {width} = Dimensions.get('window')
@@ -18,7 +19,7 @@ class LoginScreen extends React.Component{
             mem_password:'',
             logininfo:'',
             isLogined:false,
-            autologin:false
+            autologin:true
         }
     }
     static contextType = Signing;
@@ -100,7 +101,7 @@ class LoginScreen extends React.Component{
                 </View>
                 <TextInput
                     style={styles.testInput}
-                    placeholder="ID"
+                    placeholder="이메일"
                     onChangeText={nextValue => this.setState({mem_userid:nextValue})}
                     placeholderTextColor='#A897C2'
                     value={mem_userid}
@@ -109,35 +110,28 @@ class LoginScreen extends React.Component{
                 <TextInput
                     ref='pwinput'
                     style={styles.testInput}
-                    placeholder="PW"
+                    placeholder="비밀번호"
                     onChangeText={nextValue => this.setState({mem_password:nextValue})}
                     placeholderTextColor='#A897C2'
                     value={mem_password}
                     onEndEditing={()=>signIn(mem_userid,mem_password,autologin)}
                 />
-                <View style={{marginTop:10}}>
-                  <CheckBox
-                      checked={this.state.autologin}
-                      onChange={(checked)=>{this.setState({autologin:checked}),console.log(this.state.autologin)}}    
-                  >
-                    자동로그인
-                  </CheckBox>
-                </View>
-                <TouchableOpacity style={{marginTop:36}} onPress={()=>signIn(mem_userid,mem_password,autologin)}>
+                
+                <TouchableOpacity style={{marginTop:26}} onPress={()=>signIn(mem_userid,mem_password,autologin)}>
                   <Text style={{fontSize:18,fontWeight:'bold',color:'#63579D'}}>
                     로그인
                   </Text>  
                 </TouchableOpacity>
-                <View style={{flexDirection:'row',marginTop:17}}>
+                <View style={{marginTop:17, justifyContent:'center',alignItems:'center'}}>
+                  
                   <TouchableOpacity onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
                     <Text style={styles.optionText}>
-                      회원 가입
+                    아이디/ 비밀번호 찾기
                     </Text>  
                   </TouchableOpacity>
-                  <Text>/</Text>
-                  <TouchableOpacity onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
-                    <Text style={styles.optionText}>
-                      비밀번호 찾기
+                  <TouchableOpacity style={{marginTop:20}} onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
+                    <Text style={{fontSize:13,fontWeight:'bold'}}>
+                      회원 가입
                     </Text>  
                   </TouchableOpacity>
                 </View>
@@ -153,8 +147,9 @@ export default LoginScreen;
 const styles =StyleSheet.create({
   testInput : {
     backgroundColor:'#ffffff',
-    borderRadius:25,
-    borderWidth:4,
+    borderRadius:10,
+    // borderWidth:2,
+    backgroundColor:'#f4f4f4',
     borderColor:'#63579D',
     padding:8,
     fontSize:18,
