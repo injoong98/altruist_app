@@ -158,13 +158,13 @@ class Membermodify extends CB_Controller
 		$this->load->event($eventname);
 
 		if ( ! $this->session->userdata('membermodify')) {
-			redirect('membermodify');
+			//redirect('membermodify');
 		}
 
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -384,6 +384,15 @@ class Membermodify extends CB_Controller
 
 		$this->form_validation->set_rules($config);
 		$form_validation = $this->form_validation->run();
+		if(!$form_validation) {
+			response_result($view,'Err',validation_errors('', ''));
+		//	response_result($view,'Err',"유효성 검사(form_validation) 에 실패하였습니다. ");
+		}
+
+
+
+
+
 		$file_error = '';
 		$updatephoto = '';
 		$file_error2 = '';
@@ -1234,12 +1243,12 @@ class Membermodify extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		required_user_login('json');
 
 		$mem_id = (int) $this->member->item('mem_id');
 
 		if ( ! $this->session->userdata('membermodify')) {
-			redirect('membermodify');
+			//redirect('membermodify');
 		}
 
 		$view = array();
@@ -1314,38 +1323,7 @@ class Membermodify extends CB_Controller
 
 			$view['view']['info'] = $password_description;
 
-			// 이벤트가 존재하면 실행합니다
-			$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
-
-			/**
-			 * 레이아웃을 정의합니다
-			 */
-			$page_title = $this->cbconfig->item('site_meta_title_membermodify');
-			$meta_description = $this->cbconfig->item('site_meta_description_membermodify');
-			$meta_keywords = $this->cbconfig->item('site_meta_keywords_membermodify');
-			$meta_author = $this->cbconfig->item('site_meta_author_membermodify');
-			$page_name = $this->cbconfig->item('site_page_name_membermodify');
-
-			$layoutconfig = array(
-				'path' => 'mypage',
-				'layout' => 'layout',
-				'skin' => 'password_modify',
-				'layout_dir' => $this->cbconfig->item('layout_mypage'),
-				'mobile_layout_dir' => $this->cbconfig->item('mobile_layout_mypage'),
-				'use_sidebar' => $this->cbconfig->item('sidebar_mypage'),
-				'use_mobile_sidebar' => $this->cbconfig->item('mobile_sidebar_mypage'),
-				'skin_dir' => $this->cbconfig->item('skin_mypage'),
-				'mobile_skin_dir' => $this->cbconfig->item('mobile_skin_mypage'),
-				'page_title' => $page_title,
-				'meta_description' => $meta_description,
-				'meta_keywords' => $meta_keywords,
-				'meta_author' => $meta_author,
-				'page_name' => $page_name,
-			);
-			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-			$this->data = $view;
-			$this->layout = element('layout_skin_file', element('layout', $view));
-			$this->view = element('view_skin_file', element('layout', $view));
+			response_result($view,'Err',$password_description);
 
 		} else {
 
@@ -1572,38 +1550,10 @@ class Membermodify extends CB_Controller
 
 			$view['view']['result_message'] = '회원님의 패스워드가 변경되었습니다';
 
-			// 이벤트가 존재하면 실행합니다
-			$view['view']['event']['before_result_layout'] = Events::trigger('before_result_layout', $eventname);
-
-			/**
-			 * 레이아웃을 정의합니다
-			 */
-			$page_title = $this->cbconfig->item('site_meta_title_membermodify');
-			$meta_description = $this->cbconfig->item('site_meta_description_membermodify');
-			$meta_keywords = $this->cbconfig->item('site_meta_keywords_membermodify');
-			$meta_author = $this->cbconfig->item('site_meta_author_membermodify');
-			$page_name = $this->cbconfig->item('site_page_name_membermodify');
-
-			$layoutconfig = array(
-				'path' => 'mypage',
-				'layout' => 'layout',
-				'skin' => 'member_modify_result',
-				'layout_dir' => $this->cbconfig->item('layout_mypage'),
-				'mobile_layout_dir' => $this->cbconfig->item('mobile_layout_mypage'),
-				'use_sidebar' => $this->cbconfig->item('sidebar_mypage'),
-				'use_mobile_sidebar' => $this->cbconfig->item('mobile_sidebar_mypage'),
-				'skin_dir' => $this->cbconfig->item('skin_mypage'),
-				'mobile_skin_dir' => $this->cbconfig->item('mobile_skin_mypage'),
-				'page_title' => $page_title,
-				'meta_description' => $meta_description,
-				'meta_keywords' => $meta_keywords,
-				'meta_author' => $meta_author,
-				'page_name' => $page_name,
-			);
-			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-			$this->data = $view;
-			$this->layout = element('layout_skin_file', element('layout', $view));
-			$this->view = element('view_skin_file', element('layout', $view));
+		
+			
+			response_result($view,'success','OK');
+		
 		}
 	}
 
@@ -2035,6 +1985,39 @@ class Membermodify extends CB_Controller
 		}
 		return true;
 	}
+	
+	/**
+	 * API 현재 패스워드가 맞는지 체크합니다
+	 */
+	public function cur_password_check()
+	{
+		/**
+		 * 로그인이 필요한 페이지입니다
+		 */
+		required_user_login('json');
+		
+		$mem_password = 0;
+		$mem_password = $this->input->post('mem_password');
+		if(!$mem_password) {
+			response_result($view,'Err','password 누락');
+		}
+		if ( ! function_exists('password_hash')) {
+			$this->load->helper('password');
+		}
+
+		if ( ! $this->member->item('mem_id') OR ! $this->member->item('mem_password')) {
+			
+			$view['message'] = 	'패스워드가 맞지 않습니다';
+			$view['action'] = 	'cur_password_check';
+			response_result($view,'Err',$view['message']);
+			
+		} elseif ( ! password_verify($mem_password, $this->member->item('mem_password'))) {
+			$view['message'] = 	'패스워드가 맞지 않습니다';
+			$view['action'] = 	'cur_password_check';
+			response_result($view,'Err',$view['message']);
+		}
+		response_result($view,'success','OK');
+	}
 
 
 	/**
@@ -2072,5 +2055,52 @@ class Membermodify extends CB_Controller
 			return false;
 		}
 		return true;
+	}
+	/**
+	 * API 새로운 패스워드가 환경설정에 정한 글자수를 채웠는지를 체크합니다
+	 */
+	public function mem_password_check()
+	{
+		/**
+		 * 로그인이 필요한 페이지입니다
+		 */
+		required_user_login('json');
+		$mem_password = 0;
+		$mem_password = $this->input->post('mem_password');
+		if(!$mem_password) {
+			response_result($view,'Err','password 누락');
+		}
+		$uppercase = $this->cbconfig->item('password_uppercase_length');
+		$number = $this->cbconfig->item('password_numbers_length');
+		$specialchar = $this->cbconfig->item('password_specialchars_length');
+
+		$this->load->helper('chkstring');
+		$str_uc = count_uppercase($mem_password);
+		$str_num = count_numbers($mem_password);
+		$str_spc = count_specialchars($smem_passwordtr);
+
+		if ($str_uc < $uppercase OR $str_num < $number OR $str_spc < $specialchar) {
+
+			$description = '비밀번호는 ';
+			if ($str_uc < $uppercase) {
+				$description .= ' ' . $uppercase . '개 이상의 대문자';
+			}
+			if ($str_num < $number) {
+				$description .= ' ' . $number . '개 이상의 숫자';
+			}
+			if ($str_spc < $specialchar) {
+				$description .= ' ' . $specialchar . '개 이상의 특수문자';
+			}
+			$description .= '를 포함해야 합니다';
+
+			$this->form_validation->set_message(
+				'_mem_password_check',
+				$description
+			);
+			$view['message'] = 	$description;
+			$view['action'] = 	'mem_password_check';
+			response_result($view,'Err',$view['message']);
+		}
+		response_result($view,'success','OK');
 	}
 }
