@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Register class
@@ -34,7 +34,7 @@ class Register extends CB_Controller
 		 */
 		$this->load->library(array('querystring', 'form_validation', 'email', 'notelib', 'point'));
 
-		if ( ! function_exists('password_hash')) {
+		if (!function_exists('password_hash')) {
 			$this->load->helper('password');
 		}
 	}
@@ -55,8 +55,10 @@ class Register extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before'] = Events::trigger('before', $eventname);
 
-		if ($this->member->is_member()
-			&& ! ($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))) {
+		if (
+			$this->member->is_member()
+			&& !($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))
+		) {
 			redirect();
 		}
 
@@ -162,7 +164,6 @@ class Register extends CB_Controller
 			$this->data = $view;
 			$this->layout = element('layout_skin_file', element('layout', $view));
 			$this->view = element('view_skin_file', element('layout', $view));
-
 		} else {
 			/**
 			 * 유효성 검사를 통과한 경우입니다.
@@ -186,9 +187,9 @@ class Register extends CB_Controller
 	public function get_register_policy()
 	{
 
-			$view['view']['member_register_policy1'] = $this->cbconfig->item('member_register_policy1');
-			$view['view']['member_register_policy2'] = $this->cbconfig->item('member_register_policy2');
-			response_result($view,'success','OK');
+		$view['view']['member_register_policy1'] = $this->cbconfig->item('member_register_policy1');
+		$view['view']['member_register_policy2'] = $this->cbconfig->item('member_register_policy2');
+		response_result($view, 'success', 'OK');
 	}
 
 
@@ -201,7 +202,7 @@ class Register extends CB_Controller
 		$eventname = 'event_register_form';
 		$this->load->event($eventname);
 
-		if ($this->member->is_member() && ! ($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))) {
+		if ($this->member->is_member() && !($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))) {
 			redirect();
 		}
 
@@ -262,18 +263,21 @@ class Register extends CB_Controller
 			$nickname_description = '<br />닉네임을 입력하시면 앞으로 '
 				. $this->cbconfig->item('change_nickname_date') . '일 이내에는 변경할 수 없습니다';
 		}
-
 		$configbasic['mem_userid'] = array(
 			'field' => 'mem_userid',
 			'label' => '아이디',
-			'rules' => 'trim|required|alphanumunder|min_length[3]|max_length[20]|is_unique[member_userid.mem_userid]|callback__mem_userid_check',
-			'description' => '영문자, 숫자, _ 만 입력 가능. 최소 3자이상 입력하세요',
+			// 'rules' => 'trim|required|min_length[3]|max_length[20]|is_unique[member_userid.mem_userid]|callback__mem_userid_check',
+			'rules' => 'trim|required|valid_email|max_length[50]|is_unique[member.mem_userid]|callback__mem_userid_check',
+			// 'description' => '영문자, 숫자, _ 만 입력 가능. 최소 3자이상 입력하세요',
+			'description' => '이메일을 입력해주세요 / 이메일과 아이디 동일하게 사용합니다',
 		);
 
 		$password_description = '비밀번호는 ' . $password_length . '자리 이상이어야 ';
-		if ($this->cbconfig->item('password_uppercase_length')
-			OR $this->cbconfig->item('password_numbers_length')
-			OR $this->cbconfig->item('password_specialchars_length')) {
+		if (
+			$this->cbconfig->item('password_uppercase_length')
+			or $this->cbconfig->item('password_numbers_length')
+			or $this->cbconfig->item('password_specialchars_length')
+		) {
 
 			$password_description .= '하며 ';
 			if ($this->cbconfig->item('password_uppercase_length')) {
@@ -409,7 +413,7 @@ class Register extends CB_Controller
 		$config = array();
 		if ($form && is_array($form)) {
 			foreach ($form as $key => $value) {
-				if ( ! element('use', $value)) {
+				if (!element('use', $value)) {
 					continue;
 				}
 				if (element('func', $value) === 'basic') {
@@ -480,9 +484,9 @@ class Register extends CB_Controller
 		$updateicon = '';
 
 		$view['view']['form_validation'] = $form_validation;
-		
-		if(!$form_validation) {
-			response_result($view,'Err',validation_errors('', ''));
+
+		if (!$form_validation) {
+			response_result($view, 'Err', validation_errors('', ''));
 		}
 
 		if ($form_validation) {
@@ -532,7 +536,6 @@ class Register extends CB_Controller
 						$updatephoto = cdate('Y') . '/' . cdate('m') . '/' . $img['file_name'];
 					} else {
 						$file_error = $this->upload->display_errors();
-
 					}
 				}
 			}
@@ -591,7 +594,7 @@ class Register extends CB_Controller
 		 * 유효성 검사를 하지 않는 경우, 또는 유효성 검사에 실패한 경우입니다.
 		 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
 		 */
-		if ($form_validation === false OR $file_error !== '' OR $file_error2 !== '') {
+		if ($form_validation === false or $file_error !== '' or $file_error2 !== '') {
 
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formrunfalse'] = Events::trigger('formrunfalse', $eventname);
@@ -601,7 +604,7 @@ class Register extends CB_Controller
 			$k = 0;
 			if ($form && is_array($form)) {
 				foreach ($form as $key => $value) {
-					if ( ! element('use', $value)) {
+					if (!element('use', $value)) {
 						continue;
 					}
 
@@ -612,11 +615,13 @@ class Register extends CB_Controller
 					$html_content[$k]['input'] = '';
 
 					//field_type : text, url, email, phone, textarea, radio, select, checkbox, date
-					if (element('field_type', $value) === 'text'
-						OR element('field_type', $value) === 'url'
-						OR element('field_type', $value) === 'email'
-						OR element('field_type', $value) === 'phone'
-						OR element('field_type', $value) === 'date') {
+					if (
+						element('field_type', $value) === 'text'
+						or element('field_type', $value) === 'url'
+						or element('field_type', $value) === 'email'
+						or element('field_type', $value) === 'phone'
+						or element('field_type', $value) === 'date'
+					) {
 						if (element('field_type', $value) === 'date') {
 							$html_content[$k]['input'] .= '<input type="text" id="' . element('field_name', $value) . '" name="' . element('field_name', $value) . '" class="form-control input datepicker" value="' . set_value(element('field_name', $value)) . '" readonly="readonly" ' . $required . ' />';
 						} elseif (element('field_type', $value) === 'phone') {
@@ -636,7 +641,7 @@ class Register extends CB_Controller
 						} else {
 							$options = explode("\n", element('options', $value));
 						}
-						$i =1;
+						$i = 1;
 						if ($options) {
 							foreach ($options as $okey => $oval) {
 								$radiovalue = (element('field_name', $value) === 'mem_sex') ? $okey : $oval;
@@ -648,7 +653,7 @@ class Register extends CB_Controller
 					} elseif (element('field_type', $value) === 'checkbox') {
 						$html_content[$k]['input'] .= '<div class="checkbox">';
 						$options = explode("\n", element('options', $value));
-						$i =1;
+						$i = 1;
 						if ($options) {
 							foreach ($options as $okey => $oval) {
 								$html_content[$k]['input'] .= '<label for="' . element('field_name', $value) . '_' . $i . '"><input type="checkbox" name="' . element('field_name', $value) . '[]" id="' . element('field_name', $value) . '_' . $i . '" value="' . $oval . '" ' . set_checkbox(element('field_name', $value), $oval) . ' /> ' . $oval . ' </label> ';
@@ -754,7 +759,6 @@ class Register extends CB_Controller
 			$this->data = $view;
 			$this->layout = element('layout_skin_file', element('layout', $view));
 			$this->view = element('view_skin_file', element('layout', $view));
-
 		} else {
 
 			/**
@@ -819,7 +823,7 @@ class Register extends CB_Controller
 			} else {
 				$insertdata['mem_email_cert'] = 1;
 				$metadata['meta_email_cert_datetime'] = cdate('Y-m-d H:i:s');
-			 }
+			}
 
 			if ($updatephoto) {
 				$insertdata['mem_photo'] = $updatephoto;
@@ -849,7 +853,7 @@ class Register extends CB_Controller
 			if ($form && is_array($form)) {
 				$this->load->model('Member_extra_vars_model');
 				foreach ($form as $key => $value) {
-					if ( ! element('use', $value)) {
+					if (!element('use', $value)) {
 						continue;
 					}
 					if (element('func', $value) === 'basic') {
@@ -943,9 +947,10 @@ class Register extends CB_Controller
 				$this->input->ip_address(),
 			);
 
-			if ( ! $this->cbconfig->item('use_register_email_auth')) {
+			if (!$this->cbconfig->item('use_register_email_auth')) {
 				if (($this->cbconfig->item('send_email_register_user') && $this->input->post('mem_receive_email'))
-					OR $this->cbconfig->item('send_email_register_alluser')) {
+					or $this->cbconfig->item('send_email_register_alluser')
+				) {
 					$title = str_replace(
 						$searchconfig,
 						$replaceconfig,
@@ -1019,9 +1024,11 @@ class Register extends CB_Controller
 			$smssendlistuser = array();
 
 			$superadminlist = '';
-			if ($this->cbconfig->item('send_email_register_admin')
-				OR $this->cbconfig->item('send_note_register_admin')
-				OR $this->cbconfig->item('send_sms_register_admin')) {
+			if (
+				$this->cbconfig->item('send_email_register_admin')
+				or $this->cbconfig->item('send_note_register_admin')
+				or $this->cbconfig->item('send_sms_register_admin')
+			) {
 				$mselect = 'mem_id, mem_email, mem_nickname, mem_phone';
 				$superadminlist = $this->Member_model->get_superadmin_list($mselect);
 			}
@@ -1045,7 +1052,8 @@ class Register extends CB_Controller
 				}
 			}
 			if (($this->cbconfig->item('send_sms_register_user') && $this->input->post('mem_receive_sms'))
-				OR $this->cbconfig->item('send_sms_register_alluser')) {
+				or $this->cbconfig->item('send_sms_register_alluser')
+			) {
 				if ($this->input->post('mem_phone')) {
 					$smssendlistuser['mem_id'] = $mem_id;
 					$smssendlistuser['mem_nickname'] = $this->input->post('mem_nickname');
@@ -1201,13 +1209,13 @@ class Register extends CB_Controller
 				$this->input->post('mem_nickname')
 			);
 
-			if ( ! $this->cbconfig->item('use_register_email_auth')) {
+			if (!$this->cbconfig->item('use_register_email_auth')) {
 				$this->session->set_userdata(
 					'mem_id',
 					$mem_id
 				);
 			}
-			response_result($view,'success','정상적으로 가입되었습니다.');
+			response_result($view, 'success', '정상적으로 가입되었습니다.');
 			//redirect('register/result');
 		}
 	}
@@ -1231,7 +1239,7 @@ class Register extends CB_Controller
 		$this->session->keep_flashdata('nickname');
 		$this->session->keep_flashdata('email_auth_message');
 
-		if ( ! $this->session->flashdata('nickname')) {
+		if (!$this->session->flashdata('nickname')) {
 			redirect();
 		}
 
@@ -1291,7 +1299,7 @@ class Register extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		if ( ! preg_match("/^([a-z0-9_])+$/i", $userid)) {
+		if (!preg_match("/^([a-z0-9_])+$/i", $userid)) {
 			$result = array(
 				'result' => 'no',
 				'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
@@ -1328,7 +1336,7 @@ class Register extends CB_Controller
 		);
 		exit(json_encode($result));
 	}
-	
+
 
 	public function ajax_email_check()
 	{
@@ -1351,8 +1359,10 @@ class Register extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		if ($this->member->item('mem_email')
-			&& $this->member->item('mem_email') === $email) {
+		if (
+			$this->member->item('mem_email')
+			&& $this->member->item('mem_email') === $email
+		) {
 			$result = array(
 				'result' => 'available',
 				'reason' => '사용 가능한 이메일입니다',
@@ -1389,7 +1399,7 @@ class Register extends CB_Controller
 		);
 		exit(json_encode($result));
 	}
-	
+
 
 	public function ajax_password_check()
 	{
@@ -1449,8 +1459,10 @@ class Register extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		if ($this->member->item('mem_nickname')
-			&& $this->member->item('mem_nickname') === $nickname) {
+		if (
+			$this->member->item('mem_nickname')
+			&& $this->member->item('mem_nickname') === $nickname
+		) {
 			$result = array(
 				'result' => 'available',
 				'reason' => '사용 가능한 닉네임입니다',
@@ -1512,15 +1524,15 @@ class Register extends CB_Controller
 				'result' => 'no',
 				'reason' => '아이디값이 넘어오지 않았습니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
-		if ( ! preg_match("/^([a-z0-9_])+$/i", $userid)) {
+		if (!preg_match("/^([a-z0-9_])+$/i", $userid)) {
 			$result = array(
 				'result' => 'no',
 				'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
 		$where = array(
@@ -1532,7 +1544,7 @@ class Register extends CB_Controller
 				'result' => 'no',
 				'reason' => '이미 사용중인 아이디입니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
 		if ($this->_mem_userid_check($userid) === false) {
@@ -1540,7 +1552,7 @@ class Register extends CB_Controller
 				'result' => 'no',
 				'reason' => $userid . '은(는) 예약어로 사용하실 수 없는 회원아이디입니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
 		// 이벤트가 존재하면 실행합니다
@@ -1551,7 +1563,7 @@ class Register extends CB_Controller
 			'result' => 'available',
 			'reason' => '사용 가능한 아이디입니다',
 		);
-		response_result($result,'success',$result['reason']);	
+		response_result($result, 'success', $result['reason']);
 	}
 
 	//RN 회원이메일 체크
@@ -1573,16 +1585,18 @@ class Register extends CB_Controller
 				'result' => 'no',
 				'reason' => '이메일값이 넘어오지 않았습니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
-		if ($this->member->item('mem_email')
-			&& $this->member->item('mem_email') === $email) {
+		if (
+			$this->member->item('mem_email')
+			&& $this->member->item('mem_email') === $email
+		) {
 			$result = array(
 				'result' => 'available',
 				'reason' => '사용 가능한 이메일입니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
 		$where = array(
@@ -1594,7 +1608,7 @@ class Register extends CB_Controller
 				'result' => 'no',
 				'reason' => '이미 사용중인 이메일입니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
 		if ($this->_mem_email_check($email) === false) {
@@ -1602,7 +1616,7 @@ class Register extends CB_Controller
 				'result' => 'no',
 				'reason' => $email . '은(는) 예약어로 사용하실 수 없는 이메일입니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
 		// 이벤트가 존재하면 실행합니다
@@ -1613,7 +1627,7 @@ class Register extends CB_Controller
 			'result' => 'available',
 			'reason' => '사용 가능한 이메일입니다',
 		);
-		response_result($result,'success',$result['reason']);	
+		response_result($result, 'success', $result['reason']);
 	}
 
 	//RN 닉네임 검사
@@ -1635,16 +1649,18 @@ class Register extends CB_Controller
 				'result' => 'no',
 				'reason' => '닉네임값이 넘어오지 않았습니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
-		if ($this->member->item('mem_nickname')
-			&& $this->member->item('mem_nickname') === $nickname) {
+		if (
+			$this->member->item('mem_nickname')
+			&& $this->member->item('mem_nickname') === $nickname
+		) {
 			$result = array(
 				'result' => 'available',
 				'reason' => '사용 가능한 닉네임입니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
 		$where = array(
@@ -1656,7 +1672,7 @@ class Register extends CB_Controller
 				'result' => 'no',
 				'reason' => '이미 사용중인 닉네임입니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
 		if ($this->_mem_nickname_check($nickname) === false) {
@@ -1664,7 +1680,7 @@ class Register extends CB_Controller
 				'result' => 'no',
 				'reason' => '이미 사용중인 닉네임입니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
 		$result = array(
@@ -1672,7 +1688,7 @@ class Register extends CB_Controller
 			'result' => 'available',
 			'reason' => '사용 가능한 닉네임입니다',
 		);
-		response_result($result,'success',$result['reason']);	
+		response_result($result, 'success', $result['reason']);
 	}
 
 	//RN 패스워드 체크
@@ -1694,7 +1710,7 @@ class Register extends CB_Controller
 				'result' => 'no',
 				'reason' => '패스워드값이 넘어오지 않았습니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
 		if ($this->_mem_password_check($password) === false) {
@@ -1702,7 +1718,7 @@ class Register extends CB_Controller
 				'result' => 'no',
 				'reason' => '패스워드는 최소 1개 이상의 숫자를 포함해야 합니다',
 			);
-			response_result($result,'Err',$result['reason']);	
+			response_result($result, 'Err', $result['reason']);
 		}
 
 		$result = array(
@@ -1710,7 +1726,7 @@ class Register extends CB_Controller
 			'result' => 'available',
 			'reason' => '사용 가능한 패스워드입니다',
 		);
-		response_result($result,'success',$result['reason']);	
+		response_result($result, 'success', $result['reason']);
 	}
 
 
@@ -1810,7 +1826,7 @@ class Register extends CB_Controller
 	 */
 	public function _mem_recommend_check($str)
 	{
-		if( ! $str) {
+		if (!$str) {
 			return true;
 		}
 
@@ -1838,7 +1854,7 @@ class Register extends CB_Controller
 	public function _check_captcha($str)
 	{
 		$captcha = $this->session->userdata('captcha');
-		if ( ! is_array($captcha) OR ! element('word', $captcha) OR strtolower(element('word', $captcha)) !== strtolower($str)) {
+		if (!is_array($captcha) or !element('word', $captcha) or strtolower(element('word', $captcha)) !== strtolower($str)) {
 			$this->session->unset_userdata('captcha');
 			$this->form_validation->set_message(
 				'_check_captcha',
@@ -1897,7 +1913,7 @@ class Register extends CB_Controller
 		$str_num = count_numbers($str);
 		$str_spc = count_specialchars($str);
 
-		if ($str_uc < $uppercase OR $str_num < $number OR $str_spc < $specialchar) {
+		if ($str_uc < $uppercase or $str_num < $number or $str_spc < $specialchar) {
 
 			$description = '비밀번호는 ';
 			if ($str_uc < $uppercase) {
@@ -1916,7 +1932,6 @@ class Register extends CB_Controller
 				$description
 			);
 			return false;
-
 		}
 
 		return true;
