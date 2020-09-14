@@ -52,7 +52,7 @@ class Mypage extends React.Component{
     render(){
       const {signOut} = this.context
       const {logOutModalVisible} = this.state
-      const {mem_point,mem_nickname,mem_following,mem_followed} = this.state.mem_info
+      const {mem_point,mem_nickname,mem_following,mem_followed,mem_profile_content} = this.state.mem_info
       const {navigate} =this.props.navigation
         return(
           <SafeAreaView style={{flex:1}}>
@@ -61,15 +61,15 @@ class Mypage extends React.Component{
                       <View style={{marginVertical:20,marginLeft:30}}>
                           <NoimageSvg height={125} width={125}/>
                       </View>
-                      <View style={{marginLeft:16,marginTop:13,marginBottom:24,justifyContent:'space-between'}}>
+                      <View style={{maxWidth:'40%',marginHorizontal:16,marginTop:13,marginBottom:24,justifyContent:'space-between'}}>
                         <View style={{marginTop:15,display:'flex',flexDirection:'row', alignItems:'flex-end'}}>
                             <Text category='h2' style={{fontSize:24,color:'#63579D'}}>{mem_nickname}</Text>
                             <View style={{height:'80%',marginLeft:10,alignItems:'flex-end'}}>
                                 <ThumbSvg height={24} width={24}/>          
                             </View>
                         </View>  
-                        <View style={{marginTop:10}}>
-                            <Text style={{fontSize:9}}>팔로워 : {mem_followed} | 팔로잉 : {mem_following}</Text>          
+                        <View style={{marginVertical:10}}>
+                            <Text style={{fontSize:9,maxHeight:'100%'}} numberOfLines={2}> {mem_profile_content} </Text>          
                         </View> 
                         <TouchableOpacity style={{padding:8,flexDirection:'row',backgroundColor:'#ffffff',borderRadius:10}} onPress={()=>this.props.navigation.navigate('MyPoint')}>
                               <View style={{}}>
@@ -143,6 +143,9 @@ class Mypage extends React.Component{
                       <Text category='h2' style={styles.menuTitle}>계정</Text>
                     </View>
                     <View>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>navigate('MyProfEdit',{mem_info:this.state.mem_info})} >
+                        <Text style={styles.menuItem}>프로필 수정</Text>
+                      </TouchableOpacity>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{this.setState({logOutModalVisible:true})}} >
                         <Text style={styles.menuItem}>로그아웃</Text>
                       </TouchableOpacity>
