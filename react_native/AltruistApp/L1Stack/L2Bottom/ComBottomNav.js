@@ -70,7 +70,7 @@ const BottomTabBar = ({ navigation, state }) => (
     <BottomNavigation
       selectedIndex={state.index}
       onSelect={index => navigation.navigate(state.routeNames[index])}>
-      <BottomNavigationTab title={()=><Homesvg height={35} width ={35}/>}/>
+      {/* <BottomNavigationTab title={()=><Homesvg height={35} width ={35}/>}/> */}
       <BottomNavigationTab title={()=><Altsvg height={35} />}/>
       <BottomNavigationTab title={()=><Communitysvg height={35} />}/>
       <BottomNavigationTab title={()=><Bellsvg height={35} />}/>  
@@ -86,7 +86,7 @@ const BottomTabBar = ({ navigation, state }) => (
 
 export const ComBottomNav = () =>(
     <Navigator tabBar={props => <BottomTabBar {...props} />}>
-        <Screen name = "Home" component={FontScreen}/>
+        {/* <Screen name = "Home" component={FontScreen}/> */}
         <Screen name = "Alt" component={AltStackNav}/>
         <Screen name = "Commu" component={ComToptabNav}/>
         <Screen name = "Meet" component={SpareScreen}/>

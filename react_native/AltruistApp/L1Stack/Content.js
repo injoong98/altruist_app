@@ -771,16 +771,18 @@ class AlbaContent extends React.Component {
             phoneNumber : '010 9999 9999',
             isLoading : true,
             image_height : 0,
+            popoverVisibel: false,
+            deleteModalVisible : false,
+            spinnerModalVisible : false,
         }
     }
 
     Alba_salary_type = [
-        {color : 'green', str : '시'},
-        {color : 'purple', str : '일'},
-        {color : 'blue', str : '주'},
-        {color : 'red', str : '월'},
+        {color : '#A7D4DE', str : '시급'},
+        {color : '#EAB0B3', str : '일급'},
+        {color : '#B09BDE', str : '주급'},
+        {color : 'white', str : '월급'},
     ]
-
 
     async componentDidMount(){
         const {post_id} = this.props.route.params;
@@ -820,15 +822,52 @@ class AlbaContent extends React.Component {
     setVisible(bool){
         this.setState({visible : bool});
     }
-
+    renderPostMore=()=>(
+        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisibel:true})}>
+            <MoreLsvg height={24} width={24}/>
+        </TouchableOpacity>
+    )
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
     UD_Action = () =>(
         // <TopNavigationAction icon={HeartIcon} onPress={() =>{this.onClick_UD_Action()}}/>
-        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.onClick_UD_Action()}>
-            <MoreLsvg height={24} width={24}/>
-        </TouchableOpacity>
+        <Popover
+        anchor={this.renderPostMore}
+        visible={this.state.popoverVisibel}
+        placement='bottom start'
+        onBackdropPress={() => this.setState({popoverVisibel:false})}>
+            <View>
+                {/* <TouchableOpacity 
+                    onPress={()=>{this.postscrap();this.setState({popoverVisibel:false})}} 
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>스크랩</Text>
+                </TouchableOpacity> */}
+                {/* <TouchableOpacity 
+                    onPress={()=>{this.postBlameConfirm();this.setState({popoverVisibel:false})}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>신고</Text>
+                </TouchableOpacity> */}
+                {/* <TouchableOpacity 
+                    onPress={()=>{
+                        this.setState({popoverVisibel:false});
+                        this.props.navigation.navigate('GominWrite',
+                            {
+                                statefunction:this.statefunction,
+                                mode:'edit',
+                                post:this.state.post,
+                                content:this.state.content,
+                            })}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>수정</Text>
+                </TouchableOpacity> */}
+                <TouchableOpacity 
+                    onPress={()=>{this.setState({popoverVisibel:false,deleteModalVisible:true})}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>삭제</Text>
+                </TouchableOpacity>
+            </View>
+        </Popover>
     )
     onClick_UD_Action = () => {
         const buttons = ['수정', '삭제', '취소'];
@@ -857,23 +896,20 @@ class AlbaContent extends React.Component {
         alert('update');
     }
 
-    deleteData = async(id) => {
+    postAlbaDelete = async(id) => {
         alert('delete');
-        // var formdata =new FormData();
-        // formdata.append("post_id", id);
-        // formdata.append("modify_password", '1234');
-
-        // await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
-        // .then(response => {
-        //     if(response.status=='500'){
-        //         alert(response.message)
-        //     }else if(response.status=="200"){
-        //         alert(response.message);
-        //     }
-        // })
-        // .catch(error=>{
-        //     alert(`게시글 삭제에 실패했습니다. ${error}`)
-        // })
+        var formdata =new FormData();
+        formdata.append("post_id", this.state.post.post_id);
+        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        .then(response => {
+            this.setState({spinnerModalVisible:false})
+            this.props.navigation.goBack();
+            this.props.route.params.OnGoback();
+            alert(JSON.stringify(res.data))
+        })
+        .catch(error=>{
+            alert(JSON.stringify(err))
+        })
     }
 
 
@@ -892,7 +928,7 @@ class AlbaContent extends React.Component {
     // }
 
     render(){
-        const {post} = this.state;
+        const {post, deleteModalVisible, spinnerModalVisible} = this.state;
         console.log('post_id=>'+JSON.stringify(post))
         // const defaultRenderer ={
         //     renderers:{
@@ -919,17 +955,13 @@ class AlbaContent extends React.Component {
                                 <Text style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
                             </View>
                             <Layout style={styles.icons}>
-                                <Icon
-                                    style={{width:32,height:32}}
-                                    fill={this.Alba_salary_type[post.alba_salary_type].color}
-                                    name='star'
-                                />
+                                <Text style={[styles.tagstyle,{backgroundColor:this.Alba_salary_type[post.alba_salary_type].color}]} category='c2'>
+                                    {this.Alba_salary_type[post.alba_salary_type].str}
+                                </Text>
                                 <Text category='h5'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
-                                <Icon
-                                    style={{width:32,height:32}}
-                                    fill='black'
-                                    name={!post.alba_type?'eye':'heart'}
-                                />
+                                <Text style={[styles.tagstyle,{backgroundColor:post.alba_type == 0?'red':'blue'}]} category='c2'>
+                                    {post.alba_type == 0?'단기':'장기'}
+                                </Text>
                                 <Text category='h5'> {post.alba_type == 0?'일일~3개월':'3개월이상'}</Text>
                             </Layout>
                             <Divider/>
@@ -1019,6 +1051,23 @@ class AlbaContent extends React.Component {
                                     </Button>
                                 </Card>
                     </Modal>
+                    <Modal
+                        visible={deleteModalVisible}
+                        backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                        onBackdropPress={() => this.setState({deleteModalVisible:false})}>
+                        <Confirm 
+                            confirmText="게시글을 삭제하시겠습니까?"
+                            frstText="예"
+                            OnFrstPress={() =>{this.setState({deleteModalVisible:false,spinnerModalVisible:true});this.postAlbaDelete()}}
+                            scndText="아니오"
+                            OnScndPress={() => this.setState({deleteModalVisible:false})}
+                        />
+                    </Modal>
+                    <Modal
+                        visible={spinnerModalVisible}
+                        backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}>
+                        <Spinner size='giant'/>
+                    </Modal>
                 </Layout>
             </SafeAreaView>
             </Root>
@@ -1095,7 +1144,16 @@ const styles = StyleSheet.create({
         position:'absolute',
         bottom : 10,
         left : '40%'
-      },
+    },
+    tagstyle:{
+        borderRadius : 20, 
+        padding : 4, 
+        marginHorizontal : 5,
+        textAlignVertical : 'center',
+        justifyContent : 'center',
+        fontSize : 14,
+        color : 'white',
+    }
 });
 
 

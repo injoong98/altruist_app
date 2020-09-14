@@ -1109,7 +1109,11 @@ class Board_post extends CB_Controller
 		 * 게시판 목록에 필요한 정보를 가져옵니다.
 		 */
 		if ($brd_key=='indi' && $is_admin === false) {
-			$where = "`cb_post`.brd_id=".$this->board->item_key('brd_id', $brd_key)." AND (`cb_post`.mem_id=".$mem_id." OR `cb_post`.answer_mem_id=".$mem_id.")";
+			if($this->input->get('type')=='send'){
+				$where = "`cb_post`.brd_id=".$this->board->item_key('brd_id', $brd_key)." AND (`cb_post`.mem_id=".$mem_id.")";
+			}else{
+				$where = "`cb_post`.brd_id=".$this->board->item_key('brd_id', $brd_key)." AND (`cb_post`.answer_mem_id=".$mem_id.")";
+			}
 		}else{
 			$where = array(
 			   'brd_id' => $this->board->item_key('brd_id', $brd_key),

@@ -252,7 +252,7 @@ class MarketWrite extends React.Component {
                 [
                     { 
                         text: "OK", 
-                        onPress: ()=> {}
+                        onPress: ()=> {this.gobackfunc()}
                     }
                 ],
                 { cancelable: false }
@@ -394,7 +394,7 @@ class MarketWrite extends React.Component {
                         <Layout style={styles.container}>
                             <Text>사진</Text>
                             <ScrollView horizontal={true} style={styles.input}>
-                                <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
+                                <TouchableOpacity style={{width:100, height:100, backgroundColor:'gray'}} onPress={()=>this.onClickAddImage()}>
                                     <Image source={{uri : 'http://dev.unyict.org/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
                                 </TouchableOpacity>
                                 {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
