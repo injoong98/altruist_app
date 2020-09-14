@@ -9,6 +9,7 @@ import MoreSvg from '../../../assets/icons/dotdotdot-large.svg'
 import ThumbSvg from '../../../assets/icons/thumb-up-filled.svg'
 import PencilSvg from '../../../assets/icons/pencil-outline.svg'
 import MessageSvg from '../../../assets/icons/message.svg'
+import AltruistSvg from '../../../assets/icons/altruist.svg'
 import NoimageSvg from '../../../assets/icons/noimage.svg'
 
 
@@ -118,6 +119,19 @@ class Mypage extends React.Component{
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{alert('보낸 쪽지!')}}>
                         <Text style={styles.menuItem}>보낸 쪽지함</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View style={{ marginHorizontal:40,marginBottom:20}}>
+                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
+                      <View>
+                        <MoreSvg height={19} width={22}/>
+                      </View>
+                      <Text category='h2' style={styles.menuTitle}>이타주의자</Text>
+                    </View>
+                    <View>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyQueList')}} >
+                        <Text style={styles.menuItem}>질문함</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
