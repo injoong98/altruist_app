@@ -775,12 +775,11 @@ class AlbaContent extends React.Component {
     }
 
     Alba_salary_type = [
-        {color : 'green', str : '시'},
-        {color : 'purple', str : '일'},
-        {color : 'blue', str : '주'},
-        {color : 'red', str : '월'},
+        {color : '#A7D4DE', str : '시급'},
+        {color : '#EAB0B3', str : '일급'},
+        {color : '#B09BDE', str : '주급'},
+        {color : 'white', str : '월급'},
     ]
-
 
     async componentDidMount(){
         const {post_id} = this.props.route.params;
@@ -919,17 +918,13 @@ class AlbaContent extends React.Component {
                                 <Text style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
                             </View>
                             <Layout style={styles.icons}>
-                                <Icon
-                                    style={{width:32,height:32}}
-                                    fill={this.Alba_salary_type[post.alba_salary_type].color}
-                                    name='star'
-                                />
+                                <Text style={[styles.tagstyle,{backgroundColor:this.Alba_salary_type[post.alba_salary_type].color}]} category='c2'>
+                                    {this.Alba_salary_type[post.alba_salary_type].str}
+                                </Text>
                                 <Text category='h5'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
-                                <Icon
-                                    style={{width:32,height:32}}
-                                    fill='black'
-                                    name={!post.alba_type?'eye':'heart'}
-                                />
+                                <Text style={[styles.tagstyle,{backgroundColor:post.alba_type == 0?'red':'blue'}]} category='c2'>
+                                    {post.alba_type == 0?'단기':'장기'}
+                                </Text>
                                 <Text category='h5'> {post.alba_type == 0?'일일~3개월':'3개월이상'}</Text>
                             </Layout>
                             <Divider/>
@@ -1095,7 +1090,16 @@ const styles = StyleSheet.create({
         position:'absolute',
         bottom : 10,
         left : '40%'
-      },
+    },
+    tagstyle:{
+        borderRadius : 20, 
+        padding : 4, 
+        marginHorizontal : 5,
+        textAlignVertical : 'center',
+        justifyContent : 'center',
+        fontSize : 14,
+        color : 'white',
+    }
 });
 
 

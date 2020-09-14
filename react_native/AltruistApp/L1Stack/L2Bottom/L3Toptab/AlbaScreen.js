@@ -25,10 +25,10 @@ class AlbaScreen extends React.Component {
   }
 
   Alba_salary_type = [
-    {color : 'green', str : '시'},
-    {color : 'purple', str : '일'},
-    {color : 'blue', str : '주'},
-    {color : 'red', str : '월'},  
+    {color : '#A7D4DE', str : '시'},
+    {color : '#EAB0B3', str : '일'},
+    {color : '#B09BDE', str : '주'},
+    {color : 'black', str : '월'},  
   ]
 
   // const renderItemHeader = (headerProps, info) => (

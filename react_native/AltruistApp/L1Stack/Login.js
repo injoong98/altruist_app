@@ -110,6 +110,7 @@ class LoginScreen extends React.Component{
                 <TextInput
                     ref='pwinput'
                     style={styles.testInput}
+                    secureTextEntry={true}
                     placeholder="비밀번호"
                     onChangeText={nextValue => this.setState({mem_password:nextValue})}
                     placeholderTextColor='#A897C2'
