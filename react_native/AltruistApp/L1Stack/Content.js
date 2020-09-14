@@ -587,11 +587,16 @@ class MarketContent extends React.Component {
         this.state ={
             post : {} ,
             image : [],
-            activeDot : 0,
             comment : '',
             cmt_content : '',
             isLoading : true,
             refreshing : false,
+            replying:false,
+            modalVisible:false,
+            replyModalVisible:false,
+            deleteModalVisible:false,
+            spinnerModalVisible:false,
+            popoverVisibel:false,
         }
     }
 
@@ -635,12 +640,6 @@ class MarketContent extends React.Component {
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
 
-    UproadIcon = (props) => (
-        <TouchableWithoutFeedback>
-          <Icon {...props} name='arrow-circle-up'/>
-        </TouchableWithoutFeedback>
-    )
-
     renderImage = ({item}) => {
         console.log(item.url)
         return (
@@ -655,26 +654,201 @@ class MarketContent extends React.Component {
             url : this.state.image[index].url,
         }
     }
+    
+    commentWrite= ()=>{
+        this.setState({replying:false,cmt_id:''})
+        this.refs.commentInput.blur()
+        console.log(this.refs)
+    }
+    
+    commentUpload= async()=>{
+        const {cmt_content,post,cmt_id}=this.state;
+        var formdata = new FormData();
+        formdata.append("post_id",post.post_id);
+        formdata.append("cmt_content",cmt_content);
+        cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+        
+        this.commentWrite()
+        
+        await Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
+        .then(response=>{
+            const {status,message}=response.data;
+            if(status=='200'){
+                alert(`성공 : ${message}`);
+                Keyboard.dismiss();
+                this.setState({cmt_content:'',relpying:false,cmt_id:''});
+                this.getCommentData(post.post_id);
+                this.refs.pstcmtlist.scrollToEnd();
+            }else if(status=="500"){
+                alert(`실패 : ${message}`)
+            }
+        })
+        .catch(error=>{
+            alert(`등록 실패 ! ${error.message}`)
+        })
+    }
+    
+    commentValid =async() =>{
+        const {cmt_content} =this.state;
+        var formdata = new FormData();
+        formdata.append("content",cmt_content);
+        
+        await Axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        .then(response=>{
+            const {status,message} = response.data;
+            if(status=='500'){
+                alert(message);
+            }else if(status=="200"){
+                this.commentUpload();
+            }
+        })
+        .catch(error=>{
+            alert('error')
+        })
+
+    }
+    UploadButton=(props)=>(
+        <TouchableOpacity onPress={()=>{this.commentValid()}}>
+            <UploadIcon {...props}/>
+        </TouchableOpacity>
+    )
+    
+    cmtBlame = (cmt_id)=>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',cmt_id)
+        
+        Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+                alert(`${JSON.stringify(response.data.message)}`)
+                this.getCommentData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    cmtBlameConfirm = (cmt_id) =>{
+        Alert.alert(
+            "댓글",
+            "이 댓글을 신고하시겠습니까?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "OK", 
+                    onPress: ()=> this.cmtBlame(cmt_id)
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+    cmtDelete = (cmt_id) =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',cmt_id)
+        
+        Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+                alert(`${JSON.stringify(response.data.message)}`)
+                this.getCommentData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    cmtDeleteConfirm = (cmt_id) =>{
+        Alert.alert(
+            "댓글",
+            "이 댓글을 삭제하시겠습니까?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "OK", 
+                    onPress: ()=> this.cmtDelete(cmt_id)
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+    cmtLike = (cmt_id) =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',cmt_id)
+        formdata.append('like_type',1)
+        Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+            this.getCommentData(this.state.post.post_id)}
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
 
     
     renderCommentsList=({item,index})=>(
-        <Card>
-            <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
-                <View style={{flexDirection:"row"}}>
-                <StarIcon />
-                <Text category="s2">{item.cmt_nickname}</Text>
+        <Layout style={{paddingVertical:3}}>
+            {item.cmt_reply==""?
+            null
+            :
+            <View style={{position:'absolute',left:0,paddingLeft:25}}>
+            </View> 
+            }
+            <Layout 
+                style ={{
+                    borderRadius:8,
+                    paddingRight:15,
+                    marginRight:15,
+                    paddingVertical:10,
+                    paddingLeft: 15,
+                    marginLeft:item.cmt_reply==""?15:50,
+                    backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
+                <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                    <View style={{flexDirection:"row"}}>
+                        <StarIcon />
+                        <View>
+                            <Text category="s2">{item.cmt_nickname}</Text>
+                            <PostTime datetime={item.cmt_datetime}/>
+                        </View>
+                    </View>
+                    <View style={{display:'flex',flexDirection:'row'}}>
+                        {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
+                            <BlameIcon />
+                        </TouchableOpacity> */}
+                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
+                            <MoreSsvg/>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <HeartIcon onPress={()=>{alert('좋아요누르겠습니다.')}} />
-            </View>
-            <View style={{padding:5}}>
-                <Text category="s1">{item.content}</Text>
-            </View>
-            <View style={{display:"flex", justifyContent:"flex-start",flexDirection:"row",alignItems:"center"}}>
-                <Text category="s2">{item.cmt_datetime}</Text>
-                <HeartIcon style ={{width:10,heigth:10}} />
-                <Text>{item.cmt_like}</Text>
-            </View>
-        </Card>
+                <View style={{padding:5}}>
+                    <Text category="s1">{item.cmt_content}</Text>
+                </View>
+                <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
+                    {item.cmt_reply ==""?
+                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replyModalVisible:true,cmt_id:item.cmt_id})}>
+                        <ReplySsvg />
+                    </TouchableOpacity>
+                    :null
+                    }
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
+                        <Thumbsvg />
+                    </TouchableOpacity>
+                        <Text>{item.cmt_like}</Text>
+                </View>
+            </Layout>
+        </Layout>
     )
     
     onRefresh=()=>{
@@ -683,10 +857,48 @@ class MarketContent extends React.Component {
 
     }
 
+    renderPostBody = (post, width) =>{
+
+        return(
+            <Layout>
+                <View>
+                    <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
+                </View>
+                <Layout style={{padding : 10}}>
+                    <Layout>
+                    <Text category='h2'>{post.post_title}</Text>
+                    </Layout>
+                    <Layout style={{marginTop : 10, marginLeft : 5}}>
+                    <Text category='h4'>{post.deal_price} 원</Text>
+                    </Layout>
+                </Layout>
+                <Divider/>
+                <Layout style={{height:50,flexDirection:'row', paddingVertical : 10}}>
+                    <Layout style={{width:50}}>
+                    <Image source={require('../assets/images/icon-social-dark.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                    </Layout>
+                    <Layout style={{justifyContent:'center'}}>
+                    <Text>{post.post_nickname}</Text>
+                    </Layout>
+                </Layout>
+                <Divider/>
+                <Layout style={{padding : 10}}>
+                    <Text style={{color : 'gray'}}>거래희망지역</Text>
+                    <Text style={{marginTop : 10, marginLeft : 10}}>{post.post_location}</Text>
+                    <Text style={{color : 'gray', marginTop : 10}}>상품설명</Text>
+                    <Text style={{marginTop : 10, marginLeft : 10}}>{post.post_content}</Text>
+                </Layout>
+                <Divider/>
+                <Text style={{margin:10}}>댓글</Text>
+            </Layout>
+        )
+    }
+
     render(){
 
-        const {post} = this.state;
         const { width } = Dimensions.get("window");
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,replyModalVisible,deleteModalVisible,spinnerModalVisible} = this.state;
+
         return(
             this.state.isLoading ?
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -696,59 +908,87 @@ class MarketContent extends React.Component {
             :
             <SafeAreaView style={{flex:1}}>
                 <TopNavigation title="수수마켓" alignment="center" accessoryLeft={this.BackAction} style={styles.topbar}/>
-                <KeyboardAvoidingView behavior={'height'} style={{flex:1}}>
-                    <ScrollView>
-                        <View>
-                            <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
-                        </View>
-                        <Layout style={{padding : 10}}>
-                            <Layout>
-                            <Text category='h2'>{post.post_title}</Text>
-                            </Layout>
-                            <Layout style={{marginTop : 10, marginLeft : 5}}>
-                            <Text category='h4'>{post.deal_price} 원</Text>
-                            </Layout>
-                        </Layout>
-                        <Divider/>
-                        <Layout style={{height:50,flexDirection:'row', paddingVertical : 10}}>
-                            <Layout style={{width:50}}>
-                            <Image source={require('../assets/images/icon-social-dark.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
-                            </Layout>
-                            <Layout style={{justifyContent:'center'}}>
-                            <Text>{post.post_nickname}</Text>
-                            </Layout>
-                        </Layout>
-                        <Divider/>
-                        <Layout style={{padding : 10}}>
-                            <Text style={{color : 'gray'}}>거래희망지역</Text>
-                            <Text style={{marginTop : 10, marginLeft : 10}}>{post.post_location}</Text>
-                            <Text style={{color : 'gray', marginTop : 10}}>상품설명</Text>
-                            <Text style={{marginTop : 10, marginLeft : 10}}>{post.post_content}</Text>
-                        </Layout>
-                        <Divider/>
-                        <Layout style={{padding : 10}}>
-                            <Text>Comment</Text>
-                            <List
-                                ref={"pstcmtlist"} 
-                                data={this.state.comment}
-                                renderItem={this.renderCommentsList}
-                                onRefresh={this.onRefresh}
-                                refreshing={this.state.refreshing}
-                            />
-                            <Input
-                                style={{flex:1, margin:5}}
-                                size='large'
-                                placeholder='댓글을 입력하세요.'
-                                value={this.state.cmt_content}
-                                multiline={true}
-                                accessoryRight={this.UproadIcon}
-                                onChangeText={nextValue => this.setState({comment : nextValue})}
-                            />
-                            <Layout style={{alignItems: "flex-end", marginHorizontal:20, marginBottom:20}}>
-                            </Layout>
-                        </Layout>
-                    </ScrollView>
-                </KeyboardAvoidingView>
+                <Layout style={{flex:1}}>
+                    <List
+                        ref={"pstcmtlist"} 
+                        data={this.state.comment}
+                        ListHeaderComponent={this.renderPostBody(post, width)}
+                        renderItem={this.renderCommentsList}
+                        onRefresh={this.onRefresh}
+                        refreshing={this.state.refreshing}
+                    />
+                </Layout>
+                <View style={{backgroundColor:'#ffffff',padding:8}}>
+                    {this.state.replying ?
+                    <TouchableOpacity onPress={this.commentWrite}>
+                        <Text category="h2" style={{color:'#63579D'}}>X</Text>
+                    </TouchableOpacity>
+                    :
+                    null
+                    }
+                    <TextInput
+                        ref="commentInput"
+                        style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                        value={cmt_content}
+                        placeholder={ replying?"대댓글" :"댓글"}
+                        placeholderTextColor='#A897C2'
+                        multiline={true}
+                        onChangeText={nextValue => this.setState({cmt_content:nextValue})}
+                    />
+                    <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
+                        <UploadCirclesvg width={50} height={50}/>
+                    </TouchableOpacity>
+                </View>
+                <Modal
+                    visible={modalVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                    onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}
+                >
+                    <View>
+                        <TouchableOpacity 
+                            onPress={()=>{this.cmtBlameConfirm(cmt_id);this.setState({modalVisible:false,cmt_id:''})}}
+                            style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
+                            <Text category='h3'>댓글 신고</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                            onPress={()=>{this.cmtDeleteConfirm(cmt_id);this.setState({modalVisible:false,cmt_id:''})}}
+                            style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
+                            <Text category='h3'>댓글 삭제</Text>
+                        </TouchableOpacity>
+                    </View>   
+                </Modal>
+                <Modal
+                    visible={replyModalVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                    onBackdropPress={() => this.setState({replyModalVisible:false})}
+                >
+                    <Confirm 
+                        confirmText="대댓글을 작성하시겠습니까?"
+                        frstText="예"
+                        OnFrstPress={() =>{this.setState({replying:true,replyModalVisible:false}); this.refs.commentInput.focus()}}
+                        scndText="아니오"
+                        OnScndPress={() => this.setState({replyModalVisible:false,cmt_id:''})}
+                    />
+                </Modal>
+                <Modal
+                    visible={deleteModalVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                    onBackdropPress={() => this.setState({deleteModalVisible:false})}
+                >
+                    <Confirm 
+                        confirmText="게시글을 삭제하시겠습니까?"
+                        frstText="예"
+                        OnFrstPress={() =>{this.setState({deleteModalVisible:false,spinnerModalVisible:true});this.postDelete()}}
+                        scndText="아니오"
+                        OnScndPress={() => this.setState({deleteModalVisible:false})}
+                    />
+                </Modal>
+                <Modal
+                    visible={spinnerModalVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
+                >
+                    <Spinner size='giant'/>
+                </Modal>
             </SafeAreaView>
         
             )
@@ -1153,6 +1393,13 @@ const styles = StyleSheet.create({
         justifyContent : 'center',
         fontSize : 14,
         color : 'white',
+    },
+    comment: {
+        borderRadius:8,
+        paddingRight:15,
+        marginRight:15,
+        paddingVertical:10,
+        paddingLeft: 15,
     }
 });
 
