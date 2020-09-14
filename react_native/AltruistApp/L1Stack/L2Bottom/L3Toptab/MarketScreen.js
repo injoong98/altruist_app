@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Image, SafeAreaView, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Image, ActivityIndicator, SafeAreaView, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction, Button, List, Card, Spinner} from '@ui-kitten/components';
 import axios from 'axios'
 
@@ -12,7 +12,7 @@ class MarketScreen extends React.Component {
     super(props);
     this.state={
       isLoading : true,
-      list : '',
+      lists : [],
       image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
       refreshing : false,
       current_page:1,
@@ -45,7 +45,7 @@ class MarketScreen extends React.Component {
     await axios.get('http://dev.unyict.org/api/board_post/lists/b-a-2')
     .then((response)=>{
         this.setState({
-          list:response.data.view.list.data.list,
+          lists:response.data.view.list.data.list,
           isLoading:false,
           isListLoading:false})
     })
@@ -99,6 +99,23 @@ class MarketScreen extends React.Component {
     this.componentDidMount()    
   }
 
+  load_more_data = () => {
+      if(!this.state.isNoMoreData){
+          this.setState({
+          current_page : this.state.current_page + 1,
+          isListLoading : true},
+          this.getPostList, console.log(this.state.current_page))
+      }
+  }
+
+  renderFooter=()=>{
+    return(
+      this.state.isListLoading ?
+      <View style = {styles.loader}>
+        <ActivityIndicator size='large'/>
+      </View>:null
+    )
+  }
   render() {
     return (
       this.state.isLoading ?
@@ -111,9 +128,12 @@ class MarketScreen extends React.Component {
         <List
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
-            data={this.state.list}
+            data={this.state.lists}
             renderItem={this.renderItem}
             refreshing={this.state.refreshing}
+            onEndReached={this.load_more_data}
+            onEndReachedThreshold = {0.9}
+            ListFooterComponent={this.renderFooter}
             onRefresh={this.onRefresh}
         />
         <TouchableOpacity 
@@ -158,6 +178,10 @@ const styles = StyleSheet.create({
     },
     textBottom: {
         flexDirection: 'row'
+    },
+    loader:{
+        marginTop : 10,
+        alignItems : 'center',
     },
     text: {
         margin: 4,
