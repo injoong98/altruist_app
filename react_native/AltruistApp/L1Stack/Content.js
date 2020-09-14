@@ -766,7 +766,7 @@ class AlbaContent extends React.Component {
             visible : false,
             OF_visible : false,
             post : {} ,
-            thumb_image : '/react_native/AltruistApp/assets/images/noimage.png',
+            thumb_image : '../assets/images/noimage.png',
             file_images : null,
             phoneNumber : '010 9999 9999',
             isLoading : true,
@@ -778,10 +778,10 @@ class AlbaContent extends React.Component {
     }
 
     Alba_salary_type = [
-        {color : '#A7D4DE', str : '시급'},
-        {color : '#EAB0B3', str : '일급'},
-        {color : '#B09BDE', str : '주급'},
-        {color : 'white', str : '월급'},
+        {color : '#EAB0B3', str : '시급'},
+        {color : '#E3898E', str : '일급'},
+        {color : '#CA676C', str : '주급'},
+        {color : '#B12D34', str : '월급'},
     ]
 
     async componentDidMount(){
@@ -869,28 +869,6 @@ class AlbaContent extends React.Component {
             </View>
         </Popover>
     )
-    onClick_UD_Action = () => {
-        const buttons = ['수정', '삭제', '취소'];
-        ActionSheet.show(
-            {
-                options: buttons,
-                cancelButtonIndex: 2,
-            },
-            buttonIndex => {
-                switch (buttonIndex) {
-                    case 0:
-                        this.updateData();
-                        break;
-                    case 1:
-                        this.deleteData(this.props.route.params.post_id)
-                        break;
-                    default:
-                        break
-                }
-            }
-        );
-
-    };
 
     updateData = () => {
         alert('update');
@@ -959,7 +937,7 @@ class AlbaContent extends React.Component {
                                     {this.Alba_salary_type[post.alba_salary_type].str}
                                 </Text>
                                 <Text category='h5'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
-                                <Text style={[styles.tagstyle,{backgroundColor:post.alba_type == 0?'red':'blue'}]} category='c2'>
+                                <Text style={[styles.tagstyle,{backgroundColor:post.alba_type == 0?'#978DC7':'#63579D'}]} category='c2'>
                                     {post.alba_type == 0?'단기':'장기'}
                                 </Text>
                                 <Text category='h5'> {post.alba_type == 0?'일일~3개월':'3개월이상'}</Text>
@@ -993,7 +971,9 @@ class AlbaContent extends React.Component {
                                     <Text style={styles.gathertext}>급여</Text>
                                 </View>
                                 <View style={{flex : 5, flexDirection : 'row'}}>
-                                    <Text style={{marginVertical : 5,color : this.Alba_salary_type[post.alba_salary_type].color}}>{this.Alba_salary_type[post.alba_salary_type].str} </Text>
+                                    <Text style={[styles.tagstyle,{backgroundColor:this.Alba_salary_type[post.alba_salary_type].color}]} category='c2'>
+                                        {this.Alba_salary_type[post.alba_salary_type].str}
+                                    </Text>
                                     <Text style={styles.gather}>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                                 </View>
                             </Layout>
@@ -1147,11 +1127,9 @@ const styles = StyleSheet.create({
     },
     tagstyle:{
         borderRadius : 20, 
-        padding : 4, 
-        marginHorizontal : 5,
+        paddingHorizontal : 5,
         textAlignVertical : 'center',
         justifyContent : 'center',
-        fontSize : 14,
         color : 'white',
     }
 });
