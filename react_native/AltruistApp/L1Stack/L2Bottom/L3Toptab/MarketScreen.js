@@ -3,6 +3,8 @@ import {Image, SafeAreaView, View, StyleSheet, TouchableOpacity} from 'react-nat
 import {Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction, Button, List, Card, Spinner} from '@ui-kitten/components';
 import axios from 'axios'
 
+import Writesvg from '../../../assets/icons/write.svg'
+
 
 class MarketScreen extends React.Component {
 
@@ -13,14 +15,39 @@ class MarketScreen extends React.Component {
       list : '',
       image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
       refreshing : false,
+      current_page:1,
+      isListLoading : false,
+      isNoMoreData : false,
     }
   }
 
-
   getPostList = async() =>{
+    await axios.get(`http://dev.unyict.org/api/board_post/lists/b-a-2?page=${this.state.current_page}`)
+    .then((response)=>{
+      if(response.data.view.list.data.list.length > 0){
+        this.setState({
+          lists:this.state.lists.concat(response.data.view.list.data.list),
+          isLoading:false,
+          isListLoading:false,
+        })
+      }
+      else{
+        console.log('no page data');
+        this.setState({isListLoading:false, isNoMoreData : true});
+      }
+    })
+    .catch((error)=>{
+        alert('error')
+    })
+  }
+
+  getPostFirst = async() =>{
     await axios.get('http://dev.unyict.org/api/board_post/lists/b-a-2')
     .then((response)=>{
-        this.setState({list:response.data.view.list.data.list,isLoading:false})
+        this.setState({
+          list:response.data.view.list.data.list,
+          isLoading:false,
+          isListLoading:false})
     })
     .catch((error)=>{
         alert('error')
@@ -28,11 +55,11 @@ class MarketScreen extends React.Component {
   }
 
   componentDidMount(){
-    this.getPostList();
-  }
+    this.setState({current_page:1, isNoMoreData : false,}, this.getPostFirst);
+  } 
 
-  onRefresh = () => {
-    this.getPostList();
+  onRefresh= () =>{
+    this.getPostFirst();
   }
 
   renderItem = ({item}) => (
@@ -66,6 +93,11 @@ class MarketScreen extends React.Component {
         </Layout>
     </TouchableOpacity>
   );
+  
+  statefunction=(str)=>{
+    this.setState({isLoading:true});
+    this.componentDidMount()    
+  }
 
   render() {
     return (
@@ -84,10 +116,16 @@ class MarketScreen extends React.Component {
             refreshing={this.state.refreshing}
             onRefresh={this.onRefresh}
         />
-        <Button style={{position:'absolute', width:'20%', left:'40%', bottom:10}} 
+        <TouchableOpacity 
+          style={{position:'absolute', right:20,bottom:14}} 
+          onPress={()=>{this.props.navigation.navigate('MarketWrite',{statefunction:this.statefunction})}} 
+        >
+          <Writesvg />
+        </TouchableOpacity>
+        {/* <Button style={{position:'absolute', width:'20%', left:'40%', bottom:10}} 
         onPress={()=>this.props.navigation.navigate('MarketWrite')}>
             등록
-        </Button>
+        </Button> */}
       </View>
     );
   }
