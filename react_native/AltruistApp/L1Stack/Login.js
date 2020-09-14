@@ -97,7 +97,7 @@ class LoginScreen extends React.Component{
             <View style={{flex:1,backgroundColor:'#ffffff'}}>
               <View style={{alignItems:'center',position:'relative',top:'35%'}}>
                 <View style={{backgroundColor:'#ffffff'}}>
-                  <LogoSvg  width={wdithLogo} heightLogo={heightLogo}/>
+                  <LogoSvg  width={wdithLogo} height={heightLogo}/>
                 </View>
                 <TextInput
                     style={styles.testInput}
