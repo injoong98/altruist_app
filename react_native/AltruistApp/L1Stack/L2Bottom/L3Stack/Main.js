@@ -1,11 +1,15 @@
 import React from 'react';
-import {SafeAreaView, TouchableWithoutFeedback,TextInput,StyleSheet,View,TouchableOpacity} from 'react-native';
+import {SafeAreaView, TouchableWithoutFeedback,TextInput,StyleSheet,View,TouchableOpacity,Dimensions} from 'react-native';
 import {TopNavigation,Layout,Text,Button,Icon,Modal} from '@ui-kitten/components';
 import Slider from '../../../components/slider.component'
 import {TopBarTune} from '../../../components/TopBarTune'
 
+import LogoSvg from '../../../assets/icons/logo.svg'
 import Searchsvg from '../../../assets/icons/search-outline.svg'
 import { ScrollView } from 'react-native-gesture-handler';
+
+const {width,height} = Dimensions.get('window')
+
 
 const Search = (props) =>(
     <Icon {...props} name='search-outline'/>
@@ -24,7 +28,9 @@ class AltMainScreen extends React.Component{
     render(){
         const {navigation} =this.props
         const {title,modalVisible} =this.state
-        
+
+        const wdithLogo = (width*0.47);
+        const heightLogo = (wdithLogo*0.57);
         return(
             <SafeAreaView style={{flex:1}}>
                 {/* <TopNavigation title="메인" alignment="center"/>  */}
@@ -34,48 +40,53 @@ class AltMainScreen extends React.Component{
                     gbckfunc={()=>{navigation.goBack()}} 
                     gbckuse={false}
                 /> */}
-                <ScrollView style={{flex:1}}>
-                    <View style={{alignItems:'center'}}>
-                        <View style={{padding:10,borderWidth:1,borderColor:'#35367B',borderRadius:23,margin:10}}>
-                            <Text category='h1' style={{color:'#35367B'}}>더불어 성장하는</Text>
-                            <Text category='h2' style={{fontSize:26,color:'#35367B'}}>이 타 주 의 자 </Text>
+                <View style={{flex:1}}>
+                    <View style={{flex:1, alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff'}}>
+                        <View style={{height:'60%', alignItems:'center',justifyContent:'space-evenly'}}>
+                            <View style={{}}>
+                                <LogoSvg  width={wdithLogo} height={heightLogo}/>
+                            </View>
+                            <View>
+                                <TextInput 
+                                    style={styles.titleInput} 
+                                    value={title} 
+                                    onChangeText={text =>this.setState({title:text})}
+                                    placeholder="이타주의자들에게 질문 해보세요"
+                                    placeholderTextColor='#A897C2'
+                                    onEndEditing={()=>navigation.navigate('AltList',{title:title})}
+                                />
+                                <View style={{position:"absolute", right:20,top:20}}>
+                                    <Searchsvg height={25} width={25} fill='#000' />
+                                </View>
+                            </View>
+                            <View style={{backgroundColor:'#B09BDE',borderRadius:10,marginBottom:20}} >
+                                <TouchableOpacity 
+                                    style={{display:'flex', flexDirection:'row',padding:5}}
+                                    onPress={()=>navigation.navigate('AltList',{title:title})}
+                                >
+                                    <Text category='h2' style={{color:'#ffffff'}}>이타주의자 찾기</Text>
+                                
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                        <View>
-                            <TextInput 
-                                style={styles.titleInput} 
-                                value={title} 
-                                onChangeText={text =>this.setState({title:text})}
-                                placeholder="질문을 입력하고 이타주의자를 찾아보세요"
-                                placeholderTextColor='#A897C2'
-                                onEndEditing={()=>navigation.navigate('AltList',{title:title})}
+                        <View style={{position:'absolute' ,bottom:0}}>                        
+                            <Slider
+                                height={110} 
+                                image={[
+                                    {id:0,url:'/uploads/6e3a7e4e1f77abb3b060_20200904100225599.jpg'},
+                                    {id:1,url:'/uploads/59901fc0cb0b6526dee1_20200903153758446.jpg'}    
+                                ]}
+                                dotStyle={{position:'absolute'}}
                             />
-                        </View>
-                        <View style={{backgroundColor:'#B09BDE',borderRadius:10,marginBottom:20}} >
-                            <TouchableOpacity 
-                                style={{display:'flex', flexDirection:'row',padding:5}}
-                                onPress={()=>navigation.navigate('AltList',{title:title})}
-                            >
-                                <Text category='h2' style={{color:'#ffffff'}}>이타주의자 찾기</Text>
-                                <Searchsvg height={25} width={25} fill='#fff'/>
-                            </TouchableOpacity>
-                        </View>
-
                         <View style={{marginVertical:20,flexDirection:'row',justifyContent:'space-evenly',width:'100%'}}>
                             <Button onPress={()=>navigation.navigate('AltApply')}>지원</Button>
                             <Button onPress={()=>navigation.navigate('AltList')}>멘토리스트</Button>
                             <Button onPress={()=>navigation.navigate('AltOpqQueList')}>오픈 질문</Button>
                             <Button onPress={()=>navigation.navigate('AltQueToptab')}>일대일 질문</Button>
                         </View>
-                        <Slider
-                            height={110} 
-                            image={[
-                                {id:0,url:'/uploads/6e3a7e4e1f77abb3b060_20200904100225599.jpg'},
-                                {id:1,url:'/uploads/59901fc0cb0b6526dee1_20200903153758446.jpg'}    
-                            ]}
-                            dotStyle={{position:'absolute'}}
-                        />
+                        </View>
                     </View>
-                </ScrollView>
+                </View>
             </SafeAreaView>
         )
     }
@@ -94,7 +105,8 @@ const styles = StyleSheet.create({
         marginTop:10,
         marginBottom:5,
         fontSize:18,
-        minHeight:45
+        minHeight:45,
+        minWidth:'80%'
     }
 })
 

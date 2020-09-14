@@ -6,7 +6,9 @@ import {IlbanContent, GominContent, MarketContent, AlbaContent} from '../../Cont
 import {Mypage} from './Mypage';
 import {MyList} from './MyList';
 import {MyPoint} from './MyPoint';
-
+import {MyProfEdit} from './MyProfEdit';
+import {AltQueToptab} from '../L3Stack/AltQueToptab';
+import {AltQueContent,AltReplying} from '../L3Stack/Question';
 const {Navigator,Screen} = createStackNavigator();
 
 const BackIcon =  (props) =>(
@@ -34,9 +36,13 @@ export const MyStackNav = () =>(
         <Screen name = "Mypage" component={Mypage}/>
         <Screen name = "MyList" component={MyList}/>
         <Screen name = "MyPoint" component={MyPoint}/>
+        <Screen name = "MyProfEdit" component={MyProfEdit}/>
         <Screen name = "MyIlban" component={IlbanContent}/>
         <Screen name = "MyGomin" component={GominContent}/>
         <Screen name = "MyMarket" component={MarketContent}/>
         <Screen name = "MyAlba" component={AlbaContent}/>
+        <Screen name = "MyQueList" component={AltQueToptab}/>
+        <Screen name = "AltReplying" component={AltReplying}/>
+        <Screen name = "AltQueContent" component={AltQueContent}/>
     </Navigator>
 )

@@ -172,10 +172,11 @@ class RegisterScreen extends React.Component {
               <Input
                 style={{padding: 3}}
                 placeholder="이메일 (ID 겸용) "
-                onChangeText={() => this.setState({mem_email: mem_email})}
+                onChangeText={(mem_email) => this.setState({mem_email: mem_email})}
               />
               <Input
                 style={{padding: 3}}
+                secureTextEntry={true}
                 placeholder="비밀번호"
                 onChangeText={(mem_password) =>
                   this.setState({mem_password: mem_password})
@@ -184,6 +185,7 @@ class RegisterScreen extends React.Component {
               />
               <Input
                 style={{padding: 3}}
+                secureTextEntry={true}
                 placeholder="비밀번호 확인"
                 onChangeText={(mem_password_re) =>
                   this.setState({mem_password_re: mem_password_re})
