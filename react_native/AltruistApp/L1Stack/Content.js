@@ -586,10 +586,11 @@ class MarketContent extends React.Component {
     constructor(props){
         super(props);
         this.state ={
-            post : {} ,
+            post : {},
             image : [],
             comment : '',
             cmt_content : '',
+            cmt_id:'',
             isLoading : true,
             refreshing : false,
             replying:false,
