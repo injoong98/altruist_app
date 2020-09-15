@@ -252,7 +252,7 @@ class MarketWrite extends React.Component {
                 [
                     { 
                         text: "OK", 
-                        onPress: ()=> {this.gobackfunc()}
+                        onPress: ()=> this.gobackfunc()
                     }
                 ],
                 { cancelable: false }
@@ -364,45 +364,46 @@ class MarketWrite extends React.Component {
                 <Divider />
                 
                 <ScrollView>
-                    <Layout style={{paddingVertical:10}}>
-                        <Layout style={styles.container}>
+                    <View style={{paddingVertical:10, backgroundColor:'#F4F4F4'}}>
+                        <View style={styles.container}>
                             <Text>상품명</Text>
                             <Input
                                 style={styles.input}
                                 onChangeText={text => this.setState({post_title : text})}
                                 // value={itemName}
                             />
-                        </Layout>
-                        <Layout style={{...styles.container, flexDirection:'row'}}>
-                            <Layout style={{flex:1}}>
+                        </View>
+                        <View style={{...styles.container, flexDirection:'row'}}>
+                            <View style={{flex:1}}>
                                 <Text>판매가격</Text>
                                 <Input
-                                    style={styles.input}   
+                                    style={styles.input}
+                                    keyboardType='numeric'
                                     onChangeText={text => this.setState({deal_price : text})}
                                     // value={price}
                                 />
-                            </Layout>
-                            <Layout style={{flex:1}}>
+                            </View>
+                            <View style={{flex:1}}>
                                 <Text>거래희망지역</Text>
                                 <Input
                                     style={styles.input}
                                     onChangeText={text => this.setState({post_location : text})}
                                     // value={loaction}
                                 />
-                            </Layout>
-                        </Layout>
-                        <Layout style={styles.container}>
+                            </View>
+                        </View>
+                        <View style={styles.container}>
                             <Text>사진</Text>
                             <ScrollView horizontal={true} style={styles.input}>
-                                <TouchableOpacity style={{width:100, height:100, backgroundColor:'gray'}} onPress={()=>this.onClickAddImage()}>
-                                    <Image source={{uri : 'http://dev.unyict.org/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                                <TouchableOpacity style={{width:100, height:100, backgroundColor:'white', alignItems:'center', justifyContent:'center'}} onPress={()=>this.onClickAddImage()}>
+                                    <Camsvg/>
                                 </TouchableOpacity>
                                 {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
                             </ScrollView>                                                 
-                        </Layout>
-                        <Layout style={styles.container}>
+                        </View>
+                        <View style={styles.container}>
                             <Text>거래방법</Text>
-                            <Layout style={styles.deal_type}>
+                            <View style={styles.deal_type}>
                                 <TouchableWithoutFeedback onPress={()=>this.setState({deal_type : 0})}>
                                     <View style={this.state.deal_type==0? {...styles.deal_box, opacity:1.0}:styles.deal_box}>
                                         <Text style={styles.deal_type_text}>직거래</Text>
@@ -418,18 +419,18 @@ class MarketWrite extends React.Component {
                                         <Text style={styles.deal_type_text}>둘다가능</Text>
                                     </View>
                                 </TouchableWithoutFeedback>
-                            </Layout>
-                        </Layout>
-                        <Layout style={styles.container}>
+                            </View>
+                        </View>
+                        <View style={styles.container}>
                             <Text>상세정보</Text>
                             <Input
                                 onChangeText={text => this.setState({post_content : text})}
                                 // value={detail}
                             />
-                        </Layout>
+                        </View>
                         <Button onPress={()=>this.submitPost()}>등 록</Button>
                         {/* <Button onPress={()=>console.log(this.state.images)}>콘솔</Button> */}
-                    </Layout>
+                    </View>
                 </ScrollView>
             </SafeAreaView>
             </Root>
@@ -1029,6 +1030,7 @@ const styles = StyleSheet.create({
         marginVertical : 2,
         margin : 10,
         marginTop : 5,
+        backgroundColor : 'white'
     },
     photo: {
         justifyContent: 'center', 
