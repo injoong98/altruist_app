@@ -1012,6 +1012,7 @@ class AlbaContent extends React.Component {
             isLoading : true,
             image_height : 0,
             popoverVisibel: false,
+            blameModalVisible : false,
             deleteModalVisible : false,
             spinnerModalVisible : false,
         }
@@ -1079,16 +1080,16 @@ class AlbaContent extends React.Component {
         placement='bottom start'
         onBackdropPress={() => this.setState({popoverVisibel:false})}>
             <View>
-                {/* <TouchableOpacity 
-                    onPress={()=>{this.postscrap();this.setState({popoverVisibel:false})}} 
+                <TouchableOpacity 
+                    onPress={()=>{this.postscrap(); this.setState({popoverVisibel:false, ScrapModalVisible:true})}} 
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
                     <Text category='h3'>스크랩</Text>
-                </TouchableOpacity> */}
-                {/* <TouchableOpacity 
-                    onPress={()=>{this.postBlameConfirm();this.setState({popoverVisibel:false})}}
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{this.setState({popoverVisibel:false, blameModalVisible:true})}}
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
                     <Text category='h3'>신고</Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
                 {/* <TouchableOpacity 
                     onPress={()=>{
                         this.setState({popoverVisibel:false});
@@ -1111,6 +1112,39 @@ class AlbaContent extends React.Component {
         </Popover>
     )
 
+    
+    postscrap = async()=>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        
+        Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        .then(response=>{
+            alert(`${JSON.stringify(response.data)}`)
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+
+    postBlame = ()=>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        
+        Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+        .then(response=>{
+            this.setState({spinnerModalVisible:false});
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+                this.getPostData(this.state.post.post_id)
+                alert(`${JSON.stringify(response.data.message)}`)
+            }
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    
     updateData = () => {
         alert('update');
     }
@@ -1132,7 +1166,6 @@ class AlbaContent extends React.Component {
     }
 
 
-
     // getImageSize (uri, passProps) {
     //     const img_url = "http://dev.unyict.org"+uri;
     //     const imagesMaxWidth = Dimensions.get('window').width;
@@ -1147,7 +1180,7 @@ class AlbaContent extends React.Component {
     // }
 
     render(){
-        const {post, deleteModalVisible, spinnerModalVisible} = this.state;
+        const {post, blameModalVisible, deleteModalVisible, spinnerModalVisible} = this.state;
         console.log('post_id=>'+JSON.stringify(post))
         // const defaultRenderer ={
         //     renderers:{
@@ -1189,17 +1222,6 @@ class AlbaContent extends React.Component {
                                 :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org/'+this.state.thumb_image}}/>}
                                 <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
-                            {/* <Layout style ={styles.icons}>
-                                <Icon
-                                    style={{width:32,height:32, flex : 1}}
-                                    fill='black'
-                                    name='share'
-                                />
-                                <View style={{flex : 10, marginLeft:10}}>
-                                    <Text category='h4'>{post.post_email}</Text>
-                                    <Text category='h4'>{post.post_hp}</Text>
-                                </View>
-                            </Layout> */}
                         </Card>
                         
                         <Card disabled={true} style={styles.item}>
@@ -1272,6 +1294,18 @@ class AlbaContent extends React.Component {
                                         취소
                                     </Button>
                                 </Card>
+                    </Modal>
+                    <Modal
+                        visible={blameModalVisible}
+                        backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                        onBackdropPress={() => this.setState({blameModalVisible:false})}>
+                        <Confirm 
+                            confirmText="게시글을 신고하시겠습니까?"
+                            frstText="예"
+                            OnFrstPress={() =>{this.setState({blameModalVisible:false,spinnerModalVisible:true});this.postBlame()}}
+                            scndText="아니오"
+                            OnScndPress={() => this.setState({blameModalVisible:false})}
+                        />
                     </Modal>
                     <Modal
                         visible={deleteModalVisible}
