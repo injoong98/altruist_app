@@ -1045,7 +1045,7 @@ class AlbaContent extends React.Component {
                         return {uri : 'http://dev.unyict.org'+i.origin_image_url, height : this.scaledHeight(i.pfi_width, i.pfi_height, Dimensions.get('window').width)};
                     })
                 })
-                console.log(this.state.file_images);
+                // console.log(this.state.file_images);
             }
         })
         .catch((error)=>{
@@ -1090,19 +1090,19 @@ class AlbaContent extends React.Component {
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
                     <Text category='h3'>신고</Text>
                 </TouchableOpacity>
-                {/* <TouchableOpacity 
+                <TouchableOpacity 
                     onPress={()=>{
                         this.setState({popoverVisibel:false});
-                        this.props.navigation.navigate('GominWrite',
+                        this.props.navigation.navigate('AlbaWrite',
                             {
                                 statefunction:this.statefunction,
                                 mode:'edit',
                                 post:this.state.post,
-                                content:this.state.content,
+                                file_images:this.state.file_images,
                             })}}
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
                     <Text category='h3'>수정</Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
                 <TouchableOpacity 
                     onPress={()=>{this.setState({popoverVisibel:false,deleteModalVisible:true})}}
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
@@ -1145,8 +1145,9 @@ class AlbaContent extends React.Component {
         })
     }
     
-    updateData = () => {
-        alert('update');
+    statefunction=(str)=>{
+        this.setState({isLoading:true});
+        this.componentDidMount()    
     }
 
     postAlbaDelete = async(id) => {

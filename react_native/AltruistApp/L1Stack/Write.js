@@ -445,14 +445,14 @@ class AlbaWrite extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            post_title : '',
-            post_content : '',
-            post_location : '',
-            post_hp : '',
-            alba_type : 0,
-            alba_salary_type : new IndexPath(0),
-            alba_salary : '',
-            images : [],
+            post_title : this.props.route.params.mode=='edit' ? this.props.route.params.post.post_title:'',
+            post_content : this.props.route.params.mode=='edit' ? this.props.route.params.post.post_content:'',
+            post_location : this.props.route.params.mode=='edit' ? this.props.route.params.post.post_location:'',
+            post_hp : this.props.route.params.mode=='edit' ? this.props.route.params.post.post_hp:'',
+            alba_type : this.props.route.params.mode=='edit' ? this.props.route.params.post.alba_type:0,
+            alba_salary_type : this.props.route.params.mode=='edit' ? new IndexPath(this.props.route.params.post.alba_salary_type):new IndexPath(0),
+            alba_salary : this.props.route.params.mode=='edit' ? this.props.route.params.post.alba_salary:'',
+            images : this.props.route.params.mode=='edit' ? this.props.route.params.file_images:[],
             isTipVisible:false,
             isFollowUp:false,
             isNoSumnail:true,
@@ -483,7 +483,8 @@ class AlbaWrite extends React.Component{
         this.setState({isNoSumnail:nextChecked});
     }
     submit_alba_post = async() => {
-        console.log(this.state);
+        const url = this.props.route.params.mode=='edit' ?'http://dev.unyict.org/api/board_write/modify' :'http://dev.unyict.org/api/board_write/write/b-a-3'
+        
         const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary,images, isNoSumnail} = this.state;
         let formdata = new FormData();
         formdata.append("brd_key", 'b-a-3');
@@ -494,8 +495,9 @@ class AlbaWrite extends React.Component{
         formdata.append("alba_type", alba_type);
         formdata.append("alba_salary_type", alba_salary_type.row);
         formdata.append("alba_salary", alba_salary);
-        console.log(isNoSumnail?1:0);
-        formdata.append("deal_status", isNoSumnail?1:0);
+        // console.log(isNoSumnail?1:0);
+        // formdata.append("deal_status", isNoSumnail?1:0);
+        
         images.map(item=>{
             formdata.append('post_file[]',
                 {
@@ -505,17 +507,25 @@ class AlbaWrite extends React.Component{
                 }
             )
         })
+        this.props.route.params.mode=='edit' ?
+            formdata.append('post_id',this.props.route.params.post.post_id)            
+            :
+            null
+        
         console.log(formdata);
-        await axios.post('http://dev.unyict.org/api/board_write/write/b-a-3', formdata)
-        .then(response=>{
+        await axios.post(url, formdata)
+        .then((response)=>{
             console.log(response);
             Alert.alert(
-                "게시글",
-                "게시글 작성 완료",
+                "알바천일국",
+                this.props.route.params.mode=='edit' ?
+                `"게시글 수정 완료"\n${JSON.stringify(response.data)}`
+                :
+                `"게시글 작성 완료"\n${JSON.stringify(response.data)}`,
                 [
                     { 
-                        text: "OK", 
-                        onPress: ()=> {this.gobackfunc()}
+                        text: "닫기", 
+                        onPress: ()=> this.gobackfunc()
                     }
                 ],
                 { cancelable: false }
@@ -529,15 +539,15 @@ class AlbaWrite extends React.Component{
     submit_alba_Alert= () => {
         Alert.alert(
             "알바천일국",
-            "게시글을 작성하시겠습니까?",
+            this.props.route.params.mode=='edit' ?'게시글을 수정하시겠습니까?':"게시글을 작성하시겠습니까?",
             [
-                {
-                    text: "Cancel",
-                    onPress: () => alert('취소했습니다.')
-                },
                 { 
-                    text: "OK", 
+                    text: "작성", 
                     onPress: ()=> this.submit_alba_post()
+                },
+                {
+                    text: "취소",
+                    onPress: () => alert('취소했습니다.')
                 }
             ],
             { cancelable: false }
@@ -607,7 +617,8 @@ class AlbaWrite extends React.Component{
         //console.log(image);
         return (
             <View key={image.uri}>
-                <Image style={styles.market_RenderImage} source={image.url}/>
+                {this.props.route.params.mode=='edit'? <Image style={styles.market_RenderImage} source={image.uri}/>
+                :<Image style={styles.market_RenderImage} source={image.url}/>}
             </View>
         )
     }
@@ -625,8 +636,14 @@ class AlbaWrite extends React.Component{
         </TouchableOpacity>
     );
 
+    componentDidMount = () => {
+
+    }
+
     render(){
+        const {post_title, post_content, post_location, post_hp, alba_salary, alba_salary_type, alba_type} = this.state;
         const {navigation} = this.props;
+        console.log(this.state.images);
         return(
             <SafeAreaView style={{flex:1,}}>
                 <TopBarTune 
@@ -641,6 +658,7 @@ class AlbaWrite extends React.Component{
                 <Layout style={{flex:10, backgroundColor : '#F4F4F4'}}>
                     <ScrollView>
                         <TextInput
+                            value={post_title}
                             style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, marginTop : 10,
                                 backgroundColor : 'white', paddingLeft : 20, fontSize : 24}}
                             placeholder='Input Title'
@@ -651,6 +669,7 @@ class AlbaWrite extends React.Component{
                                 backgroundColor : 'white', paddingLeft : 20, }}>
                                 <View style={{flexDirection : 'row'}}>
                                     <RadioGroup
+                                        value={this.state.alba_salary_type}
                                         style={{flexDirection:'row'}}
                                         selectedIndex = {this.state.alba_type}
                                         onChange={(index) => { this.setState({alba_type:index})}}>
@@ -688,6 +707,7 @@ class AlbaWrite extends React.Component{
                             </View>
                             <View style={{flex : 1}}>
                                 <TextInput
+                                    value={post_hp}
                                     style={{flex : 1, borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
                                         backgroundColor : 'white', paddingLeft : 20, fontSize : 16}}
                                     category = 'h4'
@@ -696,6 +716,7 @@ class AlbaWrite extends React.Component{
                                     onChangeText ={(nextText) => {this.setState({post_hp:nextText})}}
                                 />
                                 <TextInput
+                                    value={alba_salary}
                                     style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
                                         backgroundColor : 'white', paddingHorizontal : 20, fontSize : 16}}
                                     size='medium'
@@ -707,12 +728,14 @@ class AlbaWrite extends React.Component{
                             </View>
                         </View>
                         <TextInput
+                            value={post_location}
                             style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
                                     backgroundColor : 'white', paddingLeft : 20, fontSize : 20}}
                             placeholder='Input Location'
                             onChangeText ={(nextText) => {this.setState({post_location:nextText})}}
                             />
                     <TextInput
+                        value={post_content}
                         style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
                             backgroundColor : 'white', paddingHorizontal : 20, fontSize : 20}}
                         multiline={true}
