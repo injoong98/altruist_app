@@ -654,7 +654,7 @@ class MarketContent extends React.Component {
             url : this.state.image[index].url,
         }
     }
-    
+
     commentWrite= ()=>{
         this.setState({replying:false,cmt_id:''})
         this.refs.commentInput.blur()

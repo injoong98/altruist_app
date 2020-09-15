@@ -428,7 +428,7 @@ class MarketWrite extends React.Component {
                             />
                         </Layout>
                         <Button onPress={()=>this.submitPost()}>등 록</Button>
-                        <Button onPress={()=>console.log(this.state.images)}>콘솔</Button>
+                        {/* <Button onPress={()=>console.log(this.state.images)}>콘솔</Button> */}
                     </Layout>
                 </ScrollView>
             </SafeAreaView>

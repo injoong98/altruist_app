@@ -65,32 +65,35 @@ class MarketScreen extends React.Component {
   renderItem = ({item}) => (
     <TouchableOpacity style={styles.item} onPress={() => {this.props.navigation.navigate('MarketContent', {post_id:item.post_id})}}>
         <View style={{width:100}}>
-            <Image source={item.origin_image_url? {uri : 'http://dev.unyict.org'+item.origin_image_url}:{uri : 'http://dev.unyict.org'+item.thumb_url}} style={{flex : 1, width:'100%', resizeMode:'cover'}}/>
+            <Image 
+              source={item.origin_image_url? {uri : 'http://dev.unyict.org'+item.origin_image_url}:{uri : 'http://dev.unyict.org'+item.thumb_url}} 
+              style={{flex : 1, width:'100%', resizeMode:'cover', borderTopLeftRadius:10, borderBottomLeftRadius:10}}
+            />
         </View>
-        <Layout style={styles.textArea}>
-            <Layout style={styles.textTop}>
+        <View style={styles.textArea}>
+            <View style={styles.textTop}>
             <Text style={styles.text} category='h4'>
                 {item.title}
             </Text>
-            </Layout>
-            <Layout style={{}}>
+            </View>
+            <View style={{}}>
             <Text style={{marginLeft:4, color : 'gray'}} category='c2'>
                 {item.post_location} 
             </Text>
-            </Layout>
-            <Layout style={styles.textBottom}>
-            <Layout style={{flex:1, justifyContent:'center'}}>
+            </View>
+            <View style={styles.textBottom}>
+            <View style={{flex:1, justifyContent:'center'}}>
                 <Text style={styles.text} category='h5'>
                     {item.deal_price.replace(/(<([^>]+)>)/ig,"")} 원
                 </Text>
-            </Layout>
-            <Layout style={{justifyContent: 'center'}}>
+            </View>
+            <View style={{justifyContent: 'center'}}>
                 <Text style={styles.text}>
                     {item.post_nickname}
                 </Text>
-            </Layout>
-            </Layout>
-        </Layout>
+            </View>
+            </View>
+        </View>
     </TouchableOpacity>
   );
   
@@ -165,12 +168,15 @@ const styles = StyleSheet.create({
         flex:1, 
         flexDirection:'row', 
         height:100, 
-        margin:5
+        margin:5,
+        backgroundColor:'#F4F4F4',
+        borderRadius:10,
     },
     textArea: {
         flex: 1,
         paddingHorizontal: 10,
-        maxHeight: 100
+        paddingVertical: 5,
+        maxHeight: 100,
     },
     textTop: {
         flex: 1,
