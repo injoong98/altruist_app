@@ -202,6 +202,7 @@
 		30223CEA8A1A447C903DB3B0 /* view.svg in Resources */ = {isa = PBXBuildFile; fileRef = 8074AE6D39D8404B81DDB50E /* view.svg */; };
 		5923692FAA4E413F8C57406D /* write.svg in Resources */ = {isa = PBXBuildFile; fileRef = 92F78A2BA36945B2959379F2 /* write.svg */; };
 		4F98CE9C3A8B405DA4594829 /* noimage.png in Resources */ = {isa = PBXBuildFile; fileRef = E122576643F648C09984181A /* noimage.png */; };
+		FD947C1103BE489A87175833 /* logo.svg in Resources */ = {isa = PBXBuildFile; fileRef = ED33360450E146C6B1246886 /* logo.svg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -423,6 +424,7 @@
 		8074AE6D39D8404B81DDB50E /* view.svg */ = {isa = PBXFileReference; name = "view.svg"; path = "../assets/icons/view.svg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		92F78A2BA36945B2959379F2 /* write.svg */ = {isa = PBXFileReference; name = "write.svg"; path = "../assets/icons/write.svg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		E122576643F648C09984181A /* noimage.png */ = {isa = PBXFileReference; name = "noimage.png"; path = "../assets/images/noimage.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		ED33360450E146C6B1246886 /* logo.svg */ = {isa = PBXFileReference; name = "logo.svg"; path = "../assets/icons/logo.svg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -719,6 +721,7 @@
 				8074AE6D39D8404B81DDB50E /* view.svg */,
 				92F78A2BA36945B2959379F2 /* write.svg */,
 				E122576643F648C09984181A /* noimage.png */,
+				ED33360450E146C6B1246886 /* logo.svg */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1048,6 +1051,7 @@
 				30223CEA8A1A447C903DB3B0 /* view.svg in Resources */,
 				5923692FAA4E413F8C57406D /* write.svg in Resources */,
 				4F98CE9C3A8B405DA4594829 /* noimage.png in Resources */,
+				FD947C1103BE489A87175833 /* logo.svg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

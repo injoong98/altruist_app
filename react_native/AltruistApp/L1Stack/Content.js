@@ -73,6 +73,7 @@ class GominContent extends React.Component{
     postDelete = async () => {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
+        console.log(formdata);
         await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
         .then(res=>{
             this.setState({spinnerModalVisible:false})
@@ -585,10 +586,11 @@ class MarketContent extends React.Component {
     constructor(props){
         super(props);
         this.state ={
-            post : {} ,
+            post : {},
             image : [],
             comment : '',
             cmt_content : '',
+            cmt_id:'',
             isLoading : true,
             refreshing : false,
             replying:false,
@@ -635,7 +637,115 @@ class MarketContent extends React.Component {
             alert('error')
         })
     }
-
+    
+    MoreAction = () =>(
+        // <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{this.setState({modalVisible:true})}}/>
+        <Popover
+        anchor={this.renderPostMore}
+        visible={this.state.popoverVisibel}
+        placement='bottom start'
+        onBackdropPress={() => this.setState({popoverVisibel:false})}>
+            <View>
+                <TouchableOpacity 
+                    onPress={()=>{this.postscrap();this.setState({popoverVisibel:false})}} 
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>스크랩</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{this.postBlameConfirm();this.setState({popoverVisibel:false})}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>신고</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{
+                        this.setState({popoverVisibel:false});
+                        this.props.navigation.navigate('MarketWrite',
+                            {
+                                statefunction:this.statefunction,
+                                mode:'edit',
+                                post:this.state.post,
+                                content:this.state.content,
+                            })}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>수정</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{this.setState({popoverVisibel:false,deleteModalVisible:true})}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>삭제</Text>
+                </TouchableOpacity>
+            </View>
+        </Popover>
+    )
+    
+    renderPostMore=()=>(
+        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisibel:true})}>
+            <MoreLsvg height={24} width={24}/>
+        </TouchableOpacity>
+    )
+    
+    postscrap = async()=>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        
+        Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        .then(response=>{
+            alert(`${JSON.stringify(response.data)}`)
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    
+    postBlame = ()=>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        
+        Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+                this.getPostData(this.state.post.post_id)
+                alert(`${JSON.stringify(response.data.message)}`)
+            }
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    postBlameConfirm = () =>{
+        Alert.alert(
+            "게시글",
+            "이 게시글을 신고하시겠습니까?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => alert('취소했습니다.')
+                },
+                { 
+                    text: "OK", 
+                    onPress: ()=> this.postBlame()
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+    postDelete = async () => {
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        console.log(formdata);
+        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        .then(res=>{
+            this.setState({spinnerModalVisible:false})
+            this.props.navigation.goBack();
+            this.props.route.params.OnGoback();
+            alert(JSON.stringify(res.data))
+        })
+        .catch(err=>{
+            alert(JSON.stringify(err))
+        })
+    }
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
@@ -654,7 +764,7 @@ class MarketContent extends React.Component {
             url : this.state.image[index].url,
         }
     }
-    
+
     commentWrite= ()=>{
         this.setState({replying:false,cmt_id:''})
         this.refs.commentInput.blur()
@@ -907,7 +1017,7 @@ class MarketContent extends React.Component {
             </View>
             :
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="수수마켓" alignment="center" accessoryLeft={this.BackAction} style={styles.topbar}/>
+                <TopNavigation title="" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.MoreAction} style={styles.topbar}/>
                 <Layout style={{flex:1}}>
                     <List
                         ref={"pstcmtlist"} 
