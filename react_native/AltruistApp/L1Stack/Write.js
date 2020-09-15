@@ -335,7 +335,7 @@ class MarketWrite extends React.Component {
     renderImage(image) {
         //console.log(image);
         return (
-            <View key={image.uri}>
+            <View key={image.id}>
                 <Image style={styles.market_RenderImage} source={image.url}/>
             </View>
         )
