@@ -25,10 +25,10 @@ class AlbaScreen extends React.Component {
   }
 
   Alba_salary_type = [
-    {color : '#A7D4DE', str : '시'},
-    {color : '#EAB0B3', str : '일'},
-    {color : '#B09BDE', str : '주'},
-    {color : 'black', str : '월'},  
+    {color : '#EAB0B3', str : '시'},
+    {color : '#E3898E', str : '일'},
+    {color : '#CA676C', str : '주'},
+    {color : '#B12D34', str : '월'},
   ]
 
   // const renderItemHeader = (headerProps, info) => (
@@ -116,17 +116,22 @@ class AlbaScreen extends React.Component {
                 <Text style={{marginTop :5, marginBottom : 5, fontSize : 20}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
                 <Divider style={{borderWidth : 0.5}}/>
                 <View style={{flex : 1, flexDirection : 'row'}}>
+                  <Text style={[styles.tagstyle,{backgroundColor:item.alba_type == 0?'#978DC7':'#63579D'}]} category='c2'>
+                    {item.alba_type == 0?'단기':'장기'}
+                  </Text>
                   <Text category='c2' style={{flex:1.2}} numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
                   <View style={{flex : 1, flexDirection : 'row'}}>
-                    <Text category='c2' style={{color : this.Alba_salary_type[item.alba_salary_type].color}}>{this.Alba_salary_type[item.alba_salary_type].str}</Text>
+                    <Text style={[styles.tagstyle,{backgroundColor:this.Alba_salary_type[item.alba_salary_type].color}]} category='c2'>
+                    {' '+this.Alba_salary_type[item.alba_salary_type].str}
+                    </Text>
                     <Text category='c2'> {(item.alba_salary != '추후협의'?item.alba_salary+'원':item.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                   </View>
                 </View>
             </View>
             <View style={styles.image}>
-              {item.origin_image_url?
-                <Image source={{uri:'http://dev.unyict.org'+item.origin_image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
-                :<Image source={{uri:'http://dev.unyict.org'+this.state.image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
+              {(item.origin_image_url)?
+                <Image source={{uri:'http://dev.unyict.org'+item.thumb_url}} style={{flex : 1, marginLeft: 10, width : '100%', height : 90, resizeMode:'contain'}}/>
+                :<Image source={{uri:'http://dev.unyict.org'+item.origin_image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
               }
             </View>
         </View>
@@ -205,6 +210,13 @@ const styles = StyleSheet.create({
     right : 10,
     bottom : 10,
   },
+  tagstyle:{
+    borderRadius : 20,
+    paddingHorizontal : 5,
+    textAlignVertical : 'center',
+    justifyContent : 'center',
+    color : 'white',
+  }
 });
 
 export {AlbaScreen} ;

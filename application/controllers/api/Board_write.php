@@ -887,7 +887,7 @@ class Board_write extends CB_Controller
 			//수수마켓 추가 컬럼  
 			$updatedata['deal_price'] = $this->input->post('deal_price', null, '');
 			$updatedata['deal_type'] = $this->input->post('deal_type', null, '');
-			$updatedata['deal_status	'] = $this->input->post('deal_status', null, '');
+			$updatedata['deal_status'] = $this->input->post('deal_status', null, '');
 
 			
 
