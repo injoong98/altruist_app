@@ -1036,7 +1036,8 @@ class AlbaContent extends React.Component {
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
-                this.setState({thumb_image: response.data.view.file_image.shift().origin_image_url});
+                if(response.data.view.deal_status > 0)
+                    this.setState({thumb_image: response.data.view.file_image.shift().origin_image_url});
                 this.setState({
                     file_images : response.data.view.file_image.map(i => {
                         console.log('received image', i);
@@ -1184,7 +1185,8 @@ class AlbaContent extends React.Component {
                             </Layout>
                             <Divider/>
                             <Layout style={{flexDirection:'row', alignItems : 'center'}}>
-                                <Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org'+this.state.thumb_image}}/>
+                                {post.deal_status?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>
+                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org/'+this.state.thumb_image}}/>}
                                 <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
                             {/* <Layout style ={styles.icons}>

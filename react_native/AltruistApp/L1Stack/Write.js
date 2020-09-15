@@ -11,6 +11,7 @@ import { TopBarTune } from '../components/TopBarTune';
 
 import Camsvg from '../assets/icons/Icon_Cam.svg'
 import Tooltipsvg from '../assets/icons/tooltip.svg'
+import Noimage from '../assets/images/noimage.png';
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -451,12 +452,10 @@ class AlbaWrite extends React.Component{
             alba_type : 0,
             alba_salary_type : new IndexPath(0),
             alba_salary : '',
-            post_image : [],
-            imagesource : {},
             images : [],
             isTipVisible:false,
             isFollowUp:false,
-            image:''
+            isNoSumnail:true,
         }
     }
 
@@ -480,21 +479,23 @@ class AlbaWrite extends React.Component{
         this.setState({isFollowUp:nextChecked});
         this.setState({alba_salary:'추후협의'});
     }
+    setSumnailCheck = (nextChecked) => {
+        this.setState({isNoSumnail:nextChecked});
+    }
     submit_alba_post = async() => {
         console.log(this.state);
-        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary,images} = this.state;
+        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary,images, isNoSumnail} = this.state;
         let formdata = new FormData();
         formdata.append("brd_key", 'b-a-3');
         formdata.append("post_title", post_title);
         formdata.append("post_content", post_content);
-        formdata.append("post_nickname", 'roothyo');
-        formdata.append("post_email", 'roothyo@soongsil.ac.kr');
-        formdata.append("post_password", '1234');
         formdata.append("post_location", post_location);
         formdata.append("post_hp", post_hp);
         formdata.append("alba_type", alba_type);
         formdata.append("alba_salary_type", alba_salary_type.row);
         formdata.append("alba_salary", alba_salary);
+        console.log(isNoSumnail?1:0);
+        formdata.append("deal_status", isNoSumnail?1:0);
         images.map(item=>{
             formdata.append('post_file[]',
                 {
@@ -730,6 +731,14 @@ class AlbaWrite extends React.Component{
                         <ScrollView horizontal style={{height : 150}}>
                             {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
                         </ScrollView>
+                        <View style={{flexDirection : 'row', flex: 1, alignItems : 'center'}}>
+                        <CheckBox
+                            style={{margin : 5}}
+                            checked={this.state.isNoSumnail}
+                            onChange={nextChecked => this.setSumnailCheck(nextChecked)}>
+                        </CheckBox>
+                        <Text style={{fontSize : 12}} category='c2'> {this.state.isNoSumnail?'회사 로고(썸네일)가 없을경우 선택해주세요.':'맨 첫 이미지로 썸네일을 넣어주세요.'}</Text>
+                        </View>
                     </Layout>
                 </ScrollView>
                 </Layout>   
