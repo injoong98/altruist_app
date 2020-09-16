@@ -19,7 +19,7 @@ class AlbaScreen extends React.Component {
       isListLoading : false,
       isNoMoreData : false,
       lists : [],
-      image_url : '../../../assets/images/noimage.png',
+      image_url : '/react_native/AltruistApp/assets/images/noimage.png',
       refreshing : false,
     }
   }
@@ -129,9 +129,9 @@ class AlbaScreen extends React.Component {
                 </View>
             </View>
             <View style={styles.image}>
-              {item.origin_image_url?
-                <Image source={{uri:'http://dev.unyict.org'+item.origin_image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
-                :<Image source={{uri:'http://dev.unyict.org'+this.state.image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
+              {(item.origin_image_url)?
+                <Image source={{uri:'http://dev.unyict.org'+item.thumb_url}} style={{flex : 1, marginLeft: 10, width : '100%', height : 90, resizeMode:'contain'}}/>
+                :<Image source={{uri:'http://dev.unyict.org'+item.origin_image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
               }
             </View>
         </View>

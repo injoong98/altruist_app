@@ -191,7 +191,9 @@ class RegisterScreen extends React.Component {
                   //{} 하면 obj로 던져서 obj.이름 해야지 됌
                   this.CheckPassword(this.state.mem_password, mem_password_re);
                 }}
-                caption={this.state.captionCheck}
+                caption={() => (
+                  <Text style={{color: 'red'}}>{this.state.captionCheck}</Text>
+                )}
                 secureTextEntry
               />
               <Input
