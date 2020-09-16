@@ -208,7 +208,7 @@ class MarketWrite extends React.Component {
             post_title: '',
             post_content: '',
             post_location: '',
-            deal_price: '',
+            deal_price: 0,
             deal_type: 2, // 0: 직거래, 1: 배송, 2: 둘다가능
             deal_status: 1, // 0: 판매완료, 1: 판매중
             images: [],
@@ -241,7 +241,7 @@ class MarketWrite extends React.Component {
                     }
                 )
             })
-            
+        //10.0.1.1  dev.unyict.org 
         await axios.post(
             'http://dev.unyict.org/api/board_write/write/b-a-2',
             formdata
