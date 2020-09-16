@@ -229,11 +229,15 @@ class Board_write extends CB_Controller
 			)
 		);
 
+		if ($this->member->is_member() === false) {
+			response_result($_view,'Err','비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
+		}
+
 		// 글 한개만 작성 가능
 		if (element('use_only_one_post', $board) && $is_admin === false) {
 			if ($this->member->is_member() === false) {
 				//alert('비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
-				response_result($view,'Err','비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
+				response_result($_view,'Err','비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
 			}
 			$mywhere = array(
 				'brd_id' => element('brd_id', $board),
@@ -242,36 +246,30 @@ class Board_write extends CB_Controller
 			$cnt = $this->Post_model->count_by($mywhere);
 			if ($cnt) {
 				//alert('이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
-				response_result($view,'Err','이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
+				response_result($_view,'Err','이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
 			}
 		}
 
 		// 글쓰기 기간제한
 		if (element('write_possible_days', $board) && $is_admin === false) {
 			if ($this->member->is_member() === false) {
-				//alert('비회원은 글을 작성할 수 있는 권한이 없습니다. 회원이사라면 로그인 후 이용해주세요');
-				response_result($view,'Err','이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
+				response_result($_view,'Err','이 게시판은 한 사람이 하나의 글만 등록 가능합니다.');
 			}
 
 			if ((ctimestamp() - strtotime($this->member->item('mem_register_datetime'))) < element('write_possible_days', $board) * 86400 ) {
-				alert('이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
-				//	alert('이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
-					response_result($view,'Err','이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
+					response_result($_view,'Err','이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
 			}
 		}
 
 		if ($this->session->userdata('lastest_post_time') && $this->cbconfig->item('new_post_second')) {
 			if ($this->session->userdata('lastest_post_time') >= ( ctimestamp() - $this->cbconfig->item('new_post_second')) && $is_admin === false) {
-				//alert('이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
-				response_result($view,'Err','이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
+				response_result($_view,'Err','이 게시판은 회원가입한지 ' . element('write_possible_days', $board) . '일이 지난 회원만 게시물 작성이 가능합니다');
 			}
 		}
 
 		if (element('use_point', $board) && $this->cbconfig->item('block_write_zeropoint') && element('point_write', $board) < 0
 			&& ($this->member->item('mem_point') + element('point_write', $board)) < 0 ) {
-			//alert('회원님은 포인트가 부족하므로 글을 작성하실 수 없습니다. 글 작성시 ' . (element('point_write', $board) * -1) . ' 포인트가 차감됩니다');
-			//return false;
-			response_result($view,'Err','회원님은 포인트가 부족하므로 글을 작성하실 수 없습니다. 글 작성시 ' . (element('point_write', $board) * -1) . ' 포인트가 차감됩니다');
+			response_result($_view,'Err','회원님은 포인트가 부족하므로 글을 작성하실 수 없습니다. 글 작성시 ' . (element('point_write', $board) * -1) . ' 포인트가 차감됩니다');
 		}
 
 		// 이벤트가 존재하면 실행합니다
