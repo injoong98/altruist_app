@@ -4,7 +4,7 @@ import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider,
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
 import {ActionSheet, Root, Container} from 'native-base';
-import Slider from '../components/slider.component'
+import Slider from '../components/MarketSlider.component'
 import { Alert } from 'react-native';
 import {PostTime} from '../components/PostTime'
 import Confirm from '../components/confirm.component'
