@@ -394,8 +394,17 @@ class MarketWrite extends React.Component {
                         </View>
                         <View style={styles.container}>
                             <Text>사진</Text>
-                            <ScrollView horizontal={true} style={styles.input}>
-                                <TouchableOpacity style={{width:100, height:100, backgroundColor:'white', alignItems:'center', justifyContent:'center'}} onPress={()=>this.onClickAddImage()}>
+                            <ScrollView 
+                            horizontal={true} 
+                            style={{
+                                marginVertical : 2,
+                                margin : 10,
+                                marginTop : 5,
+                                backgroundColor : '#F4F4F4'
+                            }}>
+                                <TouchableOpacity 
+                                style={{width:100, height:100, backgroundColor:'white', alignItems:'center', justifyContent:'center', borderRadius:10}} 
+                                onPress={()=>this.onClickAddImage()}>
                                     <Camsvg/>
                                 </TouchableOpacity>
                                 {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
@@ -1077,6 +1086,7 @@ const styles = StyleSheet.create({
         width: 100, 
         height: 100, 
         resizeMode: 'cover',
+        borderRadius:10,
     },
     picture : {
         borderRadius : 20,
