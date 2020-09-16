@@ -620,7 +620,6 @@ class Board_write extends CB_Controller
 			$view['view']['form_validation'] = $form_validation;
 			if(!$form_validation) {
 				response_result($view,'Err',validation_errors('', ''));
-			//	response_result($view,'Err',"유효성 검사(form_validation) 에 실패하였습니다. ");
 			}
 
 			/**
@@ -887,7 +886,8 @@ class Board_write extends CB_Controller
 			$updatedata['deal_type'] = $this->input->post('deal_type', null, '');
 			$updatedata['deal_status'] = $this->input->post('deal_status', null, '');
 
-			
+			//썸네일 사용여부
+			$updatedata['post_thumb_use'] = $this->input->post('post_thumb_use', null, '');
 
 
 			
@@ -1001,9 +1001,11 @@ class Board_write extends CB_Controller
 				$this->Tempsave_model->delete_where($tempwhere);
 			}
 
+			// 파일 전송 부분 시작 
 			$file_updated = false;
-			if ($use_upload && $uploadfiledata
-				&& is_array($uploadfiledata) && count($uploadfiledata) > 0) {
+			if ($use_upload && $uploadfiledata && is_array($uploadfiledata) && count($uploadfiledata) > 0) {
+				
+
 				foreach ($uploadfiledata as $pkey => $pval) {
 					if ($pval) {
 						$fileupdate = array(
@@ -1034,8 +1036,8 @@ class Board_write extends CB_Controller
 							}
 						}
 						$file_updated = true;
-					}
-				}
+					} //end if pval
+				} //end foreach
 			}
 			$result = $this->Post_file_model->get_post_file_count($post_id);
 			$postupdatedata = array();
@@ -1462,7 +1464,7 @@ class Board_write extends CB_Controller
 
 		if (element('mem_id', $post)) {
 			if ($is_admin === false && $mem_id !== abs(element('mem_id', $post))) {
-				response_result($view,'Err','회원님은 이 글을 수정할 권한이 없습니다');
+				response_result($_view,'Err','회원님은 이 글을 수정할 권한이 없습니다');
 			/* 	alert('회원님은 이 글을 수정할 권한이 없습니다');
 				return false; */
 			}
@@ -2351,20 +2353,23 @@ class Board_write extends CB_Controller
 			$updatedata['post_anoymous_yn'] = $this->input->post('post_anoymous_yn', null, '');
 			
 			//알바천일국 컬럼
-			$metadata['post_location'] = $this->input->post('post_location', null, '');
-			$metadata['alba_type'] = $this->input->post('alba_type', null, '');
-			$metadata['alba_salary_type'] = $this->input->post('alba_salary_type', null, '');
-			$metadata['alba_salary'] = $this->input->post('alba_salary', null, '');
-			$metadata['post_hp'] = $this->input->post('post_hp', null, '');
+			$updatedata['post_location'] = $this->input->post('post_location', null, '');
+			$updatedata['alba_type'] = $this->input->post('alba_type', null, '');
+			$updatedata['alba_salary_type'] = $this->input->post('alba_salary_type', null, '');
+			$updatedata['alba_salary'] = $this->input->post('alba_salary', null, '');
+			$updatedata['post_hp'] = $this->input->post('post_hp', null, '');
 					
 			//이타주의자 질문관련 추가된 항목
-			$metadata['answer_expire_date'] = $this->input->post('answer_expire_date', null, '');
-			$metadata['question_solved'] = $this->input->post('question_solved', null, '');
-			$metadata['answer_mem_id'] = $this->input->post('answer_mem_id', null, '');
+			$updatedata['answer_expire_date'] = $this->input->post('answer_expire_date', null, '');
+			$updatedata['question_solved'] = $this->input->post('question_solved', null, '');
+			$updatedata['answer_mem_id'] = $this->input->post('answer_mem_id', null, '');
 
-			$metadata['deal_price'] = $this->input->post('deal_price', null, '');
-			$metadata['deal_type'] = $this->input->post('deal_type', null, '');
-			$metadata['deal_status'] = $this->input->post('deal_status', null, '');
+			$updatedata['deal_price'] = $this->input->post('deal_price', null, '');
+			$updatedata['deal_type'] = $this->input->post('deal_type', null, '');
+			$updatedata['deal_status'] = $this->input->post('deal_status', null, '');
+			
+			//썸네일 사용여부
+			$updatedata['post_thumb_use'] = $this->input->post('post_thumb_use', null, '');
 
 
 			
