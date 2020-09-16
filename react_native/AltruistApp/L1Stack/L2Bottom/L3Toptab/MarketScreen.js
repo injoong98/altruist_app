@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {Image, SafeAreaView, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Image, ActivityIndicator, SafeAreaView, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction, Button, List, Card, Spinner} from '@ui-kitten/components';
 import axios from 'axios'
+
+import Writesvg from '../../../assets/icons/write.svg'
 
 
 class MarketScreen extends React.Component {
@@ -10,17 +12,41 @@ class MarketScreen extends React.Component {
     super(props);
     this.state={
       isLoading : true,
-      list : '',
+      lists : [],
       image_url : '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
       refreshing : false,
+      current_page:1,
+      isListLoading : false,
+      isNoMoreData : false,
     }
   }
-
-
   getPostList = async() =>{
+    await axios.get(`http://dev.unyict.org/api/board_post/lists/b-a-2?page=${this.state.current_page}`)
+    .then((response)=>{
+      if(response.data.view.list.data.list.length > 0){
+        this.setState({
+          lists:this.state.lists.concat(response.data.view.list.data.list),
+          isLoading:false,
+          isListLoading:false,
+        })
+      }
+      else{
+        console.log('no page data');
+        this.setState({isListLoading:false, isNoMoreData : true});
+      }
+    })
+    .catch((error)=>{
+        alert('error')
+    })
+  }
+
+  getPostFirst = async() =>{
     await axios.get('http://dev.unyict.org/api/board_post/lists/b-a-2')
     .then((response)=>{
-        this.setState({list:response.data.view.list.data.list,isLoading:false})
+        this.setState({
+          lists:response.data.view.list.data.list,
+          isLoading:false,
+          isListLoading:false})
     })
     .catch((error)=>{
         alert('error')
@@ -28,45 +54,70 @@ class MarketScreen extends React.Component {
   }
 
   componentDidMount(){
-    this.getPostList();
-  }
+    this.setState({current_page:1, isNoMoreData : false,}, this.getPostFirst);
+  } 
 
-  onRefresh = () => {
-    this.getPostList();
+  onRefresh= () =>{
+    this.getPostFirst();
   }
 
   renderItem = ({item}) => (
-    <TouchableOpacity style={styles.item} onPress={() => {this.props.navigation.navigate('MarketContent', {post_id:item.post_id})}}>
+    <TouchableOpacity style={styles.item} onPress={() => {this.props.navigation.navigate('MarketContent',{OnGoback:() =>this.onRefresh(), post_id:item.post_id})}}>
         <View style={{width:100}}>
-            <Image source={item.origin_image_url? {uri : 'http://dev.unyict.org'+item.origin_image_url}:{uri : 'http://dev.unyict.org'+item.thumb_url}} style={{flex : 1, width:'100%', resizeMode:'cover'}}/>
+            <Image 
+              source={item.origin_image_url? {uri : 'http://dev.unyict.org'+item.origin_image_url}:{uri : 'http://dev.unyict.org'+item.thumb_url}} 
+              style={{flex : 1, width:'100%', resizeMode:'cover', borderTopLeftRadius:10, borderBottomLeftRadius:10}}
+            />
         </View>
-        <Layout style={styles.textArea}>
-            <Layout style={styles.textTop}>
+        <View style={styles.textArea}>
+            <View style={styles.textTop}>
             <Text style={styles.text} category='h4'>
                 {item.title}
             </Text>
-            </Layout>
-            <Layout style={{}}>
+            </View>
+            <View style={{}}>
             <Text style={{marginLeft:4, color : 'gray'}} category='c2'>
                 {item.post_location} 
             </Text>
-            </Layout>
-            <Layout style={styles.textBottom}>
-            <Layout style={{flex:1, justifyContent:'center'}}>
+            </View>
+            <View style={styles.textBottom}>
+            <View style={{flex:1, justifyContent:'center'}}>
                 <Text style={styles.text} category='h5'>
                     {item.deal_price.replace(/(<([^>]+)>)/ig,"")} 원
                 </Text>
-            </Layout>
-            <Layout style={{justifyContent: 'center'}}>
+            </View>
+            <View style={{justifyContent: 'center'}}>
                 <Text style={styles.text}>
                     {item.post_nickname}
                 </Text>
-            </Layout>
-            </Layout>
-        </Layout>
+            </View>
+            </View>
+        </View>
     </TouchableOpacity>
   );
+  
+  statefunction=(str)=>{
+    this.setState({isLoading:true});
+    this.componentDidMount()    
+  }
 
+  load_more_data = () => {
+      if(!this.state.isNoMoreData){
+          this.setState({
+          current_page : this.state.current_page + 1,
+          isListLoading : true},
+          this.getPostList, console.log(this.state.current_page))
+      }
+  }
+
+  renderFooter=()=>{
+    return(
+      this.state.isListLoading ?
+      <View style = {styles.loader}>
+        <ActivityIndicator size='large'/>
+      </View>:null
+    )
+  }
   render() {
     return (
       this.state.isLoading ?
@@ -79,15 +130,24 @@ class MarketScreen extends React.Component {
         <List
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
-            data={this.state.list}
+            data={this.state.lists}
             renderItem={this.renderItem}
             refreshing={this.state.refreshing}
+            onEndReached={this.load_more_data}
+            onEndReachedThreshold = {0.9}
+            ListFooterComponent={this.renderFooter}
             onRefresh={this.onRefresh}
         />
-        <Button style={{position:'absolute', width:'20%', left:'40%', bottom:10}} 
+        <TouchableOpacity 
+          style={{position:'absolute', right:20,bottom:14}} 
+          onPress={()=>{this.props.navigation.navigate('MarketWrite',{statefunction:this.statefunction})}} 
+        >
+          <Writesvg />
+        </TouchableOpacity>
+        {/* <Button style={{position:'absolute', width:'20%', left:'40%', bottom:10}} 
         onPress={()=>this.props.navigation.navigate('MarketWrite')}>
             등록
-        </Button>
+        </Button> */}
       </View>
     );
   }
@@ -107,12 +167,15 @@ const styles = StyleSheet.create({
         flex:1, 
         flexDirection:'row', 
         height:100, 
-        margin:5
+        margin:5,
+        backgroundColor:'#F4F4F4',
+        borderRadius:10,
     },
     textArea: {
         flex: 1,
         paddingHorizontal: 10,
-        maxHeight: 100
+        paddingVertical: 5,
+        maxHeight: 100,
     },
     textTop: {
         flex: 1,
@@ -120,6 +183,10 @@ const styles = StyleSheet.create({
     },
     textBottom: {
         flexDirection: 'row'
+    },
+    loader:{
+        marginTop : 10,
+        alignItems : 'center',
     },
     text: {
         margin: 4,

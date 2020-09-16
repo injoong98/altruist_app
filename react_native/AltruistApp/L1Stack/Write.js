@@ -11,6 +11,7 @@ import { TopBarTune } from '../components/TopBarTune';
 
 import Camsvg from '../assets/icons/Icon_Cam.svg'
 import Tooltipsvg from '../assets/icons/tooltip.svg'
+import Noimage from '../assets/images/noimage.png';
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -252,7 +253,7 @@ class MarketWrite extends React.Component {
                 [
                     { 
                         text: "OK", 
-                        onPress: ()=> {}
+                        onPress: ()=> this.gobackfunc()
                     }
                 ],
                 { cancelable: false }
@@ -335,7 +336,7 @@ class MarketWrite extends React.Component {
     renderImage(image) {
         //console.log(image);
         return (
-            <View key={image.uri}>
+            <View key={image.id}>
                 <Image style={styles.market_RenderImage} source={image.url}/>
             </View>
         )
@@ -364,45 +365,46 @@ class MarketWrite extends React.Component {
                 <Divider />
                 
                 <ScrollView>
-                    <Layout style={{paddingVertical:10}}>
-                        <Layout style={styles.container}>
+                    <View style={{paddingVertical:10, backgroundColor:'#F4F4F4'}}>
+                        <View style={styles.container}>
                             <Text>상품명</Text>
                             <Input
                                 style={styles.input}
                                 onChangeText={text => this.setState({post_title : text})}
                                 // value={itemName}
                             />
-                        </Layout>
-                        <Layout style={{...styles.container, flexDirection:'row'}}>
-                            <Layout style={{flex:1}}>
+                        </View>
+                        <View style={{...styles.container, flexDirection:'row'}}>
+                            <View style={{flex:1}}>
                                 <Text>판매가격</Text>
                                 <Input
-                                    style={styles.input}   
+                                    style={styles.input}
+                                    keyboardType='numeric'
                                     onChangeText={text => this.setState({deal_price : text})}
                                     // value={price}
                                 />
-                            </Layout>
-                            <Layout style={{flex:1}}>
+                            </View>
+                            <View style={{flex:1}}>
                                 <Text>거래희망지역</Text>
                                 <Input
                                     style={styles.input}
                                     onChangeText={text => this.setState({post_location : text})}
                                     // value={loaction}
                                 />
-                            </Layout>
-                        </Layout>
-                        <Layout style={styles.container}>
+                            </View>
+                        </View>
+                        <View style={styles.container}>
                             <Text>사진</Text>
                             <ScrollView horizontal={true} style={styles.input}>
-                                <TouchableOpacity style={{width:100, height:100}} onPress={()=>this.onClickAddImage()}>
-                                    <Image source={{uri : 'http://dev.unyict.org/react_native/AltruistApp/assets/images/noimage_120x90.gif'}} style={{width:100,height:100}}/>
+                                <TouchableOpacity style={{width:100, height:100, backgroundColor:'white', alignItems:'center', justifyContent:'center'}} onPress={()=>this.onClickAddImage()}>
+                                    <Camsvg/>
                                 </TouchableOpacity>
                                 {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
                             </ScrollView>                                                 
-                        </Layout>
-                        <Layout style={styles.container}>
+                        </View>
+                        <View style={styles.container}>
                             <Text>거래방법</Text>
-                            <Layout style={styles.deal_type}>
+                            <View style={styles.deal_type}>
                                 <TouchableWithoutFeedback onPress={()=>this.setState({deal_type : 0})}>
                                     <View style={this.state.deal_type==0? {...styles.deal_box, opacity:1.0}:styles.deal_box}>
                                         <Text style={styles.deal_type_text}>직거래</Text>
@@ -418,18 +420,18 @@ class MarketWrite extends React.Component {
                                         <Text style={styles.deal_type_text}>둘다가능</Text>
                                     </View>
                                 </TouchableWithoutFeedback>
-                            </Layout>
-                        </Layout>
-                        <Layout style={styles.container}>
+                            </View>
+                        </View>
+                        <View style={styles.container}>
                             <Text>상세정보</Text>
                             <Input
                                 onChangeText={text => this.setState({post_content : text})}
                                 // value={detail}
                             />
-                        </Layout>
+                        </View>
                         <Button onPress={()=>this.submitPost()}>등 록</Button>
-                        <Button onPress={()=>console.log(this.state.images)}>콘솔</Button>
-                    </Layout>
+                        {/* <Button onPress={()=>console.log(this.state.images)}>콘솔</Button> */}
+                    </View>
                 </ScrollView>
             </SafeAreaView>
             </Root>
@@ -444,19 +446,17 @@ class AlbaWrite extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            post_title : '',
-            post_content : '',
-            post_location : '',
-            post_hp : '',
-            alba_type : 0,
-            alba_salary_type : new IndexPath(0),
-            alba_salary : '',
-            post_image : [],
-            imagesource : {},
-            images : [],
+            post_title : this.props.route.params.mode=='edit' ? this.props.route.params.post.post_title:'',
+            post_content : this.props.route.params.mode=='edit' ? this.props.route.params.post.post_content:'',
+            post_location : this.props.route.params.mode=='edit' ? this.props.route.params.post.post_location:'',
+            post_hp : this.props.route.params.mode=='edit' ? this.props.route.params.post.post_hp:'',
+            alba_type : this.props.route.params.mode=='edit' ? this.props.route.params.post.alba_type:0,
+            alba_salary_type : this.props.route.params.mode=='edit' ? new IndexPath(this.props.route.params.post.alba_salary_type):new IndexPath(0),
+            alba_salary : this.props.route.params.mode=='edit' ? this.props.route.params.post.alba_salary:'',
+            images : this.props.route.params.mode=='edit' ? this.props.route.params.file_images:[],
             isTipVisible:false,
             isFollowUp:false,
-            image:''
+            isNoSumnail:true,
         }
     }
 
@@ -480,21 +480,25 @@ class AlbaWrite extends React.Component{
         this.setState({isFollowUp:nextChecked});
         this.setState({alba_salary:'추후협의'});
     }
+    setSumnailCheck = (nextChecked) => {
+        this.setState({isNoSumnail:nextChecked});
+    }
     submit_alba_post = async() => {
-        console.log(this.state);
-        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary,images} = this.state;
+        const url = this.props.route.params.mode=='edit' ?'http://dev.unyict.org/api/board_write/modify' :'http://dev.unyict.org/api/board_write/write/b-a-3'
+        
+        const {post_title, post_content, post_location, post_hp, alba_type, alba_salary_type, alba_salary,images, isNoSumnail} = this.state;
         let formdata = new FormData();
         formdata.append("brd_key", 'b-a-3');
         formdata.append("post_title", post_title);
         formdata.append("post_content", post_content);
-        formdata.append("post_nickname", 'roothyo');
-        formdata.append("post_email", 'roothyo@soongsil.ac.kr');
-        formdata.append("post_password", '1234');
         formdata.append("post_location", post_location);
         formdata.append("post_hp", post_hp);
         formdata.append("alba_type", alba_type);
         formdata.append("alba_salary_type", alba_salary_type.row);
         formdata.append("alba_salary", alba_salary);
+        // console.log(isNoSumnail?1:0);
+        // formdata.append("deal_status", isNoSumnail?1:0);
+        
         images.map(item=>{
             formdata.append('post_file[]',
                 {
@@ -504,17 +508,25 @@ class AlbaWrite extends React.Component{
                 }
             )
         })
+        this.props.route.params.mode=='edit' ?
+            formdata.append('post_id',this.props.route.params.post.post_id)            
+            :
+            null
+        
         console.log(formdata);
-        await axios.post('http://dev.unyict.org/api/board_write/write/b-a-3', formdata)
-        .then(response=>{
+        await axios.post(url, formdata)
+        .then((response)=>{
             console.log(response);
             Alert.alert(
-                "게시글",
-                "게시글 작성 완료",
+                "알바천일국",
+                this.props.route.params.mode=='edit' ?
+                `"게시글 수정 완료"\n${JSON.stringify(response.data)}`
+                :
+                `"게시글 작성 완료"\n${JSON.stringify(response.data)}`,
                 [
                     { 
-                        text: "OK", 
-                        onPress: ()=> {this.gobackfunc()}
+                        text: "닫기", 
+                        onPress: ()=> this.gobackfunc()
                     }
                 ],
                 { cancelable: false }
@@ -528,15 +540,15 @@ class AlbaWrite extends React.Component{
     submit_alba_Alert= () => {
         Alert.alert(
             "알바천일국",
-            "게시글을 작성하시겠습니까?",
+            this.props.route.params.mode=='edit' ?'게시글을 수정하시겠습니까?':"게시글을 작성하시겠습니까?",
             [
-                {
-                    text: "Cancel",
-                    onPress: () => alert('취소했습니다.')
-                },
                 { 
-                    text: "OK", 
+                    text: "작성", 
                     onPress: ()=> this.submit_alba_post()
+                },
+                {
+                    text: "취소",
+                    onPress: () => alert('취소했습니다.')
                 }
             ],
             { cancelable: false }
@@ -606,7 +618,8 @@ class AlbaWrite extends React.Component{
         //console.log(image);
         return (
             <View key={image.uri}>
-                <Image style={styles.market_RenderImage} source={image.url}/>
+                {this.props.route.params.mode=='edit'? <Image style={styles.market_RenderImage} source={image.uri}/>
+                :<Image style={styles.market_RenderImage} source={image.url}/>}
             </View>
         )
     }
@@ -624,8 +637,14 @@ class AlbaWrite extends React.Component{
         </TouchableOpacity>
     );
 
+    componentDidMount = () => {
+
+    }
+
     render(){
+        const {post_title, post_content, post_location, post_hp, alba_salary, alba_salary_type, alba_type} = this.state;
         const {navigation} = this.props;
+        console.log(this.state.images);
         return(
             <SafeAreaView style={{flex:1,}}>
                 <TopBarTune 
@@ -640,6 +659,7 @@ class AlbaWrite extends React.Component{
                 <Layout style={{flex:10, backgroundColor : '#F4F4F4'}}>
                     <ScrollView>
                         <TextInput
+                            value={post_title}
                             style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, marginTop : 10,
                                 backgroundColor : 'white', paddingLeft : 20, fontSize : 24}}
                             placeholder='Input Title'
@@ -650,6 +670,7 @@ class AlbaWrite extends React.Component{
                                 backgroundColor : 'white', paddingLeft : 20, }}>
                                 <View style={{flexDirection : 'row'}}>
                                     <RadioGroup
+                                        value={this.state.alba_salary_type}
                                         style={{flexDirection:'row'}}
                                         selectedIndex = {this.state.alba_type}
                                         onChange={(index) => { this.setState({alba_type:index})}}>
@@ -687,6 +708,7 @@ class AlbaWrite extends React.Component{
                             </View>
                             <View style={{flex : 1}}>
                                 <TextInput
+                                    value={post_hp}
                                     style={{flex : 1, borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
                                         backgroundColor : 'white', paddingLeft : 20, fontSize : 16}}
                                     category = 'h4'
@@ -695,6 +717,7 @@ class AlbaWrite extends React.Component{
                                     onChangeText ={(nextText) => {this.setState({post_hp:nextText})}}
                                 />
                                 <TextInput
+                                    value={alba_salary}
                                     style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
                                         backgroundColor : 'white', paddingHorizontal : 20, fontSize : 16}}
                                     size='medium'
@@ -706,12 +729,14 @@ class AlbaWrite extends React.Component{
                             </View>
                         </View>
                         <TextInput
+                            value={post_location}
                             style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
                                     backgroundColor : 'white', paddingLeft : 20, fontSize : 20}}
                             placeholder='Input Location'
                             onChangeText ={(nextText) => {this.setState({post_location:nextText})}}
                             />
                     <TextInput
+                        value={post_content}
                         style={{borderRadius : 20, marginVertical : 5, marginHorizontal : 10, 
                             backgroundColor : 'white', paddingHorizontal : 20, fontSize : 20}}
                         multiline={true}
@@ -730,6 +755,14 @@ class AlbaWrite extends React.Component{
                         <ScrollView horizontal style={{height : 150}}>
                             {this.state.images ? this.state.images.map(i => <View key={i.uri}>{this.renderAsset(i)}</View>) : null}
                         </ScrollView>
+                        <View style={{flexDirection : 'row', flex: 1, alignItems : 'center'}}>
+                        <CheckBox
+                            style={{margin : 5}}
+                            checked={this.state.isNoSumnail}
+                            onChange={nextChecked => this.setSumnailCheck(nextChecked)}>
+                        </CheckBox>
+                        <Text style={{fontSize : 12}} category='c2'> {this.state.isNoSumnail?'회사 로고(썸네일)가 없을경우 선택해주세요.':'맨 첫 이미지로 썸네일을 넣어주세요.'}</Text>
+                        </View>
                     </Layout>
                 </ScrollView>
                 </Layout>   
@@ -1029,6 +1062,7 @@ const styles = StyleSheet.create({
         marginVertical : 2,
         margin : 10,
         marginTop : 5,
+        backgroundColor : 'white'
     },
     photo: {
         justifyContent: 'center', 

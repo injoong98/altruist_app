@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, SafeAreaView} from 'react-native';
+import {View, StyleSheet, SafeAreaView, Alert} from 'react-native';
 import {
   Text,
   Input,
@@ -43,6 +43,7 @@ class RegisterScreen extends React.Component {
       mem_profile_content: '',
       mem_recommend: '',
       captionCheck: '',
+      column: '',
     };
   }
 
@@ -80,10 +81,10 @@ class RegisterScreen extends React.Component {
     formdata.append('mem_recommend', mem_recommend);
 
     await axios
-      .post('http://10.0.2.2/api/register/form', formdata)
+      .post('http://dev.unyict.org/api/register/form', formdata)
       .then((response) => {
-        console.log('response', response);
-        console.log('this.state', this.state);
+        // console.log('response', response);
+        // console.log('this.state', this.state);
         Alert.alert(
           '가입 테스트',
           '가입 테스트 완료',
@@ -107,40 +108,37 @@ class RegisterScreen extends React.Component {
 
   //   TODO : 생년월일
 
-  UselessTextInput = ({column, placeholder}) => {
-    const [textInputValue, setTextInputValue] = React.useState('');
+  // UselessTextInput = ({placeholder}) => {
+  //   const [textInputValue, setTextInputValue] = React.useState('');
+  //   const column = this.state.column
+  //   return (
+  //     <Input
+  //       onChangeText={(text) => setTextInputValue(text)}
+  //       value={({textInputValue}) => this.setState({this.state.column: textInputValue})}
+  //       placeholder={placeholder}
+  //     />
+  //   );
+  // };
 
-    return (
-      <Input
-        onChangeText={(text) => setTextInputValue(text)}
-        value={textInputValue}
-        placeholder={placeholder}
-      />
-    );
-  };
   //   TODO : 성별
+
+  //   TODO : 이메일
 
   //   TODO : 휴대폰 번호
 
   //   TODO : 패스워드 확인
-  CheckPassword = ({mem_password, mem_password_re}) => {
+  CheckPassword = (a, b) => {
     console.log(this.state);
-    const {checkPassword} = this.state;
-    if ({mem_password} == {mem_password_re}) {
-      this.checkPassword = 'Not matched';
+    let checkPassword = '';
+    if (a == b) {
+      checkPassword = '';
+      console.log(checkPassword);
     } else {
-      this.checkPassword = '';
+      checkPassword = '비밀번호가 일치하지 않습니다.';
+      console.log(checkPassword);
     }
     this.setState({captionCheck: checkPassword});
   };
-
-  componentDidMount() {
-    // console.log('mount됌');
-    // Axios.post(' dev.unyict.org/api/register/form', formdata);
-  }
-  componentDidUpdate() {
-    console.log('update됌');
-  }
 
   render() {
     console.log(this.state);
@@ -153,15 +151,21 @@ class RegisterScreen extends React.Component {
         />
         <SafeAreaView style={{flex: 1}}>
           <ScrollView>
-            <View style={{flex: 1, justifyContent: 'center', padding: 50}}>
+            <View style={{flex: 1, justifyContent: 'center', padding: 30}}>
               <Input
                 style={{padding: 3}}
                 placeholder="이름"
-                onChangeText={(mem_userid) =>
-                  this.setState({mem_userid: mem_userid})
+                onChangeText={(mem_username) =>
+                  this.setState({mem_username: mem_username})
                 }
               />
-
+              <Input
+                style={{padding: 3}}
+                placeholder="Email (example@email.com) "
+                onChangeText={(mem_email) =>
+                  this.setState({mem_email: mem_email, mem_userid: mem_email})
+                }
+              />
               <Input
                 style={{padding: 3}}
                 placeholder="닉네임 / 활동명"
@@ -171,11 +175,7 @@ class RegisterScreen extends React.Component {
               />
               <Input
                 style={{padding: 3}}
-                placeholder="이메일 (ID 겸용) "
-                onChangeText={() => this.setState({mem_email: mem_email})}
-              />
-              <Input
-                style={{padding: 3}}
+                secureTextEntry={true}
                 placeholder="비밀번호"
                 onChangeText={(mem_password) =>
                   this.setState({mem_password: mem_password})
@@ -184,11 +184,16 @@ class RegisterScreen extends React.Component {
               />
               <Input
                 style={{padding: 3}}
+                secureTextEntry={true}
                 placeholder="비밀번호 확인"
-                onChangeText={(mem_password_re) =>
-                  this.setState({mem_password_re: mem_password_re})
-                }
-                caption={this.state.caption}
+                onChangeText={(mem_password_re) => {
+                  this.setState({mem_password_re: mem_password_re});
+                  //{} 하면 obj로 던져서 obj.이름 해야지 됌
+                  this.CheckPassword(this.state.mem_password, mem_password_re);
+                }}
+                caption={() => (
+                  <Text style={{color: 'red'}}>{this.state.captionCheck}</Text>
+                )}
                 secureTextEntry
               />
               <Input
@@ -211,8 +216,16 @@ class RegisterScreen extends React.Component {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}>
-                <Button style={{width: '45%'}}>여성</Button>
-                <Button style={{width: '45%'}}>남성</Button>
+                <Button
+                  style={{width: '45%'}}
+                  onPress={() => this.setState({mem_sex: 2})}>
+                  여성
+                </Button>
+                <Button
+                  style={{width: '45%'}}
+                  onPress={() => this.setState({mem_sex: 1})}>
+                  남성
+                </Button>
               </View>
               <View
                 style={{
@@ -220,22 +233,7 @@ class RegisterScreen extends React.Component {
                   justifyContent: 'space-around',
                   alignItems: 'stretch',
                   alignContent: 'stretch',
-                }}>
-                {/* <Button
-                  style={{alignSelf: 'stretch'}}
-                  onPress={() =>
-                    this.props.navigation.navigate('QuestionScreen')
-                  }>
-                  여성
-                </Button>
-                <Button
-                  style={{alignSelf: 'stretch'}}
-                  onPress={() =>
-                    this.props.navigation.navigate('QuestionScreen')
-                  }>
-                  남성
-                </Button> */}
-              </View>
+                }}></View>
             </View>
             {/* 동의 및 다음 버튼 */}
             <View

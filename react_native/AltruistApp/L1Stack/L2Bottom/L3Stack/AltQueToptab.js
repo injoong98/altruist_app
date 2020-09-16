@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet,SafeAreaView} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { TabBar, Tab, Layout, Text,TopNavigation,Button } from '@ui-kitten/components';
 
@@ -9,11 +9,15 @@ import {TopTab} from '../../../components/TopTab'
 import {AltQueList} from './Question'
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
-const AltQueListSend = () => (
-    <AltQueList type= 'Send'/>
+const AltQueListSend = (props) => (
+            <SafeAreaView>
+               <AltQueList {...props} type='indi' scndType='send'/>
+            </SafeAreaView>
 )
-const AltQueListRecieve = () => (
-    <AltQueList type= 'Recieve' />
+const AltQueListRecieve = (props) => (
+            <SafeAreaView>
+               <AltQueList {...props} type='indi' scndType='recieve'/>
+            </SafeAreaView>
 )
 const TopTabBar = ({ navigation, state }) => (
     <TabBar

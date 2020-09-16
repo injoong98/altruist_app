@@ -7,10 +7,10 @@ import AltMainScreen from './Main';
 import AltApplyScreen from './Apply';
 import AltListScreen from './List';
 import AltProfileScreen from './Profile';
-import {AltQuestionWrite,AltQueType,AltAreaList,AltQueContent,AltOpqQueList,AltReplying} from './Question';
+import {AltQuestionWrite,AltQueType,AltAreaList,AltQueContent,AltQueList,AltReplying,AltOpqQueList} from './Question';
 import AltApplyFormScreen from './ApplyForm';
 import ApplyCompleteScreen from './ApplyComplete';
-
+import {AltQueToptab} from './AltQueToptab'
 const {Navigator,Screen} = createStackNavigator();
 
 const BackIcon =  (props) =>(
@@ -44,8 +44,10 @@ export const AltStackNav = () =>(
         <Screen name = "AltQueType" component={AltQueType}/>
         <Screen name = "AltAreaList" component={AltAreaList}/>
         <Screen name = "AltQuestionWrite" component={AltQuestionWrite}/>
-        <Screen name = "AltOpqQueList" component={AltOpqQueList}/>
+        <Screen name = "AltQueList" component={AltQueList}/>
         <Screen name = "AltQueContent" component={AltQueContent}/>
         <Screen name = "AltReplying" component={AltReplying}/>
+        <Screen name = "AltQueToptab" component={AltQueToptab}/>
+        <Screen name = "AltOpqQueList" component={AltOpqQueList}/>
     </Navigator>
 )

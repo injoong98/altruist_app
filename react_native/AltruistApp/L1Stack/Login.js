@@ -97,7 +97,7 @@ class LoginScreen extends React.Component{
             <View style={{flex:1,backgroundColor:'#ffffff'}}>
               <View style={{alignItems:'center',position:'relative',top:'35%'}}>
                 <View style={{backgroundColor:'#ffffff'}}>
-                  <LogoSvg  width={wdithLogo} heightLogo={heightLogo}/>
+                  <LogoSvg  width={wdithLogo} height={heightLogo}/>
                 </View>
                 <TextInput
                     style={styles.testInput}
@@ -110,6 +110,7 @@ class LoginScreen extends React.Component{
                 <TextInput
                     ref='pwinput'
                     style={styles.testInput}
+                    secureTextEntry={true}
                     placeholder="비밀번호"
                     onChangeText={nextValue => this.setState({mem_password:nextValue})}
                     placeholderTextColor='#A897C2'
