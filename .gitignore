@@ -42,3 +42,4 @@ react_native/AltruistApp/ios/testAltruistApp/Info.plist
 .prettierrc
 .eslintrc.json
 package.json
+react_native/AltruistApp/package-lock.json

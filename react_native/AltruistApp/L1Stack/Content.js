@@ -15,6 +15,7 @@ import MoreSsvg from '../assets/icons/dotdotdot-small.svg'
 import Backsvg from '../assets/icons/back-arrow-color.svg'
 import Thumbsvg from '../assets/icons/thumb-up.svg'
 import UploadCirclesvg from '../assets/icons/upload-circle.svg'
+import paperPlane from '../assets/icons/paper-plane.svg'
 
 
 
@@ -1307,15 +1308,22 @@ class AlbaContent extends React.Component {
             :
             <Root>
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="채용정보" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.UD_Action} style={styles.topbar}/> 
+                <TopNavigation category = 'c2'title="채용정보" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.UD_Action} style={styles.topbar}/> 
                 <Layout style={styles.container}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
                         <Card disabled={true} style={styles.item}>
-                            <Text category='c2'>
-                                {JSON.stringify(post.post_datetime).substr(1,post.post_datetime.length-3)}
-                            </Text>
+                            <View style={{flexDirection : 'row-reverse'}}>
+                                <Text category='c2'>
+                                    {JSON.stringify(post.post_datetime).substr(1,post.post_datetime.length-3)}
+                                </Text>
+                            </View>
+                            <Layout style={{flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
+                                {post.deal_status?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>
+                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org/'+this.state.thumb_image}}/>}
+                                <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
+                            </Layout>
                             <View style={styles.title}>
-                                <Text style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
+                                <Text category= 'h1' style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
                             </View>
                             <Layout style={styles.icons}>
                                 <Text style={[styles.tagstyle,{backgroundColor:this.Alba_salary_type[post.alba_salary_type].color}]} category='c2'>
@@ -1325,13 +1333,11 @@ class AlbaContent extends React.Component {
                                 <Text style={[styles.tagstyle,{backgroundColor:post.alba_type == 0?'#978DC7':'#63579D'}]} category='c2'>
                                     {post.alba_type == 0?'단기':'장기'}
                                 </Text>
-                                <Text category='h5'> {post.alba_type == 0?'일일~3개월':'3개월이상'}</Text>
-                            </Layout>
-                            <Divider/>
-                            <Layout style={{flexDirection:'row', alignItems : 'center'}}>
-                                {post.deal_status?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>
-                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org/'+this.state.thumb_image}}/>}
-                                <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
+                                <Text category='h5'> {post.alba_type == 0?'일일~3개월':'3개월이상'} / </Text>
+                                <Text style={[styles.tagstyle,{backgroundColor:'blue'}]} category='c2'>
+                                    연락처
+                                </Text>
+                                <Text category='h5'> {post.post_hp}</Text>
                             </Layout>
                         </Card>
                         
@@ -1370,9 +1376,14 @@ class AlbaContent extends React.Component {
                             {this.state.file_images ? this.state.file_images.map(i => <View key={i.uri}>{this.renderImage(i)}</View>) : null} 
                         </Card>
                     </ScrollView>
-                    <Button style={styles.bottomButton} onPress={()=>this.setVisible(true)}>
-                        지원하기
-                    </Button>
+                    <TouchableOpacity style={styles.bottomButton} onPress={()=>this.setVisible(true)}>
+                        <View style={{backgroundColor : 'purple', flexDirection:'row'}}>
+                            {/* <paperPlane height={24} width={24 }/> */}
+                            <Text>
+                                지원하기
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                     <Modal
                             visible={this.state.visible}
                             backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
@@ -1463,7 +1474,7 @@ const styles = StyleSheet.create({
         flex : 1,
     },
     topbar : {
-        backgroundColor : '#ffffff',
+        backgroundColor : '#978DC7',
     },
     title : {
         backgroundColor : '#E9E9E9',
