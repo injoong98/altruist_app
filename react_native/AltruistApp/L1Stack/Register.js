@@ -256,6 +256,20 @@ class RegisterScreen extends React.Component {
                   this.setState({mem_birthday: mem_birthday})
                 }
               />
+              <Input
+                style={{padding: 3}}
+                placeholder="추천인"
+                onChangeText={(mem_birthday) =>
+                  this.setState({mem_birthday: mem_birthday})
+                }
+              />
+              <Input
+                style={{padding: 3}}
+                placeholder="서명문"
+                onChangeText={(mem_birthday) =>
+                  this.setState({mem_birthday: mem_birthday})
+                }
+              />
 
               {/* <View
                 style={{
