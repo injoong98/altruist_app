@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules, TouchableOpacity, TextInput} from 'react-native';
-import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem, Card} from '@ui-kitten/components'
+import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem, Card, Modal} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
 import ImagePicker from 'react-native-image-crop-picker';
 import { HeartIcon } from '../assets/icons/icons';
@@ -8,7 +8,7 @@ import axios from 'axios';
 import {Picker} from '@react-native-community/picker';
 import {ActionSheet, Root} from 'native-base';
 import { TopBarTune } from '../components/TopBarTune';
-
+import Confirm from '../components/confirm.component'
 import Camsvg from '../assets/icons/Icon_Cam.svg'
 import Tooltipsvg from '../assets/icons/tooltip.svg'
 import Noimage from '../assets/images/noimage.png';
@@ -208,24 +208,33 @@ class MarketWrite extends React.Component {
             post_title: '',
             post_content: '',
             post_location: '',
+            post_hp: '',
             deal_price: 0,
             deal_type: 2, // 0: 직거래, 1: 배송, 2: 둘다가능
             deal_status: 1, // 0: 판매완료, 1: 판매중
+            post_thumb_use: 1, // 0: 썸네일 사용X, 1: 사용 
+            post_thumb_index: 0, // 썸네일 사진 index
+            thumb_index_storage: 0, // 썸네일 index 임시저장
+            Image_index: 0,
             images: [],
-            image:''
+            image:'',
+            thumbModalVisible:false,
         }
     }
 
     submitPost = async() => {
 
         console.log(this.state);
-        const {post_title, post_content, post_location, deal_price, deal_type, deal_status, images, image} = this.state;
+        const {post_title, post_content, post_location, deal_price, deal_type, deal_status, images, post_hp, post_thumb_use, post_thumb_index} = this.state;
 
         let formdata = new FormData();
             formdata.append("brd_key", 'b-a-2');
             formdata.append("post_title", post_title);
             formdata.append("post_content", post_content);
             formdata.append("post_location", post_location);
+            formdata.append("post_hp", post_hp);
+            formdata.append("post_thumb_use", post_thumb_use);
+            formdata.append("post_thumb_index", post_thumb_index);
             formdata.append("deal_price", deal_price);
             formdata.append("deal_type", deal_type);
             formdata.append("deal_status", deal_status);
@@ -325,19 +334,23 @@ class MarketWrite extends React.Component {
             url: source,
             mime:image.mime,
             path:image.path,
-            content: image.data
+            content: image.data,
+            index: this.state.Image_index
         };
         console.log(item)
+        this.setState({Image_index:this.state.Image_index+1})
         newImages.push(item);
         this.setState({images: newImages})
-        this.setState({image: item})
     };
     
     renderImage(image) {
         //console.log(image);
+        // console.log(index);
         return (
             <View key={image.id}>
-                <Image style={styles.market_RenderImage} source={image.url}/>
+                <TouchableWithoutFeedback onPress={()=> this.setState({thumbModalVisible:true, thumb_index_storage:image.index})}>
+                    <Image style={styles.market_RenderImage} source={image.url}/>
+                </TouchableWithoutFeedback>
             </View>
         )
     }
@@ -371,6 +384,14 @@ class MarketWrite extends React.Component {
                             <Input
                                 style={styles.input}
                                 onChangeText={text => this.setState({post_title : text})}
+                                // value={itemName}
+                            />
+                        </View>
+                        <View style={styles.container}>
+                            <Text>연락처</Text>
+                            <Input
+                                style={styles.input}
+                                onChangeText={text => this.setState({post_hp : text})}
                                 // value={itemName}
                             />
                         </View>
@@ -408,7 +429,7 @@ class MarketWrite extends React.Component {
                                 onPress={()=>this.onClickAddImage()}>
                                     <Camsvg/>
                                 </TouchableOpacity>
-                                {this.state.images ? this.state.images.map(item => this.renderAsset(item)) : null}
+                                {this.state.images ? this.state.images.map((item) => this.renderAsset(item)) : null}
                             </ScrollView>                                                 
                         </View>
                         <View style={styles.container}>
@@ -438,10 +459,34 @@ class MarketWrite extends React.Component {
                                 // value={detail}
                             />
                         </View>
+                        <View style={{...styles.container, flexDirection:'row'}}>
+                            <Text>썸네일</Text>
+                            <RadioGroup
+                                value={this.state.post_thumb_use}
+                                style={{flexDirection:'row'}}
+                                selectedIndex = {this.state.post_thumb_use}
+                                onChange={(index) => { this.setState({post_thumb_use:index})}}>
+                                <Radio>off</Radio>
+                                <Radio>on</Radio>
+                            </RadioGroup>
+                        </View>
                         <Button onPress={()=>this.submitPost()}>등 록</Button>
                         {/* <Button onPress={()=>console.log(this.state.images)}>콘솔</Button> */}
                     </View>
                 </ScrollView>
+                <Modal
+                    visible={this.state.thumbModalVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                    onBackdropPress={() => this.setState({thumbModalVisible:false})}
+                >
+                        <Confirm 
+                            confirmText="대표 이미지를 변경하시겠습니까?"
+                            frstText="예"
+                            OnFrstPress={() => this.setState({thumbModalVisible:false, post_thumb_index:this.state.thumb_index_storage})}
+                            scndText="아니오"
+                            OnScndPress={() => this.setState({thumbModalVisible:false})}
+                        />
+                </Modal>
             </SafeAreaView>
             </Root>
         )
