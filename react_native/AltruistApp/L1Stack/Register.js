@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {Component, useState} from 'react';
 import {View, StyleSheet, SafeAreaView, Alert} from 'react-native';
 import {
   Text,
@@ -15,22 +15,20 @@ import {
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import DatePicker from 'react-native-date-picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const Calender = (props) => <Icon {...props} name="calendar-outline" />;
 
-// RegisterScreen.PropTypes = {
-//   mem_email: PropTypes.string.isRequired,
-//   mem_password: PropTypes.string.isRequired,
-//   mem_password_confirm: PropTypes.string.isRequired,
-//   mem_nickname: PropTypes.string.isRequired,
-//   mem_phone: PropTypes.string.isRequired,
-//   mem_sex: PropTypes.number.isRequired,
-//   mem_birthday: PropTypes.instanceOf(Date).isRequired,
-// };
-class RegisterScreen extends React.Component {
+class RegisterScreen extends Component {
+  // RegisterScreen.PropTypes = {
+  //   mem_email: PropTypes.string.isRequired,
+  //   mem_password: PropTypes.string.isRequired,
+  //   mem_password_confirm: PropTypes.string.isRequired,
+  //   mem_nickname: PropTypes.string.isRequired,
+  //   mem_phone: PropTypes.string.isRequired,
+  //   mem_sex: PropTypes.number.isRequired,
+  //   mem_birthday: PropTypes.instanceOf(Date).isRequired,
+  // };
   constructor(props) {
     super(props);
     this.state = {
@@ -120,23 +118,36 @@ class RegisterScreen extends React.Component {
   };
 
   //   TODO : 생년월일
-  datePicker = () => {
-    <DateTimePicker
-      value={date}
-      mode="default"
-      display="default"
-      onChange={(date) => this.setState({date})}
-    />;
-  };
-  // UselessTextInput = ({placeholder}) => {
-  //   const [textInputValue, setTextInputValue] = React.useState('');
-  //   const column = this.state.column
+  // datePicker = () => {
   //   return (
-  //     <Input
-  //       onChangeText={(text) => setTextInputValue(text)}
-  //       value={({textInputValue}) => this.setState({this.state.column: textInputValue})}
-  //       placeholder={placeholder}
-  //     />
+  //     <View style={styles.container}>
+  //       <DatePicker
+  //         style={{width: 200}}
+  //         date={this.state.date} //initial date from state
+  //         mode="date" //The enum of date, datetime and time
+  //         placeholder="select date"
+  //         format="DD-MM-YYYY"
+  //         minDate="01-01-2016"
+  //         maxDate="01-01-2019"
+  //         confirmBtnText="dsfdsf"
+  //         cancelBtnText="Cancel"
+  //         customStyles={{
+  //           dateIcon: {
+  //             // display:"none",
+  //             position: 'absolute',
+  //             left: 0,
+  //             top: 4,
+  //             marginLeft: 0,
+  //           },
+  //           dateInput: {
+  //             marginLeft: 36,
+  //           },
+  //         }}
+  //         onDateChange={(date) => {
+  //           this.setState({date: date});
+  //         }}
+  //       />
+  //     </View>
   //   );
   // };
 
@@ -191,7 +202,13 @@ class RegisterScreen extends React.Component {
         />
         <SafeAreaView style={{flex: 1}}>
           <ScrollView>
-            <View style={{flex: 1, justifyContent: 'center', padding: 30}}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                paddingRight: 30,
+                paddingLeft: 30,
+              }}>
               <Input
                 style={{padding: 3}}
                 placeholder="이름"
@@ -209,10 +226,7 @@ class RegisterScreen extends React.Component {
               <this.RadioGroupSimpleUsageShowcase />
               <Input
                 style={{padding: 3}}
-                //ios
-                textContentType="emailAddress"
-                //
-
+                textContentType="emailAddress" //ios
                 placeholder="Email (example@email.com)"
                 onChangeText={(mem_email) =>
                   this.setState({mem_email: mem_email, mem_userid: mem_email})
@@ -236,6 +250,13 @@ class RegisterScreen extends React.Component {
                   //{} 하면 obj로 던져서 obj.이름 해야지 됌
                   this.CheckPassword(this.state.mem_password, mem_password_re);
                 }}
+                // caption={() =>
+                //   this.state.captionCheck ? (
+                //     <Text style={{color: 'red'}}>
+                //       {this.state.captionCheck}
+                //     </Text>
+                //   ) : null
+                // }
                 caption={() => (
                   <Text style={{color: 'red'}}>{this.state.captionCheck}</Text>
                 )}
@@ -248,7 +269,6 @@ class RegisterScreen extends React.Component {
                   this.setState({mem_phone: mem_phone})
                 }
               />
-
               <Input
                 style={{padding: 3}}
                 placeholder="생년월일"
@@ -331,5 +351,12 @@ class RegisterScreen extends React.Component {
     );
   }
 }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+// });
 
 export default RegisterScreen;
