@@ -3,7 +3,7 @@ import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWith
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal, OverflowMenu, MenuItem,Popover} from '@ui-kitten/components'
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
-import {ActionSheet, Root, Container} from 'native-base';
+import {ActionSheet, Root, Container, Row} from 'native-base';
 import Slider from '../components/MarketSlider.component'
 import { Alert } from 'react-native';
 import {PostTime} from '../components/PostTime'
@@ -15,9 +15,7 @@ import MoreSsvg from '../assets/icons/dotdotdot-small.svg'
 import Backsvg from '../assets/icons/back-arrow-color.svg'
 import Thumbsvg from '../assets/icons/thumb-up.svg'
 import UploadCirclesvg from '../assets/icons/upload-circle.svg'
-import paperPlane from '../assets/icons/paper-plane.svg'
-
-
+import PaperPlanesvg from '../assets/icons/paper-plane.svg'
 
 
 const BackIcon =  (props) =>(
@@ -1148,7 +1146,7 @@ class AlbaContent extends React.Component {
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
-                if(response.data.view.deal_status > 0)
+                if(response.data.view.post.post_thumb_use > 0)
                     this.setState({thumb_image: response.data.view.file_image.shift().origin_image_url});
                 this.setState({
                     file_images : response.data.view.file_image.map(i => {
@@ -1318,8 +1316,8 @@ class AlbaContent extends React.Component {
                                 </Text>
                             </View>
                             <Layout style={{flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
-                                {post.deal_status?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>
-                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org/'+this.state.thumb_image}}/>}
+                                {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org/'+this.state.thumb_image}}/>
+                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
                                 <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
                             <View style={styles.title}>
@@ -1377,13 +1375,10 @@ class AlbaContent extends React.Component {
                         </Card>
                     </ScrollView>
                     <TouchableOpacity style={styles.bottomButton} onPress={()=>this.setVisible(true)}>
-                        <View style={{backgroundColor : 'purple', flexDirection:'row'}}>
-                            {/* <paperPlane height={24} width={24 }/> */}
-                            <Text>
-                                지원하기
-                            </Text>
-                        </View>
+                        <PaperPlanesvg width = {42} height = {32}/>
+                        <Text category = 'h2' style={{color : 'white'}}>지원하기</Text>
                     </TouchableOpacity>
+
                     <Modal
                             visible={this.state.visible}
                             backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
@@ -1521,7 +1516,11 @@ const styles = StyleSheet.create({
     bottomButton: {
         position:'absolute',
         bottom : 10,
-        left : '40%'
+        alignSelf: 'center',
+        borderRadius : 20,
+        padding : 10,
+        backgroundColor : '#978DC7',
+        flexDirection : 'row',
     },
     tagstyle:{
         borderRadius : 20, 

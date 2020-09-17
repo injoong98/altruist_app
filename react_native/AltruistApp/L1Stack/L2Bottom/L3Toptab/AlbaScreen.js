@@ -131,8 +131,8 @@ class AlbaScreen extends React.Component {
                   </View>
               </View>
               <View style={styles.image}>
-                {(item.origin_image_url)?
-                  <Image source={{uri:'http://dev.unyict.org'+item.thumb_url}} style={{flex : 1, marginLeft: 10, width : '100%', height : 90, resizeMode:'contain'}}/>
+                {(item.post_thumb_use == 0)?
+                  <Image source={require('../../../assets/images/noimage.png')} style={{flex : 1, marginLeft: 10, width : '100%', height : 90, resizeMode:'contain'}}/>
                   :<Image source={{uri:'http://dev.unyict.org'+item.origin_image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
                 }
               </View>
