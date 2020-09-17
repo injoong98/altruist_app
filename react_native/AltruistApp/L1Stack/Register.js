@@ -9,10 +9,14 @@ import {
   TopNavigationAction,
   Icon,
   TextInput,
+  Radio,
+  RadioGroup,
 } from '@ui-kitten/components';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import DatePicker from 'react-native-date-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const Calender = (props) => <Icon {...props} name="calendar-outline" />;
@@ -24,6 +28,7 @@ const Calender = (props) => <Icon {...props} name="calendar-outline" />;
 //   mem_nickname: PropTypes.string.isRequired,
 //   mem_phone: PropTypes.string.isRequired,
 //   mem_sex: PropTypes.number.isRequired,
+//   mem_birthday: PropTypes.instanceOf(Date).isRequired,
 // };
 class RegisterScreen extends React.Component {
   constructor(props) {
@@ -44,6 +49,7 @@ class RegisterScreen extends React.Component {
       mem_recommend: '',
       captionCheck: '',
       column: '',
+      date: new Date(),
     };
   }
 
@@ -57,7 +63,6 @@ class RegisterScreen extends React.Component {
   );
 
   //form submit
-
   SubmitForm = async () => {
     const {
       mem_userid,
@@ -106,8 +111,23 @@ class RegisterScreen extends React.Component {
       });
   };
 
-  //   TODO : 생년월일
+  //   TODO : 이메일 중복 확인
+  checkEmail = async () => {
+    const {mem_userid, checkEmail} = this.state;
+    await axios
+      .post('http://dev.unyict.org/api/register/userid_check', mem_userid)
+      .then((res) => this.setState({EmailCaption: res.result}));
+  };
 
+  //   TODO : 생년월일
+  datePicker = () => {
+    <DateTimePicker
+      value={date}
+      mode="default"
+      display="default"
+      onChange={(date) => this.setState({date})}
+    />;
+  };
   // UselessTextInput = ({placeholder}) => {
   //   const [textInputValue, setTextInputValue] = React.useState('');
   //   const column = this.state.column
@@ -121,8 +141,28 @@ class RegisterScreen extends React.Component {
   // };
 
   //   TODO : 성별
+  RadioGroupSimpleUsageShowcase = () => {
+    const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  //   TODO : 이메일
+    return (
+      <RadioGroup
+        style={{
+          padding: 3,
+          marginBottom: 8,
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+        }}
+        selectedIndex={selectedIndex}
+        onChange={(index) => {
+          setSelectedIndex(index);
+          this.setState({mem_sex: index + 1});
+        }}>
+        <Radio>남자</Radio>
+        <Radio>여자</Radio>
+      </RadioGroup>
+    );
+  };
 
   //   TODO : 휴대폰 번호
 
@@ -161,16 +201,21 @@ class RegisterScreen extends React.Component {
               />
               <Input
                 style={{padding: 3}}
-                placeholder="Email (example@email.com) "
-                onChangeText={(mem_email) =>
-                  this.setState({mem_email: mem_email, mem_userid: mem_email})
-                }
-              />
-              <Input
-                style={{padding: 3}}
                 placeholder="닉네임 / 활동명"
                 onChangeText={(mem_nickname) =>
                   this.setState({mem_nickname: mem_nickname})
+                }
+              />
+              <this.RadioGroupSimpleUsageShowcase />
+              <Input
+                style={{padding: 3}}
+                //ios
+                textContentType="emailAddress"
+                //
+
+                placeholder="Email (example@email.com)"
+                onChangeText={(mem_email) =>
+                  this.setState({mem_email: mem_email, mem_userid: mem_email})
                 }
               />
               <Input
@@ -203,17 +248,20 @@ class RegisterScreen extends React.Component {
                   this.setState({mem_phone: mem_phone})
                 }
               />
+
               <Input
-                placeholder="생년월일 (ex. 2000-01-01)"
+                style={{padding: 3}}
+                placeholder="생년월일"
                 onChangeText={(mem_birthday) =>
                   this.setState({mem_birthday: mem_birthday})
                 }
               />
-              <View
+
+              {/* <View
                 style={{
                   padding: 3,
                   flexDirection: 'row',
-                  justifyContent: 'space-between',
+                  justifyContent: 'space-around',
                   alignItems: 'center',
                 }}>
                 <Button
@@ -223,10 +271,11 @@ class RegisterScreen extends React.Component {
                 </Button>
                 <Button
                   style={{width: '45%'}}
-                  onPress={() => this.setState({mem_sex: 1})}>
-                  남성
-                </Button>
-              </View>
+                  onPress={() => this.setState({mem_sex: 1})}
+                  style={{backgroundColor: 'white'}}>
+                  <Text style={{color: black}}>남성</Text>
+                </Button> 
+              </View>*/}
               <View
                 style={{
                   flexDirection: 'row',
