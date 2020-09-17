@@ -63,24 +63,18 @@ class MarketScreen extends React.Component {
 
   renderItem = ({item}) => (
     <TouchableOpacity style={styles.item} onPress={() => {this.props.navigation.navigate('MarketContent',{OnGoback:() =>this.onRefresh(), post_id:item.post_id})}}>
-        <View style={{width:100}}>
-            <Image 
-              source={item.origin_image_url? {uri : 'http://dev.unyict.org'+item.origin_image_url}:{uri : 'http://dev.unyict.org'+item.thumb_url}} 
-              style={{flex : 1, width:'100%', resizeMode:'cover', borderTopLeftRadius:10, borderBottomLeftRadius:10}}
-            />
-        </View>
         <View style={styles.textArea}>
-            <View style={styles.textTop}>
+          <View style={styles.textTop}>
             <Text style={styles.text} category='h4'>
                 {item.title}
             </Text>
-            </View>
-            <View style={{}}>
+          </View>
+          <View style={{}}>
             <Text style={{marginLeft:4, color : 'gray'}} category='c2'>
                 {item.post_location} 
             </Text>
-            </View>
-            <View style={styles.textBottom}>
+          </View>
+          <View style={styles.textBottom}>
             <View style={{flex:1, justifyContent:'center'}}>
                 <Text style={styles.text} category='h5'>
                     {item.deal_price.replace(/(<([^>]+)>)/ig,"")} 원
@@ -91,7 +85,13 @@ class MarketScreen extends React.Component {
                     {item.post_nickname}
                 </Text>
             </View>
-            </View>
+          </View>
+        </View>
+        <View style={{width:100, justifyContent:'center', alignItems:'center'}}>
+            <Image 
+              source={item.origin_image_url? {uri : 'http://dev.unyict.org'+item.origin_image_url}:{uri : 'http://dev.unyict.org'+item.thumb_url}} 
+              style={{width:86, height:86, resizeMode:'cover', borderRadius:10}}
+            />
         </View>
     </TouchableOpacity>
   );
