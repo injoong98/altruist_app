@@ -12,6 +12,10 @@ target 'testAltruistApp' do
 
   pod 'react-native-cookies', :path => '../node_modules/@react-native-community/cookies'
 
+  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+
+  pod 'RNFBMessaging', :path => '../node_modules/@react-native-firebase/messaging'
+
   target 'testAltruistAppTests' do
     inherit! :complete
     # Pods for testing
