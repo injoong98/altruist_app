@@ -505,8 +505,8 @@ class AlbaWrite extends React.Component{
         formdata.append("alba_type", alba_type);
         formdata.append("alba_salary_type", alba_salary_type.row);
         formdata.append("alba_salary", alba_salary);
-        // console.log(isNoSumnail?1:0);
-        // formdata.append("deal_status", isNoSumnail?1:0);
+        console.log(isNoSumnail?0:1);
+        formdata.append("post_thumb_use", isNoSumnail?0:1);
         
         images.map(item=>{
             formdata.append('post_file[]',
@@ -653,7 +653,6 @@ class AlbaWrite extends React.Component{
     render(){
         const {post_title, post_content, post_location, post_hp, alba_salary, alba_salary_type, alba_type} = this.state;
         const {navigation} = this.props;
-        console.log(this.state.images);
         return(
             <SafeAreaView style={{flex:1,}}>
                 <TopBarTune 

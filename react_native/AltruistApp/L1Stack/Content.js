@@ -1148,7 +1148,7 @@ class AlbaContent extends React.Component {
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
-                if(response.data.view.deal_status > 0)
+                if(response.data.view.post.post_thumb_use > 0)
                     this.setState({thumb_image: response.data.view.file_image.shift().origin_image_url});
                 this.setState({
                     file_images : response.data.view.file_image.map(i => {
@@ -1318,8 +1318,8 @@ class AlbaContent extends React.Component {
                                 </Text>
                             </View>
                             <Layout style={{flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
-                                {post.deal_status?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>
-                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org/'+this.state.thumb_image}}/>}
+                                {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org/'+this.state.thumb_image}}/>
+                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
                                 <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
                             <View style={styles.title}>
