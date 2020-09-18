@@ -137,7 +137,6 @@ class Notificationlib extends CI_Controller
 		$arr_post["to"] = $to;
 
 		//배열을 JSON데이터로 생성
-		echo 'gd';
 		$post_data = json_encode($arr_post);
 		
 		//CURL함수 사용
