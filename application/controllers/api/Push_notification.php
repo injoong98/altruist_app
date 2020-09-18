@@ -1,7 +1,6 @@
 
 <?php
 //---------------------CURL를 활용하여 JSON데이터를 POST방식으로 요청하여 JSON데이터로 받기--------------------
-
 //요청 서버 URL 셋팅
 $url = "https://fcm.googleapis.com/fcm/send";
 
@@ -13,7 +12,7 @@ $headers = array(
 
 //POST방식으로 보낼 JSON데이터 생성
 $notification = array();
-$to = array();
+$to = array(); 
 $arr_post = array();
 
 $notification["title"] = "from php servser";
@@ -21,7 +20,7 @@ $notification["body"] = "from php servser";
 
 $arr_post["notification"] = $notification;
 
-$to = "/topics/weather";
+$to = "emoW7N_xRFGK84lQSWB8vw:APA91bEMgryRgIVvvhSwaVciWjjmdGrKu5uIdlKOl6wFSg4vXikELSwoYgUFzZdsmFYzQjqXtKRWKPtCEx522Ated4M7-owEJYTzDiJD7Q1oXL6LEkjjd-x5TU2w8kQABK8N9DPyAEWb";
 
 $arr_post["to"] = $to;
 

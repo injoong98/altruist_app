@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,StyleSheet, SafeAreaView, TouchableOpacity,Scrollview} from 'react-native';
+import {View,StyleSheet, SafeAreaView, TouchableOpacity,ScrollView} from 'react-native';
 import {Input,Button,Text,Modal} from '@ui-kitten/components';
 import axios from 'axios'
 import Confirm from '../../../components/confirm.component'
@@ -56,7 +56,7 @@ class Mypage extends React.Component{
       const {navigate} =this.props.navigation
         return(
           <SafeAreaView style={{flex:1}}>
-              <Scrollview style={{flex:1,backgroundColor:'#ffffff'}}>
+              <ScrollView style={{flex:1,backgroundColor:'#ffffff'}}>
                   <View style={{flexDirection:'row',margin:35,backgroundColor:'#F0F0F0',borderRadius:10}}>
                       <View style={{marginVertical:20,marginLeft:30}}>
                           <NoimageSvg height={125} width={125}/>
@@ -152,13 +152,13 @@ class Mypage extends React.Component{
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{()=>{this.sessionChk();}}}>
                         <Text style={styles.menuItem}>세션체크</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{()=>{this.navigate('MyAlarm');}}}>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarm');}}>
                         <Text style={styles.menuItem}>알림 체크</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
 
-              </Scrollview>
+              </ScrollView>
               <Modal
                 visible={logOutModalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
