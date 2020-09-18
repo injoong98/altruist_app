@@ -291,6 +291,13 @@ class Mypage extends React.Component {
                 }}>
                 <Text style={styles.menuItem}>세션체크</Text>
               </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.menuContainer}
+                onPress={() => {
+                    navigate('MyAlarm');
+                }}>
+                <Text style={styles.menuItem}>알람 관리</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>

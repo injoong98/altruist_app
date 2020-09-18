@@ -7,6 +7,7 @@ import {Mypage} from './Mypage';
 import {MyList} from './MyList';
 import {MyPoint} from './MyPoint';
 import {MyProfEdit} from './MyProfEdit';
+import {MyAlarm} from './MyAlarm';
 import {AltQueToptab} from '../L3Stack/AltQueToptab';
 import {AltQueContent,AltReplying} from '../L3Stack/Question';
 const {Navigator,Screen} = createStackNavigator();
@@ -44,5 +45,6 @@ export const MyStackNav = () =>(
         <Screen name = "MyQueList" component={AltQueToptab}/>
         <Screen name = "AltReplying" component={AltReplying}/>
         <Screen name = "AltQueContent" component={AltQueContent}/>
+        <Screen name = "MyAlarm" component={MyAlarm}/>
     </Navigator>
 )
