@@ -95,7 +95,11 @@ export class StackNav extends React.Component{
                 
                 axios.post('http://dev.unyict.org/api/login',formdata)
                 .then(response=>{
-                    this.setState({isSignedIn:true})
+                    console.log(JSON.stringify(response.data.status))
+                    response.data.status == 200 ? 
+                     this.setState({isSignedIn:true})
+                    :
+                     alert(`로그인 실패 :(`)
                 })
                 .catch(error=>{
                     alert(`에러 : ${JSON.stringify(error)}`)
