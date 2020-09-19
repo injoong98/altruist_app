@@ -1,5 +1,11 @@
 import React, {Component, useState} from 'react';
-import {View, StyleSheet, SafeAreaView, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Alert,
+  DatePickerAndroid,
+} from 'react-native';
 import {
   Text,
   Input,
@@ -11,13 +17,17 @@ import {
   TextInput,
   Radio,
   RadioGroup,
+  Datepicker,
+  Calendar,
+  NativeDateService,
 } from '@ui-kitten/components';
+import moment from 'moment';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
-const Calender = (props) => <Icon {...props} name="calendar-outline" />;
+const CalendarIcon = (props) => <Icon {...props} name="calendar" />;
 
 class RegisterScreen extends Component {
   // RegisterScreen.PropTypes = {
@@ -41,7 +51,7 @@ class RegisterScreen extends Component {
       mem_homepage: '',
       mem_phone: '',
       mem_birthday: '',
-      mem_sex: '',
+      mem_sex: '1',
       mem_address: '',
       mem_profile_content: '',
       mem_recommend: '',
@@ -82,6 +92,7 @@ class RegisterScreen extends Component {
     formdata.append('mem_sex', mem_sex);
     formdata.append('mem_birthday', mem_birthday);
     formdata.append('mem_recommend', mem_recommend);
+    console.log('form', this.state);
 
     await axios
       .post('http://dev.unyict.org/api/register/form', formdata)
@@ -94,9 +105,9 @@ class RegisterScreen extends Component {
           [
             {
               text: 'OK',
-              onPress: () => {
-                this.gobackfunc();
-              },
+              // onPress: () => {
+              //   this.gobackfunc();
+              // },
             },
           ],
           {cancelable: false},
@@ -117,39 +128,39 @@ class RegisterScreen extends Component {
       .then((res) => this.setState({EmailCaption: res.result}));
   };
 
+  //성별, 생년월일 "" STring으로 안9들어가는 문제
+  // 생년월일 string으로 변환하는 문제
+  ConvertString = (something) => {
+    console.info(something);
+    let type = something.toString();
+    return type;
+  };
+
   //   TODO : 생년월일
-  // datePicker = () => {
-  //   return (
-  //     <View style={styles.container}>
-  //       <DatePicker
-  //         style={{width: 200}}
-  //         date={this.state.date} //initial date from state
-  //         mode="date" //The enum of date, datetime and time
-  //         placeholder="select date"
-  //         format="DD-MM-YYYY"
-  //         minDate="01-01-2016"
-  //         maxDate="01-01-2019"
-  //         confirmBtnText="dsfdsf"
-  //         cancelBtnText="Cancel"
-  //         customStyles={{
-  //           dateIcon: {
-  //             // display:"none",
-  //             position: 'absolute',
-  //             left: 0,
-  //             top: 4,
-  //             marginLeft: 0,
-  //           },
-  //           dateInput: {
-  //             marginLeft: 36,
-  //           },
-  //         }}
-  //         onDateChange={(date) => {
-  //           this.setState({date: date});
-  //         }}
-  //       />
-  //     </View>
-  //   );
-  // };
+  DatepickerBday = () => {
+    // const today = new Date(1900, 1, 1);
+    const [date, setDate] = useState(new Date());
+    const formatDateService = new NativeDateService('en', {
+      format: 'YYYY-MM-DD',
+    });
+    // console.log('date', today);
+    return (
+      <Datepicker
+        accessoryRight={CalendarIcon}
+        min={new Date(1900, 1, 1)}
+        date={date}
+        dateService={formatDateService}
+        onSelect={(nextDate) => {
+          setDate(nextDate);
+          this.setState({
+            mem_birthday: moment(this.ConvertString(nextDate)).format(
+              'YYYY-MM-DD',
+            ),
+          });
+        }}
+      />
+    );
+  };
 
   //   TODO : 성별
   RadioGroupSimpleUsageShowcase = () => {
@@ -167,8 +178,10 @@ class RegisterScreen extends Component {
         selectedIndex={selectedIndex}
         onChange={(index) => {
           setSelectedIndex(index);
-          this.setState({mem_sex: index + 1});
-        }}>
+          this.setState({mem_sex: this.ConvertString(index + 1)});
+        }}
+        // onChangeText={(sex) => this.setState({mem_sex: })}
+      >
         <Radio>남자</Radio>
         <Radio>여자</Radio>
       </RadioGroup>
@@ -225,6 +238,7 @@ class RegisterScreen extends Component {
               />
               <this.RadioGroupSimpleUsageShowcase />
               <Input
+                keyboardType="email-address"
                 style={{padding: 3}}
                 textContentType="emailAddress" //ios
                 placeholder="Email (example@email.com)"
@@ -263,33 +277,30 @@ class RegisterScreen extends Component {
                 secureTextEntry
               />
               <Input
+                keyboardType="phone-pad"
+                dataDetectorTypes="phoneNumber"
                 style={{padding: 3}}
                 placeholder="휴대전화"
                 onChangeText={(mem_phone) =>
                   this.setState({mem_phone: mem_phone})
                 }
               />
-              <Input
+              {/* <Input
                 style={{padding: 3}}
                 placeholder="생년월일"
                 onChangeText={(mem_birthday) =>
                   this.setState({mem_birthday: mem_birthday})
                 }
-              />
+              /> */}
+              <this.DatepickerBday />
               <Input
                 style={{padding: 3}}
                 placeholder="추천인"
-                onChangeText={(mem_birthday) =>
-                  this.setState({mem_birthday: mem_birthday})
+                onChangeText={(mem_recommend) =>
+                  this.setState({mem_recommend: mem_recommend})
                 }
               />
-              <Input
-                style={{padding: 3}}
-                placeholder="서명문"
-                onChangeText={(mem_birthday) =>
-                  this.setState({mem_birthday: mem_birthday})
-                }
-              />
+              <Input style={{padding: 3}} placeholder="서명문" />
 
               {/* <View
                 style={{
