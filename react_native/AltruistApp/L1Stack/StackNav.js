@@ -11,6 +11,8 @@ import axios from 'axios'
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
 import LoginScreen from './Login'
 import RegisterScreen from './Register'
+import AgreementScreen from './Agreement'
+import RegisterSuccessScreen from './RegisterSuccess'
 import QuestionScreen from './Question'
 import FinishScreen from './Finish'
 import {Signing} from './Context'
@@ -123,6 +125,8 @@ export class StackNav extends React.Component{
                         <>
                             <Screen name = "Login" component={LoginScreen}/>
                             <Screen name = "RegisterScreen" component={RegisterScreen}/>
+                            <Screen name = "AgreementScreen" component={AgreementScreen}/>
+                            <Screen name = "RegisterSuccessScreen" component={RegisterSuccessScreen}/>
                             <Screen name = "QuestionScreen" component={QuestionScreen}/>
                             <Screen name = "FinishScreen" component={FinishScreen}/>
                         </>

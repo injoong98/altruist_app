@@ -1,5 +1,11 @@
 import React, {Component, useState} from 'react';
-import {View, StyleSheet, SafeAreaView, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Alert,
+  DatePickerAndroid,
+} from 'react-native';
 import {
   Text,
   Input,
@@ -11,24 +17,20 @@ import {
   TextInput,
   Radio,
   RadioGroup,
+  Datepicker,
+  Calendar,
+  NativeDateService,
 } from '@ui-kitten/components';
+import moment from 'moment';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+// import RegisterSuccessScreen from './RegisterSuccess';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
-const Calender = (props) => <Icon {...props} name="calendar-outline" />;
+const CalendarIcon = (props) => <Icon {...props} name="calendar" />;
 
 class RegisterScreen extends Component {
-  // RegisterScreen.PropTypes = {
-  //   mem_email: PropTypes.string.isRequired,
-  //   mem_password: PropTypes.string.isRequired,
-  //   mem_password_confirm: PropTypes.string.isRequired,
-  //   mem_nickname: PropTypes.string.isRequired,
-  //   mem_phone: PropTypes.string.isRequired,
-  //   mem_sex: PropTypes.number.isRequired,
-  //   mem_birthday: PropTypes.instanceOf(Date).isRequired,
-  // };
   constructor(props) {
     super(props);
     this.state = {
@@ -41,7 +43,7 @@ class RegisterScreen extends Component {
       mem_homepage: '',
       mem_phone: '',
       mem_birthday: '',
-      mem_sex: '',
+      mem_sex: '1',
       mem_address: '',
       mem_profile_content: '',
       mem_recommend: '',
@@ -67,6 +69,7 @@ class RegisterScreen extends Component {
       mem_password,
       mem_password_re,
       mem_nickname,
+      mem_phone,
       mem_email,
       mem_sex,
       mem_birthday,
@@ -78,36 +81,49 @@ class RegisterScreen extends Component {
     formdata.append('mem_email', mem_email);
     formdata.append('mem_password', mem_password);
     formdata.append('mem_password_re', mem_password_re);
+    formdata.append('mem_phone', mem_phone);
     formdata.append('mem_nickname', mem_nickname);
     formdata.append('mem_sex', mem_sex);
     formdata.append('mem_birthday', mem_birthday);
     formdata.append('mem_recommend', mem_recommend);
+    console.info('form', this.state);
 
     await axios
       .post('http://dev.unyict.org/api/register/form', formdata)
-      .then((response) => {
-        // console.log('response', response);
+      .then((res) => {
+        console.log('response', res);
+        console.log('status', res.status);
+        if (res.status == 500) {
+          // () => this.props.navigation.navigate('AgreementScreen');
+          this.props.navigation.navigate('RegisterSuccessScreen');
+        } else if (res.status == 200) {
+          //실패시,
+          this.props.navigation.navigate('RegisterSuccessScreen');
+        } else {
+        }
         // console.log('this.state', this.state);
-        Alert.alert(
-          '가입 테스트',
-          '가입 테스트 완료',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                this.gobackfunc();
-              },
-            },
-          ],
-          {cancelable: false},
-        );
+        // Alert.alert(
+        //   '가입 테스트',
+        //   '가입 테스트 완료',
+        //   [
+        //     {
+        //       text: 'OK',
+        //       // onPress: () => {
+        //       //   this.gobackfunc();
+        //       // },
+        //     },
+        //   ],
+        //   {cancelable: false},
+        // );
       })
       .catch((error) => {
-        console.log(error);
+        console.log('ERROR', error);
         console.error();
         //alert('')
       });
   };
+
+  //TODO : 모달 (실패)
 
   //   TODO : 이메일 중복 확인
   checkEmail = async () => {
@@ -117,42 +133,42 @@ class RegisterScreen extends Component {
       .then((res) => this.setState({EmailCaption: res.result}));
   };
 
+  //성별, 생년월일 "" STring으로 안9들어가는 문제
+  // 생년월일 string으로 변환하는 문제
+  ConvertString = (something) => {
+    console.info(something);
+    let type = something.toString();
+    return type;
+  };
+
   //   TODO : 생년월일
-  // datePicker = () => {
-  //   return (
-  //     <View style={styles.container}>
-  //       <DatePicker
-  //         style={{width: 200}}
-  //         date={this.state.date} //initial date from state
-  //         mode="date" //The enum of date, datetime and time
-  //         placeholder="select date"
-  //         format="DD-MM-YYYY"
-  //         minDate="01-01-2016"
-  //         maxDate="01-01-2019"
-  //         confirmBtnText="dsfdsf"
-  //         cancelBtnText="Cancel"
-  //         customStyles={{
-  //           dateIcon: {
-  //             // display:"none",
-  //             position: 'absolute',
-  //             left: 0,
-  //             top: 4,
-  //             marginLeft: 0,
-  //           },
-  //           dateInput: {
-  //             marginLeft: 36,
-  //           },
-  //         }}
-  //         onDateChange={(date) => {
-  //           this.setState({date: date});
-  //         }}
-  //       />
-  //     </View>
-  //   );
-  // };
+  DatepickerBday = () => {
+    // const today = new Date(1900, 1, 1);
+    const [date, setDate] = useState(new Date());
+    const formatDateService = new NativeDateService('en', {
+      format: 'YYYY-MM-DD',
+    });
+    // console.log('date', today);
+    return (
+      <Datepicker
+        accessoryRight={CalendarIcon}
+        min={new Date(1900, 1, 1)}
+        date={date}
+        dateService={formatDateService}
+        onSelect={(nextDate) => {
+          setDate(nextDate);
+          this.setState({
+            mem_birthday: moment(this.ConvertString(nextDate)).format(
+              'YYYY-MM-DD',
+            ),
+          });
+        }}
+      />
+    );
+  };
 
   //   TODO : 성별
-  RadioGroupSimpleUsageShowcase = () => {
+  RadioSexSelection = () => {
     const [selectedIndex, setSelectedIndex] = React.useState(0);
 
     return (
@@ -167,7 +183,7 @@ class RegisterScreen extends Component {
         selectedIndex={selectedIndex}
         onChange={(index) => {
           setSelectedIndex(index);
-          this.setState({mem_sex: index + 1});
+          this.setState({mem_sex: this.ConvertString(index + 1)});
         }}>
         <Radio>남자</Radio>
         <Radio>여자</Radio>
@@ -176,6 +192,7 @@ class RegisterScreen extends Component {
   };
 
   //   TODO : 휴대폰 번호
+  PhoneHyphen = () => {};
 
   //   TODO : 패스워드 확인
   CheckPassword = (a, b) => {
@@ -200,7 +217,7 @@ class RegisterScreen extends Component {
           alignment="center"
           accessoryLeft={this.BackAction}
         />
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
           <ScrollView>
             <View
               style={{
@@ -223,14 +240,15 @@ class RegisterScreen extends Component {
                   this.setState({mem_nickname: mem_nickname})
                 }
               />
-              <this.RadioGroupSimpleUsageShowcase />
+              <this.RadioSexSelection />
               <Input
-                style={{padding: 3}}
+                keyboardType="email-address"
                 textContentType="emailAddress" //ios
                 placeholder="Email (example@email.com)"
                 onChangeText={(mem_email) =>
                   this.setState({mem_email: mem_email, mem_userid: mem_email})
                 }
+                style={{padding: 3}}
               />
               <Input
                 style={{padding: 3}}
@@ -263,60 +281,30 @@ class RegisterScreen extends Component {
                 secureTextEntry
               />
               <Input
+                keyboardType="phone-pad"
+                dataDetectorTypes="phoneNumber"
                 style={{padding: 3}}
                 placeholder="휴대전화"
                 onChangeText={(mem_phone) =>
                   this.setState({mem_phone: mem_phone})
                 }
               />
-              <Input
-                style={{padding: 3}}
-                placeholder="생년월일"
-                onChangeText={(mem_birthday) =>
-                  this.setState({mem_birthday: mem_birthday})
-                }
-              />
+              <this.DatepickerBday />
               <Input
                 style={{padding: 3}}
                 placeholder="추천인"
-                onChangeText={(mem_birthday) =>
-                  this.setState({mem_birthday: mem_birthday})
+                onChangeText={(mem_recommend) =>
+                  this.setState({mem_recommend: mem_recommend})
                 }
               />
-              <Input
-                style={{padding: 3}}
-                placeholder="서명문"
-                onChangeText={(mem_birthday) =>
-                  this.setState({mem_birthday: mem_birthday})
-                }
-              />
-
+              <Input style={{padding: 3}} placeholder="서명문" />
               {/* <View
-                style={{
-                  padding: 3,
-                  flexDirection: 'row',
-                  justifyContent: 'space-around',
-                  alignItems: 'center',
-                }}>
-                <Button
-                  style={{width: '45%'}}
-                  onPress={() => this.setState({mem_sex: 2})}>
-                  여성
-                </Button>
-                <Button
-                  style={{width: '45%'}}
-                  onPress={() => this.setState({mem_sex: 1})}
-                  style={{backgroundColor: 'white'}}>
-                  <Text style={{color: black}}>남성</Text>
-                </Button> 
-              </View>*/}
-              <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-around',
                   alignItems: 'stretch',
                   alignContent: 'stretch',
-                }}></View>
+                }}></View> */}
             </View>
             {/* 동의 및 다음 버튼 */}
             <View
@@ -352,11 +340,24 @@ class RegisterScreen extends Component {
   }
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
+RegisterScreen.PropTypes = {
+  mem_email: PropTypes.string.isRequired,
+  mem_password: PropTypes.string.isRequired,
+  mem_password_confirm: PropTypes.string.isRequired,
+  mem_nickname: PropTypes.string.isRequired,
+  mem_phone: PropTypes.string.isRequired,
+  mem_sex: PropTypes.number.isRequired,
+  mem_birthday: PropTypes.instanceOf(Date).isRequired,
+};
+
+const styles = StyleSheet.create({
+  '*': {
+    backgroundColor: 'white',
+  },
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default RegisterScreen;
