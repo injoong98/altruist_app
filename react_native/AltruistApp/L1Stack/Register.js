@@ -3,6 +3,7 @@ import {
   View,
   StyleSheet,
   SafeAreaView,
+  Keyboard,
   Alert,
   DatePickerAndroid,
 } from 'react-native';
@@ -123,14 +124,28 @@ class RegisterScreen extends Component {
       });
   };
 
+  //   TODO : 휴대폰 번호
+  PhoneHyphen = () => {};
+
+  //TODO :
+
   //TODO : 모달 (실패)
 
   //   TODO : 이메일 중복 확인
   checkEmail = async () => {
     const {mem_userid, checkEmail} = this.state;
+    console.log('jklsajf');
+
+    let formdata = new FormData();
+    formdata.append('userid', mem_userid);
+
     await axios
-      .post('http://dev.unyict.org/api/register/userid_check', mem_userid)
-      .then((res) => this.setState({EmailCaption: res.result}));
+      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
+        this.setState({EmailCaption: res.data.message});
+      });
   };
 
   //성별, 생년월일 "" STring으로 안9들어가는 문제
@@ -191,9 +206,6 @@ class RegisterScreen extends Component {
     );
   };
 
-  //   TODO : 휴대폰 번호
-  PhoneHyphen = () => {};
-
   //   TODO : 패스워드 확인
   CheckPassword = (a, b) => {
     console.log(this.state);
@@ -245,9 +257,11 @@ class RegisterScreen extends Component {
                 keyboardType="email-address"
                 textContentType="emailAddress" //ios
                 placeholder="Email (example@email.com)"
-                onChangeText={(mem_email) =>
-                  this.setState({mem_email: mem_email, mem_userid: mem_email})
-                }
+                onChangeText={(mem_email) => {
+                  this.setState({mem_email: mem_email, mem_userid: mem_email});
+                }}
+                onEndEditing={this.checkEmail}
+                caption={this.state.EmailCaption}
                 style={{padding: 3}}
               />
               <Input
