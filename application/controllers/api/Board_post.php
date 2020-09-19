@@ -1234,7 +1234,7 @@ class Board_post extends CB_Controller
 							//post_main_thumb  로 대표 썸네일을 가져온다.  0 부터 
 							$file = $this->Post_file_model->get_main_thumb(element('post_id', $val),element('post_main_thumb', $val));
 							$pfi_filename = $file->pfi_filename;
-							log_message('error','pfi_filename'.$pfi_filename);
+							//log_message('error','pfi_filename'.$pfi_filename);
 							$result['list'][$key]['thumb_url'] = thumb_url('post', $pfi_filename, $gallery_image_width, $gallery_image_height);
 							$result['list'][$key]['origin_image_url'] = thumb_url('post', $pfi_filename);
 						} else {
