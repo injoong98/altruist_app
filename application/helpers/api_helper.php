@@ -75,10 +75,12 @@ if ( ! function_exists('response_result')) {
                 $return_result['status'] ='200';
                 $return_result['message'] ='OK';
                 if($result_code =='success') $return_result['message'] =$result_msg;
+                
 
             }else{
                 $return_result['status'] ='500';
                 $return_result['message'] = $result_msg;
+                log_message('error',json_encode($return_result ,JSON_UNESCAPED_UNICODE));
 
             } 
         }else {
@@ -86,8 +88,9 @@ if ( ! function_exists('response_result')) {
             $return_result['row'] =false;
              $return_result['status'] ='950';
              $return_result['message'] =$result_json['msg'];
+             log_message('error',json_encode($return_result ,JSON_UNESCAPED_UNICODE));
          }
-         log_message('error',json_encode($return_result ,JSON_UNESCAPED_UNICODE));
+        // log_message('error',json_encode($return_result ,JSON_UNESCAPED_UNICODE));
         //결과응답
 		header("Content-Type: application/json; charset=utf-8");
 		//header("Content-Type: text/html; charset=euc-kr");

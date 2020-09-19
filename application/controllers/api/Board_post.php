@@ -348,7 +348,7 @@ class Board_post extends CB_Controller
 			$dbmember = $this->Member_model->get_by_memid(element('mem_id', $post), 'mem_icon');
 
 			if(element('post_anoymous_yn', $view['view']['post'])) {// 익명글일경우에는 고민주의자로 표기
-				$view['view']['post']['display_name'] = '고민주의자';
+				$view['view']['post']['display_name'] = '익명';
 			}else {
 				$view['view']['post']['display_name'] = element('post_nickname', $post);
 				//  display_username(
@@ -1230,15 +1230,13 @@ class Board_post extends CB_Controller
 
 				if (element('use_gallery_list', $board)) {
 					if (element('post_thumb_use', $val)) {
-						if (element('post_image', $val)) {
-							$filewhere = array(
-								'post_id' => element('post_id', $val),
-								'pfi_is_image' => 1,
-							);
-							$file = $this->Post_file_model
-								->get_one('', '', $filewhere, '', '', 'pfi_id', 'ASC');
-							$result['list'][$key]['thumb_url'] = thumb_url('post', element('pfi_filename', $file), $gallery_image_width, $gallery_image_height);
-							$result['list'][$key]['origin_image_url'] = thumb_url('post', element('pfi_filename', $file));
+						if (element('post_image', $val)) { //post_image : 이미지 카운트
+							//post_main_thumb  로 대표 썸네일을 가져온다.  0 부터 
+							$file = $this->Post_file_model->get_main_thumb(element('post_id', $val),element('post_main_thumb', $val));
+							$pfi_filename = $file->pfi_filename;
+							//log_message('error','pfi_filename'.$pfi_filename);
+							$result['list'][$key]['thumb_url'] = thumb_url('post', $pfi_filename, $gallery_image_width, $gallery_image_height);
+							$result['list'][$key]['origin_image_url'] = thumb_url('post', $pfi_filename);
 						} else {
 							$thumb_url = get_post_image_url(element('post_content', $val), $gallery_image_width, $gallery_image_height);
 							$result['list'][$key]['thumb_url'] = $thumb_url
