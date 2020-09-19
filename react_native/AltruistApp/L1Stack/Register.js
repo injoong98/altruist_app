@@ -25,20 +25,12 @@ import moment from 'moment';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+// import RegisterSuccessScreen from './RegisterSuccess';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CalendarIcon = (props) => <Icon {...props} name="calendar" />;
 
 class RegisterScreen extends Component {
-  // RegisterScreen.PropTypes = {
-  //   mem_email: PropTypes.string.isRequired,
-  //   mem_password: PropTypes.string.isRequired,
-  //   mem_password_confirm: PropTypes.string.isRequired,
-  //   mem_nickname: PropTypes.string.isRequired,
-  //   mem_phone: PropTypes.string.isRequired,
-  //   mem_sex: PropTypes.number.isRequired,
-  //   mem_birthday: PropTypes.instanceOf(Date).isRequired,
-  // };
   constructor(props) {
     super(props);
     this.state = {
@@ -77,6 +69,7 @@ class RegisterScreen extends Component {
       mem_password,
       mem_password_re,
       mem_nickname,
+      mem_phone,
       mem_email,
       mem_sex,
       mem_birthday,
@@ -88,37 +81,49 @@ class RegisterScreen extends Component {
     formdata.append('mem_email', mem_email);
     formdata.append('mem_password', mem_password);
     formdata.append('mem_password_re', mem_password_re);
+    formdata.append('mem_phone', mem_phone);
     formdata.append('mem_nickname', mem_nickname);
     formdata.append('mem_sex', mem_sex);
     formdata.append('mem_birthday', mem_birthday);
     formdata.append('mem_recommend', mem_recommend);
-    console.log('form', this.state);
+    console.info('form', this.state);
 
     await axios
       .post('http://dev.unyict.org/api/register/form', formdata)
-      .then((response) => {
-        // console.log('response', response);
+      .then((res) => {
+        console.log('response', res);
+        console.log('status', res.status);
+        if (res.status == 500) {
+          // () => this.props.navigation.navigate('AgreementScreen');
+          this.props.navigation.navigate('RegisterSuccessScreen');
+        } else if (res.status == 200) {
+          //실패시,
+          this.props.navigation.navigate('RegisterSuccessScreen');
+        } else {
+        }
         // console.log('this.state', this.state);
-        Alert.alert(
-          '가입 테스트',
-          '가입 테스트 완료',
-          [
-            {
-              text: 'OK',
-              // onPress: () => {
-              //   this.gobackfunc();
-              // },
-            },
-          ],
-          {cancelable: false},
-        );
+        // Alert.alert(
+        //   '가입 테스트',
+        //   '가입 테스트 완료',
+        //   [
+        //     {
+        //       text: 'OK',
+        //       // onPress: () => {
+        //       //   this.gobackfunc();
+        //       // },
+        //     },
+        //   ],
+        //   {cancelable: false},
+        // );
       })
       .catch((error) => {
-        console.log(error);
+        console.log('ERROR', error);
         console.error();
         //alert('')
       });
   };
+
+  //TODO : 모달 (실패)
 
   //   TODO : 이메일 중복 확인
   checkEmail = async () => {
@@ -163,7 +168,7 @@ class RegisterScreen extends Component {
   };
 
   //   TODO : 성별
-  RadioGroupSimpleUsageShowcase = () => {
+  RadioSexSelection = () => {
     const [selectedIndex, setSelectedIndex] = React.useState(0);
 
     return (
@@ -179,9 +184,7 @@ class RegisterScreen extends Component {
         onChange={(index) => {
           setSelectedIndex(index);
           this.setState({mem_sex: this.ConvertString(index + 1)});
-        }}
-        // onChangeText={(sex) => this.setState({mem_sex: })}
-      >
+        }}>
         <Radio>남자</Radio>
         <Radio>여자</Radio>
       </RadioGroup>
@@ -189,6 +192,7 @@ class RegisterScreen extends Component {
   };
 
   //   TODO : 휴대폰 번호
+  PhoneHyphen = () => {};
 
   //   TODO : 패스워드 확인
   CheckPassword = (a, b) => {
@@ -213,7 +217,7 @@ class RegisterScreen extends Component {
           alignment="center"
           accessoryLeft={this.BackAction}
         />
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
           <ScrollView>
             <View
               style={{
@@ -236,15 +240,15 @@ class RegisterScreen extends Component {
                   this.setState({mem_nickname: mem_nickname})
                 }
               />
-              <this.RadioGroupSimpleUsageShowcase />
+              <this.RadioSexSelection />
               <Input
                 keyboardType="email-address"
-                style={{padding: 3}}
                 textContentType="emailAddress" //ios
                 placeholder="Email (example@email.com)"
                 onChangeText={(mem_email) =>
                   this.setState({mem_email: mem_email, mem_userid: mem_email})
                 }
+                style={{padding: 3}}
               />
               <Input
                 style={{padding: 3}}
@@ -285,13 +289,6 @@ class RegisterScreen extends Component {
                   this.setState({mem_phone: mem_phone})
                 }
               />
-              {/* <Input
-                style={{padding: 3}}
-                placeholder="생년월일"
-                onChangeText={(mem_birthday) =>
-                  this.setState({mem_birthday: mem_birthday})
-                }
-              /> */}
               <this.DatepickerBday />
               <Input
                 style={{padding: 3}}
@@ -301,33 +298,13 @@ class RegisterScreen extends Component {
                 }
               />
               <Input style={{padding: 3}} placeholder="서명문" />
-
               {/* <View
-                style={{
-                  padding: 3,
-                  flexDirection: 'row',
-                  justifyContent: 'space-around',
-                  alignItems: 'center',
-                }}>
-                <Button
-                  style={{width: '45%'}}
-                  onPress={() => this.setState({mem_sex: 2})}>
-                  여성
-                </Button>
-                <Button
-                  style={{width: '45%'}}
-                  onPress={() => this.setState({mem_sex: 1})}
-                  style={{backgroundColor: 'white'}}>
-                  <Text style={{color: black}}>남성</Text>
-                </Button> 
-              </View>*/}
-              <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-around',
                   alignItems: 'stretch',
                   alignContent: 'stretch',
-                }}></View>
+                }}></View> */}
             </View>
             {/* 동의 및 다음 버튼 */}
             <View
@@ -363,11 +340,24 @@ class RegisterScreen extends Component {
   }
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
+RegisterScreen.PropTypes = {
+  mem_email: PropTypes.string.isRequired,
+  mem_password: PropTypes.string.isRequired,
+  mem_password_confirm: PropTypes.string.isRequired,
+  mem_nickname: PropTypes.string.isRequired,
+  mem_phone: PropTypes.string.isRequired,
+  mem_sex: PropTypes.number.isRequired,
+  mem_birthday: PropTypes.instanceOf(Date).isRequired,
+};
+
+const styles = StyleSheet.create({
+  '*': {
+    backgroundColor: 'white',
+  },
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default RegisterScreen;
