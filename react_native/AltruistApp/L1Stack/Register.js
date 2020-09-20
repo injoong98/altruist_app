@@ -354,7 +354,7 @@ class RegisterScreen extends Component {
   }
 }
 
-RegisterScreen.PropTypes = {
+RegisterScreen.propTypes = {
   mem_email: PropTypes.string.isRequired,
   mem_password: PropTypes.string.isRequired,
   mem_password_confirm: PropTypes.string.isRequired,
@@ -365,9 +365,6 @@ RegisterScreen.PropTypes = {
 };
 
 const styles = StyleSheet.create({
-  '*': {
-    backgroundColor: 'white',
-  },
   container: {
     alignItems: 'center',
     justifyContent: 'center',
