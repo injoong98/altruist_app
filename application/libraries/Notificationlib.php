@@ -135,12 +135,12 @@ class Notificationlib extends CI_Controller
 			$this->CI->db->select('ptk_token');
 			$query =  $this->CI->db->get_where('cb_push_token',array('mem_id'=>$target));
 			if($query!=false){
-				$target_info=$query->row_array();
+				$target_info=$query->result_array();
 			}
 		}
 		foreach($target_info as $ti){
 			
-			$arr_post["to"] = $ti;
+			$arr_post["to"] = $ti['ptk_token'];
 
 			$post_data = json_encode($arr_post);
 			
