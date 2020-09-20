@@ -12,6 +12,7 @@ import {Layout,Text,TopNavigation} from '@ui-kitten/components'
 import LoginScreen from './Login'
 import RegisterScreen from './Register'
 import AgreementScreen from './Agreement'
+import FindPwScreen from './FindPw'
 import RegisterSuccessScreen from './RegisterSuccess'
 import QuestionScreen from './Question'
 import FinishScreen from './Finish'
@@ -97,7 +98,11 @@ export class StackNav extends React.Component{
                 
                 axios.post('http://dev.unyict.org/api/login',formdata)
                 .then(response=>{
-                    this.setState({isSignedIn:true})
+                    console.log(JSON.stringify(response.data.status))
+                    response.data.status == 200 ? 
+                     this.setState({isSignedIn:true})
+                    :
+                     alert(`로그인 실패 :(`)
                 })
                 .catch(error=>{
                     alert(`에러 : ${JSON.stringify(error)}`)
@@ -124,6 +129,7 @@ export class StackNav extends React.Component{
                         !isSignedIn ? 
                         <>
                             <Screen name = "Login" component={LoginScreen}/>
+                            <Screen name = "FindPwScreen" component={FindPwScreen}/>
                             <Screen name = "RegisterScreen" component={RegisterScreen}/>
                             <Screen name = "AgreementScreen" component={AgreementScreen}/>
                             <Screen name = "RegisterSuccessScreen" component={RegisterSuccessScreen}/>

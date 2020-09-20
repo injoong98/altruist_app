@@ -125,7 +125,12 @@ class RegisterScreen extends Component {
   };
 
   //   TODO : 휴대폰 번호
-  PhoneHyphen = () => {};
+  PhoneHyphen = (e) => {
+    //넣었다가 아니면 뱉어주고
+    //11자 되기 전에는 3자리, 8자리 기준으로
+    //3자리에서 뱉어주고 뱉어준거 다시 받아서
+    //4자리부터는 -가지고 다시 이어나갈 수 있도록
+  };
 
   //TODO :
 
@@ -133,8 +138,7 @@ class RegisterScreen extends Component {
 
   //   TODO : 이메일 중복 확인
   checkEmail = async () => {
-    const {mem_userid, checkEmail} = this.state;
-    console.log('jklsajf');
+    const {mem_userid} = this.state;
 
     let formdata = new FormData();
     formdata.append('userid', mem_userid);
@@ -145,6 +149,23 @@ class RegisterScreen extends Component {
         console.log(res);
         console.log(res.data);
         this.setState({EmailCaption: res.data.message});
+      });
+  };
+
+  checkRecommend = async () => {
+    const {mem_recommend} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('userid', mem_recommend);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .then((res) => {
+        if (res.data.message == '이미 사용중인 아이디입니다') {
+          this.setState({recommendCaption: null});
+        } else if (res.data.result == 'available') {
+          this.setState({recommendCaption: '없는 아이디 입니다.'});
+        }
       });
   };
 
@@ -295,21 +316,27 @@ class RegisterScreen extends Component {
                 secureTextEntry
               />
               <Input
+                maxLength={11}
                 keyboardType="phone-pad"
                 dataDetectorTypes="phoneNumber"
                 style={{padding: 3}}
                 placeholder="휴대전화"
-                onChangeText={(mem_phone) =>
-                  this.setState({mem_phone: mem_phone})
-                }
+                onChangeText={(mem_phone) => {
+                  this.setState({mem_phone: mem_phone});
+                  this.PhoneHyphen(mem_phone);
+                }}
+                // onEndEditing={this.PhoneHyphen}
+                caption={this.state.phoneCaption}
               />
               <this.DatepickerBday />
               <Input
                 style={{padding: 3}}
-                placeholder="추천인"
+                placeholder="추천인 이메일"
                 onChangeText={(mem_recommend) =>
                   this.setState({mem_recommend: mem_recommend})
                 }
+                onEndEditing={this.checkRecommend}
+                caption={this.state.recommendCaption}
               />
               <Input style={{padding: 3}} placeholder="서명문" />
               {/* <View
@@ -354,20 +381,23 @@ class RegisterScreen extends Component {
   }
 }
 
-RegisterScreen.PropTypes = {
+RegisterScreen.propTypes = {
+  // 필수 :
+  // 이메일주소
+  // 비밀번호
+  // 비밀번호 확인
+  // 닉네임
+  // 이름
   mem_email: PropTypes.string.isRequired,
   mem_password: PropTypes.string.isRequired,
   mem_password_confirm: PropTypes.string.isRequired,
   mem_nickname: PropTypes.string.isRequired,
-  mem_phone: PropTypes.string.isRequired,
   mem_sex: PropTypes.number.isRequired,
-  mem_birthday: PropTypes.instanceOf(Date).isRequired,
+  mem_birthday: PropTypes.instanceOf(Date),
+  mem_phone: PropTypes.string,
 };
 
 const styles = StyleSheet.create({
-  '*': {
-    backgroundColor: 'white',
-  },
   container: {
     alignItems: 'center',
     justifyContent: 'center',
