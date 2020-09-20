@@ -209,8 +209,7 @@ class GominWrite extends React.Component {
                                     confirmText={this.props.route.params.mode=='edit' ?'게시글 수정 완료':"게시글 작성 완료"}
                                     frstText="닫기"
                                     OnFrstPress={() =>{this.setState({resultVisible:false});this.gobackfunc()}}
-                                    scndText="아니오"
-                                    OnScndPress={() => this.setState({resultVisible:false})}
+                                    type='result'
                                 />
                     </Modal>
                     <Modal
