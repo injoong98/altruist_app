@@ -32,6 +32,16 @@ class Login extends CB_Controller
 	}
 
 	//세션 클리어
+	public	function sync_push_token()
+		{
+			$token = $_POST['token'];
+			$mem_id = $_POST['mem_id'];
+
+			$this->db->insert('cb_push_token',array('ptk_token'=>$token,'mem_id'=>$mem_id));
+			
+			response_result($view,'success','토큰 싱크 완료');
+		}
+	//세션 클리어
 	public	function session_clear()
 		{
 			$_SESSION['mem_id'] = '';
