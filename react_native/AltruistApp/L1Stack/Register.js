@@ -138,7 +138,7 @@ class RegisterScreen extends Component {
 
   //   TODO : 이메일 중복 확인
   checkEmail = async () => {
-    const {mem_userid, checkEmail} = this.state;
+    const {mem_userid} = this.state;
 
     let formdata = new FormData();
     formdata.append('userid', mem_userid);
@@ -149,6 +149,23 @@ class RegisterScreen extends Component {
         console.log(res);
         console.log(res.data);
         this.setState({EmailCaption: res.data.message});
+      });
+  };
+
+  checkRecommend = async () => {
+    const {mem_recommend} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('userid', mem_recommend);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .then((res) => {
+        if (res.data.message == '이미 사용중인 아이디입니다') {
+          this.setState({recommendCaption: null});
+        } else if (res.data.result == 'available') {
+          this.setState({recommendCaption: '없는 아이디 입니다.'});
+        }
       });
   };
 
@@ -318,6 +335,8 @@ class RegisterScreen extends Component {
                 onChangeText={(mem_recommend) =>
                   this.setState({mem_recommend: mem_recommend})
                 }
+                onEndEditing={this.checkRecommend}
+                caption={this.state.recommendCaption}
               />
               <Input style={{padding: 3}} placeholder="서명문" />
               {/* <View
@@ -363,13 +382,19 @@ class RegisterScreen extends Component {
 }
 
 RegisterScreen.propTypes = {
+  // 필수 :
+  // 이메일주소
+  // 비밀번호
+  // 비밀번호 확인
+  // 닉네임
+  // 이름
   mem_email: PropTypes.string.isRequired,
   mem_password: PropTypes.string.isRequired,
   mem_password_confirm: PropTypes.string.isRequired,
   mem_nickname: PropTypes.string.isRequired,
-  mem_phone: PropTypes.string.isRequired,
   mem_sex: PropTypes.number.isRequired,
-  mem_birthday: PropTypes.instanceOf(Date).isRequired,
+  mem_birthday: PropTypes.instanceOf(Date),
+  mem_phone: PropTypes.string,
 };
 
 const styles = StyleSheet.create({
