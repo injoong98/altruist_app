@@ -77,4 +77,30 @@ class Post_file_model extends CB_Model
 
 		return $result;
 	}
+
+
+
+	public function get_main_thumb($post_id,$ord)
+	{
+
+		$limit = (int)$ord;
+		$sql = <<<EOT
+		SELECT * FROM cb_post_file
+		WHERE post_id = $post_id and pfi_is_image =1
+		order by pfi_id
+		LIMIT $limit,1
+EOT;
+		$query = $this->db->query($sql);
+
+		return  $query->row();
+	
+	
+	
+	}
+
+
+
+
+
+
 }
