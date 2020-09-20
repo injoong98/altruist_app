@@ -12,6 +12,7 @@ import {Layout,Text,TopNavigation} from '@ui-kitten/components'
 import LoginScreen from './Login'
 import RegisterScreen from './Register'
 import AgreementScreen from './Agreement'
+import FindPwScreen from './FindPw'
 import RegisterSuccessScreen from './RegisterSuccess'
 import QuestionScreen from './Question'
 import FinishScreen from './Finish'
@@ -124,6 +125,7 @@ export class StackNav extends React.Component{
                         !isSignedIn ? 
                         <>
                             <Screen name = "Login" component={LoginScreen}/>
+                            <Screen name = "FindPwScreen" component={FindPwScreen}/>
                             <Screen name = "RegisterScreen" component={RegisterScreen}/>
                             <Screen name = "AgreementScreen" component={AgreementScreen}/>
                             <Screen name = "RegisterSuccessScreen" component={RegisterSuccessScreen}/>
