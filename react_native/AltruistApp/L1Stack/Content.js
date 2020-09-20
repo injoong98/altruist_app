@@ -115,11 +115,14 @@ class GominContent extends React.Component{
         .then(response=>{
             const {status,message}=response.data;
             if(status=='200'){
-                alert(`성공 : ${message}`);
-                Keyboard.dismiss();
-                this.setState({cmt_content:'',relpying:false,cmt_id:''});
-                this.getCommentData(post.post_id);
-                this.refs.pstcmtlist.scrollToEnd();
+                if (message == '댓글이 등록되었습니다.')
+                {
+                    // this.setState({replyModalVisible:true});
+                    Keyboard.dismiss();
+                    this.setState({replyModalVisible:true, cmt_content:'',relpying:false,cmt_id:''});
+                    this.getCommentData(post.post_id);
+                    this.refs.pstcmtlist.scrollToEnd();
+                }
             }else if(status=="500"){
                 alert(`실패 : ${message}`)
             }
@@ -463,7 +466,7 @@ class GominContent extends React.Component{
             </View>
             <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                 {item.cmt_reply ==""?
-                <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replyModalVisible:true,cmt_id:item.cmt_id})}>
+                <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
                     <ReplySsvg />
                 </TouchableOpacity>
                 :null
@@ -488,18 +491,20 @@ class GominContent extends React.Component{
         :
         <SafeAreaView style={{flex:1}}>
             <TopNavigation title="" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.MoreAction} style={styles.topbar}/> 
+            <TouchableWithoutFeedback onPress={()=>{ this.commentWrite; Keyboard.dismiss()}}>
+                <Layout style={{flex:1}}>
+                        <List
+                        ref={"pstcmtlist"} 
+                        data={comment}
+                        ListHeaderComponent={this.renderPostBody(post)}
+                        renderItem={this.renderCommentsList}
+                        onRefresh={this.onRefresh}
+                        refreshing={this.state.refreshing}
+                        style={{backgroundColor:'#ffffff'}}
+                        />
+                </Layout>
+            </TouchableWithoutFeedback>
             
-            <Layout style={{flex:1}}>
-                    <List
-                    ref={"pstcmtlist"} 
-                    data={comment}
-                    ListHeaderComponent={this.renderPostBody(post)}
-                    renderItem={this.renderCommentsList}
-                    onRefresh={this.onRefresh}
-                    refreshing={this.state.refreshing}
-                    style={{backgroundColor:'#ffffff'}}
-                    />
-            </Layout>
             <View style={{backgroundColor:'#ffffff',padding:8}}>
                 {this.state.replying ?
                 <TouchableOpacity onPress={this.commentWrite}>
@@ -545,13 +550,12 @@ class GominContent extends React.Component{
                 visible={replyModalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                 onBackdropPress={() => this.setState({replyModalVisible:false})}
-            >
+                >
                 <Confirm 
-                    confirmText="대댓글을 작성하시겠습니까?"
-                    frstText="예"
-                    OnFrstPress={() =>{this.setState({replying:true,replyModalVisible:false}); this.refs.commentInput.focus()}}
-                    scndText="아니오"
-                    OnScndPress={() => this.setState({replyModalVisible:false,cmt_id:''})}
+                    type = 'result'
+                    confirmText="댓글이 성공적으로 달렸습니다."
+                    frstText="닫기"
+                    OnFrstPress={() => this.setState({replyModalVisible:false,cmt_id:''})}
                 />
             </Modal>
             <Modal
@@ -1469,7 +1473,7 @@ const styles = StyleSheet.create({
         flex : 1,
     },
     topbar : {
-        backgroundColor : '#978DC7',
+        backgroundColor : 'white',
     },
     title : {
         backgroundColor : '#E9E9E9',

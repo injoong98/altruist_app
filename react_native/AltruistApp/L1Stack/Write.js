@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules, TouchableOpacity, TextInput} from 'react-native';
-import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem, Card, Modal} from '@ui-kitten/components'
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules, TouchableOpacity, TextInput, Keyboard} from 'react-native';
+import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem, Card, Modal, Spinner} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
 import ImagePicker from 'react-native-image-crop-picker';
 import { HeartIcon } from '../assets/icons/icons';
@@ -60,11 +60,14 @@ class GominWrite extends React.Component {
             post_anoymous_yn:this.props.route.params.mode=='edit' ? this.props.route.params.post.post_anoymous_yn:1,
             post_category:1,
             checked:this.props.route.params.mode=='edit' ? this.props.route.params.post.post_anoymous_yn==0 ? false: true :true,
+            modalVisible : false,
+            resultVisible : false,
+            spinnerModalVisible : false,
         }
     }
     submitPost= async()=>{
         const url = this.props.route.params.mode=='edit' ?'http://dev.unyict.org/api/board_write/modify' :'http://dev.unyict.org/api/board_write/write/b-a-1'
-        const {post_title,post_content,post_anoymous_yn,post_category} =this.state
+        const {post_title,post_content,post_anoymous_yn,post_category} =this.state;
         let formdata = new FormData();
             formdata.append("post_title", post_title);
             formdata.append("post_content", post_content);
@@ -80,20 +83,26 @@ class GominWrite extends React.Component {
         
         await axios.post(url,formdata)
         .then(response=>{
-            Alert.alert(
-                "게시글",
-                this.props.route.params.mode=='edit' ?
-                `"게시글 수정 완료"\n${JSON.stringify(response.data)}`
-                :
-                `"게시글 작성 완료"\n${JSON.stringify(response.data)}`,
-                [
-                    { 
-                        text: "닫기", 
-                        onPress: ()=> this.gobackfunc()
-                    }
-                ],
-                { cancelable: false }
-            );
+            const {message,status}=response.data
+            if(status=='500'){
+                alert(message)
+            }else if(status=="200"){
+                this.setState({spinnerModalVisible:false, resultVisible:true});
+            }
+            // Alert.alert(
+            //     "게시글",
+            //     this.props.route.params.mode=='edit' ?
+            //     `"게시글 수정 완료"\n${JSON.stringify(response.data)}`
+            //     :
+            //     `"게시글 작성 완료"\n${JSON.stringify(response.data)}`,
+            //     [
+            //         { 
+            //             text: "닫기", 
+            //             onPress: ()=> this.gobackfunc()
+            //         }
+            //     ],
+            //     { cancelable: false }
+            // );
         })
         .catch(error=>{
             alert(JSON.stringify(error))
@@ -108,6 +117,8 @@ class GominWrite extends React.Component {
         formdata.append("content", post_content);
         formdata.append("csrf_test_name", '');
         
+        //Keyboard
+        Keyboard.dismiss(); 
     
         await axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
@@ -115,22 +126,7 @@ class GominWrite extends React.Component {
             if(status=='500'){
                 alert(message)
             }else if(status=="200"){
-                Alert.alert(
-                    "게시글",
-                    this.props.route.params.mode=='edit' ?'게시글을 수정하시겠습니까?':"게시글을 작성하시겠습니까?",
-                    [
-                        { 
-                            text: "작성", 
-                            onPress: ()=> this.submitPost()
-                        },
-                        {
-                            text: "취소",
-                            onPress: () => alert('취소했습니다.')
-                        }
-                        
-                    ],
-                    { cancelable: false }
-                );
+                this.setState({modalVisible:true});
             }
 
         })
@@ -152,11 +148,11 @@ class GominWrite extends React.Component {
     )
     render(){
         const {navigation} = this.props;
-        const {post_title,post_category,post_anoymous_yn,post_content,checked,content} =this.state;
+        const {post_title,post_category,post_anoymous_yn,post_content,checked,content, modalVisible, spinnerModalVisible, resultVisible} =this.state;
         return(
 
-            // <SafeAreaView style={{flex:1}}>
-                <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}>
+            <SafeAreaView style={{flex:1}}>
+                {/* // <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}> */}
                 <TopBarTune 
                     text="고민 작성" 
                     func={() =>{this.filterSpamKeyword()}} 
@@ -192,8 +188,37 @@ class GominWrite extends React.Component {
                                 </Text>}
                             </CheckBox>
                         </View>
-                    </KeyboardAvoidingView>
-            // {/* </SafeAreaView> */}
+
+                    <Modal
+                        visible={modalVisible}
+                        backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                        onBackdropPress={() => this.setState({modalVisible:false})}>
+                        <Confirm 
+                            confirmText={this.props.route.params.mode=='edit' ?'게시글을 수정하시겠습니까?':"게시글을 작성하시겠습니까?"}
+                            frstText="예"
+                            OnFrstPress={() =>{this.setState({modalVisible:false,spinnerModalVisible:true});this.submitPost()}}
+                            scndText="아니오"
+                            OnScndPress={() => this.setState({modalVisible:false})}
+                        />
+                    </Modal>
+                    <Modal
+                            visible={resultVisible}
+                            backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                            onBackdropPress={() => this.setState({resultVisible:false})}>
+                                <Confirm 
+                                    confirmText={this.props.route.params.mode=='edit' ?'게시글 수정 완료':"게시글 작성 완료"}
+                                    frstText="닫기"
+                                    OnFrstPress={() =>{this.setState({resultVisible:false});this.gobackfunc()}}
+                                    type='result'
+                                />
+                    </Modal>
+                    <Modal
+                        visible={spinnerModalVisible}
+                        backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}>
+                        <Spinner size='giant'/>
+                    </Modal>
+                {/* </KeyboardAvoidingView> */}
+            </SafeAreaView>
     
         )
     }
