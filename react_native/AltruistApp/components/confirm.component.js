@@ -6,7 +6,7 @@ export default class Confirm extends React.Component {
 
     render(){
         return(
-            <View style ={{width:200,height:175,borderRadius:23,backgroundColor:'#ffffff'}}>
+                <View style ={{width:200,height:175,borderRadius:23,backgroundColor:'#ffffff'}}>
                     <View style={{flex:3 ,justifyContent:'center',alignItems:'center'}}>
                         <Text category='h1' style={{color:'#63579D',fontSize:13}}>
                         {this.props.confirmText}
