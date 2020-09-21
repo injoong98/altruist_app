@@ -416,7 +416,7 @@ class Comment_write extends CB_Controller
 					);
 				}
 
-				//답변글 푸시
+				//대댓글 푸시
 				$push_type = 'token';
 				$topic_name = '';
 				if ($origin && $cmt_reply && $this->cbconfig->item('use_push') && $this->cbconfig->item('notification_comment_comment') && abs(element('mem_id', $post)) !== abs(element('mem_id', $origin))) {
