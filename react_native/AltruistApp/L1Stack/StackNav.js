@@ -66,8 +66,8 @@ export class StackNav extends React.Component{
     }
     static contextType = Signing
     syncPushToken = async (token,mem_id) =>{
-        console.log(token)
-        console.log(mem_id)
+        console.log('synchPushToken token :'+token)
+        console.log('synchPushToken mem_id :'+mem_id)
         var formdata = new FormData();
         formdata.append('token',token);
         formdata.append('mem_id',mem_id);
@@ -95,12 +95,12 @@ export class StackNav extends React.Component{
                     await AsyncStorage.setItem('currentMemId',mem_id);
                   } 
                 catch (error) {
-                    console.log(error)
+                    console.log('asyncstorage error'+error)
                   }
             }
             else if(res.data.status == 500)
             {
-                this.setState({isSignedIn:false})
+                this.setState({isSignedIn:false});
             }
             else
             {
@@ -109,11 +109,17 @@ export class StackNav extends React.Component{
                 this.setState({isLoading:false})
         })
         .catch(err=>{
-            console.log(JSON.stringify(err))
+            console.log('session_chk error:'+JSON.stringify(err))
         })
     }
     componentDidMount(){
-        setTimeout(this.session_chk,600)
+        setTimeout(this.session_chk,600);
+        messaging()
+            .getInitialNotification()
+            .then(async remoteMessage=>{
+            console.log('getInitialNotification stack'+remoteMessage)
+            }) 
+            
     }
     render(){
         const context ={
@@ -127,14 +133,14 @@ export class StackNav extends React.Component{
                 
                 axios.post('http://dev.unyict.org/api/login',formdata)
                 .then(response=>{
-                    console.log(JSON.stringify(response.data.status))
+                    console.log('sign in res:'+JSON.stringify(response.data.status))
                     if(response.data.status == 200 )
                     {
                         this.setState({isSignedIn:true});
                         this.session_chk()
                     }
                     else{
-                        alert(`로그인 실패 :(`)
+                        alert(response.data.message)
                     }
                     
                 })
