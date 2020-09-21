@@ -230,18 +230,18 @@ class MarketWrite extends React.Component {
         super(props);
         this.state={
             isLoading: true,
-            post_title: '',
-            post_content: '',
-            post_location: '',
-            post_hp: '',
-            deal_price: 0,
-            deal_type: 2, // 0: 직거래, 1: 배송, 2: 둘다가능
-            deal_status: 1, // 0: 판매완료, 1: 판매중
-            post_thumb_use: 1, // 0: 썸네일 사용X, 1: 사용 
-            post_thumb_index: 0, // 썸네일 사진 index
+            post_title : this.props.route.params.mode=='edit' ? this.props.route.params.post.post_title:'',
+            post_content : this.props.route.params.mode=='edit' ? this.props.route.params.post.post_content:'',
+            post_location : this.props.route.params.mode=='edit' ? this.props.route.params.post.post_location:'',
+            post_hp: this.props.route.params.mode=='edit' ? this.props.route.params.post.post_hp:'',
+            deal_price: this.props.route.params.mode=='edit' ? this.props.route.params.post.deal_price: 0,
+            deal_type: this.props.route.params.mode=='edit' ? this.props.route.params.post.deal_type: 2, // 0: 직거래, 1: 배송, 2: 둘다가능
+            deal_status:  1, // 0: 판매완료, 1: 판매중
+            post_thumb_use: this.props.route.params.mode=='edit' ? this.props.route.params.post.post_thumb_use: 1, // 0: 썸네일 사용X, 1: 사용 
+            post_main_thumb: this.props.route.params.mode=='edit' ? this.props.route.params.post.post_main_thumb: 0, // 썸네일 사진 index
             thumb_index_storage: 0, // 썸네일 index 임시저장
-            Image_index: 0,
-            images: [],
+            Image_index: this.props.route.params.mode=='edit' ? this.props.route.params.image.length-1: 0,
+            images: this.props.route.params.mode=='edit' ? this.props.route.params.image: [],
             image:'',
             thumbModalVisible:false,
         }
@@ -250,7 +250,7 @@ class MarketWrite extends React.Component {
     submitPost = async() => {
 
         console.log(this.state);
-        const {post_title, post_content, post_location, deal_price, deal_type, deal_status, images, post_hp, post_thumb_use, post_thumb_index} = this.state;
+        const {post_title, post_content, post_location, deal_price, deal_type, deal_status, images, post_hp, post_thumb_use, post_main_thumb} = this.state;
 
         let formdata = new FormData();
             formdata.append("brd_key", 'b-a-2');
@@ -259,13 +259,10 @@ class MarketWrite extends React.Component {
             formdata.append("post_location", post_location);
             formdata.append("post_hp", post_hp);
             formdata.append("post_thumb_use", post_thumb_use);
-            formdata.append("post_thumb_index", post_thumb_index);
+            formdata.append("post_main_thumb", post_main_thumb);
             formdata.append("deal_price", deal_price);
             formdata.append("deal_type", deal_type);
             formdata.append("deal_status", deal_status);
-            formdata.append("post_nickname", 'Edward');
-            formdata.append("post_email", 'Edward@sogang.ac.kr');
-            formdata.append("post_password", '0000');
             images.map(item=>{
                 formdata.append('post_file[]',
                     {
@@ -351,7 +348,7 @@ class MarketWrite extends React.Component {
 
     //불러온 사진의 정보를 this.state에 저장
     onSelectedImage(image) {
-        //console.log(image);
+        console.log(image);
         let newImages = this.state.images;
         const source = {uri: image.path};
         let item = {
@@ -374,7 +371,7 @@ class MarketWrite extends React.Component {
         return (
             <View key={image.id}>
                 <TouchableWithoutFeedback onPress={()=> this.setState({thumbModalVisible:true, thumb_index_storage:image.index})}>
-                    <Image style={styles.market_RenderImage} source={image.url}/>
+                    <Image style={styles.market_RenderImage} source={image.edit ? {uri : 'http://dev.unyict.org'+image.url} : image.url}/>
                 </TouchableWithoutFeedback>
             </View>
         )
@@ -394,6 +391,9 @@ class MarketWrite extends React.Component {
     )
 
     render() {
+
+        const {post_title, post_content, post_location, post_hp, deal_price, deal_type, deal_status, post_thumb_use, post_main_thumb} = this.state;
+
         return(
             <Root>
             <SafeAreaView style={{flex:1}}>
@@ -409,7 +409,7 @@ class MarketWrite extends React.Component {
                             <Input
                                 style={styles.input}
                                 onChangeText={text => this.setState({post_title : text})}
-                                // value={itemName}
+                                value={post_title}
                             />
                         </View>
                         <View style={styles.container}>
@@ -417,7 +417,7 @@ class MarketWrite extends React.Component {
                             <Input
                                 style={styles.input}
                                 onChangeText={text => this.setState({post_hp : text})}
-                                // value={itemName}
+                                value={post_hp}
                             />
                         </View>
                         <View style={{...styles.container, flexDirection:'row'}}>
@@ -427,7 +427,7 @@ class MarketWrite extends React.Component {
                                     style={styles.input}
                                     keyboardType='numeric'
                                     onChangeText={text => this.setState({deal_price : text})}
-                                    // value={price}
+                                    value={deal_price}
                                 />
                             </View>
                             <View style={{flex:1}}>
@@ -435,7 +435,7 @@ class MarketWrite extends React.Component {
                                 <Input
                                     style={styles.input}
                                     onChangeText={text => this.setState({post_location : text})}
-                                    // value={loaction}
+                                    value={post_location}
                                 />
                             </View>
                         </View>
@@ -481,15 +481,15 @@ class MarketWrite extends React.Component {
                             <Text>상세정보</Text>
                             <Input
                                 onChangeText={text => this.setState({post_content : text})}
-                                // value={detail}
+                                value={post_content}
                             />
                         </View>
                         <View style={{...styles.container, flexDirection:'row'}}>
                             <Text>썸네일</Text>
                             <RadioGroup
-                                value={this.state.post_thumb_use}
+                                value={post_thumb_use}
                                 style={{flexDirection:'row'}}
-                                selectedIndex = {this.state.post_thumb_use}
+                                selectedIndex = {post_thumb_use}
                                 onChange={(index) => { this.setState({post_thumb_use:index})}}>
                                 <Radio>off</Radio>
                                 <Radio>on</Radio>
@@ -507,7 +507,7 @@ class MarketWrite extends React.Component {
                         <Confirm 
                             confirmText="대표 이미지를 변경하시겠습니까?"
                             frstText="예"
-                            OnFrstPress={() => this.setState({thumbModalVisible:false, post_thumb_index:this.state.thumb_index_storage})}
+                            OnFrstPress={() => this.setState({thumbModalVisible:false, post_main_thumb:this.state.thumb_index_storage})}
                             scndText="아니오"
                             OnScndPress={() => this.setState({thumbModalVisible:false})}
                         />
