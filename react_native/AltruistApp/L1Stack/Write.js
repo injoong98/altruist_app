@@ -240,7 +240,7 @@ class MarketWrite extends React.Component {
             post_thumb_use: this.props.route.params.mode=='edit' ? this.props.route.params.post.post_thumb_use: 1, // 0: 썸네일 사용X, 1: 사용 
             post_main_thumb: this.props.route.params.mode=='edit' ? this.props.route.params.post.post_main_thumb: 0, // 썸네일 사진 index
             thumb_index_storage: 0, // 썸네일 index 임시저장
-            Image_index: this.props.route.params.mode=='edit' ? this.props.route.params.image.length-1: 0,
+            Image_index: this.props.route.params.mode=='edit' ? this.props.route.params.image.length: 0,
             images: this.props.route.params.mode=='edit' ? this.props.route.params.image: [],
             image:'',
             thumbModalVisible:false,
@@ -392,74 +392,82 @@ class MarketWrite extends React.Component {
 
     render() {
 
+        const {navigation} = this.props
         const {post_title, post_content, post_location, post_hp, deal_price, deal_type, deal_status, post_thumb_use, post_main_thumb} = this.state;
 
         return(
             <Root>
             <SafeAreaView style={{flex:1}}>
+                <TopBarTune 
+                    text="수수마켓" 
+                    right={this.props.route.params.mode=='edit' ?'edit' : "upload"}
+                    func={() =>{this.submitPost()}}
+                    gbckfunc={()=>{navigation.goBack()}} 
+                    gbckuse={true}
+                />
                 
-                <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} style={styles.topbar}/>
+                {/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.BackAction} style={styles.topbar}/> */}
     
                 <Divider />
                 
                 <ScrollView>
                     <View style={{paddingVertical:10, backgroundColor:'#F4F4F4'}}>
                         <View style={styles.container}>
-                            <Text>상품명</Text>
-                            <Input
-                                style={styles.input}
+                            {/* <Text>상품명</Text> */}
+                            <TextInput
+                                style={{...styles.input, height:60, fontSize:20}}
                                 onChangeText={text => this.setState({post_title : text})}
                                 value={post_title}
-                            />
-                        </View>
-                        <View style={styles.container}>
-                            <Text>연락처</Text>
-                            <Input
-                                style={styles.input}
-                                onChangeText={text => this.setState({post_hp : text})}
-                                value={post_hp}
+                                placeholder='상품명'
                             />
                         </View>
                         <View style={{...styles.container, flexDirection:'row'}}>
                             <View style={{flex:1}}>
-                                <Text>판매가격</Text>
-                                <Input
+                                {/* <Text>판매가격</Text> */}
+                                <TextInput
                                     style={styles.input}
                                     keyboardType='numeric'
                                     onChangeText={text => this.setState({deal_price : text})}
                                     value={deal_price}
+                                    placeholder='판매가격'
                                 />
                             </View>
                             <View style={{flex:1}}>
-                                <Text>거래희망지역</Text>
-                                <Input
+                                {/* <Text>연락처</Text> */}
+                                <TextInput
                                     style={styles.input}
-                                    onChangeText={text => this.setState({post_location : text})}
-                                    value={post_location}
+                                    onChangeText={text => this.setState({post_hp : text})}
+                                    value={post_hp}
+                                    placeholder='연락처'
                                 />
                             </View>
                         </View>
                         <View style={styles.container}>
-                            <Text>사진</Text>
-                            <ScrollView 
-                            horizontal={true} 
-                            style={{
-                                marginVertical : 2,
-                                margin : 10,
-                                marginTop : 5,
-                                backgroundColor : '#F4F4F4'
-                            }}>
-                                <TouchableOpacity 
-                                style={{width:100, height:100, backgroundColor:'white', alignItems:'center', justifyContent:'center', borderRadius:10}} 
-                                onPress={()=>this.onClickAddImage()}>
-                                    <Camsvg/>
-                                </TouchableOpacity>
-                                {this.state.images ? this.state.images.map((item) => this.renderAsset(item)) : null}
-                            </ScrollView>                                                 
+                            {/* <Text>상세정보</Text> */}
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={text => this.setState({post_content : text})}
+                                value={post_content}
+                                placeholder='상세정보'
+                                multiline={true}
+                                numberOfLines={7}
+                                textAlignVertical='top'
+                            />
                         </View>
                         <View style={styles.container}>
-                            <Text>거래방법</Text>
-                            <View style={styles.deal_type}>
+                            {/* <Text>거래희망지역</Text> */}
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={text => this.setState({post_location : text})}
+                                value={post_location}
+                                placeholder='거래희망지역'
+                            />
+                        </View>
+                        <View style={{...styles.container, flexDirection:'row'}}>
+                            <View style={{flex:1,alignItems:'center', justifyContent:'center'}}>
+                                <Text>거래방법</Text>
+                            </View>
+                            <View style={{...styles.deal_type, flex:3}}>
                                 <TouchableWithoutFeedback onPress={()=>this.setState({deal_type : 0})}>
                                     <View style={this.state.deal_type==0? {...styles.deal_box, opacity:1.0}:styles.deal_box}>
                                         <Text style={styles.deal_type_text}>직거래</Text>
@@ -477,14 +485,36 @@ class MarketWrite extends React.Component {
                                 </TouchableWithoutFeedback>
                             </View>
                         </View>
-                        <View style={styles.container}>
-                            <Text>상세정보</Text>
-                            <Input
-                                onChangeText={text => this.setState({post_content : text})}
-                                value={post_content}
-                            />
-                        </View>
-                        <View style={{...styles.container, flexDirection:'row'}}>
+                        <Layout style={styles.picture}>
+                            <View style={{flexDirection : 'row', flex: 1, alignItems : 'center', justifyContent : 'space-between', marginVertical : 10}}>
+                                <Text category='h4'> 사진</Text>
+                                <TouchableOpacity onPress={()=>this.onClickAddImage()}>
+                                    <Camsvg/>
+                                </TouchableOpacity>
+                            </View>
+                            <ScrollView horizontal style={{height : 150}}>
+                                {this.state.images ? this.state.images.map((item) => this.renderAsset(item)) : null}
+                            </ScrollView>
+                        </Layout>
+                        {/*<View style={styles.container}>
+                            <Text>사진</Text>
+                            <ScrollView 
+                            horizontal={true} 
+                            style={{
+                                marginVertical : 2,
+                                margin : 10,
+                                marginTop : 5,
+                                backgroundColor : '#F4F4F4'
+                            }}>
+                                <TouchableOpacity 
+                                style={{width:100, height:100, backgroundColor:'white', alignItems:'center', justifyContent:'center', borderRadius:10}} 
+                                onPress={()=>this.onClickAddImage()}>
+                                    <Camsvg/>
+                                </TouchableOpacity>
+                                {this.state.images ? this.state.images.map((item) => this.renderAsset(item)) : null}
+                            </ScrollView>                                                 
+                        </View> */}
+                        {/* <View style={{...styles.container, flexDirection:'row'}}>
                             <Text>썸네일</Text>
                             <RadioGroup
                                 value={post_thumb_use}
@@ -494,8 +524,7 @@ class MarketWrite extends React.Component {
                                 <Radio>off</Radio>
                                 <Radio>on</Radio>
                             </RadioGroup>
-                        </View>
-                        <Button onPress={()=>this.submitPost()}>등 록</Button>
+                        </View> */}
                         {/* <Button onPress={()=>console.log(this.state.images)}>콘솔</Button> */}
                     </View>
                 </ScrollView>
@@ -1137,10 +1166,11 @@ const styles = StyleSheet.create({
       fontSize: 32,
     },
     input : {
-        marginVertical : 2,
-        margin : 10,
-        marginTop : 5,
-        backgroundColor : 'white'
+        borderRadius : 20, 
+        marginVertical : 5, 
+        marginHorizontal : 10, 
+        backgroundColor : 'white', 
+        paddingLeft : 20
     },
     photo: {
         justifyContent: 'center', 
@@ -1162,17 +1192,16 @@ const styles = StyleSheet.create({
         flexDirection : 'row',
         justifyContent : 'space-around',
         alignItems : 'center',
-        marginTop : 10
     },
     deal_box : {
         width : '30%',
-        height : 50,
+        height : 40,
         justifyContent : 'center',
         alignItems : 'center',
         backgroundColor : 'gray',
         opacity : 0.5,
         borderColor : 'gray',
-        borderRadius : 10,
+        borderRadius : 20,
         borderWidth: 1,
     },
     select: {
