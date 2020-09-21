@@ -50,6 +50,8 @@ class RegisterScreen extends Component {
       mem_recommend: '',
       captionCheck: '',
       column: '',
+      borderColor: '',
+      goNext: true,
       date: new Date(),
     };
   }
@@ -63,28 +65,115 @@ class RegisterScreen extends Component {
     />
   );
 
+  //처음엔 버튼을 disabled
+  //다른 input 다 적으면 abled
+
+  checkInputs = (e) => {
+    RegisterScreen.propTypes = {
+      // 필수 :
+      // 이메일주소
+      // 비밀번호
+      // 비밀번호 확인
+      // 닉네임
+      // 이름
+      mem_email: PropTypes.string.isRequired,
+      mem_password: PropTypes.string.isRequired,
+      mem_password_confirm: PropTypes.string.isRequired,
+      mem_nickname: PropTypes.string.isRequired,
+      mem_birthday: PropTypes.instanceOf(Date),
+      mem_phone: PropTypes.string,
+    };
+    console.log('no');
+    // this.state.goNext = 'true';
+    this.state.goNext = false;
+    if (this.state.mem_username == '' || this.state.mem_username == null) {
+      return;
+    }
+    if (this.state.mem_nickname == '' || this.state.mem_nickname == null) {
+      return;
+    }
+    if (this.state.mem_sex == '' || this.state.mem_sex == null) {
+      return;
+    }
+    if (this.state.mem_userid == '' || this.state.mem_userid == null) {
+      return;
+    }
+    if (this.state.mem_email == '' || this.state.mem_email == null) {
+      return;
+    }
+    if (this.state.mem_password == '' || this.state.mem_password == null) {
+      return;
+    }
+    if (
+      this.state.mem_password_re == '' ||
+      this.state.mem_password_re == null
+    ) {
+      return;
+    }
+    if (this.state.mem_phone == '' || this.state.mem_phone == null) {
+      return;
+    }
+    if (this.state.mem_birthday == '' || this.state.mem_birthday == null) {
+      return;
+    }
+    // if (this.state.mem_recommend == '' || this.state.mem_recommend == null) {
+    //   return;
+    // }
+    console.log('no');
+    this.SubmitForm();
+  };
+
+  checkNotNull = () => {
+    console.log('sdf');
+    if (!this.state.mem_nickname) {
+      this.setState({goNext: true});
+      return;
+    }
+    if (!this.state.mem_sex) {
+      this.setState({goNext: true});
+      return;
+    }
+    if (!this.state.mem_email) {
+      this.setState({goNext: true});
+
+      return;
+    }
+    if (!this.state.mem_password) {
+      this.setState({goNext: true});
+
+      return;
+    }
+    if (!this.state.mem_password_re) {
+      this.setState({goNext: true});
+
+      return;
+    }
+  };
+
   //form submit
   SubmitForm = async () => {
     const {
+      mem_username,
+      mem_nickname,
+      mem_sex,
       mem_userid,
+      mem_email,
       mem_password,
       mem_password_re,
-      mem_nickname,
       mem_phone,
-      mem_email,
-      mem_sex,
       mem_birthday,
       mem_recommend,
     } = this.state;
 
     let formdata = new FormData();
+    formdata.append('mem_userid', mem_username);
+    formdata.append('mem_nickname', mem_nickname);
+    formdata.append('mem_sex', mem_sex);
     formdata.append('mem_userid', mem_userid);
     formdata.append('mem_email', mem_email);
     formdata.append('mem_password', mem_password);
     formdata.append('mem_password_re', mem_password_re);
     formdata.append('mem_phone', mem_phone);
-    formdata.append('mem_nickname', mem_nickname);
-    formdata.append('mem_sex', mem_sex);
     formdata.append('mem_birthday', mem_birthday);
     formdata.append('mem_recommend', mem_recommend);
     console.info('form', this.state);
@@ -125,29 +214,54 @@ class RegisterScreen extends Component {
   };
 
   //   TODO : 휴대폰 번호
-  PhoneHyphen = (e) => {
+  PhoneHyphen = (phonenum) => {
     //넣었다가 아니면 뱉어주고
     //11자 되기 전에는 3자리, 8자리 기준으로
     //3자리에서 뱉어주고 뱉어준거 다시 받아서
     //4자리부터는 -가지고 다시 이어나갈 수 있도록
+    console.log(phonenum);
+    var number = phonenum.replace(/[^0-9]/g, '');
+    var phone = '';
+    console.log(number);
+
+    if (number.length < 4) {
+      return number;
+    } else if (number.length < 7) {
+      phone += number.substr(0, 3);
+      phone += '-';
+      phone += number.substr(3);
+    } else if (number.length < 11) {
+      phone += number.substr(0, 3);
+      phone += '-';
+      phone += number.substr(3, 3);
+      phone += '-';
+      phone += number.substr(6);
+    } else {
+      phone += number.substr(0, 3);
+      phone += '-';
+      phone += number.substr(3, 4);
+      phone += '-';
+      phone += number.substr(7);
+    }
+    var value = phone;
+    this.setState({mem_phone: value});
   };
-
-  //TODO :
-
-  //TODO : 모달 (실패)
 
   //   TODO : 이메일 중복 확인
   checkEmail = async () => {
     const {mem_userid} = this.state;
 
     let formdata = new FormData();
-    formdata.append('userid', mem_userid);
+    formdata.append('email', mem_userid);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .post(`http://dev.unyict.org/api/register/email_check`, formdata)
       .then((res) => {
-        console.log(res);
-        console.log(res.data);
+        if (res.data.message.includes('예약어')) {
+          this.setState({goNext: true});
+        } else {
+          this.setState({goNext: false});
+        }
         this.setState({EmailCaption: res.data.message});
       });
   };
@@ -161,6 +275,8 @@ class RegisterScreen extends Component {
     await axios
       .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
       .then((res) => {
+        console.log(res.data);
+
         if (res.data.message == '이미 사용중인 아이디입니다') {
           this.setState({recommendCaption: null});
         } else if (res.data.result == 'available') {
@@ -178,6 +294,13 @@ class RegisterScreen extends Component {
     await axios
       .post(`http://dev.unyict.org/api/register/nickname_check`, formdata)
       .then((res) => {
+        if (res.data.reason == '닉네임값이 넘어오지 않았습니다') {
+          this.setState({nicknameCaption: '닉네임값을 입력해주세요'});
+          this.setState({goNext: false});
+        } else {
+          if (res.data.message.includes('사용중'))
+            this.setState({goNext: true});
+        }
         this.setState({nicknameCaption: res.data.reason});
       });
   };
@@ -246,15 +369,13 @@ class RegisterScreen extends Component {
     let checkPassword = '';
     if (a == b) {
       checkPassword = '';
-      console.log(checkPassword);
+      this.setState({goNext: false});
     } else {
       checkPassword = '비밀번호가 일치하지 않습니다.';
-      console.log(checkPassword);
+      this.setState({goNext: true});
     }
     this.setState({captionCheck: checkPassword});
   };
-
-  checkInputs = () => {};
 
   render() {
     console.log(this.state);
@@ -271,22 +392,26 @@ class RegisterScreen extends Component {
               style={{
                 flex: 1,
                 justifyContent: 'center',
-                paddingRight: 30,
-                paddingLeft: 30,
+                paddingRight: 60,
+                paddingLeft: 60,
               }}>
               <Input
                 style={{padding: 3}}
                 placeholder="이름"
-                onChangeText={(mem_username) =>
-                  this.setState({mem_username: mem_username})
-                }
+                status={this.state.status}
+                onChangeText={(mem_username) => {
+                  this.setState({mem_username: mem_username});
+                }}
+                onChange={() => this.checkNotNull}
               />
               <Input
                 style={{padding: 3}}
                 placeholder="닉네임 / 활동명"
-                onChangeText={(mem_nickname) =>
-                  this.setState({mem_nickname: mem_nickname})
-                }
+                onChangeText={(mem_nickname) => {
+                  this.setState({mem_nickname: mem_nickname});
+                  this.checkNotNull();
+                }}
+                onChange={() => this.checkNotNull}
                 onEndEditing={this.checkNickname}
                 caption={this.state.nicknameCaption}
               />
@@ -297,8 +422,11 @@ class RegisterScreen extends Component {
                 placeholder="Email (example@email.com)"
                 onChangeText={(mem_email) => {
                   this.setState({mem_email: mem_email, mem_userid: mem_email});
+                  this.checkEmail(mem_email);
+                  this.checkNotNull();
                 }}
-                onEndEditing={this.checkEmail}
+                onChange={() => this.checkNotNull}
+                value={this.state.mem_email}
                 caption={this.state.EmailCaption}
                 style={{padding: 3}}
               />
@@ -306,9 +434,11 @@ class RegisterScreen extends Component {
                 style={{padding: 3}}
                 secureTextEntry={true}
                 placeholder="비밀번호"
-                onChangeText={(mem_password) =>
-                  this.setState({mem_password: mem_password})
-                }
+                onChangeText={(mem_password) => {
+                  this.setState({mem_password: mem_password});
+                  this.checkNotNull();
+                }}
+                onChange={() => this.checkNotNull}
                 secureTextEntry
               />
               <Input
@@ -319,7 +449,9 @@ class RegisterScreen extends Component {
                   this.setState({mem_password_re: mem_password_re});
                   //{} 하면 obj로 던져서 obj.이름 해야지 됌
                   this.CheckPassword(this.state.mem_password, mem_password_re);
+                  this.checkNotNull();
                 }}
+                onChange={() => this.checkNotNull}
                 // caption={() =>
                 //   this.state.captionCheck ? (
                 //     <Text style={{color: 'red'}}>
@@ -333,7 +465,7 @@ class RegisterScreen extends Component {
                 secureTextEntry
               />
               <Input
-                maxLength={11}
+                maxLength={13}
                 keyboardType="phone-pad"
                 dataDetectorTypes="phoneNumber"
                 style={{padding: 3}}
@@ -342,7 +474,7 @@ class RegisterScreen extends Component {
                   this.setState({mem_phone: mem_phone});
                   this.PhoneHyphen(mem_phone);
                 }}
-                // onEndEditing={this.PhoneHyphen}
+                value={this.state.mem_phone}
                 caption={this.state.phoneCaption}
               />
               <this.DatepickerBday />
@@ -388,7 +520,8 @@ class RegisterScreen extends Component {
             </View>
             <Button
               style={{alignSelf: 'center', width: 200}}
-              onPress={() => this.SubmitForm()}>
+              disabled={this.state.goNext}
+              onPress={() => this.checkInputs()}>
               다음
             </Button>
           </ScrollView>
@@ -397,21 +530,6 @@ class RegisterScreen extends Component {
     );
   }
 }
-
-RegisterScreen.propTypes = {
-  // 필수 :
-  // 이메일주소
-  // 비밀번호
-  // 비밀번호 확인
-  // 닉네임
-  // 이름
-  mem_email: PropTypes.string.isRequired,
-  mem_password: PropTypes.string.isRequired,
-  mem_password_confirm: PropTypes.string.isRequired,
-  mem_nickname: PropTypes.string.isRequired,
-  mem_birthday: PropTypes.instanceOf(Date),
-  mem_phone: PropTypes.string,
-};
 
 const styles = StyleSheet.create({
   container: {
