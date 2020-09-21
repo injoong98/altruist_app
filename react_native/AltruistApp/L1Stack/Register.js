@@ -169,6 +169,19 @@ class RegisterScreen extends Component {
       });
   };
 
+  checkNickname = async () => {
+    const {mem_nickname} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('nickname', mem_nickname);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/nickname_check`, formdata)
+      .then((res) => {
+        this.setState({nicknameCaption: res.data.reason});
+      });
+  };
+
   //성별, 생년월일 "" STring으로 안9들어가는 문제
   // 생년월일 string으로 변환하는 문제
   ConvertString = (something) => {
@@ -241,6 +254,8 @@ class RegisterScreen extends Component {
     this.setState({captionCheck: checkPassword});
   };
 
+  checkInputs = () => {};
+
   render() {
     console.log(this.state);
     return (
@@ -272,6 +287,8 @@ class RegisterScreen extends Component {
                 onChangeText={(mem_nickname) =>
                   this.setState({mem_nickname: mem_nickname})
                 }
+                onEndEditing={this.checkNickname}
+                caption={this.state.nicknameCaption}
               />
               <this.RadioSexSelection />
               <Input
@@ -392,7 +409,6 @@ RegisterScreen.propTypes = {
   mem_password: PropTypes.string.isRequired,
   mem_password_confirm: PropTypes.string.isRequired,
   mem_nickname: PropTypes.string.isRequired,
-  mem_sex: PropTypes.number.isRequired,
   mem_birthday: PropTypes.instanceOf(Date),
   mem_phone: PropTypes.string,
 };

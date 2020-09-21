@@ -21,10 +21,6 @@ import {
   Calendar,
   NativeDateService,
 } from '@ui-kitten/components';
-import moment from 'moment';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import PropTypes from 'prop-types';
-import axios from 'axios';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
