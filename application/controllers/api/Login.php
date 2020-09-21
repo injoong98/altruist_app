@@ -36,8 +36,16 @@ class Login extends CB_Controller
 		{
 			$token = $_POST['token'];
 			$mem_id = $_POST['mem_id'];
+			//토큰 유무 검사
+			$current_token = $this->db->get_where('cb_push_token',array('ptk_token'=>$token))->row_array();
+			if(count($current_token)>0){
+				//토큰 있을 경우 mem_id update
+				$this->db->update('cb_push_token',array('mem_id'=>$mem_id),array('ptk_token'=>$token));
+			}else{
+				//토큰 없을 경우 insert
+				$this->db->insert('cb_push_token',array('ptk_token'=>$token,'mem_id'=>$mem_id));
+			}
 
-			$this->db->insert('cb_push_token',array('ptk_token'=>$token,'mem_id'=>$mem_id));
 			
 			response_result($view,'success','토큰 싱크 완료');
 		}
