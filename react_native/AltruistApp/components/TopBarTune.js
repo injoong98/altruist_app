@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,StyleSheet,TouchableOpacity} from 'react-native';
+import {View,StyleSheet,TouchableOpacity, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import {Text,Icon,Button} from '@ui-kitten/components'
 import BellLargesvg from '../assets/icons/bell-large.svg'
 import Uploadsvg from '../assets/icons/upload.svg'
@@ -31,22 +31,16 @@ export class TopBarTune extends React.Component {
                             borderTopLeftRadius:16,backgroundColor:bckclr,width:"100%",height:"100%"}}
                     >
                         <View style={styles.iconcontainer}>
-                            {this.props.right =='upload' ? 
-                                <TouchableOpacity onPress={this.props.func}>
-                                    <Uploadsvg height={35} width={35}/>
-                                </TouchableOpacity>
-                            :
-                            this.props.right =='edit' ?
-                                <Button onPress={this.props.func}>
-                                    수정
-                                </Button>
-                            :
-
-                                <TouchableOpacity onPress={this.props.func}>
-                                    {/* <BellIcon style={styles.topicon}/> */}
-                                    <BellLargesvg height={35} width={35}/>
-                                </TouchableOpacity>
-                            }
+                                {this.props.right =='upload' ? 
+                                    <TouchableOpacity onPress={this.props.func}>
+                                        <Uploadsvg height={35} width={35}/>
+                                    </TouchableOpacity>
+                                :
+                                this.props.right =='edit' ?
+                                    <Button onPress={this.props.func}>
+                                        수정
+                                    </Button>
+                                : null}
                         </View>
                     </View>
                 </View>

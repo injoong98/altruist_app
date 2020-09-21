@@ -105,7 +105,7 @@ class Notificationlib extends CI_Controller
 		);
 		$not_id = $this->CI->Notification_model->insert($insertdata);
 		$result = json_encode( array('success' => '알림이 저장되었습니다'));
-		$this->request_fcm($not_type,$not_message);
+		$this->request_fcm($not_type,$not_message,$mem_id);
 
 		return $result;
 	}
@@ -129,52 +129,61 @@ class Notificationlib extends CI_Controller
 
 		$notification["title"] = $title;
 		$notification["body"] = $body;
-
 		$arr_post["notification"] = $notification;
-
-		$to = "emoW7N_xRFGK84lQSWB8vw:APA91bEMgryRgIVvvhSwaVciWjjmdGrKu5uIdlKOl6wFSg4vXikELSwoYgUFzZdsmFYzQjqXtKRWKPtCEx522Ated4M7-owEJYTzDiJD7Q1oXL6LEkjjd-x5TU2w8kQABK8N9DPyAEWb";
-		//$to = $target
-		$arr_post["to"] = $to;
-
-		//배열을 JSON데이터로 생성
-		$post_data = json_encode($arr_post);
 		
-		//CURL함수 사용
-		$ch=curl_init();
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_URL, $url);
-		//header값 셋팅(없을시 삭제해도 무방함)
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		//POST방식
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-		curl_setopt($ch, CURLOPT_POST, true);
-		//POST방식으로 넘길 데이터(JSON데이터)
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-
-		$response = curl_exec($ch);
-
-		if(curl_error($ch)){
-			$curl_data = null;
-		} else {
-			$curl_data = $response;
-		}
-
-		curl_close($ch);
-
-		//받은 JSON데이터를 배열로 만듬
-		$json_data = json_decode($curl_data,true);
-		//배열 제어
-		if($json_data["result"] == "200"){
-			$cnt = 0;
-			foreach($json_data["msg"] as $msg_data){
-				foreach($msg_data as $msgval_data){
-					//msg_val값만 출력합니다.
-					echo 'gd';
-					$cnt++;
-				}
+		if($target!=''){
+			$this->CI->db->select('ptk_token');
+			$query =  $this->CI->db->get_where('cb_push_token',array('mem_id'=>$target));
+			if($query!=false){
+				$target_info=$query->result_array();
 			}
 		}
+		foreach($target_info as $ti){
+			
+			$arr_post["to"] = $ti['ptk_token'];
+
+			$post_data = json_encode($arr_post);
+			
+			//CURL함수 사용
+			$ch=curl_init();
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_URL, $url);
+			//header값 셋팅(없을시 삭제해도 무방함)
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			//POST방식
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+			curl_setopt($ch, CURLOPT_POST, true);
+			//POST방식으로 넘길 데이터(JSON데이터)
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+	
+			$response = curl_exec($ch);
+	
+			if(curl_error($ch)){
+				$curl_data = null;
+			} else {
+				$curl_data = $response;
+			}
+	
+			curl_close($ch);
+			$json_data = json_decode($curl_data,true);
+		}
+		//$to = $target
+
+		//배열을 JSON데이터로 생성
+
+		//받은 JSON데이터를 배열로 만듬
+		//배열 제어
+		// if($json_data["result"] == "200"){
+		// 	$cnt = 0;
+		// 	foreach($json_data["msg"] as $msg_data){
+		// 		foreach($msg_data as $msgval_data){
+		// 			//msg_val값만 출력합니다.
+		// 			echo 'gd';
+		// 			$cnt++;
+		// 		}
+		// 	}
+		// }
 		return true;
 	}
 }
