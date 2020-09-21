@@ -80,6 +80,22 @@
 					</label>
 				</div>
 			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">글에 좋아요를 눌렀을때 </label>
+				<div class="col-sm-10">
+					<label for="notification_like_post" class="checkbox-inline">
+						<input type="checkbox" name="notification_like_post" id="notification_like_post" class="chk" value="1" <?php echo set_checkbox('notification_like_post', '1', (element('notification_like_post', element('data', $view)) ? true : false)); ?> /> 사용합니다
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">댓글에 좋아요를 눌렀을때 </label>
+				<div class="col-sm-10">
+					<label for="notification_like_comment" class="checkbox-inline">
+						<input type="checkbox" name="notification_like_comment" id="notification_like_comment" class="chk" value="1" <?php echo set_checkbox('notification_like_comment', '1', (element('notification_like_comment', element('data', $view)) ? true : false)); ?> /> 사용합니다
+					</label>
+				</div>
+			</div>
 			<div class="btn-group pull-right" role="group" aria-label="...">
 				<button type="submit" class="btn btn-success btn-sm">저장하기</button>
 			</div>

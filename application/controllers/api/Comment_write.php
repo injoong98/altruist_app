@@ -388,7 +388,7 @@ class Comment_write extends CB_Controller
 					$this->pushlib->set_push(
 						abs(element('mem_id', $post)),
 						$mem_id,
-						'comment',
+						'이타주의자들',
 						$cmt_id,
 						$not_message,
 						$not_url,
@@ -427,7 +427,7 @@ class Comment_write extends CB_Controller
 					$this->pushlib->set_push(
 						abs(element('mem_id', $origin)),
 						$mem_id,
-						'comment_comment',
+						'이타주의자들',
 						$cmt_id,
 						$not_message,
 						$not_url,

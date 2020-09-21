@@ -77,6 +77,12 @@ class Pushlib extends CI_Controller
 					$error_msg = '쪽지에 알림 기능을 사용하지 않습니다';
 				}
 				break;
+
+			case '이타주의자들':
+				if ( ! $this->CI->cbconfig->item('use_push')) {
+					$error_msg = '푸시 기능을 사용하지 않습니다';
+				}
+				break;
 			default :
 				$error_msg = 'TYPE 이 잘못되었습니다';
 		}
@@ -121,7 +127,7 @@ class Pushlib extends CI_Controller
 		
 		if($pushdata['target_id']!='' && $pushdata['push_type'] =='token' ){ // token 방식 
 			$this->CI->db->select('ptk_token');
-			$query =  $this->CI->db->get_where('cb_push_token',array('mem_id'=>$pushdata['to']));
+			$query =  $this->CI->db->get_where('cb_push_token',array('mem_id'=>$pushdata['target_id']));
 			if($query!=false){
 				$target_info=$query->result_array();
 			}
