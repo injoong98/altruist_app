@@ -15,6 +15,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
     
     console.log('Message handled in the background!', remoteMessage);
   });
-  
 
+  messaging().onNotificationOpenedApp(async remoteMessage=>{
+    console.log('onNotificationOpenedApp on index.js'+remoteMessage)
+    })
 AppRegistry.registerComponent(appName, () => App);
