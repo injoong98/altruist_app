@@ -922,6 +922,16 @@ class Cbconfigs extends CB_Controller
 				'label' => '쪽지가 도착하였을 때 알림',
 				'rules' => 'trim|numeric',
 			),
+			array(
+				'field' => 'notification_open_question',
+				'label' => '오픈 질문이 등록 되었을때 때 알림',
+				'rules' => 'trim|numeric',
+			),
+			array(
+				'field' => 'use_push',
+				'label' => '푸시 기능',
+				'rules' => 'trim|numeric',
+			),
 		);
 		$this->form_validation->set_rules($config);
 
@@ -943,7 +953,7 @@ class Cbconfigs extends CB_Controller
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
 
-			$array = array('use_notification', 'notification_reply', 'notification_comment', 'notification_comment_comment', 'notification_note');
+			$array = array('use_notification', 'notification_reply', 'notification_comment', 'notification_comment_comment', 'notification_note','notification_open_question','use_push');
 			foreach ($array as $value) {
 				$savedata[$value] = $this->input->post($value, null, '');
 			}

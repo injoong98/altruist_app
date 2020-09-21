@@ -365,6 +365,31 @@ class Comment_write extends CB_Controller
 						$not_url
 					);
 				}
+
+				//댓글에 대한 푸시
+				/*
+					푸시를 사용하는가
+					해당 액션에 대한 푸시를 사용하는가
+					푸시 전송
+
+				*/
+				$push_type = 'token';
+				if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_comment')) {
+					$this->load->library('pushlib');
+					$not_message = $updatedata['cmt_nickname'] . '님께서 [' . element('post_title', $post) . '] 에 댓글을 남기셨습니다';
+					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
+					$this->pushlib->set_push(
+						abs(element('mem_id', $post)),
+						$mem_id,
+						'comment',
+						$cmt_id,
+						$not_message,
+						$not_url,
+						$push_type,
+						$topic_name
+					);
+				}
+
 				if ($origin
 					&& $cmt_reply
 					&& $this->cbconfig->item('use_notification')
