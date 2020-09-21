@@ -170,10 +170,10 @@ class RegisterScreen extends Component {
     const {mem_userid} = this.state;
 
     let formdata = new FormData();
-    formdata.append('userid', mem_userid);
+    formdata.append('email', mem_userid);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .post(`http://dev.unyict.org/api/register/email_check`, formdata)
       .then((res) => {
         console.log(res);
         console.log(res.data);
@@ -329,8 +329,9 @@ class RegisterScreen extends Component {
                 placeholder="Email (example@email.com)"
                 onChangeText={(mem_email) => {
                   this.setState({mem_email: mem_email, mem_userid: mem_email});
+                  this.checkEmail(mem_email);
                 }}
-                onEndEditing={this.checkEmail}
+                value={this.state.mem_email}
                 caption={this.state.EmailCaption}
                 style={{padding: 3}}
               />
