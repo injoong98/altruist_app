@@ -25,10 +25,10 @@ class AlbaScreen extends React.Component {
   }
 
   Alba_salary_type = [
-    {color : '#A7D4DE', str : '시'},
-    {color : '#EAB0B3', str : '일'},
-    {color : '#B09BDE', str : '주'},
-    {color : 'black', str : '월'},  
+    {color : '#EAB0B3', str : '시'},
+    {color : '#E3898E', str : '일'},
+    {color : '#CA676C', str : '주'},
+    {color : '#B12D34', str : '월'},
   ]
 
   // const renderItemHeader = (headerProps, info) => (
@@ -109,26 +109,34 @@ class AlbaScreen extends React.Component {
       <Card
       onPress={() => {this.props.navigation.navigate('AlbaContent', {post_id:item.post_id})}}
       style={styles.carditem}>
-        <View style={{flexDirection : 'row'}}>
-            <View style={styles.Text}>
-                <PostTime datetime = {item.post_datetime}/>
-                <Text category='h5'>{item.post_nickname}</Text>
-                <Text style={{marginTop :5, marginBottom : 5, fontSize : 20}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
-                <Divider style={{borderWidth : 0.5}}/>
-                <View style={{flex : 1, flexDirection : 'row'}}>
-                  <Text category='c2' style={{flex:1.2}} numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
-                  <View style={{flex : 1, flexDirection : 'row'}}>
-                    <Text category='c2' style={{color : this.Alba_salary_type[item.alba_salary_type].color}}>{this.Alba_salary_type[item.alba_salary_type].str}</Text>
-                    <Text category='c2'> {(item.alba_salary != '추후협의'?item.alba_salary+'원':item.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+        <View style = {styles.Text}>
+          <PostTime datetime = {item.post_datetime}/>
+          <View style={{flexDirection : 'row'}}>
+              <View style={styles.Text}>
+                  <Text category = 'c2' style={{marginVertical : 3, fontSize : 20}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
+                  <Text style={{fontSize : 16}} numberOfLines={1} ellipsizeMode='tail'>{item.post_content}</Text>
+                  <View style = {{marginTop : 10, flexDirection : 'row'}}>
+                    <View style={{marginVertical : 5, flex : 1, flexDirection : 'row', alignItems : 'center'}}>
+                      <Text style={[styles.tagstyle,{backgroundColor:item.alba_type == 0?'#978DC7':'#63579D'}]} category='c2'>
+                        {item.alba_type == 0?'단기':'장기'}
+                      </Text>
+                      <Text category='c2' style={{flex:1.2}} numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
+                    </View>
+                    <View style={{flex : 1, flexDirection : 'row', alignItems : 'center'}}>
+                        <Text style={[styles.tagstyle,{backgroundColor:this.Alba_salary_type[item.alba_salary_type].color}]} category='c2'>
+                        {this.Alba_salary_type[item.alba_salary_type].str}
+                        </Text>
+                        <Text category='c2'> {(item.alba_salary != '추후협의'?item.alba_salary+'원':item.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                    </View>
                   </View>
-                </View>
-            </View>
-            <View style={styles.image}>
-              {item.origin_image_url?
-                <Image source={{uri:'http://dev.unyict.org'+item.origin_image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
-                :<Image source={{uri:'http://dev.unyict.org'+this.state.image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
-              }
-            </View>
+              </View>
+              <View style={styles.image}>
+                {(item.post_thumb_use == 0)?
+                  <Image source={require('../../../assets/images/noimage.png')} style={{flex : 1, marginLeft: 10, width : '100%', height : 90, resizeMode:'contain'}}/>
+                  :<Image source={{uri:'http://dev.unyict.org'+item.origin_image_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
+                }
+              </View>
+          </View>
         </View>
       </Card>
   );
@@ -187,12 +195,9 @@ const styles = StyleSheet.create({
   },
   Text : {
     flex : 2,
-    marginLeft : 20,
-    marginTop : 10,
     },
   image :{
     flex : 1,
-    justifyContent : 'center',
     alignItems : 'center',
   },
   bottomView: {
@@ -205,6 +210,14 @@ const styles = StyleSheet.create({
     right : 10,
     bottom : 10,
   },
+  tagstyle:{
+    borderRadius : 20,
+    paddingHorizontal : 5,
+    textAlignVertical : 'center',
+    justifyContent : 'center',
+    color : 'white',
+    maxHeight : 20
+  }
 });
 
 export {AlbaScreen} ;

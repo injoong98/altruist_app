@@ -1,5 +1,12 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, SafeAreaView, Alert} from 'react-native';
+import React, {Component, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Keyboard,
+  Alert,
+  DatePickerAndroid,
+} from 'react-native';
 import {
   Text,
   Input,
@@ -9,23 +16,22 @@ import {
   TopNavigationAction,
   Icon,
   TextInput,
+  Radio,
+  RadioGroup,
+  Datepicker,
+  Calendar,
+  NativeDateService,
 } from '@ui-kitten/components';
+import moment from 'moment';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+// import RegisterSuccessScreen from './RegisterSuccess';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
-const Calender = (props) => <Icon {...props} name="calendar-outline" />;
+const CalendarIcon = (props) => <Icon {...props} name="calendar" />;
 
-// RegisterScreen.PropTypes = {
-//   mem_email: PropTypes.string.isRequired,
-//   mem_password: PropTypes.string.isRequired,
-//   mem_password_confirm: PropTypes.string.isRequired,
-//   mem_nickname: PropTypes.string.isRequired,
-//   mem_phone: PropTypes.string.isRequired,
-//   mem_sex: PropTypes.number.isRequired,
-// };
-class RegisterScreen extends React.Component {
+class RegisterScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,12 +44,13 @@ class RegisterScreen extends React.Component {
       mem_homepage: '',
       mem_phone: '',
       mem_birthday: '',
-      mem_sex: '',
+      mem_sex: '1',
       mem_address: '',
       mem_profile_content: '',
       mem_recommend: '',
       captionCheck: '',
       column: '',
+      date: new Date(),
     };
   }
 
@@ -57,13 +64,13 @@ class RegisterScreen extends React.Component {
   );
 
   //form submit
-
   SubmitForm = async () => {
     const {
       mem_userid,
       mem_password,
       mem_password_re,
       mem_nickname,
+      mem_phone,
       mem_email,
       mem_sex,
       mem_birthday,
@@ -75,56 +82,150 @@ class RegisterScreen extends React.Component {
     formdata.append('mem_email', mem_email);
     formdata.append('mem_password', mem_password);
     formdata.append('mem_password_re', mem_password_re);
+    formdata.append('mem_phone', mem_phone);
     formdata.append('mem_nickname', mem_nickname);
     formdata.append('mem_sex', mem_sex);
     formdata.append('mem_birthday', mem_birthday);
     formdata.append('mem_recommend', mem_recommend);
+    console.info('form', this.state);
 
     await axios
       .post('http://dev.unyict.org/api/register/form', formdata)
-      .then((response) => {
-        // console.log('response', response);
+      .then((res) => {
+        console.log('response', res);
+        console.log('status', res.status);
+        if (res.status == 500) {
+          // () => this.props.navigation.navigate('AgreementScreen');
+          this.props.navigation.navigate('RegisterSuccessScreen');
+        } else if (res.status == 200) {
+          //실패시,
+          this.props.navigation.navigate('RegisterSuccessScreen');
+        } else {
+        }
         // console.log('this.state', this.state);
-        Alert.alert(
-          '가입 테스트',
-          '가입 테스트 완료',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                this.gobackfunc();
-              },
-            },
-          ],
-          {cancelable: false},
-        );
+        // Alert.alert(
+        //   '가입 테스트',
+        //   '가입 테스트 완료',
+        //   [
+        //     {
+        //       text: 'OK',
+        //       // onPress: () => {
+        //       //   this.gobackfunc();
+        //       // },
+        //     },
+        //   ],
+        //   {cancelable: false},
+        // );
       })
       .catch((error) => {
-        console.log(error);
+        console.log('ERROR', error);
         console.error();
         //alert('')
       });
   };
 
-  //   TODO : 생년월일
+  //   TODO : 휴대폰 번호
+  PhoneHyphen = (e) => {
+    //넣었다가 아니면 뱉어주고
+    //11자 되기 전에는 3자리, 8자리 기준으로
+    //3자리에서 뱉어주고 뱉어준거 다시 받아서
+    //4자리부터는 -가지고 다시 이어나갈 수 있도록
+  };
 
-  // UselessTextInput = ({placeholder}) => {
-  //   const [textInputValue, setTextInputValue] = React.useState('');
-  //   const column = this.state.column
-  //   return (
-  //     <Input
-  //       onChangeText={(text) => setTextInputValue(text)}
-  //       value={({textInputValue}) => this.setState({this.state.column: textInputValue})}
-  //       placeholder={placeholder}
-  //     />
-  //   );
-  // };
+  //TODO :
+
+  //TODO : 모달 (실패)
+
+  //   TODO : 이메일 중복 확인
+  checkEmail = async () => {
+    const {mem_userid} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('userid', mem_userid);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
+        this.setState({EmailCaption: res.data.message});
+      });
+  };
+
+  checkRecommend = async () => {
+    const {mem_recommend} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('userid', mem_recommend);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .then((res) => {
+        if (res.data.message == '이미 사용중인 아이디입니다') {
+          this.setState({recommendCaption: null});
+        } else if (res.data.result == 'available') {
+          this.setState({recommendCaption: '없는 아이디 입니다.'});
+        }
+      });
+  };
+
+  //성별, 생년월일 "" STring으로 안9들어가는 문제
+  // 생년월일 string으로 변환하는 문제
+  ConvertString = (something) => {
+    console.info(something);
+    let type = something.toString();
+    return type;
+  };
+
+  //   TODO : 생년월일
+  DatepickerBday = () => {
+    // const today = new Date(1900, 1, 1);
+    const [date, setDate] = useState(new Date());
+    const formatDateService = new NativeDateService('en', {
+      format: 'YYYY-MM-DD',
+    });
+    // console.log('date', today);
+    return (
+      <Datepicker
+        accessoryRight={CalendarIcon}
+        min={new Date(1900, 1, 1)}
+        date={date}
+        dateService={formatDateService}
+        onSelect={(nextDate) => {
+          setDate(nextDate);
+          this.setState({
+            mem_birthday: moment(this.ConvertString(nextDate)).format(
+              'YYYY-MM-DD',
+            ),
+          });
+        }}
+      />
+    );
+  };
 
   //   TODO : 성별
+  RadioSexSelection = () => {
+    const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  //   TODO : 이메일
-
-  //   TODO : 휴대폰 번호
+    return (
+      <RadioGroup
+        style={{
+          padding: 3,
+          marginBottom: 8,
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+        }}
+        selectedIndex={selectedIndex}
+        onChange={(index) => {
+          setSelectedIndex(index);
+          this.setState({mem_sex: this.ConvertString(index + 1)});
+        }}>
+        <Radio>남자</Radio>
+        <Radio>여자</Radio>
+      </RadioGroup>
+    );
+  };
 
   //   TODO : 패스워드 확인
   CheckPassword = (a, b) => {
@@ -149,9 +250,15 @@ class RegisterScreen extends React.Component {
           alignment="center"
           accessoryLeft={this.BackAction}
         />
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
           <ScrollView>
-            <View style={{flex: 1, justifyContent: 'center', padding: 30}}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                paddingRight: 30,
+                paddingLeft: 30,
+              }}>
               <Input
                 style={{padding: 3}}
                 placeholder="이름"
@@ -161,17 +268,22 @@ class RegisterScreen extends React.Component {
               />
               <Input
                 style={{padding: 3}}
-                placeholder="Email (example@email.com) "
-                onChangeText={(mem_email) =>
-                  this.setState({mem_email: mem_email, mem_userid: mem_email})
-                }
-              />
-              <Input
-                style={{padding: 3}}
                 placeholder="닉네임 / 활동명"
                 onChangeText={(mem_nickname) =>
                   this.setState({mem_nickname: mem_nickname})
                 }
+              />
+              <this.RadioSexSelection />
+              <Input
+                keyboardType="email-address"
+                textContentType="emailAddress" //ios
+                placeholder="Email (example@email.com)"
+                onChangeText={(mem_email) => {
+                  this.setState({mem_email: mem_email, mem_userid: mem_email});
+                }}
+                onEndEditing={this.checkEmail}
+                caption={this.state.EmailCaption}
+                style={{padding: 3}}
               />
               <Input
                 style={{padding: 3}}
@@ -191,47 +303,49 @@ class RegisterScreen extends React.Component {
                   //{} 하면 obj로 던져서 obj.이름 해야지 됌
                   this.CheckPassword(this.state.mem_password, mem_password_re);
                 }}
-                caption={this.state.captionCheck}
+                // caption={() =>
+                //   this.state.captionCheck ? (
+                //     <Text style={{color: 'red'}}>
+                //       {this.state.captionCheck}
+                //     </Text>
+                //   ) : null
+                // }
+                caption={() => (
+                  <Text style={{color: 'red'}}>{this.state.captionCheck}</Text>
+                )}
                 secureTextEntry
               />
               <Input
+                maxLength={11}
+                keyboardType="phone-pad"
+                dataDetectorTypes="phoneNumber"
                 style={{padding: 3}}
                 placeholder="휴대전화"
-                onChangeText={(mem_phone) =>
-                  this.setState({mem_phone: mem_phone})
-                }
+                onChangeText={(mem_phone) => {
+                  this.setState({mem_phone: mem_phone});
+                  this.PhoneHyphen(mem_phone);
+                }}
+                // onEndEditing={this.PhoneHyphen}
+                caption={this.state.phoneCaption}
               />
+              <this.DatepickerBday />
               <Input
-                placeholder="생년월일 (ex. 2000-01-01)"
-                onChangeText={(mem_birthday) =>
-                  this.setState({mem_birthday: mem_birthday})
+                style={{padding: 3}}
+                placeholder="추천인 이메일"
+                onChangeText={(mem_recommend) =>
+                  this.setState({mem_recommend: mem_recommend})
                 }
+                onEndEditing={this.checkRecommend}
+                caption={this.state.recommendCaption}
               />
-              <View
-                style={{
-                  padding: 3,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                <Button
-                  style={{width: '45%'}}
-                  onPress={() => this.setState({mem_sex: 2})}>
-                  여성
-                </Button>
-                <Button
-                  style={{width: '45%'}}
-                  onPress={() => this.setState({mem_sex: 1})}>
-                  남성
-                </Button>
-              </View>
-              <View
+              <Input style={{padding: 3}} placeholder="서명문" />
+              {/* <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-around',
                   alignItems: 'stretch',
                   alignContent: 'stretch',
-                }}></View>
+                }}></View> */}
             </View>
             {/* 동의 및 다음 버튼 */}
             <View
@@ -266,5 +380,28 @@ class RegisterScreen extends React.Component {
     );
   }
 }
+
+RegisterScreen.propTypes = {
+  // 필수 :
+  // 이메일주소
+  // 비밀번호
+  // 비밀번호 확인
+  // 닉네임
+  // 이름
+  mem_email: PropTypes.string.isRequired,
+  mem_password: PropTypes.string.isRequired,
+  mem_password_confirm: PropTypes.string.isRequired,
+  mem_nickname: PropTypes.string.isRequired,
+  mem_sex: PropTypes.number.isRequired,
+  mem_birthday: PropTypes.instanceOf(Date),
+  mem_phone: PropTypes.string,
+};
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default RegisterScreen;

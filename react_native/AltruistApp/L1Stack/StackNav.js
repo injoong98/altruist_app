@@ -1,16 +1,19 @@
 import React from 'react';
-import {Dimensions,Animated,View} from 'react-native';
+import {Dimensions,Animated,View,SafeAreaView,} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
-
+import {Layout,Text,TopNavigation} from '@ui-kitten/components'
+import messaging from '@react-native-firebase/messaging'
 import {ComBottomNav} from './L2Bottom/ComBottomNav'
 import {defaultContent, IlbanContent, GominContent, MarketContent, AlbaContent} from './Content'
 import {defaultWrite, MarketWrite, AlbaWrite,GominWrite, IlbanWrite} from './Write'
 
-import {SafeAreaView} from 'react-native'
 import axios from 'axios' 
-import {Layout,Text,TopNavigation} from '@ui-kitten/components'
 import LoginScreen from './Login'
 import RegisterScreen from './Register'
+import AgreementScreen from './Agreement'
+import FindPwScreen from './FindPw'
+import RegisterSuccessScreen from './RegisterSuccess'
 import QuestionScreen from './Question'
 import FinishScreen from './Finish'
 import {Signing} from './Context'
@@ -62,18 +65,47 @@ export class StackNav extends React.Component{
         
     }
     static contextType = Signing
-    
+    syncPushToken = async (token,mem_id) =>{
+        console.log(token)
+        console.log(mem_id)
+        var formdata = new FormData();
+        formdata.append('token',token);
+        formdata.append('mem_id',mem_id);
+        
+        await axios.post('http://dev.unyict.org/api/login/sync_push_token',formdata)
+        .then(res=>{
+            console.log('success!')
+        })
+        .catch(err=>{
+            console.log('failure!')
+        })
+    }
     session_chk= async()=>{
         await axios.get('http://dev.unyict.org/api/login/session_check')
-        .then(res=>{
+        .then(async res=>{
             console.log('session_checking')
-            res.data.status == 200?
-                this.setState({isSignedIn:true})
-                :
-                res.data.status == 500?
+            if(res.data.status == 200){
+                const {mem_id} =res.data.session
+                this.setState({isSignedIn:true});
+                messaging().getToken()
+                .then(token=>{
+                    this.syncPushToken(token,mem_id)
+                });
+                try {
+                    await AsyncStorage.setItem('currentMemId',mem_id);
+                  } 
+                catch (error) {
+                    console.log(error)
+                  }
+            }
+            else if(res.data.status == 500)
+            {
                 this.setState({isSignedIn:false})
-                :
+            }
+            else
+            {
                 null;
+            }
                 this.setState({isLoading:false})
         })
         .catch(err=>{
@@ -95,7 +127,16 @@ export class StackNav extends React.Component{
                 
                 axios.post('http://dev.unyict.org/api/login',formdata)
                 .then(response=>{
-                    this.setState({isSignedIn:true})
+                    console.log(JSON.stringify(response.data.status))
+                    if(response.data.status == 200 )
+                    {
+                        this.setState({isSignedIn:true});
+                        this.session_chk()
+                    }
+                    else{
+                        alert(`로그인 실패 :(`)
+                    }
+                    
                 })
                 .catch(error=>{
                     alert(`에러 : ${JSON.stringify(error)}`)
@@ -122,7 +163,10 @@ export class StackNav extends React.Component{
                         !isSignedIn ? 
                         <>
                             <Screen name = "Login" component={LoginScreen}/>
+                            <Screen name = "FindPwScreen" component={FindPwScreen}/>
                             <Screen name = "RegisterScreen" component={RegisterScreen}/>
+                            <Screen name = "AgreementScreen" component={AgreementScreen}/>
+                            <Screen name = "RegisterSuccessScreen" component={RegisterSuccessScreen}/>
                             <Screen name = "QuestionScreen" component={QuestionScreen}/>
                             <Screen name = "FinishScreen" component={FinishScreen}/>
                         </>

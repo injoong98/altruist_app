@@ -57,7 +57,7 @@ class JauScreen extends React.Component {
         `http://dev.unyict.org/api/board_post/lists/ilban?category_id=${this.state.post_category}`,
       )
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         if (response.data.view.list.data.list == '') {
           this.setState({
             no_post: true,
