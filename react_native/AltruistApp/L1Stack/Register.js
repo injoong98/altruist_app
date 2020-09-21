@@ -63,6 +63,9 @@ class RegisterScreen extends Component {
     />
   );
 
+  //처음엔 버튼을 disabled
+  //다른 input 다 적으면 abled
+
   //form submit
   SubmitForm = async () => {
     const {
@@ -125,11 +128,37 @@ class RegisterScreen extends Component {
   };
 
   //   TODO : 휴대폰 번호
-  PhoneHyphen = (e) => {
+  PhoneHyphen = (phonenum) => {
     //넣었다가 아니면 뱉어주고
     //11자 되기 전에는 3자리, 8자리 기준으로
     //3자리에서 뱉어주고 뱉어준거 다시 받아서
     //4자리부터는 -가지고 다시 이어나갈 수 있도록
+    console.log(phonenum);
+    var number = phonenum.replace(/[^0-9]/g, '');
+    var phone = '';
+    console.log(number);
+
+    if (number.length < 4) {
+      return number;
+    } else if (number.length < 7) {
+      phone += number.substr(0, 3);
+      phone += '-';
+      phone += number.substr(3);
+    } else if (number.length < 11) {
+      phone += number.substr(0, 3);
+      phone += '-';
+      phone += number.substr(3, 3);
+      phone += '-';
+      phone += number.substr(6);
+    } else {
+      phone += number.substr(0, 3);
+      phone += '-';
+      phone += number.substr(3, 4);
+      phone += '-';
+      phone += number.substr(7);
+    }
+    var value = phone;
+    this.setState({mem_phone: value});
   };
 
   //TODO :
@@ -161,6 +190,8 @@ class RegisterScreen extends Component {
     await axios
       .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
       .then((res) => {
+        console.log(res.data);
+
         if (res.data.message == '이미 사용중인 아이디입니다') {
           this.setState({recommendCaption: null});
         } else if (res.data.result == 'available') {
@@ -178,6 +209,7 @@ class RegisterScreen extends Component {
     await axios
       .post(`http://dev.unyict.org/api/register/nickname_check`, formdata)
       .then((res) => {
+        console.log(res.data);
         this.setState({nicknameCaption: res.data.reason});
       });
   };
@@ -333,7 +365,7 @@ class RegisterScreen extends Component {
                 secureTextEntry
               />
               <Input
-                maxLength={11}
+                maxLength={13}
                 keyboardType="phone-pad"
                 dataDetectorTypes="phoneNumber"
                 style={{padding: 3}}
@@ -342,7 +374,7 @@ class RegisterScreen extends Component {
                   this.setState({mem_phone: mem_phone});
                   this.PhoneHyphen(mem_phone);
                 }}
-                // onEndEditing={this.PhoneHyphen}
+                value={this.state.mem_phone}
                 caption={this.state.phoneCaption}
               />
               <this.DatepickerBday />
@@ -398,20 +430,20 @@ class RegisterScreen extends Component {
   }
 }
 
-RegisterScreen.propTypes = {
-  // 필수 :
-  // 이메일주소
-  // 비밀번호
-  // 비밀번호 확인
-  // 닉네임
-  // 이름
-  mem_email: PropTypes.string.isRequired,
-  mem_password: PropTypes.string.isRequired,
-  mem_password_confirm: PropTypes.string.isRequired,
-  mem_nickname: PropTypes.string.isRequired,
-  mem_birthday: PropTypes.instanceOf(Date),
-  mem_phone: PropTypes.string,
-};
+// RegisterScreen.propTypes = {
+//   // 필수 :
+//   // 이메일주소
+//   // 비밀번호
+//   // 비밀번호 확인
+//   // 닉네임
+//   // 이름
+//   mem_email: PropTypes.string.isRequired,
+//   mem_password: PropTypes.string.isRequired,
+//   mem_password_confirm: PropTypes.string.isRequired,
+//   mem_nickname: PropTypes.string.isRequired,
+//   mem_birthday: PropTypes.instanceOf(Date),
+//   mem_phone: PropTypes.string,
+// };
 
 const styles = StyleSheet.create({
   container: {
