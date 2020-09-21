@@ -50,6 +50,7 @@ const defaultContent = ({navigation}) =>{
 }
 
 class GominContent extends React.Component{
+
     constructor(props){
         super(props);
         this.state={
@@ -62,23 +63,24 @@ class GominContent extends React.Component{
             isLoading:true,
             refreshing:false,
             modalVisible:false,
-            replyModalVisible:false,
+            resultModalVisible:false,
             deleteModalVisible:false,
             spinnerModalVisible:false,
             popoverVisibel:false,
-            
+            resultText : '',
+            modalType : 0,
         }
     }
+
     postDelete = async () => {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         console.log(formdata);
         await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
         .then(res=>{
-            this.setState({spinnerModalVisible:false})
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
             this.props.navigation.goBack();
             this.props.route.params.OnGoback();
-            alert(JSON.stringify(res.data))
         })
         .catch(err=>{
             alert(JSON.stringify(err))
@@ -117,9 +119,8 @@ class GominContent extends React.Component{
             if(status=='200'){
                 if (message == '댓글이 등록되었습니다.')
                 {
-                    // this.setState({replyModalVisible:true});
                     Keyboard.dismiss();
-                    this.setState({replyModalVisible:true, cmt_content:'',relpying:false,cmt_id:''});
+                    this.setState({resultModalVisible:true, cmt_content:'',relpying:false,cmt_id:'', resultText:message});
                     this.getCommentData(post.post_id);
                     this.refs.pstcmtlist.scrollToEnd();
                 }
@@ -179,7 +180,7 @@ class GominContent extends React.Component{
                     <Text category='h3'>스크랩</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                    onPress={()=>{this.postBlameConfirm();this.setState({popoverVisibel:false})}}
+                    onPress={()=>{this.setState({popoverVisibel:false, deleteModalVisible:true, modalType : 0})}}
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
                     <Text category='h3'>신고</Text>
                 </TouchableOpacity>
@@ -197,7 +198,7 @@ class GominContent extends React.Component{
                     <Text category='h3'>수정</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                    onPress={()=>{this.setState({popoverVisibel:false,deleteModalVisible:true})}}
+                    onPress={()=>{this.setState({popoverVisibel:false,deleteModalVisible:true, modalType : 1})}}
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
                     <Text category='h3'>삭제</Text>
                 </TouchableOpacity>
@@ -214,44 +215,27 @@ class GominContent extends React.Component{
         
         Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
         .then(response=>{
-            if(response.data.status ==500){
-                alert(`${JSON.stringify(response.data.message)}`)
+            if(response.data.status == 500){
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
             }else{
                 this.getPostData(this.state.post.post_id)
-                alert(`${JSON.stringify(response.data.message)}`)
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
             }
         })
         .catch(error=>{
             alert(`${JSON.stringify(error)}`)
         })
     }
-    postBlameConfirm = () =>{
-        Alert.alert(
-            "게시글",
-            "이 게시글을 신고하시겠습니까?",
-            [
-                {
-                    text: "Cancel",
-                    onPress: () => alert('취소했습니다.')
-                },
-                { 
-                    text: "OK", 
-                    onPress: ()=> this.postBlame()
-                }
-            ],
-            { cancelable: false }
-        );
-    }
-    cmtBlame = (cmt_id)=>{
+    cmtBlame = () =>{
         var formdata = new FormData();
-        formdata.append('cmt_id',cmt_id)
+        formdata.append('cmt_id',this.state.cmt_id);
         
         Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
         .then(response=>{
             if(response.data.status ==500){
-                alert(`${JSON.stringify(response.data.message)}`)
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
             }else{
-                alert(`${JSON.stringify(response.data.message)}`)
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
                 this.getCommentData(this.state.post.post_id)
             }
         })
@@ -276,16 +260,16 @@ class GominContent extends React.Component{
             { cancelable: false }
         );
     }
-    cmtDelete = (cmt_id) =>{
+    cmtDelete = () =>{
         var formdata = new FormData();
-        formdata.append('cmt_id',cmt_id)
+        formdata.append('cmt_id',this.state.cmt_id);
         
         Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
         .then(response=>{
             if(response.data.status ==500){
-                alert(`${JSON.stringify(response.data.message)}`)
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
             }else{
-                alert(`${JSON.stringify(response.data.message)}`)
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
                 this.getCommentData(this.state.post.post_id)
             }
         })
@@ -373,8 +357,27 @@ class GominContent extends React.Component{
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
-
     }
+    
+    modalList = [
+        {
+            text : '이 게시글을 신고하시겠습니까?',
+            func : this.postBlame,
+        },
+        {
+            text : '이 게시글을 삭제하시겠습니까?',
+            func : this.postDelete,
+        },
+        {
+            text : '이 댓글을 신고하시겠습니까?',
+            func : this.cmtBlame,
+        },
+        {
+            text : '이 댓글을 삭제하시겠습니까?',
+            func : this.cmtDelete,
+        },
+    ]
+
     renderPostBody = (post)=>{
         
         const regex = /(<([^>]+)>)|&nbsp;/ig;
@@ -481,7 +484,7 @@ class GominContent extends React.Component{
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,replyModalVisible,deleteModalVisible,spinnerModalVisible} = this.state
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,deleteModalVisible,spinnerModalVisible, modalType} = this.state
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -535,27 +538,27 @@ class GominContent extends React.Component{
             >
                 <View>
                     <TouchableOpacity 
-                        onPress={()=>{this.cmtBlameConfirm(cmt_id);this.setState({modalVisible:false,cmt_id:''})}}
+                        onPress={()=>{this.setState({modalVisible:false,cmt_id:'', modalType : 2, deleteModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
                         <Text category='h3'>댓글 신고</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        onPress={()=>{this.cmtDeleteConfirm(cmt_id);this.setState({modalVisible:false,cmt_id:''})}}
+                        onPress={()=>{this.setState({modalVisible:false,cmt_id:'', modalType : 3, deleteModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
                         <Text category='h3'>댓글 삭제</Text>
                     </TouchableOpacity>
                 </View>   
             </Modal>
             <Modal
-                visible={replyModalVisible}
+                visible={resultModalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({replyModalVisible:false})}
+                onBackdropPress={() => this.setState({resultModalVisible:false, cmt_id:''})}
                 >
                 <Confirm 
                     type = 'result'
-                    confirmText="댓글이 성공적으로 달렸습니다."
+                    confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({replyModalVisible:false,cmt_id:''})}
+                    OnFrstPress={() => this.setState({resultModalVisible:false,cmt_id:''})}
                 />
             </Modal>
             <Modal
@@ -564,9 +567,9 @@ class GominContent extends React.Component{
                 onBackdropPress={() => this.setState({deleteModalVisible:false})}
             >
                 <Confirm 
-                    confirmText="게시글을 삭제하시겠습니까?"
+                    confirmText={this.modalList[modalType].text}
                     frstText="예"
-                    OnFrstPress={() =>{this.setState({deleteModalVisible:false,spinnerModalVisible:true});this.postDelete()}}
+                    OnFrstPress={() =>{this.setState({deleteModalVisible:false,spinnerModalVisible:true});this.modalList[modalType].func();}}
                     scndText="아니오"
                     OnScndPress={() => this.setState({deleteModalVisible:false})}
                 />
