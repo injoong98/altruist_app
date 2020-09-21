@@ -22,6 +22,7 @@ import {
   Calendar,
   NativeDateService,
 } from '@ui-kitten/components';
+// import moment from '@ui-kitten/moment';
 import moment from 'moment';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
@@ -110,15 +111,6 @@ class RegisterScreen extends Component {
     ) {
       return;
     }
-    if (this.state.mem_phone == '' || this.state.mem_phone == null) {
-      return;
-    }
-    if (this.state.mem_birthday == '' || this.state.mem_birthday == null) {
-      return;
-    }
-    // if (this.state.mem_recommend == '' || this.state.mem_recommend == null) {
-    //   return;
-    // }
     console.log('no');
     this.SubmitForm();
   };
@@ -135,17 +127,14 @@ class RegisterScreen extends Component {
     }
     if (!this.state.mem_email) {
       this.setState({goNext: true});
-
       return;
     }
     if (!this.state.mem_password) {
       this.setState({goNext: true});
-
       return;
     }
     if (!this.state.mem_password_re) {
       this.setState({goNext: true});
-
       return;
     }
   };
@@ -182,12 +171,12 @@ class RegisterScreen extends Component {
       .post('http://dev.unyict.org/api/register/form', formdata)
       .then((res) => {
         console.log('response', res);
-        console.log('status', res.status);
+        console.log('status', res.data.status);
+        console.log('data', res.data);
         if (res.status == 500) {
-          // () => this.props.navigation.navigate('AgreementScreen');
-          this.props.navigation.navigate('RegisterSuccessScreen');
-        } else if (res.status == 200) {
           //실패시,
+          return;
+        } else if (res.status == 200) {
           this.props.navigation.navigate('RegisterSuccessScreen');
         } else {
         }
@@ -257,15 +246,20 @@ class RegisterScreen extends Component {
     await axios
       .post(`http://dev.unyict.org/api/register/email_check`, formdata)
       .then((res) => {
+        console.log(res.data);
         if (res.data.message.includes('예약어')) {
           this.setState({goNext: true});
+          this.setState({EmailCaption: res.data.message});
+        } else if (res.data.message.includes('사용중')) {
+          this.setState({goNext: true});
+          this.setState({EmailCaption: res.data.message});
         } else {
-          this.setState({goNext: false});
+          this.setState({EmailCaption: res.data.message});
         }
-        this.setState({EmailCaption: res.data.message});
       });
   };
 
+  //추천인 - userid API
   checkRecommend = async () => {
     const {mem_recommend} = this.state;
 
@@ -277,7 +271,7 @@ class RegisterScreen extends Component {
       .then((res) => {
         console.log(res.data);
 
-        if (res.data.message == '이미 사용중인 아이디입니다') {
+        if (res.data.message.includes('사용중')) {
           this.setState({recommendCaption: null});
         } else if (res.data.result == 'available') {
           this.setState({recommendCaption: '없는 아이디 입니다.'});
@@ -295,13 +289,16 @@ class RegisterScreen extends Component {
       .post(`http://dev.unyict.org/api/register/nickname_check`, formdata)
       .then((res) => {
         if (res.data.reason == '닉네임값이 넘어오지 않았습니다') {
+          this.setState({goNext: true});
           this.setState({nicknameCaption: '닉네임값을 입력해주세요'});
-          this.setState({goNext: false});
         } else {
-          if (res.data.message.includes('사용중'))
+          if (res.data.message.includes('사용중')) {
             this.setState({goNext: true});
+            this.setState({nicknameCaption: res.data.reason});
+          } else {
+            this.setState({nicknameCaption: res.data.reason});
+          }
         }
-        this.setState({nicknameCaption: res.data.reason});
       });
   };
 
@@ -315,25 +312,19 @@ class RegisterScreen extends Component {
 
   //   TODO : 생년월일
   DatepickerBday = () => {
-    // const today = new Date(1900, 1, 1);
     const [date, setDate] = useState(new Date());
     const formatDateService = new NativeDateService('en', {
       format: 'YYYY-MM-DD',
     });
-    // console.log('date', today);
     return (
       <Datepicker
-        accessoryRight={CalendarIcon}
+        size="small"
+        style={{margin: 10}}
         min={new Date(1900, 1, 1)}
         date={date}
         dateService={formatDateService}
         onSelect={(nextDate) => {
           setDate(nextDate);
-          this.setState({
-            mem_birthday: moment(this.ConvertString(nextDate)).format(
-              'YYYY-MM-DD',
-            ),
-          });
         }}
       />
     );
@@ -396,62 +387,75 @@ class RegisterScreen extends Component {
                 paddingLeft: 60,
               }}>
               <Input
-                style={{padding: 3}}
+                style={styles.inputs}
                 placeholder="이름"
                 status={this.state.status}
                 onChangeText={(mem_username) => {
                   this.setState({mem_username: mem_username});
                 }}
-                onChange={() => this.checkNotNull}
+                onEndEditing={() => {
+                  this.checkNotNull();
+                  this.checkEmail(this.state.mem_username);
+                }}
               />
               <Input
-                style={{padding: 3}}
+                style={styles.inputs}
                 placeholder="닉네임 / 활동명"
                 onChangeText={(mem_nickname) => {
                   this.setState({mem_nickname: mem_nickname});
                   this.checkNotNull();
                 }}
-                onChange={() => this.checkNotNull}
-                onEndEditing={this.checkNickname}
+                onEndEditing={() => {
+                  this.checkNotNull();
+                  this.checkEmail(this.state.mem_nickname);
+                }}
                 caption={this.state.nicknameCaption}
               />
               <this.RadioSexSelection />
+              {/* validation : 사용자가 input창에서 딱 벗어났을 때 
+            1. null 값 체크 
+            2. mem_email 마지막으로 입력된 값*/}
               <Input
+                style={styles.inputs}
                 keyboardType="email-address"
                 textContentType="emailAddress" //ios
                 placeholder="Email (example@email.com)"
                 onChangeText={(mem_email) => {
                   this.setState({mem_email: mem_email, mem_userid: mem_email});
                   this.checkEmail(mem_email);
-                  this.checkNotNull();
                 }}
-                onChange={() => this.checkNotNull}
-                value={this.state.mem_email}
+                onEndEditing={() => {
+                  this.checkNotNull();
+                  this.checkEmail(this.state.mem_email);
+                }}
                 caption={this.state.EmailCaption}
-                style={{padding: 3}}
               />
               <Input
-                style={{padding: 3}}
+                style={styles.inputs}
                 secureTextEntry={true}
                 placeholder="비밀번호"
                 onChangeText={(mem_password) => {
                   this.setState({mem_password: mem_password});
+                  // this.checkNotNull();
+                }}
+                onEndEditing={() => {
                   this.checkNotNull();
                 }}
-                onChange={() => this.checkNotNull}
                 secureTextEntry
               />
               <Input
-                style={{padding: 3}}
+                style={styles.inputs}
                 secureTextEntry={true}
                 placeholder="비밀번호 확인"
                 onChangeText={(mem_password_re) => {
                   this.setState({mem_password_re: mem_password_re});
                   //{} 하면 obj로 던져서 obj.이름 해야지 됌
                   this.CheckPassword(this.state.mem_password, mem_password_re);
+                  // this.checkNotNull();
+                }}
+                onEndEditing={() => {
                   this.checkNotNull();
                 }}
-                onChange={() => this.checkNotNull}
                 // caption={() =>
                 //   this.state.captionCheck ? (
                 //     <Text style={{color: 'red'}}>
@@ -465,29 +469,37 @@ class RegisterScreen extends Component {
                 secureTextEntry
               />
               <Input
-                maxLength={13}
+                style={styles.inputs}
+                maxLength={11}
                 keyboardType="phone-pad"
                 dataDetectorTypes="phoneNumber"
-                style={{padding: 3}}
                 placeholder="휴대전화"
                 onChangeText={(mem_phone) => {
                   this.setState({mem_phone: mem_phone});
                   this.PhoneHyphen(mem_phone);
                 }}
-                value={this.state.mem_phone}
+                onBlur={() => this.PhoneHyphen(this.state.mem_phone)}
                 caption={this.state.phoneCaption}
+                value={this.state.mem_phone}
               />
               <this.DatepickerBday />
               <Input
-                style={{padding: 3}}
+                style={styles.inputs}
                 placeholder="추천인 이메일"
                 onChangeText={(mem_recommend) =>
                   this.setState({mem_recommend: mem_recommend})
                 }
-                onEndEditing={this.checkRecommend}
+                onEndEditing={() => {
+                  this.checkNotNull();
+                  this.checkRecommend();
+                }}
                 caption={this.state.recommendCaption}
               />
-              <Input style={{padding: 3}} placeholder="서명문" />
+              <Input
+                style={styles.inputs}
+                placeholder="서명문"
+                onChangeText={(text) => this.setState({mustInput: text})}
+              />
               {/* <View
                 style={{
                   flexDirection: 'row',
@@ -535,6 +547,11 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  inputs: {
+    backgroundColor: '#F8F8F8',
+    borderRadius: 15,
+    borderColor: '#FFFFFF',
   },
 });
 
