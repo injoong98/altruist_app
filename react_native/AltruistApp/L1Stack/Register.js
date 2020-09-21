@@ -124,15 +124,28 @@ class RegisterScreen extends Component {
   };
 
   checkNotNull = () => {
-    if (
-      this.state.mem_username != '' &&
-      this.state.mem_nickname != '' &&
-      this.state.mem_sex != '' &&
-      this.state.mem_email != '' &&
-      this.state.mem_password != '' &&
-      this.state.mem_password_re != ''
-    ) {
-      this.setState({goNext: false});
+    console.log('sdf');
+    if (!this.state.mem_nickname) {
+      this.setState({goNext: true});
+      return;
+    }
+    if (!this.state.mem_sex) {
+      this.setState({goNext: true});
+      return;
+    }
+    if (!this.state.mem_email) {
+      this.setState({goNext: true});
+
+      return;
+    }
+    if (!this.state.mem_password) {
+      this.setState({goNext: true});
+
+      return;
+    }
+    if (!this.state.mem_password_re) {
+      this.setState({goNext: true});
+
       return;
     }
   };
@@ -166,7 +179,7 @@ class RegisterScreen extends Component {
     console.info('form', this.state);
 
     await axios
-      .post('http://10.0.2.2/api/register/form', formdata)
+      .post('http://dev.unyict.org/api/register/form', formdata)
       .then((res) => {
         console.log('response', res);
         console.log('status', res.status);
@@ -242,10 +255,13 @@ class RegisterScreen extends Component {
     formdata.append('email', mem_userid);
 
     await axios
-      .post(`http://10.0.2.2/api/register/email_check`, formdata)
+      .post(`http://dev.unyict.org/api/register/email_check`, formdata)
       .then((res) => {
-        console.log(res);
-        console.log(res.data);
+        if (res.data.message.includes('예약어')) {
+          this.setState({goNext: true});
+        } else {
+          this.setState({goNext: false});
+        }
         this.setState({EmailCaption: res.data.message});
       });
   };
@@ -257,7 +273,7 @@ class RegisterScreen extends Component {
     formdata.append('userid', mem_recommend);
 
     await axios
-      .post(`http://10.0.2.2/api/register/userid_check`, formdata)
+      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
       .then((res) => {
         console.log(res.data);
 
@@ -276,13 +292,16 @@ class RegisterScreen extends Component {
     formdata.append('nickname', mem_nickname);
 
     await axios
-      .post(`http://10.0.2.2/api/register/nickname_check`, formdata)
+      .post(`http://dev.unyict.org/api/register/nickname_check`, formdata)
       .then((res) => {
         if (res.data.reason == '닉네임값이 넘어오지 않았습니다') {
           this.setState({nicknameCaption: '닉네임값을 입력해주세요'});
+          this.setState({goNext: false});
         } else {
-          this.setState({nicknameCaption: res.data.reason});
+          if (res.data.message.includes('사용중'))
+            this.setState({goNext: true});
         }
+        this.setState({nicknameCaption: res.data.reason});
       });
   };
 
@@ -350,10 +369,10 @@ class RegisterScreen extends Component {
     let checkPassword = '';
     if (a == b) {
       checkPassword = '';
-      console.log(checkPassword);
+      this.setState({goNext: false});
     } else {
       checkPassword = '비밀번호가 일치하지 않습니다.';
-      console.log(checkPassword);
+      this.setState({goNext: true});
     }
     this.setState({captionCheck: checkPassword});
   };
@@ -382,16 +401,17 @@ class RegisterScreen extends Component {
                 status={this.state.status}
                 onChangeText={(mem_username) => {
                   this.setState({mem_username: mem_username});
-                  this.checkNotNull;
                 }}
+                onChange={() => this.checkNotNull}
               />
               <Input
                 style={{padding: 3}}
                 placeholder="닉네임 / 활동명"
                 onChangeText={(mem_nickname) => {
                   this.setState({mem_nickname: mem_nickname});
-                  this.checkNotNull;
+                  this.checkNotNull();
                 }}
+                onChange={() => this.checkNotNull}
                 onEndEditing={this.checkNickname}
                 caption={this.state.nicknameCaption}
               />
@@ -403,8 +423,9 @@ class RegisterScreen extends Component {
                 onChangeText={(mem_email) => {
                   this.setState({mem_email: mem_email, mem_userid: mem_email});
                   this.checkEmail(mem_email);
-                  this.checkNotNull;
+                  this.checkNotNull();
                 }}
+                onChange={() => this.checkNotNull}
                 value={this.state.mem_email}
                 caption={this.state.EmailCaption}
                 style={{padding: 3}}
@@ -415,8 +436,9 @@ class RegisterScreen extends Component {
                 placeholder="비밀번호"
                 onChangeText={(mem_password) => {
                   this.setState({mem_password: mem_password});
-                  this.checkNotNull;
+                  this.checkNotNull();
                 }}
+                onChange={() => this.checkNotNull}
                 secureTextEntry
               />
               <Input
@@ -427,8 +449,9 @@ class RegisterScreen extends Component {
                   this.setState({mem_password_re: mem_password_re});
                   //{} 하면 obj로 던져서 obj.이름 해야지 됌
                   this.CheckPassword(this.state.mem_password, mem_password_re);
-                  this.checkNotNull;
+                  this.checkNotNull();
                 }}
+                onChange={() => this.checkNotNull}
                 // caption={() =>
                 //   this.state.captionCheck ? (
                 //     <Text style={{color: 'red'}}>
