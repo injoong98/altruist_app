@@ -392,7 +392,6 @@ RegisterScreen.propTypes = {
   mem_password: PropTypes.string.isRequired,
   mem_password_confirm: PropTypes.string.isRequired,
   mem_nickname: PropTypes.string.isRequired,
-  mem_sex: PropTypes.number.isRequired,
   mem_birthday: PropTypes.instanceOf(Date),
   mem_phone: PropTypes.string,
 };
