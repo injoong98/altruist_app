@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules, TouchableOpacity, TextInput, Keyboard} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView, VirtualizedList,Alert,useState, NativeModules, TouchableOpacity, TextInput, Keyboard, StatusBar} from 'react-native';
 import {Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input, RadioGroup, Radio, Tooltip, CheckBox, IndexPath, Select, SelectItem, Card, Modal, Spinner} from '@ui-kitten/components'
 import HTML from 'react-native-render-html';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -8,6 +8,7 @@ import axios from 'axios';
 import {Picker} from '@react-native-community/picker';
 import {ActionSheet, Root} from 'native-base';
 import { TopBarTune } from '../components/TopBarTune';
+import { WriteContentToptab } from '../components/WriteContentTopBar';
 import Confirm from '../components/confirm.component'
 import Camsvg from '../assets/icons/Icon_Cam.svg'
 import Tooltipsvg from '../assets/icons/tooltip.svg'
@@ -247,6 +248,15 @@ class MarketWrite extends React.Component {
         }
     }
 
+    componentDidMount(){
+        StatusBar.setBackgroundColor('#F4F4F4');
+        StatusBar.setBarStyle('dark-content')
+    }
+    
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default')
+    }
     submitPost = async() => {
 
         console.log(this.state);
@@ -398,7 +408,7 @@ class MarketWrite extends React.Component {
         return(
             <Root>
             <SafeAreaView style={{flex:1}}>
-                <TopBarTune 
+                <WriteContentToptab 
                     text="수수마켓" 
                     right={this.props.route.params.mode=='edit' ?'edit' : "upload"}
                     func={() =>{this.submitPost()}}
