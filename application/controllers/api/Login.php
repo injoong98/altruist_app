@@ -392,7 +392,7 @@ class Login extends CB_Controller
 				'_check_id_pw',
 				'최고관리자는 자동로그인 기능을 사용할 수 없습니다'
 			);
-			return false;
+			//return false;
 		}
 
 		if ($is_dormant_member === true) {

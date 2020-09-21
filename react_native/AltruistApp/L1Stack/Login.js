@@ -24,69 +24,69 @@ class LoginScreen extends React.Component{
     }
     static contextType = Signing;
 
-    removeValue = async () => {
-        try {
-          await AsyncStorage.removeItem('logininfo')
-          .then(()=>{
-            AsyncStorage.removeItem('autologin')
-          })
-        } catch(e) {
-          // remove error
-        }
+    // removeValue = async () => {
+    //     try {
+    //       await AsyncStorage.removeItem('logininfo')
+    //       .then(()=>{
+    //         AsyncStorage.removeItem('autologin')
+    //       })
+    //     } catch(e) {
+    //       // remove error
+    //     }
       
-        console.log('Done.')
-      }
+    //     //console.log('Done.')
+    //   }
       
-      getData = async (key) => {
-        try {
-          const value = await AsyncStorage.getItem(key)
-          if(value !== null) {
-            var objstr= `{"${key}":${value}}`
-            this.setState(JSON.parse(objstr))
-          }else{
-              console.log('null')
-          }
-        } catch(e) {
-          // error reading value
-        }
-    }
-    storeData = async (key,value) => {
-        try {
-          await AsyncStorage.setItem(key, value)
-        } catch (e) {
-          console.log(e)
-        }
-      }
-    dologin=(mem_userid,mem_password)=>{
-        var formdata= new FormData();
-        formdata.append('mem_userid',mem_userid);
-        formdata.append('mem_password',mem_password);
+    //   getData = async (key) => {
+    //     try {
+    //       const value = await AsyncStorage.getItem(key)
+    //       if(value !== null) {
+    //         var objstr= `{"${key}":${value}}`
+    //         this.setState(JSON.parse(objstr))
+    //       }else{
+    //           //console.log('null')
+    //       }
+    //     } catch(e) {
+    //       // error reading value
+    //     }
+    // }
+    // storeData = async (key,value) => {
+    //     try {
+    //       await AsyncStorage.setItem(key, value)
+    //     } catch (e) {
+    //       //console.log(e)
+    //     }
+    //   }
+    // dologin=(mem_userid,mem_password)=>{
+    //     var formdata= new FormData();
+    //     formdata.append('mem_userid',mem_userid);
+    //     formdata.append('mem_password',mem_password);
     
-        axios.post('http://dev.unyict.org/api/login',formdata)
-        .then(response=>{
-            this.setState({isLogined:true,mem_password:'',mem_userid:''})
-            this.storeData('logininfo',JSON.stringify({mem_userid:mem_userid,mem_password:mem_password}));
-            this.storeData('autologin',JSON.stringify(this.state.autologin));
-            this.props.navigation.navigate('Bottom')
-        })
-        .catch(error=>{
-            alert(`에러 : ${JSON.stringify(error)}`)
-        })
-    }
-    cookie=()=>{
-      CookieManager.get('http://dev.unyict.org')
-      .then((cookies) => {
-        console.log('CookieManager.get =>', cookies);
-      });
-    }
+    //     axios.post('http://dev.unyict.org/api/login',formdata)
+    //     .then(response=>{
+    //         this.setState({isLogined:true,mem_password:'',mem_userid:''})
+    //         this.storeData('logininfo',JSON.stringify({mem_userid:mem_userid,mem_password:mem_password}));
+    //         this.storeData('autologin',JSON.stringify(this.state.autologin));
+    //         this.props.navigation.navigate('Bottom')
+    //     })
+    //     .catch(error=>{
+    //         alert(`에러 : ${JSON.stringify(error)}`)
+    //     })
+    // }
+    // cookie=()=>{
+    //   CookieManager.get('http://dev.unyict.org')
+    //   .then((cookies) => {
+    //     //console.log('CookieManager.get =>', cookies);
+    //   });
+    // }
     componentDidMount(){
-        this.getData('logininfo');
-        this.getData('autologin');
-        const {logininfo,autologin} = this.state
-        logininfo && autologin ?
-        this.dologin(logininfo.mem_userid,logininfo.mem_password)
-        :
-        null
+        // this.getData('logininfo');
+        // this.getData('autologin');
+        // const {logininfo,autologin} = this.state
+        // logininfo && autologin ?
+        // this.dologin(logininfo.mem_userid,logininfo.mem_password)
+        // :
+        // null
     }
     render(){
         const {mem_userid,mem_password,autologin} = this.state;
