@@ -355,7 +355,8 @@ class Comment_write extends CB_Controller
 					? 'mobile' : 'desktop';
 				$cmt_id = $this->Comment_model->insert($updatedata); //코멘트 insert
 				$this->Post_model->comment_updated($post_id, cdate('Y-m-d H:i:s'));
-
+				
+				// 댓글에 대한 알림 
 				if ($this->cbconfig->item('use_notification')
 					&& $this->cbconfig->item('notification_comment')) {
 					$this->load->library('notificationlib');
@@ -370,6 +371,33 @@ class Comment_write extends CB_Controller
 						$not_url
 					);
 				}
+
+				//댓글에 대한 푸시
+				/*
+					푸시를 사용하는가
+					해당 액션에 대한 푸시를 사용하는가
+					푸시 구분 : token , topic (topic 일경우 topic name 을 지정해서 전송)
+					푸시 전송
+				*/
+				$push_type = 'token';
+				$topic_name = '';
+				if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_comment')) {
+					$this->load->library('pushlib');
+					$not_message = $updatedata['cmt_nickname'] . '님께서 [' . element('post_title', $post) . '] 에 댓글을 남기셨습니다';
+					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
+					$this->pushlib->set_push(
+						abs(element('mem_id', $post)),
+						$mem_id,
+						'이타주의자들',
+						$cmt_id,
+						$not_message,
+						$not_url,
+						$push_type,
+						$topic_name
+					);
+				}
+
+				// 답변글에 대한 알림  
 				if ($origin
 					&& $cmt_reply
 					&& $this->cbconfig->item('use_notification')
@@ -387,6 +415,27 @@ class Comment_write extends CB_Controller
 						$not_url
 					);
 				}
+
+				//대댓글 푸시
+				$push_type = 'token';
+				$topic_name = '';
+				if ($origin && $cmt_reply && $this->cbconfig->item('use_push') && $this->cbconfig->item('notification_comment_comment') && abs(element('mem_id', $post)) !== abs(element('mem_id', $origin))) {
+					$this->load->library('pushlib');
+					$not_message = $updatedata['cmt_nickname'] . '님께서 [' . element('post_title', $post) . '] 글의 회원님의 댓글에 답변댓글을 남기셨습니다';
+					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
+					
+					$this->pushlib->set_push(
+						abs(element('mem_id', $origin)),
+						$mem_id,
+						'이타주의자들',
+						$cmt_id,
+						$not_message,
+						$not_url,
+						$push_type,
+						$topic_name
+					);
+				}
+
 
 				if (element('use_point', $board)) {
 					$point = $this->point->insert_point(

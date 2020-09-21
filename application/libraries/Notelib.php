@@ -183,6 +183,24 @@ class Notelib extends CI_Controller
 				$not_url
 			);
 		}
+		$push_type = 'token';
+		$topic_name = '';
+		if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_note')) {
+			$this->load->library('pushlib');
+			$sender_name = $sender ? element('mem_nickname', $send_member) : '알림';
+			$not_message = $sender_name . '님께서 [' . $title . '] 쪽지를 남기셨습니다';
+			$not_url = site_url('note/view/recv/' . $note_id);
+			$this->pushlib->set_push(
+				$receiver,
+				$sender,
+				'이타주의자들',
+				$note_id,
+				$not_message,
+				$not_url,
+				$push_type,
+				$topic_name
+			);
+		}
 
 		$result = json_encode( array('success' => element('mem_nickname', $recv_member) . '님께 쪽지를 발송하였습니다'));
 
