@@ -141,6 +141,7 @@ class Notificationlib extends CI_Controller
 		foreach($target_info as $ti){
 			
 			$arr_post["to"] = $ti['ptk_token'];
+			// $arr_post["to"] = "/topic/some"
 
 			$post_data = json_encode($arr_post);
 			
