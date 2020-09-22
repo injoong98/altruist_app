@@ -79,7 +79,9 @@ export class StackNav extends React.Component{
                             this.session_chk()
                         }
                         else{
-                            alert(response.data.message)
+                            const regex = /(<([^>]+)>)|&nbsp;/ig;
+                            const message_remove_tags = response.data.message.replace(regex, '\n');
+                            alert(message_remove_tags)
                         }
                         
                     })
@@ -156,45 +158,6 @@ export class StackNav extends React.Component{
             console.log('getInitialNotification stack'+remoteMessage)
             }) 
             
-    }
-    context = () =>{
-        const context ={
-                signIn:(mem_userid,mem_password,autologin)=>{
-                    var formdata= new FormData();
-                    formdata.append('mem_userid',mem_userid);
-                    formdata.append('mem_password',mem_password);
-                    autologin ? 
-                    formdata.append('autologin',autologin)
-                    :null
-                    
-                    axios.post('http://dev.unyict.org/api/login',formdata)
-                    .then(response=>{
-                        console.log('sign in res:'+JSON.stringify(response.data.status))
-                        if(response.data.status == 200 )
-                        {
-                            this.setState({isSignedIn:true});
-                            this.session_chk()
-                        }
-                        else{
-                            alert(response.data.message)
-                        }
-                        
-                    })
-                    .catch(error=>{
-                        alert(`에러 : ${JSON.stringify(error)}`)
-                    })
-                },
-                signOut:()=>{
-                    axios.get('http://dev.unyict.org/api/login/logout/')
-                    .then(response=>{
-                        this.setState({isSignedOut:true})
-                        this.session_chk()
-                    })
-                    .catch(error =>{
-                    })
-                }
-            }
-            return context;
     }
     render(){
         const {context,isLoading,isSignedIn} = this.state
