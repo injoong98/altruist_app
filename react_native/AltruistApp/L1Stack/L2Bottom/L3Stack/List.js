@@ -1,9 +1,13 @@
 import React from 'react';
 
-import {StyleSheet, SafeAreaView, Image, View, ScrollView, TouchableOpacity} from 'react-native'
+import {StyleSheet, SafeAreaView, Image, View, ScrollView, TouchableOpacity,TextInput} from 'react-native'
 import {Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal, Spinner} from '@ui-kitten/components'
 import axios from 'axios';
 import Tag from '../../../components/tag.component';
+import {TopBarTune} from '../../../components/TopBarTune'
+import Rightsvg from '../../../assets/icons/right-arrow.svg';
+import Searchsvg from '../../../assets/icons/search-outline.svg';
+
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -18,6 +22,7 @@ class AltListScreen extends React.Component{
             isLoading : true,
             isFilterVisible : false,
             filterTag : [],
+            name:''
         }
     }
 
@@ -89,6 +94,48 @@ class AltListScreen extends React.Component{
         <TopNavigationAction icon={BackIcon} onPress={() => {this.props.navigation.goBack()}}/>
     )
 
+    renderAltList= ({item,index}) => (
+        <TouchableOpacity
+            style={{flexDirection:'row',height:100,marginBottom:15,marginHorizontal:18,backgroundColor:'#F4F4F4',alignItems:'center'}}
+            onPress = {()=>{this.props.navigation.navigate('AltProfile', item.alt_profile.alt_id)}}
+        >
+            <View>
+                <Image 
+                    source = {{uri : 'http://dev.unyict.org/uploads/noimage.gif'}} 
+                    style = {{flex : 1, width : 100, height : 100, resizeMode:'contain'}}
+                />
+            </View>
+            <View style={{justifyContent:'space-evenly',height:'100%',marginLeft:0,width:'30%',paddingHorizontal:10}}>
+                <View>
+                    <Text style={{fontSize:18,fontWeight:'700'}}>
+                        {item.mem_basic_info.mem_nickname}
+                    </Text>
+                </View>
+                <View>
+                    <Text style={{fontSize:12,fontWeight:'600'}}>
+                        {item.alt_profile.alt_aboutme}
+                    </Text>
+                </View>
+            </View>
+            <View style={{width:'35%'}}>
+                {item.get_alt_cv.map((i)=>
+                    <Text 
+                        category ='p1'
+                        style = {{color:'#63579D',fontSize:10,marginBottom:4}} 
+                        key={i.acv_id}
+                        numberOfLines={1} 
+                        ellipsizeMode="tail"    
+                    >
+                        {i.acv_year.trim()+') '}{i.acv_content.trim()}
+                    </Text>
+                )}                
+            </View>
+            <View style={{right:0,position:'absolute'}}>
+                <Rightsvg width={22} height={22}/>
+            </View>
+        </TouchableOpacity>
+    )
+    
     renderItem = ({item, index}) => (
         <Card style = {styles.card} onPress = {()=>{this.props.navigation.navigate('AltProfile', item.alt_profile.alt_id)}}>
             <View style = {{flexDirection : 'row', justifyContent:'flex-end'}}>
@@ -123,33 +170,38 @@ class AltListScreen extends React.Component{
     );
     
     render(){
+        const {name}= this.state
         return (
 
-            <SafeAreaView style={{flex:1}}>
-                <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/>
-                {
-                //task#628 decription 참고해주세요
-                }
-                <View style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>
-                    <TouchableOpacity 
-                        style={{padding:10,backgroundColor:'#B09BDE',borderRadius:10,marginVertical : 4}}
-                        onPress={()=>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:this.props.route.params.title})}
-                    >
-                        <Text category='h2' style={{color:'#ffffff',textAlign:'center'}}>
-                            모두에게 질문 던지기
-                        </Text>
-                    </TouchableOpacity>
+            <SafeAreaView style={{flex:1,backgroundColor:'#ffffff'}}>
+                <TopBarTune 
+                    text="이타주의자들" 
+                    func={()=>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:this.props.route.params.title})} 
+                    right='opq'
+                    gbckuse={true}
+                    gbckfunc={()=>{this.props.navigation.goBack()}}                
+                />
+                <View style={{marginTop:18,justifyContent:'center',alignItems:'center'}}>
+                    <View>
+                        <TextInput 
+                            style={styles.titleInput} 
+                            value={name} 
+                            onChangeText={text =>this.setState({name:text})}
+                            placeholder="이타주의자들에게 이름을 입력해보세요"
+                            placeholderTextColor='#A897C2'
+                        />
+                        <TouchableOpacity style={{position:"absolute",right:5,top:6}}>
+                            <Searchsvg height={25} width={25} fill='#A9C' />
+                        </TouchableOpacity>
+                    </View>
+
                 </View>
-                <View style={{height:40}}>
-                    <ScrollView horizontal={true} style={{flex : 1, marginVertical : 4}}>
-                        <Tag onPress={()=>this.setState({isFilterVisible:true})}>  +  </Tag>
-                    </ScrollView>
-                </View>
-                <View style={{flex: 25}}>
+                <View style={{flex: 25,marginTop:30}}>
                     <List
                     contentContainerStyle={styles.contentContainer}
                     data={this.state.lists}
-                    renderItem={this.renderItem}
+                    renderItem={this.renderAltList}
+                    style={{backgroundColor:'#ffffff'}}
                     />
                 </View> 
                 <Modal
@@ -193,6 +245,18 @@ const styles = StyleSheet.create({
         borderRadius : 20,
         margin : 10
       },
+      titleInput :{
+        width:'90%',
+        paddingVertical:9,
+        paddingLeft:15,
+        backgroundColor:'#ffffff',
+        borderRadius:7,
+        borderColor:"#AC95C5",
+        borderWidth:2,
+        fontSize:12,
+        height:40,
+        minWidth:'80%'
+    },
       tags : {
 
       }
