@@ -124,7 +124,6 @@ class AltListScreen extends React.Component{
     
     render(){
         return (
-
             <SafeAreaView style={{flex:1}}>
                 <TopNavigation title="이타주의자" alignment="center" accessoryLeft={this.BackAction} style={{backgroundColor : '#B09BDE'}}/>
                 {

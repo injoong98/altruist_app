@@ -1315,7 +1315,7 @@ class AlbaContent extends React.Component {
                                 <Text style={[styles.tagstyle,{backgroundColor:'blue'}]} category='c2'>
                                     연락처
                                 </Text>
-                                <Text category='h5'> {post.post_hp}</Text>
+                                <Text category='h5'> {post.post_hp.replace(/[^0-9]/g, "").replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/,"$1-$2-$3").replace("--", "-")}</Text>
                             </Layout>
                         </Card>
                         

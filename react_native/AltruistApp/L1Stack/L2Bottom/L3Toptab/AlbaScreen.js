@@ -151,25 +151,24 @@ class AlbaScreen extends React.Component {
             </Text>
         </View>:
       <>
-      <View style={{flex:10}}>
-        <List
-          contentContainerStyle={styles.contentContainer}
-          data={this.state.lists}
-          renderItem={this.renderItem}
-          refreshing={this.state.refreshing}
-          onRefresh={this.onRefresh}
-          onEndReached={this.load_more_data}
-          onEndReachedThreshold = {0.9}
-          ListFooterComponent={this.renderFooter}
-          />
-      </View>
-      <TouchableOpacity 
-        style={styles.bottomButton}
-        onPress={()=>{this.props.navigation.navigate('AlbaWrite',{statefunction:this.statefunction});}}
-        >
-        <Writesvg />
-      </TouchableOpacity>
-
+        <View style={{flex:10}}>
+          <List
+            contentContainerStyle={styles.contentContainer}
+            data={this.state.lists}
+            renderItem={this.renderItem}
+            refreshing={this.state.refreshing}
+            onRefresh={this.onRefresh}
+            onEndReached={this.load_more_data}
+            onEndReachedThreshold = {0.9}
+            ListFooterComponent={this.renderFooter}
+            />
+        </View>
+        <TouchableOpacity 
+          style={styles.bottomButton}
+          onPress={()=>{this.props.navigation.navigate('AlbaWrite',{statefunction:this.statefunction});}}
+          >
+          <Writesvg />
+        </TouchableOpacity>
       </>
     );
   }
