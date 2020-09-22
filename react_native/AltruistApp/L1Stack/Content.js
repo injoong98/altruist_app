@@ -16,6 +16,9 @@ import Backsvg from '../assets/icons/back-arrow-color.svg'
 import Thumbsvg from '../assets/icons/thumb-up.svg'
 import UploadCirclesvg from '../assets/icons/upload-circle.svg'
 import PaperPlanesvg from '../assets/icons/paper-plane.svg'
+import Callsvg from '../assets/icons/call.svg'
+import Callmessagesvg from '../assets/icons/call-message.svg'
+import Emailsvg from '../assets/icons/Email.svg'
 
 
 const BackIcon =  (props) =>(
@@ -1360,34 +1363,34 @@ class AlbaContent extends React.Component {
                             visible={this.state.visible}
                             backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
                             onBackdropPress={() => this.setVisible(false)}>
-                                <Card disabled={true}>
-                                    <Layout style={{flexDirection:'row'}}>
+                            <Card disabled={true} style={{borderRadius:20}}>
+                                <Layout style={{flexDirection:'row'}}>
+                                    <View style={styles.modal_icons}>
+                                        <TouchableOpacity
+                                            onPress={()=>{Linking.openURL(`tel:${post.post_ph}`)}}>
+                                            <Callsvg width={40} height = {40}/>
+                                        </TouchableOpacity>
+                                        <Text>전화</Text>
+                                    </View>
                                         <View style={styles.modal_icons}>
-                                            <Button
-                                                appearance='ghost'
-                                                accessoryLeft={HeartIcon}
-                                                onPress={()=>{Linking.openURL(`tel:${post.post_ph}`)}}/>
-                                            <Text>전화</Text>
-                                        </View>
-                                            <View style={styles.modal_icons}>
-                                            <Button
-                                                appearance='ghost'
-                                                accessoryLeft={CommentIcon}
-                                                onPress={()=>{Linking.openURL(`sms:${post.post_ph}`)}}/>
-                                            <Text>메시지</Text>
-                                        </View>
-                                        <View style={styles.modal_icons}>
-                                        <Button
-                                                appearance='ghost'
-                                                accessoryLeft={HeartIcon}
-                                                onPress={()=>{Linking.openURL(`mailto:${post.post_email}`)}}/>
-                                            <Text>이메일</Text>
-                                        </View>
-                                    </Layout>
-                                    <Button onPress={()=>this.setVisible(false)} appearance='ghost' >
-                                        취소
-                                    </Button>
-                                </Card>
+                                        <TouchableOpacity
+                                            onPress={()=>{Linking.openURL(`sms:${post.post_ph}`)}}>
+                                            <Callmessagesvg width={40} height = {40}/>
+                                        </TouchableOpacity>
+                                        <Text>메시지</Text>
+                                    </View>
+                                    <View style={styles.modal_icons}>
+                                        <TouchableOpacity
+                                                onPress={()=>{Linking.openURL(`mailto:${post.post_email}`)}}>
+                                                <Emailsvg width={40} height = {40}/>
+                                        </TouchableOpacity>
+                                        <Text>이메일</Text>
+                                    </View>
+                                </Layout>
+                                <Button onPress={()=>this.setVisible(false)} appearance='ghost' >
+                                    취소
+                                </Button>
+                            </Card>
                     </Modal>
                     <Modal
                         visible={blameModalVisible}
