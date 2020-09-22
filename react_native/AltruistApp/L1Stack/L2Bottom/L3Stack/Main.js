@@ -110,22 +110,22 @@ class AltMainScreen extends React.Component{
                             </TouchableHighlight>
                             <Animated.View style={{flexDirection:'row',justifyContent:'space-evenly',overflow:'hidden',width:btnContainerWidthInterpolate}}>
                                 <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltApply')}>
-                                    <Text category="h1" style={styles.btnText}>
+                                    <Text numberOfLines={1} category="h1" style={styles.btnText}>
                                     지원
                                     </Text>
                                 </TouchableHighlight>
                                 <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltList')}>
-                                    <Text category="h1" style={styles.btnText}>
+                                    <Text numberOfLines={1} category="h1" style={styles.btnText}>
                                     멘토리스트
                                     </Text>
                                 </TouchableHighlight>
                                 <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltOpqQueList')}>
-                                    <Text category="h1" style={styles.btnText}>
+                                    <Text numberOfLines={1} category="h1" style={styles.btnText}>
                                     오픈 질문
                                     </Text>
                                 </TouchableHighlight>
                                 <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltQueToptab')}>
-                                    <Text category="h1" style={styles.btnText}>
+                                    <Text numberOfLines={1} category="h1" style={styles.btnText}>
                                     일대일 질문
                                     </Text>
                                 </TouchableHighlight>
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     btnText:{
         color:'#ffffff',
         fontSize:14,
-        overflow:"hidden" 
+        overflow:"hidden",
     }
 })
 
