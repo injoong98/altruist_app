@@ -18,7 +18,7 @@ class Board_write extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Post', 'Post_link', 'Post_file', 'Post_extra_vars', 'Post_meta');
+	protected $models = array('Post', 'Post_link', 'Post_file', 'Post_extra_vars', 'Post_meta', );
 
 	/**
 	 * 헬퍼를 로딩합니다
@@ -907,6 +907,113 @@ class Board_write extends CB_Controller
 				}
 				$area_result = $this->db->insert_batch('post_alt_area',$area_insert);
 			}
+
+
+
+			$brd_key = element('brd_key', $board);
+			$nickname=  $this->session->userdata('mem_nickname');
+
+			//푸시 notification_personal_question  notification_open_question use_push
+			// 게시판 opq , indi 일 경우 질문 푸시
+			// 오픈 / 돌직 / 일반 게시판 (토픽)
+			// 알림 저장도 구분에 따라서 
+			if( $brd_key == 'indi') { // 직구 
+				//알림 저장
+				if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_personal_question')) {
+					$this->load->library('notificationlib');
+					$not_message = $nickname . '님께서 일대일 질문을 보내셨습니다.';
+					$not_url = post_url(element('brd_id', $board), $post_id);
+					$this->notificationlib->set_noti(
+						$updatedata['answer_mem_id'],
+						$mem_id,
+						'이타주의자들',
+						$post_id,
+						$not_message,
+						$not_url
+					);
+				}
+				
+				//푸시 전송
+				if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_personal_question')) {
+					$this->load->library('pushlib');
+					$not_message = $nickname . '님께서 일대일 질문을 보내셨습니다.';
+					$not_url = post_url(element('brd_id', $board), $post_id);
+					$this->pushlib->set_push(
+						$updatedata['answer_mem_id'],
+						$mem_id,
+						'이타주의자들',
+						$post_id,
+						$not_message,
+						$not_url,
+						'token',
+						''
+					);
+				}
+				
+			} else if( $brd_key == 'opq' ) { // 오픈
+
+
+
+
+				//오픈질문일경우 질문에 선택된 전문영역을 가진 이타주의자들의 토큰 설정.,
+				// 활성 이타주의자의 전문분야와 매칭하여 멤버 아이디를 가져오고 루프를 돌려서 여러 명에게 보낸다
+				// 해당 인원에게 알림도 포함.
+				for( $i= 0 ; count($_POST['act_id'])-1 >= $i; $i++ ) {
+					$a= '1';
+					$act_id = $_POST['act_id'][$i] ;
+					//act_id 경력 카테고리 코드를 가지는 이타주의자들 
+					$sql =<<<EOT
+					SELECT ara.*, pro.mem_id
+					FROM cb_alt_area ara
+					LEFT JOIN cb_alt_profile pro ON ara.alt_id = pro.alt_id
+					WHERE pro.alt_status ='Y' AND ara.act_id =$act_id 
+EOT;
+					$query = $this->db->query($sql);
+					$target_members =   $query->result();
+					foreach ($target_members as $key => $value) {
+
+						//알림 
+						if ($this->cbconfig->item('use_notification') &&  $this->cbconfig->item('notification_open_question')) {
+							$this->load->library('notificationlib');
+							$not_message = $nickname . '님께서 오픈 질문을 작성하셨습니다.';
+							$not_url = post_url(element('brd_id', $board), $post_id);
+							$this->notificationlib->set_noti(
+								$value->mem_id,
+								$mem_id,
+								'이타주의자들',
+								$post_id,
+								$not_message,
+								$not_url
+							);
+						}
+
+						//푸시 전송
+						if($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_open_question')) {
+
+							$this->load->library('pushlib');
+							$not_message = $nickname . '님께서 오픈 질문을 작성하셨습니다.';
+							$not_url = post_url(element('brd_id', $board), $post_id);
+							$this->pushlib->set_push(
+								$value->mem_id,
+								$mem_id,
+								'이타주의자들',
+								$post_id,
+								$not_message,
+								$not_url,
+								'token',
+								''
+							);
+						}
+					}
+				}
+
+			}else { //일반
+				
+
+			}
+
+
+
 
 			if ($can_post_secret && $this->input->post('post_secret')) {
 				$this->session->set_userdata(

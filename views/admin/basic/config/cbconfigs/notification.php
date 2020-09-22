@@ -73,14 +73,6 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">오픈질문이 등록되었을때 </label>
-				<div class="col-sm-10">
-					<label for="notification_open_question" class="checkbox-inline">
-						<input type="checkbox" name="notification_open_question" id="notification_open_question" class="chk" value="1" <?php echo set_checkbox('notification_open_question', '1', (element('notification_open_question', element('data', $view)) ? true : false)); ?> /> 사용합니다
-					</label>
-				</div>
-			</div>
-			<div class="form-group">
 				<label class="col-sm-2 control-label">글에 좋아요를 눌렀을때 </label>
 				<div class="col-sm-10">
 					<label for="notification_like_post" class="checkbox-inline">
@@ -93,6 +85,23 @@
 				<div class="col-sm-10">
 					<label for="notification_like_comment" class="checkbox-inline">
 						<input type="checkbox" name="notification_like_comment" id="notification_like_comment" class="chk" value="1" <?php echo set_checkbox('notification_like_comment', '1', (element('notification_like_comment', element('data', $view)) ? true : false)); ?> /> 사용합니다
+					</label>
+				</div>
+			</div>
+			<hr>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">오픈질문이 등록되었을때 </label>
+				<div class="col-sm-10">
+					<label for="notification_open_question" class="checkbox-inline">
+						<input type="checkbox" name="notification_open_question" id="notification_open_question" class="chk" value="1" <?php echo set_checkbox('notification_open_question', '1', (element('notification_open_question', element('data', $view)) ? true : false)); ?> /> 사용합니다
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">개별질문이 등록되었을때 </label>
+				<div class="col-sm-10">
+					<label for="notification_personal_question" class="checkbox-inline">
+						<input type="checkbox" name="notification_personal_question" id="notification_personal_question" class="chk" value="1" <?php echo set_checkbox('notification_personal_question', '1', (element('notification_personal_question', element('data', $view)) ? true : false)); ?> /> 사용합니다
 					</label>
 				</div>
 			</div>

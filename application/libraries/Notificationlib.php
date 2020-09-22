@@ -88,6 +88,11 @@ class Notificationlib extends CI_Controller
 					return $result;
 				}
 				break;
+			case '이타주의자들':
+				if ( ! $this->CI->cbconfig->item('use_push')) {
+					$error_msg = '푸시 기능을 사용하지 않습니다';
+				}
+				break;
 			default :
 				$result = json_encode( array('error' => 'TYPE 이 잘못되었습니다'));
 				return $result;
@@ -105,86 +110,8 @@ class Notificationlib extends CI_Controller
 		);
 		$not_id = $this->CI->Notification_model->insert($insertdata);
 		$result = json_encode( array('success' => '알림이 저장되었습니다'));
-		$this->request_fcm($not_type,$not_message,$mem_id);
 
 		return $result;
 	}
 
-	public function request_fcm($title,$body,$target='')
-	{
-		//---------------------CURL를 활용하여 JSON데이터를 POST방식으로 요청하여 JSON데이터로 받기--------------------
-		//요청 서버 URL 셋팅
-		$url = "https://fcm.googleapis.com/fcm/send";
-
-		//추가할 헤더값이 있을시 추가하면 됨
-		$headers = array(
-				"content-type: application/json",
-				"Authorization:key=AAAAfUVz-JA:APA91bHzuN3V122s197CG8EjU8icxXch8cQp5uKKjP3onBt210q1VqXcieDCih6zgmdbON_7UhlAihVFZOW2FxIhoM2V43PgndTbqA2qalUQqpd4BF1jeTfYzGY_ttAiYEFvcKhp17-d"
-		);
-
-		//POST방식으로 보낼 JSON데이터 생성
-		$notification = array();
-		$to = array(); 
-		$arr_post = array();
-
-		$notification["title"] = $title;
-		$notification["body"] = $body;
-		$arr_post["notification"] = $notification;
-		
-		if($target!=''){
-			$this->CI->db->select('ptk_token');
-			$query =  $this->CI->db->get_where('cb_push_token',array('mem_id'=>$target));
-			if($query!=false){
-				$target_info=$query->result_array();
-			}
-		}
-		foreach($target_info as $ti){
-			
-			$arr_post["to"] = $ti['ptk_token'];
-			// $arr_post["to"] = "/topic/some"
-
-			$post_data = json_encode($arr_post);
-			
-			//CURL함수 사용
-			$ch=curl_init();
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_URL, $url);
-			//header값 셋팅(없을시 삭제해도 무방함)
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-			//POST방식
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-			curl_setopt($ch, CURLOPT_POST, true);
-			//POST방식으로 넘길 데이터(JSON데이터)
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-	
-			$response = curl_exec($ch);
-	
-			if(curl_error($ch)){
-				$curl_data = null;
-			} else {
-				$curl_data = $response;
-			}
-	
-			curl_close($ch);
-			$json_data = json_decode($curl_data,true);
-		}
-		//$to = $target
-
-		//배열을 JSON데이터로 생성
-
-		//받은 JSON데이터를 배열로 만듬
-		//배열 제어
-		// if($json_data["result"] == "200"){
-		// 	$cnt = 0;
-		// 	foreach($json_data["msg"] as $msg_data){
-		// 		foreach($msg_data as $msgval_data){
-		// 			//msg_val값만 출력합니다.
-		// 			echo 'gd';
-		// 			$cnt++;
-		// 		}
-		// 	}
-		// }
-		return true;
-	}
 }
