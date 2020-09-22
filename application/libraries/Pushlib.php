@@ -10,7 +10,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 /**
- * 알림 기능을 관리하는 class 입니다.
+ * 푸시 기능을 관리하는 class 입니다.
  */
 class Pushlib extends CI_Controller
 {
@@ -26,7 +26,7 @@ class Pushlib extends CI_Controller
 
 
 	/**
-	 * 알림 내용을 인서트하는 함수입니다
+	 * 푸시 내용을 인서트하는 함수입니다
 	 */
 	public function set_push($mem_id = 0, $target_mem_id = 0, $not_type = '', $not_content_id = '', $not_message = '', $not_url = '',$push_type='' ,$topic_name ='')
 	{
@@ -43,38 +43,38 @@ class Pushlib extends CI_Controller
 			$error_msg = 'not_content_id 가 존재하지 않습니다';
 		}
 		if ($mem_id === $target_mem_id) {
-			$error_msg = 'mem_id 와 target_mem_id 이 같으므로 알림을 저장하지 않습니다';
+			$error_msg = 'mem_id 와 target_mem_id 이 같으므로 푸시을 저장하지 않습니다';
 		}
 		if (empty($not_message)) {
-			$error_msg = '알림 내용이 존재하지 않습니다';
+			$error_msg = '푸시 내용이 존재하지 않습니다';
 		}
 		if (empty($not_url)) {
-			$error_msg = '알림 URL이 존재하지 않습니다';
+			$error_msg = '푸시 URL이 존재하지 않습니다';
 		}
 
-		// 알림 기능을 사용을 하지 않는다면 return
+		// 푸시 기능을 사용을 하지 않는다면 return
 		if ( ! $this->CI->cbconfig->item('use_notification')) {
-			$error_msg = '알림을 사용하지 않는 사이트입니다';
+			$error_msg = '푸시을 사용하지 않는 사이트입니다';
 		}
 		switch ($not_type) {
 			case 'reply':
 				if ( ! $this->CI->cbconfig->item('notification_reply')) {
-					$error_msg = '답변글에 알림 기능을 사용하지 않습니다';
+					$error_msg = '답변글에 푸시 기능을 사용하지 않습니다';
 				}
 				break;
 			case 'comment':
 				if ( ! $this->CI->cbconfig->item('notification_comment')) {
-					$error_msg = '댓글에 알림 기능을 사용하지 않습니다';
+					$error_msg = '댓글에 푸시 기능을 사용하지 않습니다';
 				}
 				break;
 			case 'comment_comment':
 				if ( ! $this->CI->cbconfig->item('notification_comment_comment')) {
-					$error_msg = '댓글의 댓글에 알림 기능을 사용하지 않습니다';
+					$error_msg = '댓글의 댓글에 푸시 기능을 사용하지 않습니다';
 				}
 				break;
 			case 'note':
 				if ( ! $this->CI->cbconfig->item('notification_note')) {
-					$error_msg = '쪽지에 알림 기능을 사용하지 않습니다';
+					$error_msg = '쪽지에 푸시 기능을 사용하지 않습니다';
 				}
 				break;
 
@@ -86,9 +86,11 @@ class Pushlib extends CI_Controller
 			default :
 				$error_msg = 'TYPE 이 잘못되었습니다';
 		}
+		
 		if($error_msg != ''){
-
-			response_result(json_encode($error_msg),'Err',json_encode($error_msg));
+			log_message('error','Pushlib/set_push'.$error_msg);
+			return false;
+			//response_result(json_encode($error_msg),'Err',json_encode($error_msg));
 		}	
 
 
@@ -104,7 +106,7 @@ class Pushlib extends CI_Controller
 			'push_type' => $push_type, // token 또는 topic 
 			'topic_name' => $topic_name // topic 명 
 		);
-		$this->request_fcm($pushdata);
+		$result = $this->request_fcm($pushdata);
 	}
 
 	public function request_fcm($pushdata)
