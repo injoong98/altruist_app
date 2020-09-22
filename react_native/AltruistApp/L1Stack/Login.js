@@ -115,7 +115,6 @@ class LoginScreen extends React.Component{
                     onChangeText={nextValue => this.setState({mem_password:nextValue})}
                     placeholderTextColor='#A897C2'
                     value={mem_password}
-                    onEndEditing={()=>signIn(mem_userid,mem_password,autologin)}
                 />
                 
                 <TouchableOpacity style={{marginTop:26}} onPress={()=>signIn(mem_userid,mem_password,autologin)}>
