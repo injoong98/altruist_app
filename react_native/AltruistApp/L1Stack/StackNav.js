@@ -60,7 +60,43 @@ export class StackNav extends React.Component{
         this.state={
             isLoading:true,
             isSignedIn:false,
-            isSignedOut:false
+            isSignedOut:false,
+            context:{
+                signIn:(mem_userid,mem_password,autologin)=>{
+                    var formdata= new FormData();
+                    formdata.append('mem_userid',mem_userid);
+                    formdata.append('mem_password',mem_password);
+                    autologin ? 
+                    formdata.append('autologin',autologin)
+                    :null
+                    
+                    axios.post('http://dev.unyict.org/api/login',formdata)
+                    .then(response=>{
+                        console.log('sign in res:'+JSON.stringify(response.data.status))
+                        if(response.data.status == 200 )
+                        {
+                            this.setState({isSignedIn:true});
+                            this.session_chk()
+                        }
+                        else{
+                            alert(response.data.message)
+                        }
+                        
+                    })
+                    .catch(error=>{
+                        alert(`에러 : ${JSON.stringify(error)}`)
+                    })
+                },
+                signOut:()=>{
+                    axios.get('http://dev.unyict.org/api/login/logout/')
+                    .then(response=>{
+                        this.setState({isSignedOut:true})
+                        this.session_chk()
+                    })
+                    .catch(error =>{
+                    })
+                }
+            }
         }
         
     }
@@ -121,44 +157,47 @@ export class StackNav extends React.Component{
             }) 
             
     }
-    render(){
+    context = () =>{
         const context ={
-            signIn:(mem_userid,mem_password,autologin)=>{
-                var formdata= new FormData();
-                formdata.append('mem_userid',mem_userid);
-                formdata.append('mem_password',mem_password);
-                autologin ? 
-                formdata.append('autologin',autologin)
-                :null
-                
-                axios.post('http://dev.unyict.org/api/login',formdata)
-                .then(response=>{
-                    console.log('sign in res:'+JSON.stringify(response.data.status))
-                    if(response.data.status == 200 )
-                    {
-                        this.setState({isSignedIn:true});
-                        this.session_chk()
-                    }
-                    else{
-                        alert(response.data.message)
-                    }
+                signIn:(mem_userid,mem_password,autologin)=>{
+                    var formdata= new FormData();
+                    formdata.append('mem_userid',mem_userid);
+                    formdata.append('mem_password',mem_password);
+                    autologin ? 
+                    formdata.append('autologin',autologin)
+                    :null
                     
-                })
-                .catch(error=>{
-                    alert(`에러 : ${JSON.stringify(error)}`)
-                })
-            },
-            signOut:()=>{
-                axios.get('http://dev.unyict.org/api/login/logout/')
-                .then(response=>{
-                    this.setState({isSignedOut:true})
-                    this.session_chk()
-                })
-                .catch(error =>{
-                })
+                    axios.post('http://dev.unyict.org/api/login',formdata)
+                    .then(response=>{
+                        console.log('sign in res:'+JSON.stringify(response.data.status))
+                        if(response.data.status == 200 )
+                        {
+                            this.setState({isSignedIn:true});
+                            this.session_chk()
+                        }
+                        else{
+                            alert(response.data.message)
+                        }
+                        
+                    })
+                    .catch(error=>{
+                        alert(`에러 : ${JSON.stringify(error)}`)
+                    })
+                },
+                signOut:()=>{
+                    axios.get('http://dev.unyict.org/api/login/logout/')
+                    .then(response=>{
+                        this.setState({isSignedOut:true})
+                        this.session_chk()
+                    })
+                    .catch(error =>{
+                    })
+                }
             }
-        }
-        const {isLoading,isSignedIn} = this.state
+            return context;
+    }
+    render(){
+        const {context,isLoading,isSignedIn} = this.state
         return(
             isLoading? 
             <LoadingScreen />
