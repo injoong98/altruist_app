@@ -45,7 +45,7 @@ export default class Slider extends React.Component {
                         horizontal 
                         onScroll={this.changeDot}
                         showsHorizontalScrollIndicator={false}
-                        style={{width, height}}
+                        style={{width:width-50, height:height-50}}
                     >
                         {
                             this.props.image.map((item, index) => (
@@ -54,7 +54,7 @@ export default class Slider extends React.Component {
                                         style={slide_style.image}
                                         key={item.id}
                                         source={{uri : 'http://dev.unyict.org'+item.url}}
-                                        style={{width, height, resizeMode: 'contain'}}
+                                        style={{width:width-50, height:height-50, resizeMode: 'cover'}}
                                     />
                                 </TouchableWithoutFeedback>
                             ))
