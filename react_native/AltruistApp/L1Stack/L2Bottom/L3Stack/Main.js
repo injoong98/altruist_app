@@ -68,7 +68,7 @@ class AltMainScreen extends React.Component{
                 <ScrollView style={{flex:1}}>
                     <View style={{flex:1, alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff'}}>
                         <Slider
-                            height={110} 
+                            height={100} 
                             image={[
                                 {id:0,url:'/uploads/6e3a7e4e1f77abb3b060_20200904100225599.jpg'},
                                 {id:1,url:'/uploads/59901fc0cb0b6526dee1_20200903153758446.jpg'}    
