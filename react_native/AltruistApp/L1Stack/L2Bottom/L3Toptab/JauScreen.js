@@ -27,7 +27,7 @@ class JauScreen extends React.Component {
       	current_page:1,
       	post_content: '',
       	image_url: '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
-      	categorys: '',
+      	current_category:0,
       	post_category: '',
       	no_post: false,
     };
@@ -35,7 +35,7 @@ class JauScreen extends React.Component {
 
   ignoredTags = [...IGNORED_TAGS, 'img'];
 
-  category = ['전체', '아무말있어요', '게임', '지구별 소식', '자료실'];
+  category = ['전체', '아무말있어요', '게임', '지구별소식', '자료실'];
 
   getPostList = async () => {
 	await axios.get( `http://dev.unyict.org/api/board_post/lists/ilban?category_id=${this.category[0]}`)
@@ -162,6 +162,7 @@ class JauScreen extends React.Component {
   };
 
 	render() {
+		const {current_category} = this.state
     	return (
 			this.state.isLoading ? 
 			<View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -169,13 +170,17 @@ class JauScreen extends React.Component {
 					<Spinner size="giant" />
 				</Text>
 			</View>
-			:<>
-				{/* <View style={{flex : 1, flexDirection:'row', marginHorizontal : 5, justifyContent:'space-between', backgroundColor:'#B09BDE'}}> */}
-				<ScrollView horizontal={true} style={{flex : 1}}>
-					{this.category.map(str => (<Button appearance='ghost' key={str} onPress={()=>alert('event')}>{'#'+str}</Button>))}
+			:
+			<View style={{flex:1, backgroundColor:'white'}}>
+				<ScrollView horizontal={true} style={{flex:1, marginHorizontal : 20, marginVertical: 4,backgroundColor:'#B09BDE', borderRadius:10}}>
+					{this.category.map((str,index) => (
+					<TouchableOpacity 
+						style={{alignItems:'center', justifyContent:'center', marginHorizontal:5}}
+						onPress={()=>this.setState({current_category:index})}>
+						<Text category='h3' key={index} style={{color:(current_category==index?'white':'black')}}> {'#'+str} </Text>
+					</TouchableOpacity>))}
 				</ScrollView>
-				{/* </View> */}
-				<View style={{flex: 10, backgroundColor: 'white'}}>
+				<View style={{flex:20}}>
 					<List
 						style={{backgroundColor: 'white'}}
 						data={this.state.lists}
@@ -189,7 +194,7 @@ class JauScreen extends React.Component {
 						onPress={() => {this.props.navigation.navigate('IlbanWrite', {statefunction: this.statefunction});}}>
 						<Writesvg />
 				</TouchableOpacity>
-			</>
+			</View>
 		);
   	}
 }
