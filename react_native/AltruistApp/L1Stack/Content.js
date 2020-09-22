@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, Dimensions,Linking, VirtualizedList,TextInput} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, StatusBar, Dimensions, Linking, VirtualizedList,TextInput} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal, OverflowMenu, MenuItem,Popover} from '@ui-kitten/components'
 import Axios from 'axios';
 import HTML from 'react-native-render-html';
@@ -16,6 +16,7 @@ import Backsvg from '../assets/icons/back-arrow-color.svg'
 import Thumbsvg from '../assets/icons/thumb-up.svg'
 import UploadCirclesvg from '../assets/icons/upload-circle.svg'
 import PaperPlanesvg from '../assets/icons/paper-plane.svg'
+import Viewsvg from '../assets/icons/view.svg'
 
 
 const BackIcon =  (props) =>(
@@ -574,8 +575,15 @@ class MarketContent extends React.Component {
             popoverVisibel:false,
         }
     }
+    
+    componentWillUnmount() {
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+    }
 
     async componentDidMount(){
+        StatusBar.setBackgroundColor('#F4F4F4');
+        StatusBar.setBarStyle('dark-content');
         const {post_id} = this.props.route.params;
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
@@ -885,7 +893,7 @@ class MarketContent extends React.Component {
 
     
     renderCommentsList=({item,index})=>(
-        <Layout style={{paddingVertical:3}}>
+        <Layout style={{padding:15, marginHorizontal:10}}>
             {item.cmt_reply==""?
             null
             :
@@ -934,6 +942,7 @@ class MarketContent extends React.Component {
                         <Text>{item.cmt_like}</Text>
                 </View>
             </Layout>
+            <Divider/>
         </Layout>
     )
     
@@ -946,37 +955,66 @@ class MarketContent extends React.Component {
     renderPostBody = (post, width) =>{
 
         return(
-            <Layout>
-                <View>
-                    <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
-                </View>
-                <Layout style={{padding : 10}}>
+            <View style={{backgroundColor:'#F4F4F4'}}>
+                <Layout style={styles.container}>
                     <Layout>
-                    <Text category='h2'>{post.post_title}</Text>
+                        <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
                     </Layout>
-                    <Layout style={{marginTop : 10, marginLeft : 5}}>
-                    <Text category='h4'>{post.deal_price} 원</Text>
+                    <Layout>
+                        <Text style={{marginVertical:10, color:'#439DB1'}} category='c2'>
+                            {post.deal_status=0? '판매완료'
+                            :post.deal_type=0? '판매중 / 배송':post.deal_type=1? '판매중 / 직거래':'판매중 / 배송 & 직거래'}
+                        </Text>
+                    </Layout>
+                    <Layout>
+                        <Layout style={{marginVertical:5}}>
+                            <Text category='h1'>{post.post_title}</Text>
+                        </Layout>
+                        <Layout style={{marginTop : 10, flexDirection:'row'}}>
+                            <Text category='h5' style={{color:'gray'}}>가격</Text>
+                            <Text category='h5' style={{marginLeft:20}}>{post.deal_price} 원</Text>
+                        </Layout>
+                    </Layout>
+                    <Layout style={{height:50,flexDirection:'row', marginTop:10}}>
+                        <Layout style={{width:50}}>
+                            <Image source={require('../assets/images/icon-social-dark.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                        </Layout>
+                        <Layout style={{flex:1, justifyContent:'center'}}>
+                            <Text category='h4'>{post.post_nickname}</Text>
+                        </Layout>
+                        <Layout style={{flexDirection:'row'}}>
+                            <Layout style={{justifyContent:'center', alignItems:'center'}}>
+                                <Viewsvg/>
+                                <Text>{post.post_hit}</Text>
+                            </Layout>
+                            <Layout style={{justifyContent:'center', alignItems:'center', marginHorizontal:10}}>
+                                <Viewsvg/>
+                                <PostTime datetime={post.post_datetime}/>
+                            </Layout>
+                        </Layout>
                     </Layout>
                 </Layout>
-                <Divider/>
-                <Layout style={{height:50,flexDirection:'row', paddingVertical : 10}}>
-                    <Layout style={{width:50}}>
-                    <Image source={require('../assets/images/icon-social-dark.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
-                    </Layout>
-                    <Layout style={{justifyContent:'center'}}>
-                    <Text>{post.post_nickname}</Text>
+                <Layout style={styles.container}>
+                    <Text style={{marginBottom:5}} category='h2'>상품설명</Text>
+                    <Text style={styles.marketText} category='s1'>{post.post_content}</Text>
+                </Layout>
+                <Layout style={styles.container}>
+                    <Text style={{marginBottom:5}} category='h2'>상세정보</Text>
+                    <Layout style={{flexDirection:'row'}}>
+                        <Layout>
+                            <Text style={styles.marketText} category='s1'>연락처</Text>
+                            <Text style={styles.marketText} category='s1'>거래희망지역</Text>
+                            <Text style={styles.marketText} category='s1'>거래방법</Text>
+                        </Layout>
+                        <Layout style={{marginLeft:20}}>
+                            <Text style={styles.marketText} category='s1'>{post.post_hp}</Text>
+                            <Text style={styles.marketText} category='s1'>{post.post_location}</Text>
+                            <Text style={styles.marketText} category='s1'>{post.deal_type=0? '배송':post.deal_type=1? '직거래':'배송 & 직거래'}</Text>
+                        </Layout>
                     </Layout>
                 </Layout>
-                <Divider/>
-                <Layout style={{padding : 10}}>
-                    <Text style={{color : 'gray'}}>거래희망지역</Text>
-                    <Text style={{marginTop : 10, marginLeft : 10}}>{post.post_location}</Text>
-                    <Text style={{color : 'gray', marginTop : 10}}>상품설명</Text>
-                    <Text style={{marginTop : 10, marginLeft : 10}}>{post.post_content}</Text>
-                </Layout>
-                <Divider/>
-                <Text style={{margin:10}}>댓글</Text>
-            </Layout>
+                <Text style={{margin:10}}></Text>
+            </View>
         )
     }
 
@@ -1002,6 +1040,7 @@ class MarketContent extends React.Component {
                         renderItem={this.renderCommentsList}
                         onRefresh={this.onRefresh}
                         refreshing={this.state.refreshing}
+                        style={{backgroundColor:'#F4F4F4'}}
                     />
                 </Layout>
                 <View style={{backgroundColor:'#ffffff',padding:8}}>
@@ -1284,7 +1323,7 @@ class AlbaContent extends React.Component {
             <Root>
             <SafeAreaView style={{flex:1}}>
                 <TopNavigation category = 'c2'title="채용정보" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.UD_Action} style={styles.topbar}/> 
-                <Layout style={styles.container}>
+                <Layout style={{flex:1}}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
                         <Card disabled={true} style={styles.item}>
                             <View style={{flexDirection : 'row-reverse'}}>
@@ -1443,10 +1482,14 @@ const styles = StyleSheet.create({
         marginVertical:10,
     },
     container : {
-        flex : 1,
-    },
+        borderRadius : 10,
+        padding : 15,
+        marginHorizontal : 10,
+        marginTop : 10,
+        paddingBottom : 25
+    }, 
     topbar : {
-        backgroundColor : 'white',
+        backgroundColor : '#F4F4F4',
     },
     title : {
         backgroundColor : '#E9E9E9',
@@ -1512,6 +1555,10 @@ const styles = StyleSheet.create({
         marginRight:15,
         paddingVertical:10,
         paddingLeft: 15,
+    },
+    marketText: {
+        marginTop:10,
+        marginLeft: 10
     }
 });
 
