@@ -961,18 +961,18 @@ class MarketContent extends React.Component {
                         <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
                     </Layout>
                     <Layout>
-                        <Text style={{marginVertical:10}} category='c2'>
+                        <Text style={{marginVertical:10, color:'#439DB1'}} category='c2'>
                             {post.deal_status=0? '판매완료'
                             :post.deal_type=0? '판매중 / 배송':post.deal_type=1? '판매중 / 직거래':'판매중 / 배송 & 직거래'}
                         </Text>
                     </Layout>
                     <Layout>
-                        <Layout>
+                        <Layout style={{marginVertical:5}}>
                             <Text category='h1'>{post.post_title}</Text>
                         </Layout>
                         <Layout style={{marginTop : 10, flexDirection:'row'}}>
-                            <Text category='h4' style={{color:'gray'}}>가격</Text>
-                            <Text category='h4' style={{marginLeft:20}}>{post.deal_price} 원</Text>
+                            <Text category='h5' style={{color:'gray'}}>가격</Text>
+                            <Text category='h5' style={{marginLeft:20}}>{post.deal_price} 원</Text>
                         </Layout>
                     </Layout>
                     <Layout style={{height:50,flexDirection:'row', marginTop:10}}>
@@ -980,7 +980,7 @@ class MarketContent extends React.Component {
                             <Image source={require('../assets/images/icon-social-dark.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                         </Layout>
                         <Layout style={{flex:1, justifyContent:'center'}}>
-                            <Text>{post.post_nickname}</Text>
+                            <Text category='h4'>{post.post_nickname}</Text>
                         </Layout>
                         <Layout style={{flexDirection:'row'}}>
                             <Layout style={{justifyContent:'center', alignItems:'center'}}>
@@ -995,21 +995,21 @@ class MarketContent extends React.Component {
                     </Layout>
                 </Layout>
                 <Layout style={styles.container}>
-                    <Text style={{color : 'gray', marginBottom:5}} category='h2'>상품설명</Text>
-                    <Text style={styles.marketText}>{post.post_content}</Text>
+                    <Text style={{marginBottom:5}} category='h2'>상품설명</Text>
+                    <Text style={styles.marketText} category='s1'>{post.post_content}</Text>
                 </Layout>
                 <Layout style={styles.container}>
-                    <Text style={{color : 'gray', marginBottom:5}} category='h2'>상세정보</Text>
+                    <Text style={{marginBottom:5}} category='h2'>상세정보</Text>
                     <Layout style={{flexDirection:'row'}}>
                         <Layout>
-                            <Text style={styles.marketText}>연락처</Text>
-                            <Text style={styles.marketText}>거래희망지역</Text>
-                            <Text style={styles.marketText}>거래방법</Text>
+                            <Text style={styles.marketText} category='s1'>연락처</Text>
+                            <Text style={styles.marketText} category='s1'>거래희망지역</Text>
+                            <Text style={styles.marketText} category='s1'>거래방법</Text>
                         </Layout>
                         <Layout style={{marginLeft:20}}>
-                            <Text style={styles.marketText}>{post.post_hp}</Text>
-                            <Text style={styles.marketText}>{post.post_location}</Text>
-                            <Text style={styles.marketText}>{post.deal_type=0? '배송':post.deal_type=1? '직거래':'배송 & 직거래'}</Text>
+                            <Text style={styles.marketText} category='s1'>{post.post_hp}</Text>
+                            <Text style={styles.marketText} category='s1'>{post.post_location}</Text>
+                            <Text style={styles.marketText} category='s1'>{post.deal_type=0? '배송':post.deal_type=1? '직거래':'배송 & 직거래'}</Text>
                         </Layout>
                     </Layout>
                 </Layout>
@@ -1486,6 +1486,7 @@ const styles = StyleSheet.create({
         padding : 15,
         marginHorizontal : 10,
         marginTop : 10,
+        paddingBottom : 25
     }, 
     topbar : {
         backgroundColor : '#F4F4F4',
