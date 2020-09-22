@@ -292,10 +292,10 @@ class Register extends CB_Controller
 		$configbasic['mem_userid'] = array(
 			'field' => 'mem_userid',
 			'label' => '아이디',
-			'rules' => 'trim|required|min_length[3]|max_length[20]|is_unique[member_userid.mem_userid]|callback__mem_userid_check',
+			'rules' => 'trim|required|min_length[3]|max_length[50]|is_unique[member_userid.mem_userid]|callback__mem_userid_check',
 			// 'rules' => 'trim|required|valid_email|max_length[50]|is_unique[member.mem_userid]|callback__mem_userid_check',
-			'description' => '영문자, 숫자, _ 만 입력 가능. 최소 3자이상 입력하세요',
-			// 'description' => '이메일을 입력해주세요 / 이메일과 아이디 동일하게 사용합니다',
+			// 'description' => '영문자, 숫자, _ 만 입력 가능. 최소 3자이상 입력하세요',
+			'description' => '이메일을 입력해주세요 / 이메일과 아이디 동일하게 사용합니다',
 		);
 
 		$password_description = '비밀번호는 ' . $password_length . '자리 이상이어야 ';
