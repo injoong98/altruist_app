@@ -139,6 +139,10 @@ export class StackNav extends React.Component{
             else if(res.data.status == 500)
             {
                 this.setState({isSignedIn:false});
+                messaging().getToken()
+                .then(token=>{
+                    this.syncPushToken(token,0)
+                });
             }
             else
             {
