@@ -95,40 +95,6 @@ class RegisterScreen extends Component {
     };
   }
 
-  App = () => {
-    const [timesPressed, setTimesPressed] = useState(0);
-
-    let textLog = '';
-    if (timesPressed > 1) {
-      textLog = timesPressed + 'x onPress';
-    } else if (timesPressed > 0) {
-      textLog = 'onPress';
-    }
-
-    return (
-      <View style={{alignSelf: 'flex-end'}}>
-        <Pressable
-          onPress={() => {
-            setTimesPressed((current) => current + 1);
-          }}
-          style={({pressed}) => [
-            {
-              backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'white',
-            },
-            styles.wrapperCustom,
-          ]}>
-          {({p}) => (
-            <Text style={styles.text}>{p ? 'Pressed!' : 'Press Me'}</Text>
-          )}
-        </Pressable>
-        <View style={styles.logBox}>
-          {/* <Button onPress={() => this.checkInputs()}>다음</Button> */}
-          <Text testID="pressable_press_console">{textLog}</Text>
-        </View>
-      </View>
-    );
-  };
-
   BackAction = () => (
     <TopNavigationAction
       icon={BackIcon}
@@ -476,16 +442,26 @@ class RegisterScreen extends Component {
       format: 'YYYY-MM-DD',
     });
     return (
-      <Datepicker
-        size="small"
-        style={{margin: 10}}
-        min={new Date(1900, 1, 1)}
-        date={date}
-        dateService={formatDateService}
-        onSelect={(nextDate) => {
-          setDate(nextDate);
-        }}
-      />
+      <View
+        style={{
+          backgroundColor: '#F8F8F8',
+          borderColor: '#FFFFFF',
+          borderRadius: 15,
+        }}>
+        <Datepicker
+          size="small"
+          appearance="ghost"
+          style={{
+            margin: 10,
+          }}
+          min={new Date(1900, 1, 1)}
+          date={date}
+          dateService={formatDateService}
+          onSelect={(nextDate) => {
+            setDate(nextDate);
+          }}
+        />
+      </View>
     );
   };
 
@@ -664,7 +640,7 @@ class RegisterScreen extends Component {
                   style={styles.inputs}
                   label={() => (
                     <Text category="s2" style={styles.statementfont}>
-                      이타주의자 앱 사용중에
+                      이타주의자 사용중에 욕을 하지 않겠습니다.
                     </Text>
                   )}
                   placeholder="위와 동일하게 작성"
@@ -730,7 +706,6 @@ class RegisterScreen extends Component {
               onPress={() => this.checkInputs()}>
               <Text style={{color: '#63579D', textAlign: 'center'}}>다음</Text>
             </TouchableOpacity>
-            <this.App />
           </ScrollView>
         </SafeAreaView>
       </>
