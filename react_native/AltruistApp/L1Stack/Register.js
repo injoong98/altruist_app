@@ -31,6 +31,36 @@ import axios from 'axios';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CalendarIcon = (props) => <Icon {...props} name="calendar" />;
+const ApprovedIcon = (props) => (
+  <Icon
+    {...props}
+    name="checkmark-outline
+"
+  />
+);
+const OneCheckIcon = (props) => (
+  <Icon
+    {...props}
+    name="checkmark-outline
+"
+  />
+);
+const DoubleCheckcon = (props) => (
+  <Icon
+    {...props}
+    name="done-all-outline
+
+
+"
+  />
+);
+const DangerIcon = (props) => (
+  <Icon
+    {...props}
+    name="alert-circle-outline
+"
+  />
+);
 
 class RegisterScreen extends Component {
   constructor(props) {
@@ -52,6 +82,7 @@ class RegisterScreen extends Component {
       captionCheck: '',
       column: '',
       borderColor: '',
+      EmailIcon: false,
       goNext: true,
       date: new Date(),
     };
@@ -70,45 +101,38 @@ class RegisterScreen extends Component {
   //다른 input 다 적으면 abled
 
   checkInputs = (e) => {
-    RegisterScreen.propTypes = {
-      // 필수 :
-      // 이메일주소
-      // 비밀번호
-      // 비밀번호 확인
-      // 닉네임
-      // 이름
-      mem_email: PropTypes.string.isRequired,
-      mem_password: PropTypes.string.isRequired,
-      mem_password_confirm: PropTypes.string.isRequired,
-      mem_nickname: PropTypes.string.isRequired,
-      mem_birthday: PropTypes.instanceOf(Date),
-      mem_phone: PropTypes.string,
-    };
-    console.log('no');
+    console.log('checkInputs, submit전에');
     // this.state.goNext = 'true';
     this.state.goNext = false;
-    if (this.state.mem_username == '' || this.state.mem_username == null) {
+    if (!this.state.mem_username) {
+      this.setState({usernameStyle: '{styles.inputDeny}'});
       return;
     }
     if (this.state.mem_nickname == '' || this.state.mem_nickname == null) {
+      this.setState({nicknameStyle: styles.inputDeny});
       return;
     }
     if (this.state.mem_sex == '' || this.state.mem_sex == null) {
+      this.setState({sexStyle: styles.inputDeny});
       return;
     }
-    if (this.state.mem_userid == '' || this.state.mem_userid == null) {
-      return;
-    }
+    // if (this.state.mem_userid == '' || this.state.mem_userid == null) {
+    //   this.setState({Style: styles.inputDeny});
+    //   return;
+    // }
     if (this.state.mem_email == '' || this.state.mem_email == null) {
+      this.setState({emailStyle: styles.inputDeny});
       return;
     }
     if (this.state.mem_password == '' || this.state.mem_password == null) {
+      this.setState({pwStyle: styles.inputDeny});
       return;
     }
     if (
       this.state.mem_password_re == '' ||
       this.state.mem_password_re == null
     ) {
+      this.setState({pwreStyle: styles.inputDeny});
       return;
     }
     console.log('no');
@@ -116,27 +140,40 @@ class RegisterScreen extends Component {
   };
 
   checkNotNull = () => {
-    console.log('sdf');
-    if (!this.state.mem_nickname) {
+    console.log('checkNotNull, input칸 떠날때마다');
+    if (
+      !this.state.mem_username ||
+      !this.state.mem_nickname ||
+      !this.state.mem_sex ||
+      !this.state.mem_email ||
+      !this.state.mem_password ||
+      !this.state.mem_password_re
+    ) {
+      console.log('checkNotNull : atleastoneisnot');
       this.setState({goNext: true});
-      return;
+    } else if (
+      this.state.mem_username &&
+      this.state.mem_nickname &&
+      this.state.mem_sex &&
+      this.state.mem_email &&
+      this.state.mem_password &&
+      this.state.mem_password_re
+    ) {
+      console.log('checkNotNull : Allfilled');
+      if (this.state.captionCheck) {
+        console.log('checkNotNull : passwordNotmatched');
+        this.setState({goNext: true});
+      } else {
+        console.log('checkNotNull : passwordmatched');
+        this.setState({goNext: false});
+      }
+      //이메일 체크
+      if (this.state.EmailCaption.includes('없는')) {
+        console.log('checkNotNull : emailisnotright');
+        this.setState({goNext: true});
+      }
     }
-    if (!this.state.mem_sex) {
-      this.setState({goNext: true});
-      return;
-    }
-    if (!this.state.mem_email) {
-      this.setState({goNext: true});
-      return;
-    }
-    if (!this.state.mem_password) {
-      this.setState({goNext: true});
-      return;
-    }
-    if (!this.state.mem_password_re) {
-      this.setState({goNext: true});
-      return;
-    }
+    // return;
   };
 
   //form submit
@@ -174,6 +211,14 @@ class RegisterScreen extends Component {
         console.log('status', res.data.status);
         console.log('data', res.data);
         if (res.status == 500) {
+          Alert.aler(
+            '실패',
+            res.data.reason[
+              {
+                text: '확인',
+              }
+            ],
+          );
           //실패시,
           return;
         } else if (res.status == 200) {
@@ -255,6 +300,7 @@ class RegisterScreen extends Component {
           this.setState({EmailCaption: res.data.message});
         } else {
           this.setState({EmailCaption: res.data.message});
+          this.setState({EmailIcon: true});
         }
       });
   };
@@ -336,13 +382,7 @@ class RegisterScreen extends Component {
 
     return (
       <RadioGroup
-        style={{
-          padding: 3,
-          marginBottom: 8,
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          alignItems: 'center',
-        }}
+        style={styles.radio}
         selectedIndex={selectedIndex}
         onChange={(index) => {
           setSelectedIndex(index);
@@ -355,7 +395,7 @@ class RegisterScreen extends Component {
   };
 
   //   TODO : 패스워드 확인
-  CheckPassword = (a, b) => {
+  CheckPassword = (a, b = '') => {
     console.log(this.state);
     let checkPassword = '';
     if (a == b) {
@@ -367,6 +407,8 @@ class RegisterScreen extends Component {
     }
     this.setState({captionCheck: checkPassword});
   };
+
+  changeBorderColor = () => {};
 
   render() {
     console.log(this.state);
@@ -388,26 +430,23 @@ class RegisterScreen extends Component {
               }}>
               <Input
                 style={styles.inputs}
-                placeholder="이름"
-                status={this.state.status}
+                placeholder="* 이름"
                 onChangeText={(mem_username) => {
                   this.setState({mem_username: mem_username});
                 }}
                 onEndEditing={() => {
                   this.checkNotNull();
-                  this.checkEmail(this.state.mem_username);
                 }}
               />
               <Input
                 style={styles.inputs}
-                placeholder="닉네임 / 활동명"
+                placeholder="* 닉네임 "
                 onChangeText={(mem_nickname) => {
                   this.setState({mem_nickname: mem_nickname});
                   this.checkNotNull();
                 }}
                 onEndEditing={() => {
                   this.checkNotNull();
-                  this.checkEmail(this.state.mem_nickname);
                 }}
                 caption={this.state.nicknameCaption}
               />
@@ -416,10 +455,11 @@ class RegisterScreen extends Component {
             1. null 값 체크 
             2. mem_email 마지막으로 입력된 값*/}
               <Input
+                // {...(this.checkNotNull ? 'yes' : '')}
                 style={styles.inputs}
                 keyboardType="email-address"
                 textContentType="emailAddress" //ios
-                placeholder="Email (example@email.com)"
+                placeholder="* 이메일 (ID겸용)"
                 onChangeText={(mem_email) => {
                   this.setState({mem_email: mem_email, mem_userid: mem_email});
                   this.checkEmail(mem_email);
@@ -431,46 +471,44 @@ class RegisterScreen extends Component {
                 caption={this.state.EmailCaption}
               />
               <Input
-                style={styles.inputs}
+                style={
+                  !this.state.mem_password ? styles.inputDeny : styles.inputs
+                }
                 secureTextEntry={true}
-                placeholder="비밀번호"
+                placeholder="* 비밀번호"
                 onChangeText={(mem_password) => {
                   this.setState({mem_password: mem_password});
-                  // this.checkNotNull();
+                  this.CheckPassword(mem_password, this.state.mem_password_re);
                 }}
                 onEndEditing={() => {
                   this.checkNotNull();
                 }}
-                secureTextEntry
               />
               <Input
-                style={styles.inputs}
+                style={
+                  !this.state.mem_password_re ? styles.inputDeny : styles.inputs
+                }
                 secureTextEntry={true}
-                placeholder="비밀번호 확인"
+                placeholder="* 비밀번호 확인"
                 onChangeText={(mem_password_re) => {
                   this.setState({mem_password_re: mem_password_re});
                   //{} 하면 obj로 던져서 obj.이름 해야지 됌
                   this.CheckPassword(this.state.mem_password, mem_password_re);
-                  // this.checkNotNull();
                 }}
                 onEndEditing={() => {
                   this.checkNotNull();
                 }}
-                // caption={() =>
-                //   this.state.captionCheck ? (
-                //     <Text style={{color: 'red'}}>
-                //       {this.state.captionCheck}
-                //     </Text>
-                //   ) : null
-                // }
-                caption={() => (
-                  <Text style={{color: 'red'}}>{this.state.captionCheck}</Text>
-                )}
-                secureTextEntry
+                caption={() =>
+                  this.state.captionCheck ? (
+                    <Text category="c1" style={{color: 'red'}}>
+                      {this.state.captionCheck}
+                    </Text>
+                  ) : null
+                }
               />
               <Input
                 style={styles.inputs}
-                maxLength={11}
+                maxLength={13}
                 keyboardType="phone-pad"
                 dataDetectorTypes="phoneNumber"
                 placeholder="휴대전화"
@@ -478,7 +516,7 @@ class RegisterScreen extends Component {
                   this.setState({mem_phone: mem_phone});
                   this.PhoneHyphen(mem_phone);
                 }}
-                onBlur={() => this.PhoneHyphen(this.state.mem_phone)}
+                onEndEditing={() => this.PhoneHyphen(this.state.mem_phone)}
                 caption={this.state.phoneCaption}
                 value={this.state.mem_phone}
               />
@@ -492,21 +530,32 @@ class RegisterScreen extends Component {
                 onEndEditing={() => {
                   this.checkNotNull();
                   this.checkRecommend();
+                  this.changeBorderColor();
                 }}
                 caption={this.state.recommendCaption}
               />
-              <Input
-                style={styles.inputs}
-                placeholder="서명문"
-                onChangeText={(text) => this.setState({mustInput: text})}
-              />
-              {/* <View
+              <View>
+                <Text style={styles.statementfont}>서명문</Text>
+
+                <Input
+                  style={styles.inputs}
+                  label={() => (
+                    <Text category="s2" style={styles.statementfont}>
+                      이타주의자 앱 사용중에
+                    </Text>
+                  )}
+                  placeholder="위와 동일하게 작성"
+                  onChangeText={(text) => this.setState({mustInput: text})}
+                />
+
+                {/* <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-around',
                   alignItems: 'stretch',
                   alignContent: 'stretch',
                 }}></View> */}
+              </View>
             </View>
             {/* 동의 및 다음 버튼 */}
             <View
@@ -552,6 +601,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
     borderRadius: 15,
     borderColor: '#FFFFFF',
+    // height: 30,
+    // padding: 3,
+    // marginTop: 15,
+  },
+  inputDeny: {
+    backgroundColor: '#F8F8F8',
+    borderRadius: 15,
+    borderColor: 'red',
+    // height: 30,
+    // padding: 3,
+    // marginTop: 15,
+  },
+  radio: {
+    padding: 3,
+    // marginTop: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  statementfont: {
+    color: '#63579D',
+    paddingLeft: 15,
   },
 });
 
