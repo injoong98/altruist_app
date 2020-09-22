@@ -43,7 +43,7 @@ class Pushlib extends CI_Controller
 			$error_msg = 'not_content_id 가 존재하지 않습니다';
 		}
 		if ($mem_id === $target_mem_id) {
-			$error_msg = 'mem_id 와 target_mem_id 이 같으므로 푸시을 저장하지 않습니다';
+			if($push_type ==='token') $error_msg = 'mem_id 와 target_mem_id 이 같으므로 푸시을 저장하지 않습니다..';
 		}
 		if (empty($not_message)) {
 			$error_msg = '푸시 내용이 존재하지 않습니다';
@@ -88,7 +88,7 @@ class Pushlib extends CI_Controller
 		}
 		
 		if($error_msg != ''){
-			log_message('error','Pushlib/set_push'.$error_msg);
+			log_message('error','Pushlib/set_push : '.$error_msg);
 			return false;
 			//response_result(json_encode($error_msg),'Err',json_encode($error_msg));
 		}	
