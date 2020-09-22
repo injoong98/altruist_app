@@ -119,14 +119,13 @@ class GominContent extends React.Component{
         Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
         .then(response=>{
             const {status, message}=response.data;
-            console.log(response);
-            if(response.status=='200'){
+            if(status=='200'){
                 Keyboard.dismiss();
                 this.getCommentData(post.post_id);
-                this.setState({resultModalVisible:true, cmt_id:'', cmt_content:'', replying:false, resultTExt:message});
+                this.setState({resultModalVisible:true, cmt_id:'', cmt_content:'', replying:false, resultText:message});
 
                 this.refs.pstcmtlist.scrollToEnd();
-            }else if(response.status=='500'){
+            }else if(status=='500'){
                 this.setState({resultModalVisible:true, resultText:message});
             }
         })
