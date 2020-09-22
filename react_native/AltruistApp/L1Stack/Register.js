@@ -62,6 +62,12 @@ const DangerIcon = (props) => (
   />
 );
 
+const LoadingIndicator = (props) => (
+  <View style={[props.style, styles.indicator]}>
+    <Spinner size="small" />
+  </View>
+);
+
 class RegisterScreen extends Component {
   constructor(props) {
     super(props);
@@ -192,7 +198,7 @@ class RegisterScreen extends Component {
     } = this.state;
 
     let formdata = new FormData();
-    formdata.append('mem_userid', mem_username);
+    formdata.append('mem_username', mem_username);
     formdata.append('mem_nickname', mem_nickname);
     formdata.append('mem_sex', mem_sex);
     formdata.append('mem_userid', mem_userid);
@@ -419,7 +425,7 @@ class RegisterScreen extends Component {
           alignment="center"
           accessoryLeft={this.BackAction}
         />
-        <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
           <ScrollView>
             <View
               style={{
@@ -563,28 +569,50 @@ class RegisterScreen extends Component {
                 alignSelf: 'center',
                 flexDirection: 'row',
                 padding: 3,
+                color: '#63579D',
               }}>
               <TouchableOpacity
                 onPress={() =>
                   this.props.navigation.navigate('AgreementScreen')
                 }>
-                <Text style={{color: 'blue'}}>이용 방침</Text>
+                <Text
+                  style={{
+                    color: 'blue',
+                    textDecorationLine: 'underline',
+                    //ios
+                    textDecorationColor: 'blue',
+                  }}>
+                  이용 방침
+                </Text>
               </TouchableOpacity>
               <Text> 과 </Text>
               <TouchableOpacity
                 onPress={() =>
                   this.props.navigation.navigate('AgreementScreen')
                 }>
-                <Text style={{color: 'blue'}}>개인정보 취급방침</Text>
+                <Text
+                  style={{
+                    color: 'blue',
+                    textDecorationLine: 'underline',
+                    //ios
+                    textDecorationColor: 'blue',
+                  }}>
+                  개인정보 취급방침
+                </Text>
               </TouchableOpacity>
               <Text>에 동의합니다</Text>
             </View>
-            <Button
-              style={{alignSelf: 'center', width: 200}}
+            <TouchableOpacity
+              style={{
+                alignContent: 'flex-end',
+                alignSelf: 'flex-end',
+                marginRight: 50,
+              }}
+              appearance="ghost"
               disabled={this.state.goNext}
               onPress={() => this.checkInputs()}>
-              다음
-            </Button>
+              <Text style={{color: '#63579D', textAlign: 'center'}}>다음</Text>
+            </TouchableOpacity>
           </ScrollView>
         </SafeAreaView>
       </>
@@ -601,6 +629,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
     borderRadius: 15,
     borderColor: '#FFFFFF',
+    color: '#A897C2',
     // height: 30,
     // padding: 3,
     // marginTop: 15,
