@@ -114,6 +114,7 @@ class GominWrite extends React.Component {
       modalVisible: false,
       resultVisible: false,
       spinnerModalVisible: false,
+      resultText : '',
     };
   }
   submitPost = async () => {
@@ -143,9 +144,10 @@ class GominWrite extends React.Component {
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
-          alert(message);
+          this.setState({spinnerModalVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
-          this.setState({spinnerModalVisible: false, resultVisible: true});
+          this.setState({spinnerModalVisible: false, resultVisible: true, 
+            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
         }
         // Alert.alert(
         //     "게시글",
@@ -310,17 +312,13 @@ class GominWrite extends React.Component {
           backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
           onBackdropPress={() => this.setState({resultVisible: false})}>
           <Confirm
-            confirmText={
-              this.props.route.params.mode == 'edit'
-                ? '게시글 수정 완료'
-                : '게시글 작성 완료'
-            }
+            type="result"
+            confirmText={this.state.resultText}
             frstText="닫기"
             OnFrstPress={() => {
               this.setState({resultVisible: false});
               this.gobackfunc();
             }}
-            type="result"
           />
         </Modal>
         <Modal
