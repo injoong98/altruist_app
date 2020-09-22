@@ -7,7 +7,7 @@ export class AlarmScreen extends React.Component{
     constructor(props){
         super(props)
         this.state={
-            noti=[]
+            noti:[]
         }
     }
 
@@ -21,9 +21,11 @@ export class AlarmScreen extends React.Component{
     render(){
         return(
             <SafeAreaView>
-                <List 
-                    data={this.state}
-                />
+                <View>
+                    <Text>
+                        알람페이지
+                    </Text>
+                </View>
             </SafeAreaView>
         )
     }
