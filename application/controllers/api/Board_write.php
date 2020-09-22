@@ -911,6 +911,7 @@ class Board_write extends CB_Controller
 
 
 			$brd_key = element('brd_key', $board);
+			$brd_name = element('brd_name', $board);
 			$nickname=  $this->session->userdata('mem_nickname');
 
 			//푸시 notification_personal_question  notification_open_question use_push
@@ -1008,12 +1009,72 @@ EOT;
 				}
 
 			}else { //일반
-				
+				/*
+				이타 : b-b-1
+				고민 : b-a-1
+				수수 : b-a-2
+				알바 : b-a-3
+				*/
+				if($this->cbconfig->item('use_push') || $this->cbconfig->item('use_notification'))  {
+				//	$board_name
+					switch ($brd_key) {
+						case 'b-b-1': // 이타
 
+							if ( ! $this->cbconfig->item('notification_itta')) {
+								$error_msg = '답변글에 푸시 기능을 사용하지 않습니다';
+							}
+							break;
+						case 'b-a-1': // 고민
+							if ( ! $this->cbconfig->item('notification_gomin')) {
+								$error_msg = '댓글에 푸시 기능을 사용하지 않습니다';
+							}
+							break;
+						case 'b-a-2': // 수수
+							if ( ! $this->cbconfig->item('notification_givetake')) {
+								$error_msg = '댓글의 댓글에 푸시 기능을 사용하지 않습니다';
+							}
+							break;
+						case 'b-a-3': // 알바
+							if ( ! $this->cbconfig->item('notification_alba')) {
+								$error_msg = '쪽지에 푸시 기능을 사용하지 않습니다';
+							}
+							break;
+						default :
+							$error_msg = '';
+					}
+					//알림 
+					$not_message = $nickname . '님께서 '.$brd_name.'게시판에 새글을 작성하셨습니다.';
+				/* 	if ($this->cbconfig->item('use_notification') ) {
+						$this->load->library('notificationlib');
+						$not_url = post_url(element('brd_id', $board), $post_id);
+						$this->notificationlib->set_noti(
+							$mem_id,
+							$mem_id,
+							'이타주의자들',
+							$post_id,
+							$not_message,
+							$not_url
+						);
+					} */
+
+					//푸시 전송
+					if ($this->cbconfig->item('use_push') ) {
+						$this->load->library('pushlib');
+					//	$not_message = $nickname . '님께서 오픈 질문을 작성하셨습니다.';
+						$not_url = post_url(element('brd_id', $board), $post_id);
+						$this->pushlib->set_push(
+							1,
+							$mem_id,
+							'이타주의자들',
+							$post_id,
+							$not_message,
+							$not_url,
+							'topic',
+							$brd_key
+						);
+					}		
+				}
 			}
-
-
-
 
 			if ($can_post_secret && $this->input->post('post_secret')) {
 				$this->session->set_userdata(

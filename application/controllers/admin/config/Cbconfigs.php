@@ -943,6 +943,28 @@ class Cbconfigs extends CB_Controller
 				'rules' => 'trim|numeric',
 			),
 			array(
+				'field' => 'notification_alba',
+				'label' => '알바천일국에 새글이 등록 되었을때',
+				'rules' => 'trim|numeric',
+			),
+
+			array(
+				'field' => 'notification_itta',
+				'label' => '이타게시판에 새글이 등록 되었을때',
+				'rules' => 'trim|numeric',
+			),
+			array(
+				'field' => 'notification_gomin',
+				'label' => '고민게시판에 새글이 등록 되었을때',
+				'rules' => 'trim|numeric',
+			),
+			array(
+				'field' => 'notification_givetake',
+				'label' => '수수마켓 새글 등록되었을때 ',
+				'rules' => 'trim|numeric',
+			),
+
+			array(
 				'field' => 'use_push',
 				'label' => '푸시 기능',
 				'rules' => 'trim|numeric',
@@ -968,7 +990,7 @@ class Cbconfigs extends CB_Controller
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
 
-			$array = array('use_notification', 'notification_reply', 'notification_comment', 'notification_comment_comment', 'notification_note','notification_open_question','use_push','notification_like_post','notification_like_comment');
+			$array = array('use_notification', 'notification_reply', 'notification_comment', 'notification_comment_comment', 'notification_note','notification_open_question','use_push','notification_like_post','notification_like_comment','notification_itta','notification_gomin','notification_givetake','notification_alba');
 			foreach ($array as $value) {
 				$savedata[$value] = $this->input->post($value, null, '');
 			}
