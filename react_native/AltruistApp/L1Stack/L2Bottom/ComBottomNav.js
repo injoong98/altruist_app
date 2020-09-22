@@ -9,6 +9,7 @@ import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, C
 import ToggleTune from '../../components/ToggleTune';
 import {MyStackNav} from './L3MyStack/MyStackNav'
 
+import {AlarmScreen} from './Alarm'
 import Homesvg from '../../assets/icons/home.svg'
 import Communitysvg from '../../assets/icons/community.svg'
 import Altsvg from '../../assets/icons/altruist.svg'
