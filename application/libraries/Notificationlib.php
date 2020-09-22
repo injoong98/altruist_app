@@ -88,6 +88,11 @@ class Notificationlib extends CI_Controller
 					return $result;
 				}
 				break;
+			case '이타주의자들':
+				if ( ! $this->CI->cbconfig->item('use_push')) {
+					$error_msg = '푸시 기능을 사용하지 않습니다';
+				}
+				break;
 			default :
 				$result = json_encode( array('error' => 'TYPE 이 잘못되었습니다'));
 				return $result;
