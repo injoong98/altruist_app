@@ -64,7 +64,7 @@ class GominContent extends React.Component{
             refreshing:false,
             modalVisible:false,
             resultModalVisible:false,
-            deleteModalVisible:false,
+            confirmModalVisible:false,
             spinnerModalVisible:false,
             popoverVisibel:false,
             resultText : '',
@@ -75,32 +75,35 @@ class GominContent extends React.Component{
     postDelete = async () => {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
-        console.log(formdata);
+
         await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
-        .then(res=>{
+        .then((res)=>{
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
             this.props.navigation.goBack();
             this.props.route.params.OnGoback();
         })
-        .catch(err=>{
-            alert(JSON.stringify(err))
+        .catch((error)=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
         })
     }
     commentWrite= ()=>{
-        this.setState({replying:false,cmt_id:''})
-        this.refs.commentInput.blur()
-        console.log(this.refs)
+        this.setState({replying:false, cmt_id:''});
+        this.refs.commentInput.blur();
+        console.log(this.refs);
     }
     postscrap = async()=>{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         
-        Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        await Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
         .then(response=>{
-            alert(`${JSON.stringify(response.data)}`)
+            if(response.data.success)
+                this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
+            else if (response.data.error)
+                this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
         })
         .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
+            this.setState({resultModalVisible:true, replying:false, resultText:error.message});
         })
     }
     
@@ -111,25 +114,24 @@ class GominContent extends React.Component{
         formdata.append("cmt_content",cmt_content);
         cmt_id==''? null : formdata.append("cmt_id",cmt_id);
         
-        this.commentWrite()
+        // this.commentWrite()
         
-        await Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
+        Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
         .then(response=>{
-            const {status,message}=response.data;
-            if(status=='200'){
-                if (message == '댓글이 등록되었습니다.')
-                {
-                    Keyboard.dismiss();
-                    this.setState({resultModalVisible:true, cmt_content:'',relpying:false,cmt_id:'', resultText:message});
-                    this.getCommentData(post.post_id);
-                    this.refs.pstcmtlist.scrollToEnd();
-                }
-            }else if(status=="500"){
-                alert(`실패 : ${message}`)
+            const {status, message}=response.data;
+            console.log(response);
+            if(response.status=='200'){
+                Keyboard.dismiss();
+                this.getCommentData(post.post_id);
+                this.setState({resultModalVisible:true, cmt_id:'', cmt_content:'', replying:false, resultTExt:message});
+
+                this.refs.pstcmtlist.scrollToEnd();
+            }else if(response.status=='500'){
+                this.setState({resultModalVisible:true, resultText:message});
             }
         })
         .catch(error=>{
-            alert(`등록 실패 ! ${error.message}`)
+            alert(error);
         })
     }
     
@@ -144,11 +146,12 @@ class GominContent extends React.Component{
             if(status=='500'){
                 alert(message);
             }else if(status=="200"){
+                console.log("valid check");
                 this.commentUpload();
             }
         })
         .catch(error=>{
-            alert('error')
+            alert(error);
         })
 
     }
@@ -180,7 +183,7 @@ class GominContent extends React.Component{
                     <Text category='h3'>스크랩</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                    onPress={()=>{this.setState({popoverVisibel:false, deleteModalVisible:true, modalType : 0})}}
+                    onPress={()=>{this.setState({popoverVisibel:false, confirmModalVisible:true, modalType : 0})}}
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
                     <Text category='h3'>신고</Text>
                 </TouchableOpacity>
@@ -198,7 +201,7 @@ class GominContent extends React.Component{
                     <Text category='h3'>수정</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                    onPress={()=>{this.setState({popoverVisibel:false,deleteModalVisible:true, modalType : 1})}}
+                    onPress={()=>{this.setState({popoverVisibel:false,confirmModalVisible:true, modalType : 1})}}
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
                     <Text category='h3'>삭제</Text>
                 </TouchableOpacity>
@@ -209,11 +212,11 @@ class GominContent extends React.Component{
         this.setState({isLoading:true});
         this.componentDidMount()    
     }
-    postBlame = ()=>{
+    postBlame = async () =>{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
-        
-        Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+
+        await Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
         .then(response=>{
             if(response.data.status == 500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
@@ -223,13 +226,13 @@ class GominContent extends React.Component{
             }
         })
         .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
         })
     }
     cmtBlame = () =>{
         var formdata = new FormData();
         formdata.append('cmt_id',this.state.cmt_id);
-        
+
         Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
         .then(response=>{
             if(response.data.status ==500){
@@ -240,30 +243,13 @@ class GominContent extends React.Component{
             }
         })
         .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
         })
-    }
-    cmtBlameConfirm = (cmt_id) =>{
-        Alert.alert(
-            "댓글",
-            "이 댓글을 신고하시겠습니까?",
-            [
-                {
-                    text: "Cancel",
-                    onPress: () => alert('취소했습니다.')
-                },
-                { 
-                    text: "OK", 
-                    onPress: ()=> this.cmtBlame(cmt_id)
-                }
-            ],
-            { cancelable: false }
-        );
     }
     cmtDelete = () =>{
         var formdata = new FormData();
         formdata.append('cmt_id',this.state.cmt_id);
-        
+
         Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
         .then(response=>{
             if(response.data.status ==500){
@@ -274,25 +260,8 @@ class GominContent extends React.Component{
             }
         })
         .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
         })
-    }
-    cmtDeleteConfirm = (cmt_id) =>{
-        Alert.alert(
-            "댓글",
-            "이 댓글을 삭제하시겠습니까?",
-            [
-                {
-                    text: "Cancel",
-                    onPress: () => alert('취소했습니다.')
-                },
-                { 
-                    text: "OK", 
-                    onPress: ()=> this.cmtDelete(cmt_id)
-                }
-            ],
-            { cancelable: false }
-        );
     }
     postLike = () =>{
         var formdata = new FormData();
@@ -301,13 +270,13 @@ class GominContent extends React.Component{
         Axios.post('http://dev.unyict.org/api/postact/post_like',formdata)
         .then(response=>{
             if(response.data.status ==500){
-                alert(`${JSON.stringify(response.data.message)}`)
+                this.setState({resultModalVisible:true, resultText : response.data.message});
             }else{
                 this.getPostData(this.state.post.post_id)
             }
         })
         .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
+            this.setState({resultModalVisible:true, resultText : error.message});
         })
     }
     cmtLike = (cmt_id) =>{
@@ -349,8 +318,7 @@ class GominContent extends React.Component{
     }
      onRefresh=()=>{
         const {post_id} = this.props.route.params
-        this.getCommentData(post_id)
-
+        this.getCommentData(post_id);
     } 
     async componentDidMount(){
         const {post_id} = this.props.route.params
@@ -484,7 +452,7 @@ class GominContent extends React.Component{
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,deleteModalVisible,spinnerModalVisible, modalType} = this.state
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType} = this.state
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -538,12 +506,12 @@ class GominContent extends React.Component{
             >
                 <View>
                     <TouchableOpacity 
-                        onPress={()=>{this.setState({modalVisible:false,cmt_id:'', modalType : 2, deleteModalVisible :true}, Keyboard.dismiss())}}
+                        onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
                         <Text category='h3'>댓글 신고</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        onPress={()=>{this.setState({modalVisible:false,cmt_id:'', modalType : 3, deleteModalVisible :true}, Keyboard.dismiss())}}
+                        onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
                         <Text category='h3'>댓글 삭제</Text>
                     </TouchableOpacity>
@@ -558,20 +526,20 @@ class GominContent extends React.Component{
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false,cmt_id:''})}
+                    OnFrstPress={() => this.setState({resultModalVisible:false, cmt_id:''})}
                 />
             </Modal>
             <Modal
-                visible={deleteModalVisible}
+                visible={confirmModalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({deleteModalVisible:false})}
+                onBackdropPress={() => this.setState({confirmModalVisible:false})}
             >
                 <Confirm 
                     confirmText={this.modalList[modalType].text}
                     frstText="예"
-                    OnFrstPress={() =>{this.setState({deleteModalVisible:false,spinnerModalVisible:true});this.modalList[modalType].func();}}
+                    OnFrstPress={() =>{this.setState({confirmModalVisible:false,spinnerModalVisible:true});this.modalList[modalType].func();}}
                     scndText="아니오"
-                    OnScndPress={() => this.setState({deleteModalVisible:false})}
+                    OnScndPress={() => this.setState({confirmModalVisible:false})}
                 />
             </Modal>
             <Modal
@@ -795,7 +763,7 @@ class MarketContent extends React.Component {
             if(status=='200'){
                 alert(`성공 : ${message}`);
                 Keyboard.dismiss();
-                this.setState({cmt_content:'',relpying:false,cmt_id:''});
+                this.setState({cmt_content:'',replying:false,cmt_id:''});
                 this.getCommentData(post.post_id);
                 this.refs.pstcmtlist.scrollToEnd();
             }else if(status=="500"){

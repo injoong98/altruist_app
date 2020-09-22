@@ -37,7 +37,7 @@ export class TopBarTune extends React.Component {
                                     </TouchableOpacity>
                                 :
                                 this.props.right =='edit' ?
-                                    <Button onPress={this.props.func}>
+                                    <Button onPress={this.props.func} appearance='ghost'>
                                         수정
                                     </Button>
                                 : null}
