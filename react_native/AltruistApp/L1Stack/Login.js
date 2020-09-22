@@ -117,20 +117,20 @@ class LoginScreen extends React.Component{
                     value={mem_password}
                 />
                 
-                <TouchableOpacity style={{marginTop:26}} onPress={()=>signIn(mem_userid,mem_password,autologin)}>
-                  <Text style={{fontSize:18,fontWeight:'bold',color:'#63579D'}}>
+                <TouchableOpacity style={styles.logInBtn} onPress={()=>signIn(mem_userid,mem_password,autologin)}>
+                  <Text category='h2' style={{fontSize:12,color:'#ffffff'}}>
                     로그인
                   </Text>  
                 </TouchableOpacity>
-                <View style={{marginTop:17, justifyContent:'center',alignItems:'center'}}>
+                <View style={{marginTop:26, justifyContent:'center',alignItems:'center'}}>
                   
                   <TouchableOpacity onPress={()=>this.props.navigation.navigate('FindPwScreen')}>
                     <Text style={styles.optionText}>
-                    아이디/ 비밀번호 찾기
+                    비밀번호 찾기
                     </Text>  
                   </TouchableOpacity>
-                  <TouchableOpacity style={{marginTop:20}} onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
-                    <Text style={{fontSize:13,fontWeight:'bold'}}>
+                  <TouchableOpacity style={{marginTop:9}} onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
+                    <Text style={styles.optionText}>
                       회원 가입
                     </Text>  
                   </TouchableOpacity>
@@ -160,5 +160,14 @@ const styles =StyleSheet.create({
     fontSize:10,
     fontWeight:'bold',
     color:'#63579D'
+  },
+  logInBtn:{
+    marginTop:26,
+    width: 62,
+    height:36,
+    borderRadius:6,
+    backgroundColor:'#63579D',
+    justifyContent:'center',
+    alignItems:'center'
   }
 })
