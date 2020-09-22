@@ -493,11 +493,11 @@ $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 7200;
 $config['sess_save_path'] =  APPPATH.'cache/session/';
-// $config['sess_save_path'] =  NULL;
+//$config['sess_save_path'] =  NULL;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
-$config['uri_segment_cmall_item'] ='item';
+
 /*
 |--------------------------------------------------------------------------
 | Cookie Related Variables
@@ -579,7 +579,7 @@ $config['global_xss_filtering'] = FALSE;
  * CiBoard 주 : csrf protection 을 사용하지 않고 싶은 경우 FALSE 로 변경하시면 됩니다.
  * 그러나 보안상의 위험이 따르므로 TRUE 로 설정해 놓으시길 강력히!! 추천합니다
  */
-$config['csrf_protection'] = FALSE;
+$config['csrf_protection'] = false;
 $config['csrf_token_name'] = 'csrf_test_name'; // 값을 변경하지 말아주세요
 $config['csrf_cookie_name'] = 'csrf_cookie_name'; // 값을 변경하지 말아주세요
 $config['csrf_expire'] = 7200;

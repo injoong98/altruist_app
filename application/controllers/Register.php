@@ -1064,7 +1064,7 @@ class Register extends CB_Controller
 				);
 				$this->Member_auth_email_model->insert($authdata);
 
-				$verify_url = site_url('verify/confirmemail?user=' . $this->input->post('mem_userid') . '&code=' . $verificationcode);
+				$verify_url = site_url('dev.unyict.org/verify/confirmemail?user=' . $this->input->post('mem_userid') . '&code=' . $verificationcode);
 
 				$title = str_replace(
 					$searchconfig,
