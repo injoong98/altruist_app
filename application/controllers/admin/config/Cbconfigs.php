@@ -928,6 +928,11 @@ class Cbconfigs extends CB_Controller
 				'rules' => 'trim|numeric',
 			),
 			array(
+				'field' => 'notification_personal_question',
+				'label' => '개인 질문이 등록 되었을때 때 알림',
+				'rules' => 'trim|numeric',
+			),
+			array(
 				'field' => 'notification_like_post',
 				'label' => '글에 좋아요를 눌렀을때',
 				'rules' => 'trim|numeric',

@@ -761,7 +761,6 @@ class Board_write extends CB_Controller
 			 * 유효성 검사를 통과한 경우입니다.
 			 * 즉 데이터의 insert 나 update 의 process 처리가 필요한 상황입니다
 			 */
-
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formruntrue'] = Events::trigger('common_formruntrue', $eventname);
 
@@ -848,9 +847,95 @@ class Board_write extends CB_Controller
 
 			$updatedata['post_device']
 				= ($this->cbconfig->get_device_type() === 'mobile') ? 'mobile' : 'desktop';
+			
+			$updatedata['post_anoymous_yn'] = $this->input->post('post_anoymous_yn', null, '');
+			$updatedata['post_location'] = $this->input->post('post_location', null, '');
+			$updatedata['alba_type'] = $this->input->post('alba_type', null, '');
+			$updatedata['alba_salary_type'] = $this->input->post('alba_salary_type', null, '');
+			$updatedata['alba_salary'] = $this->input->post('alba_salary', null, '');
+			$updatedata['post_hp'] = $this->input->post('post_hp', null, '');
+			
+			//이타주의자 질문관련 추가된 항목
+			$updatedata['answer_expire_date'] = $this->input->post('answer_expire_date', null, '');
+			$updatedata['question_solved'] = $this->input->post('question_solved', null, '');
+			$updatedata['answer_mem_id'] = $this->input->post('answer_mem_id', null, '');
+			//수수마켓 추가 컬럼  
+			$updatedata['deal_price'] = $this->input->post('deal_price', null, '');
+			$updatedata['deal_type'] = $this->input->post('deal_type', null, '');
+			$updatedata['deal_status'] = $this->input->post('deal_status', null, '');
 
+			//썸네일 사용여부
+			$updatedata['post_thumb_use'] = $this->input->post('post_thumb_use', null, '');
+	
+			//게시글 저장
 			$post_id = $this->Post_model->insert($updatedata);
 
+			//일대다 질문글일 경우 질문에 해당하는 전문 영역을 넣어 준다..
+			if (element('brd_key', $board) == 'opq') {
+				// insert post_alt_area
+				//전문영역 저장
+				$area_insert = array();
+				if(isset($_POST['act_id'])  && is_array($_POST['act_id']) && count($_POST['act_id']) > 0 ) {
+					for( $i= 0 ; count($_POST['act_id'])-1 >= $i; $i++ ) {
+						$area_insert[$i]['post_id']      = 	$post_id;
+						$area_insert[$i]['act_id']    =    $_POST['act_id'][$i];
+					}
+				}
+				$area_result = $this->db->insert_batch('post_alt_area',$area_insert);
+			}
+
+
+
+			$brd_key = element('brd_key', $board);
+			$nickname=  $this->session->userdata('mem_nickname');
+
+			//푸시 notification_personal_question  notification_open_question use_push
+			// 게시판 opq , indi 일 경우 질문 푸시
+			// 오픈 / 돌직 / 일반 게시판 (토픽)
+			// 알림 저장도 구분에 따라서 
+			if( $brd_key == 'indi') { // 직구 
+				//알림 저장
+				if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_personal_question')) {
+					$this->load->library('notificationlib');
+					$not_message = $nickname . '님께서 일대일 질문을 보내셨습니다.';
+					$not_url = post_url(element('brd_id', $board), $post_id);
+					$this->notificationlib->set_noti(
+						$updatedata['answer_mem_id'],
+						$mem_id,
+						'이타주의자들',
+						$post_id,
+						$not_message,
+						$not_url
+					);
+				}
+				
+				//푸시 전송
+				if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_personal_question')) {
+					$this->load->library('pushlib');
+					$not_message = $nickname . '님께서 일대일 질문을 보내셨습니다.';
+					$not_url = post_url(element('brd_id', $board), $post_id);
+					$this->pushlib->set_push(
+						$updatedata['answer_mem_id'],
+						$mem_id,
+						'이타주의자들',
+						$post_id,
+						$not_message,
+						$not_url,
+						'token',
+						''
+					);
+				}
+				
+			} else if( $brd_key == 'opq') { // 오픈
+				//오픈질문일경우 질문에 선택된 전문영역을 가진 이타주의자들의 토큰 설정.,
+
+
+
+			}else { //일반
+
+
+			}
+		
 			if ($can_post_secret && $this->input->post('post_secret')) {
 				$this->session->set_userdata(
 					'view_secret_' . $post_id,
