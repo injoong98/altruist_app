@@ -20,7 +20,7 @@ class AgreementScreen extends Component {
     <TopNavigationAction
       icon={BackIcon}
       onPress={() => {
-        this.props.navigation.navigate('Login');
+        this.props.navigation.goBack();
       }}
     />
   );
