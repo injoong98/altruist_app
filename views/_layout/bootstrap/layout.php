@@ -360,7 +360,15 @@ var cookie_prefix = "<?php echo config_item('cookie_prefix'); ?>";
 <script type="text/javascript" src="<?php echo base_url('assets/js/mobile.sidemenu.js'); ?>"></script>
 
 <?php } ?>
+<script type="text/javascript">
+$(document).ready(function() {
 
+	console.info('session', <?php echo json_encode($_SESSION);?>);
+	console.info('view', <?php echo json_encode($view);?>);
+	console.info('layout', <?php echo json_encode($layout);?>);
+	console.info('controller', <?php echo json_encode( $this->router->fetch_class().'/'.$this->router->fetch_method());?>);
+});
+</script>
 <script type="text/javascript">
 $(document).on('click', '.viewpcversion', function(){
 	Cookies.set('device_view_type', 'desktop', { expires: 1 });

@@ -89,7 +89,7 @@ export const ComBottomNav = () =>(
         {/* <Screen name = "Home" component={FontScreen}/> */}
         <Screen name = "Alt" component={AltStackNav}/>
         <Screen name = "Commu" component={ComToptabNav}/>
-        <Screen name = "Meet" component={SpareScreen}/>
+        <Screen name = "Alarm" component={AlarmScreen}/>
         <Screen name = "Prof" component={MyStackNav}/>
     </Navigator>
 )

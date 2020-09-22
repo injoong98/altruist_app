@@ -898,6 +898,26 @@ class Board_write extends CB_Controller
 				);
 			}
 
+
+			//푸시
+			$push_type = 'token';
+			$topic_name = '';
+			if ($reply && $origin && $this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_reply')) {
+				$this->load->library('pushlib');
+				$not_message = $updatedata['post_nickname'] . '님께서 [' . element('post_title', $origin) . '] 에 답변을 남기셨습니다';
+				$not_url = post_url(element('brd_key', $board), $post_id);
+				$this->notificationlib->set_noti(
+					element('mem_id', $origin),
+					$mem_id,
+					'이타주의자들',
+					$post_id,
+					$not_message,
+					$not_url,
+					$push_type,
+					$topic_name
+				);
+			}
+
 			if (isset($metadata) && $metadata) {
 				$this->Post_meta_model
 					->save($post_id, element('brd_id', $board), $metadata);

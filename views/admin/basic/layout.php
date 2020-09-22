@@ -149,6 +149,15 @@ var cookie_prefix = "<?php echo config_item('cookie_prefix'); ?>";
 	<span class="btn_top"><a href="#">Top <i class="fa fa-arrow-circle-o-up fa-lg"></i></a></span>
 </footer>
 <script type="text/javascript">
+$(document).ready(function() {
+
+	console.info('session', <?php echo json_encode($_SESSION);?>);
+	console.info('view', <?php echo json_encode($view);?>);
+	console.info('layout', <?php echo json_encode($layout);?>);
+	console.info('controller', <?php echo json_encode( $this->router->fetch_class().'/'.$this->router->fetch_method());?>);
+});
+</script>
+<script type="text/javascript">
 //<![CDATA[
 $(document).ready(function() {
 	$(function() {
