@@ -6,6 +6,7 @@ import {
   Keyboard,
   Alert,
   DatePickerAndroid,
+  Pressable,
 } from 'react-native';
 import {
   Text,
@@ -94,6 +95,40 @@ class RegisterScreen extends Component {
     };
   }
 
+  App = () => {
+    const [timesPressed, setTimesPressed] = useState(0);
+
+    let textLog = '';
+    if (timesPressed > 1) {
+      textLog = timesPressed + 'x onPress';
+    } else if (timesPressed > 0) {
+      textLog = 'onPress';
+    }
+
+    return (
+      <View style={{alignSelf: 'flex-end'}}>
+        <Pressable
+          onPress={() => {
+            setTimesPressed((current) => current + 1);
+          }}
+          style={({pressed}) => [
+            {
+              backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'white',
+            },
+            styles.wrapperCustom,
+          ]}>
+          {({p}) => (
+            <Text style={styles.text}>{p ? 'Pressed!' : 'Press Me'}</Text>
+          )}
+        </Pressable>
+        <View style={styles.logBox}>
+          {/* <Button onPress={() => this.checkInputs()}>다음</Button> */}
+          <Text testID="pressable_press_console">{textLog}</Text>
+        </View>
+      </View>
+    );
+  };
+
   BackAction = () => (
     <TopNavigationAction
       icon={BackIcon}
@@ -111,7 +146,6 @@ class RegisterScreen extends Component {
     // this.state.goNext = 'true';
     this.state.goNext = false;
     if (!this.state.mem_username) {
-      this.setState({usernameStyle: '{styles.inputDeny}'});
       return;
     }
     if (this.state.mem_nickname == '' || this.state.mem_nickname == null) {
@@ -142,7 +176,7 @@ class RegisterScreen extends Component {
       return;
     }
     console.log('no');
-    this.SubmitForm();
+    // this.SubmitForm();
   };
 
   checkNotNull = () => {
@@ -155,6 +189,79 @@ class RegisterScreen extends Component {
       !this.state.mem_password ||
       !this.state.mem_password_re
     ) {
+      if (!this.state.mem_username) {
+        console.log('checkNotNull : usernameisempty');
+        this.setState({
+          usernameStyle: {
+            backgroundColor: '#F8F8F8',
+            borderRadius: 15,
+            borderColor: '#FFFFFF',
+            borderColor: 'red',
+          },
+        });
+      } else {
+        this.setState({usernameStyle: ''});
+      }
+      if (!this.state.mem_nickname) {
+        this.setState({
+          nicknameStyle: {
+            backgroundColor: '#F8F8F8',
+            borderRadius: 15,
+            borderColor: '#FFFFFF',
+            borderColor: 'red',
+          },
+        });
+      } else {
+        this.setState({nicknameStyle: ''});
+      }
+      if (!this.state.mem_sex) {
+        this.setState({
+          sexStyle: {
+            backgroundColor: '#F8F8F8',
+            borderRadius: 15,
+            borderColor: '#FFFFFF',
+            borderColor: 'red',
+          },
+        });
+      } else {
+        this.setState({sexStyle: ''});
+      }
+      if (!this.state.mem_email || !this.state.mem_email.includes('@')) {
+        this.setState({
+          emailStyle: {
+            backgroundColor: '#F8F8F8',
+            borderRadius: 15,
+            borderColor: '#FFFFFF',
+            borderColor: 'red',
+          },
+        });
+      } else {
+        this.setState({emailStyle: ''});
+      }
+      if (!this.state.mem_password) {
+        this.setState({
+          pwStyle: {
+            backgroundColor: '#F8F8F8',
+            borderRadius: 15,
+            borderColor: '#FFFFFF',
+            borderColor: 'red',
+          },
+        });
+      } else {
+        this.setState({pwStyle: ''});
+      }
+      if (!this.state.mem_password_re) {
+        this.setState({
+          pwreStyle: {
+            backgroundColor: '#F8F8F8',
+            borderRadius: 15,
+            borderColor: '#FFFFFF',
+            borderColor: 'red',
+          },
+        });
+      } else {
+        this.setState({pwreStyle: ''});
+      }
       console.log('checkNotNull : atleastoneisnot');
       this.setState({goNext: true});
     } else if (
@@ -168,7 +275,7 @@ class RegisterScreen extends Component {
       console.log('checkNotNull : Allfilled');
       if (this.state.captionCheck) {
         console.log('checkNotNull : passwordNotmatched');
-        this.setState({goNext: true});
+        this.setState({checkNull: true});
       } else {
         console.log('checkNotNull : passwordmatched');
         this.setState({goNext: false});
@@ -435,7 +542,11 @@ class RegisterScreen extends Component {
                 paddingLeft: 60,
               }}>
               <Input
-                style={styles.inputs}
+                style={
+                  this.state.usernameStyle
+                    ? this.state.usernameStyle
+                    : styles.inputs
+                }
                 placeholder="* 이름"
                 onChangeText={(mem_username) => {
                   this.setState({mem_username: mem_username});
@@ -445,7 +556,11 @@ class RegisterScreen extends Component {
                 }}
               />
               <Input
-                style={styles.inputs}
+                style={
+                  this.state.nicknameStyle
+                    ? this.state.nicknameStyle
+                    : styles.inputs
+                }
                 placeholder="* 닉네임 "
                 onChangeText={(mem_nickname) => {
                   this.setState({mem_nickname: mem_nickname});
@@ -461,13 +576,17 @@ class RegisterScreen extends Component {
             1. null 값 체크 
             2. mem_email 마지막으로 입력된 값*/}
               <Input
-                // {...(this.checkNotNull ? 'yes' : '')}
-                style={styles.inputs}
+                style={
+                  this.state.emailStyle ? this.state.emailStyle : styles.inputs
+                }
                 keyboardType="email-address"
                 textContentType="emailAddress" //ios
                 placeholder="* 이메일 (ID겸용)"
                 onChangeText={(mem_email) => {
-                  this.setState({mem_email: mem_email, mem_userid: mem_email});
+                  this.setState({
+                    mem_email: mem_email,
+                    mem_userid: mem_email,
+                  });
                   this.checkEmail(mem_email);
                 }}
                 onEndEditing={() => {
@@ -477,9 +596,7 @@ class RegisterScreen extends Component {
                 caption={this.state.EmailCaption}
               />
               <Input
-                style={
-                  !this.state.mem_password ? styles.inputDeny : styles.inputs
-                }
+                style={this.state.pwStyle ? this.state.pwStyle : styles.inputs}
                 secureTextEntry={true}
                 placeholder="* 비밀번호"
                 onChangeText={(mem_password) => {
@@ -492,7 +609,7 @@ class RegisterScreen extends Component {
               />
               <Input
                 style={
-                  !this.state.mem_password_re ? styles.inputDeny : styles.inputs
+                  this.state.pwreStyle ? this.state.pwreStyle : styles.inputs
                 }
                 secureTextEntry={true}
                 placeholder="* 비밀번호 확인"
@@ -608,11 +725,12 @@ class RegisterScreen extends Component {
                 alignSelf: 'flex-end',
                 marginRight: 50,
               }}
-              appearance="ghost"
+              activeOpacity={1}
               disabled={this.state.goNext}
               onPress={() => this.checkInputs()}>
               <Text style={{color: '#63579D', textAlign: 'center'}}>다음</Text>
             </TouchableOpacity>
+            <this.App />
           </ScrollView>
         </SafeAreaView>
       </>
