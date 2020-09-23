@@ -47,6 +47,7 @@
 							<th><a href="<?php echo element('mem_nickname', element('sort', $view)); ?>">닉네임</a></th>
 							<th><a href="<?php echo element('mem_email', element('sort', $view)); ?>">이메일</a></th>
 							<th><a href="<?php echo element('alt_answertype', element('sort', $view)); ?>">답변구분</a></th>
+							<th><a href="<?php echo element('alt_honor', element('sort', $view)); ?>">명예</a></th>
 							<th><a href="<?php echo element('alt_score', element('sort', $view)); ?>">평점</a></th>
 							<th><a href="<?php echo element('alt_datetime', element('sort', $view)); ?>">신청일</a></th>
 							<th>승인</th>
@@ -71,6 +72,7 @@
 							<td><?php echo element('display_name', $result); ?></td>
 							<td><?php echo html_escape(element('mem_email', $result)); ?></td>
 							<td><?php echo element('alt_answertype', $result); ?></td>
+							<td><?php echo element('alt_honor', $result) ? '<span class="label label-success">명예</span>' : '일반'; ?></td>
 							<td><?php echo number_format(element('alt_score', $result)); ?></td>
 							<td><?php echo display_datetime(element('alt_datetime', $result), 'full'); ?></td>
 						<!-- 	<td><?php echo element('alt_status', $result) ? '<span class="label label-danger">차단</span>' : '승인'; ?></td> -->
