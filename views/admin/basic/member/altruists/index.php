@@ -7,9 +7,10 @@
 		?>
 			<div class="box-table-header">
 				<div class="btn-group btn-group-sm" role="group">
-					<a href="?" class="btn btn-sm <?php echo ( ! $this->input->get('mem_is_admin') && ! $this->input->get('mem_denied')) ? 'btn-success' : 'btn-default'; ?>">전체회원</a>
-					<a href="?mem_is_admin=1" class="btn btn-sm <?php echo ($this->input->get('mem_is_admin')) ? 'btn-success' : 'btn-default'; ?>">최고관리자</a>
-					<a href="?mem_denied=1" class="btn btn-sm <?php echo ($this->input->get('mem_denied')) ? 'btn-success' : 'btn-default'; ?>">차단회원</a>
+					<a href="?" class="btn btn-sm <?php echo ( ! $this->input->get('mem_is_admin') && ! $this->input->get('mem_denied')) ? 'btn-success' : 'btn-default'; ?>">전체</a>
+					<a href="?alt_status=Y" class="btn btn-sm <?php echo ($this->input->get('mem_is_admin')) ? 'btn-success' : 'btn-default'; ?>">승인</a>
+					<a href="?alt_status=R" class="btn btn-sm <?php echo ($this->input->get('mem_denied')) ? 'btn-success' : 'btn-default'; ?>">대기</a>
+					<a href="?alt_status=J" class="btn btn-sm <?php echo ($this->input->get('mem_denied')) ? 'btn-success' : 'btn-default'; ?>">거부</a>
 				</div>
 				<div class="btn-group btn-group-sm" role="group">
 					<a href="?" class="btn btn-sm <?php echo ( ! $this->input->get('mgr_id')) ? 'btn-success' : 'btn-default'; ?>">전체그룹</a>
@@ -45,21 +46,12 @@
 							<th><a href="<?php echo element('mem_username', element('sort', $view)); ?>">실명</a></th>
 							<th><a href="<?php echo element('mem_nickname', element('sort', $view)); ?>">닉네임</a></th>
 							<th><a href="<?php echo element('mem_email', element('sort', $view)); ?>">이메일</a></th>
-							<?php if ($this->cbconfig->item('use_selfcert')) { ?>
-								<th>본인인증</th>
-							<?php } ?>
-							<?php if ($this->cbconfig->item('use_sociallogin')) { ?>
-								<th>소셜연동</th>
-							<?php } ?>
-							<th><a href="<?php echo element('mem_point', element('sort', $view)); ?>">포인트</a></th>
-							<th><?php echo $this->cbconfig->item('deposit_name') ? html_escape($this->cbconfig->item('deposit_name')) : '예치금'; ?></th>
-							<th><a href="<?php echo element('mem_register_datetime', element('sort', $view)); ?>">가입일</a></th>
-							<th><a href="<?php echo element('mem_lastlogin_datetime', element('sort', $view)); ?>">최근로그인</a></th>
-							<th>회원그룹</th>
-							<th><a href="<?php echo element('mem_level', element('sort', $view)); ?>">회원레벨</a></th>
-							<th>메일인증/공개/메일/쪽지/문자</th>
+							<th><a href="<?php echo element('alt_answertype', element('sort', $view)); ?>">답변구분</a></th>
+							<th><a href="<?php echo element('alt_score', element('sort', $view)); ?>">평점</a></th>
+							<th><a href="<?php echo element('alt_datetime', element('sort', $view)); ?>">신청일</a></th>
 							<th>승인</th>
-							<th>수정</th>
+							<th>승인날짜</th>
+							<th>상세</th>
 							<th><input type="checkbox" name="chkall" id="chkall" /></th>
 						</tr>
 					</thead>
@@ -78,49 +70,13 @@
 							</td>
 							<td><?php echo element('display_name', $result); ?></td>
 							<td><?php echo html_escape(element('mem_email', $result)); ?></td>
-							<?php if ($this->cbconfig->item('use_selfcert')) { ?>
-								<td>
-									<?php
-									echo (element('selfcert_type', element('meta', $result)) === 'phone') ? '<span class="label label-success">휴대폰</span>' : '';
-									echo (element('selfcert_type', element('meta', $result)) === 'ipin') ? '<span class="label label-success">IPIN</span>' : '';
-									echo is_adult(element('selfcert_birthday', element('meta', $result))) ? '<span class="label label-danger">성인</span>' : '';
-									?>
-								</td>
-							<?php } ?>
-							<?php if ($this->cbconfig->item('use_sociallogin')) { ?>
-								<td>
-									<?php if ($this->cbconfig->item('use_sociallogin_facebook') && element('facebook_id', element('social', $result))) { ?>
-										<a href="javascript:;" onClick="social_open('facebook', '<?php echo element('mem_id', $result); ?>');"><img src="<?php echo base_url('assets/images/social_facebook.png'); ?>" width="15" height="15" alt="페이스북 로그인" title="페이스북 로그인" /></a>
-									<?php } ?>
-									<?php if ($this->cbconfig->item('use_sociallogin_twitter') && element('twitter_id', element('social', $result))) { ?>
-										<a href="javascript:;" onClick="social_open('twitter', '<?php echo element('mem_id', $result); ?>');"><img src="<?php echo base_url('assets/images/social_twitter.png'); ?>" width="15" height="15" alt="트위터 로그인" title="트위터 로그인" /></a>
-									<?php } ?>
-									<?php if ($this->cbconfig->item('use_sociallogin_google') && element('google_id', element('social', $result))) { ?>
-										<a href="javascript:;" onClick="social_open('google', '<?php echo element('mem_id', $result); ?>');"><img src="<?php echo base_url('assets/images/social_google.png'); ?>" width="15" height="15" alt="구글 로그인" title="구글 로그인" /></a>
-									<?php } ?>
-									<?php if ($this->cbconfig->item('use_sociallogin_naver') && element('naver_id', element('social', $result))) { ?>
-										<a href="javascript:;" onClick="social_open('naver', '<?php echo element('mem_id', $result); ?>');"><img src="<?php echo base_url('assets/images/social_naver.png'); ?>" width="15" height="15" alt="네이버 로그인" title="네이버 로그인" /></a>
-									<?php } ?>
-									<?php if ($this->cbconfig->item('use_sociallogin_kakao') && element('kakao_id', element('social', $result))) { ?>
-										<a href="javascript:;" onClick="social_open('kakao', '<?php echo element('mem_id', $result); ?>');"><img src="<?php echo base_url('assets/images/social_kakao.png'); ?>" width="15" height="15" alt="카카오 로그인" title="카카오 로그인" /></a>
-									<?php } ?>
-								</td>
-							<?php } ?>
-							<td class="text-right"><?php echo number_format(element('mem_point', $result)); ?></td>
-							<td class="text-right"><?php echo number_format((int) element('total_deposit', element('meta', $result))); ?></td>
-							<td><?php echo display_datetime(element('mem_register_datetime', $result), 'full'); ?></td>
-							<td><?php echo display_datetime(element('mem_lastlogin_datetime', $result), 'full'); ?></td>
-							<td><?php echo element('member_group', $result); ?></td>
-							<td class="text-right"><?php echo element('mem_level', $result); ?></td>
-							<td>
-								<?php echo element('mem_email_cert', $result) ? '<i class="fa fa-check-square-o"></i>' : '<i class="fa fa-square-o"></i>';; ?>
-								<?php echo element('mem_open_profile', $result) ? '<i class="fa fa-check-square-o"></i>' : '<i class="fa fa-square-o"></i>';; ?>
-								<?php echo element('mem_receive_email', $result) ? '<i class="fa fa-check-square-o"></i>' : '<i class="fa fa-square-o"></i>';; ?>
-								<?php echo element('mem_use_note', $result) ? '<i class="fa fa-check-square-o"></i>' : '<i class="fa fa-square-o"></i>';; ?>
-								<?php echo element('mem_receive_sms', $result) ? '<i class="fa fa-check-square-o"></i>' : '<i class="fa fa-square-o"></i>';; ?>
-							</td>
-							<td><?php echo element('mem_denied', $result) ? '<span class="label label-danger">차단</span>' : '승인'; ?></td>
-							<td><a href="<?php echo admin_url($this->pagedir); ?>/write/<?php echo element(element('primary_key', $view), $result); ?>?<?php echo $this->input->server('QUERY_STRING', null, ''); ?>" class="btn btn-outline btn-default btn-xs">수정</a></td>
+							<td><?php echo element('alt_answertype', $result); ?></td>
+							<td><?php echo number_format(element('alt_score', $result)); ?></td>
+							<td><?php echo display_datetime(element('alt_datetime', $result), 'full'); ?></td>
+						<!-- 	<td><?php echo element('alt_status', $result) ? '<span class="label label-danger">차단</span>' : '승인'; ?></td> -->
+							<td><?php echo element('alt_status', $result); ?></td>
+							<td><?php echo display_datetime(element('alt_approve_datetime', $result), 'full'); ?></td>
+							<td><a href="<?php echo admin_url($this->pagedir); ?>/write/<?php echo element(element('primary_key', $view), $result); ?>?<?php echo $this->input->server('QUERY_STRING', null, ''); ?>" class="btn btn-outline btn-default btn-xs">상세보기</a></td>
 							<td><input type="checkbox" name="chk[]" class="list-chkbox" value="<?php echo element(element('primary_key', $view), $result); ?>" /></td>
 						</tr>
 					<?php
@@ -166,7 +122,7 @@
 <script type="text/javascript">
 //<![CDATA[
 function social_open(stype, mem_id) {
-	var pop_url = cb_admin_url + '/altruists/altruists/socialinfo/' + stype + '/' + mem_id;
+	var pop_url = cb_admin_url + '/member/altruists/socialinfo/' + stype + '/' + mem_id;
 	window.open(pop_url, 'win_socialinfo', 'left=100,top=100,width=730,height=500,scrollbars=1');
 	return false;
 }

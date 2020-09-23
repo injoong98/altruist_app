@@ -101,6 +101,20 @@ class Member_model extends CB_Model
 		return $result;
 	}
 
+	public function get_alt_list($limit = '', $offset = '', $where = '', $like = '', $findex = '', $forder = '', $sfield = '', $skeyword = '', $sop = 'OR')
+	{
+		$join = array();
+	//	if (isset($where['mgr_id'])) {
+			$select = 'member.*';
+		//	$join[] = array('table' => 'member_group_member', 'on' => 'member.mem_id = member_group_member.mem_id', 'type' => 'left');
+			$join[] = array('table' => 'cb_alt_profile', 'on' => 'cb_alt_profile.mem_id = member.mem_id', 'type' => 'inner');
+	//	}
+		$result = $this->_get_list_common($select = '', $join, $limit, $offset, $where, $like, $findex, $forder, $sfield, $skeyword, $sop);
+
+		return $result;
+	}
+
+
 
 	public function get_register_count($type = 'd', $start_date = '', $end_date = '', $orderby = 'asc')
 	{

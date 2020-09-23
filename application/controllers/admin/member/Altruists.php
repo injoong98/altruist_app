@@ -19,7 +19,7 @@ class Altruists extends CB_Controller
 	 * 관리자 페이지 상의 현재 디렉토리입니다
 	 * 페이지 이동시 필요한 정보입니다
 	 */
-	public $pagedir = 'altruists/altruists';
+	public $pagedir = 'member/altruists';
 
 	/**
 	 * 모델을 로딩합니다
@@ -94,6 +94,12 @@ class Altruists extends CB_Controller
 		$this->{$this->modelname}->allow_order_field = array('member.mem_id', 'mem_userid', 'mem_username', 'mem_nickname', 'mem_email', 'mem_point', 'mem_register_datetime', 'mem_lastlogin_datetime', 'mem_level'); // 정렬이 가능한 필드
 
 		$where = array();
+		//승인된 이타주의자들
+		if ($this->input->get('alt_status')) {
+			$where['alt_status'] = $this->input->get('alt_status');
+		}
+		
+
 		if ($this->input->get('mem_is_admin')) {
 			$where['mem_is_admin'] = 1;
 		}
@@ -105,8 +111,10 @@ class Altruists extends CB_Controller
 				$where['mgr_id'] = $mgr_id;
 			}
 		}
-		$result = $this->{$this->modelname}
-			->get_admin_list($per_page, $offset, $where, '', $findex, $forder, $sfield, $skeyword);
+		
+		
+		//$result = $this->{$this->modelname}->get_admin_list($per_page, $offset, $where, '', $findex, $forder, $sfield, $skeyword);
+		$result = $this->{$this->modelname}->get_alt_list($per_page, $offset, $where, '', $findex, $forder, $sfield, $skeyword);
 		$list_num = $result['total_rows'] - ($page - 1) * $per_page;
 
 		if (element('list', $result)) {
