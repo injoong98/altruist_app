@@ -1462,6 +1462,36 @@ class Altruists extends CB_Controller
 		
 		if ($form_validation) {
 			$this->load->library('upload');
+			if (true) {
+				if (isset($_FILES) && isset($_FILES['acv_file']) && isset($_FILES['acv_file']['name']) && $_FILES['acv_file']['name']) {
+					$upload_path = config_item('uploads_dir') . '/altruists_apply/'.$mem_id;
+					if (is_dir($upload_path) === false) {
+						mkdir($upload_path, 0707);
+						$file = $upload_path . 'index.php';
+						$f = @fopen($file, 'w');
+						@fwrite($f, '');
+						@fclose($f);
+						@chmod($file, 0644);
+					}
+
+					$uploadconfig = array();
+					$uploadconfig['upload_path'] = $upload_path;
+					$uploadconfig['allowed_types'] = 'jpg|jpeg|png|gif|pdf|hwp';
+					$uploadconfig['max_size'] = '2000';
+					$uploadconfig['max_width'] = '1000';
+					$uploadconfig['max_height'] = '1000';
+					$uploadconfig['encrypt_name'] = true;
+
+					$this->upload->initialize($uploadconfig);
+
+					if ($this->upload->do_upload('acv_file')) {
+						$file = $this->upload->data();
+						$uploadfile = '/altruists_apply/'.$mem_id.$file['file_name'];
+					} else {
+						$file_error = $this->upload->display_errors();
+					}
+				}
+			}
 			if ($this->cbconfig->item('use_member_photo') && $this->cbconfig->item('member_photo_width') > 0 && $this->cbconfig->item('member_photo_height') > 0) {
 				if (isset($_FILES) && isset($_FILES['mem_photo']) && isset($_FILES['mem_photo']['name']) && $_FILES['mem_photo']['name']) {
 					$upload_path = config_item('uploads_dir') . '/member_photo/';
@@ -1608,7 +1638,7 @@ class Altruists extends CB_Controller
 					$acv_insert[$i]['acv_year']    =    $_POST['acv_year'][$i];
 					$acv_insert[$i]['acv_content'] = 	$_POST['acv_content'][$i];
 					$acv_insert[$i]['acv_final']   = 	$_POST['acv_final'][$i];
-					$acv_insert[$i]['acv_file1']   = 	$_POST['acv_file1'][$i];
+					$acv_insert[$i]['acv_file1']   = 	$uploadfile;
 					$acv_insert[$i]['acv_file2']   = 	$_POST['acv_file2'][$i];
 					$acv_insert[$i]['acv_file3']   = 	$_POST['acv_file3'][$i];
 					$acv_insert[$i]['acv_status']  = 	$_POST['acv_status'][$i];
