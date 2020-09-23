@@ -560,12 +560,11 @@ class RegisterScreen extends Component {
               {/* 필수 */}
               <View style={{marginBottom: 10}}>
                 <Input
-                  style={[
-                    styles.inputs,
-                    this.state.mem_username
-                      ? {borderColor: '#FFFFFFF'}
-                      : {borderColor: 'red'},
-                  ]}
+                  style={
+                    this.state.usernameStyle
+                      ? this.state.usernameStyle
+                      : styles.inputs
+                  }
                   placeholder="* 이름"
                   onChangeText={(mem_username) => {
                     this.setState({mem_username: mem_username});
