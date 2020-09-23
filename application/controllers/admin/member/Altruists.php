@@ -24,7 +24,7 @@ class Altruists extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Member_meta', 'Member_group', 'Member_group_member', 'Member_nickname', 'Member_extra_vars', 'Member_userid', 'Social_meta');
+	protected $models = array('Member_meta', 'Member_group', 'Member_group_member', 'Member_nickname', 'Member_extra_vars', 'Member_userid', 'Social_meta','Altruists');
 
 	/**
 	 * 이 컨트롤러의 메인 모델 이름입니다
@@ -225,7 +225,23 @@ class Altruists extends CB_Controller
 		 */
 		$getdata = array();
 		if ($pid) {
-			$getdata = $this->{$this->modelname}->get_one($pid);
+
+			// 이타주의자들 기본 정보 			
+			$where['cb_member.mem_id'] =  $pid;
+			$getdata_alt = $this->{$this->modelname}->get_alt_list('','', $where);
+			$getdata = $getdata_alt['list'][0];
+			$alt_id = 0;
+			$alt_id = $getdata_alt['list'][0]['alt_id']; //이타주의자 프로필 키
+			//이타주의자들 경력 정보
+			$getdata['alt_cv'] = $this->Altruists_model->get_alt_cv($alt_id);
+			
+			//이타주의자들 선택한 전문분야 카테고리
+			$getdata['alt_area'] = $this->Altruists_model->cb_alt_area($alt_id);
+			
+			//이타주의자들 전체 카테고리 
+			$getdata['alt_cat'] = $this->Altruists_model->get_alt_cate();
+
+
 			$getdata['extras'] = $this->Member_extra_vars_model->get_all_meta($pid);
 			$getdata['meta'] = $this->Member_meta_model->get_all_meta($pid);
 			$where = array(
@@ -500,6 +516,7 @@ class Altruists extends CB_Controller
 			$view['view']['message'] = $file_error . $file_error2;
 
 			$view['view']['data'] = $getdata;
+			
 
 			if (empty($pid)) {
 				$view['view']['data']['mem_receive_email'] = 1;

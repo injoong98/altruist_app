@@ -218,8 +218,11 @@ class CB_Model extends CI_Model
 		if ($count_by_where) {
 			$this->db->where($count_by_where);
 		}
+		if(!$forder='9999') {
 
-		$this->db->order_by($findex, $forder);
+			$this->db->order_by($findex, $forder);
+		}
+
 		if ($limit) {
 			$this->db->limit($limit, $offset);
 		}
