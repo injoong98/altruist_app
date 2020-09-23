@@ -9,7 +9,9 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Alert,
-  TouchableHighlight
+  TouchableHighlight,
+  TouchableOpacity,
+  ScrollView
 } from 'react-native';
 import {
   Layout,
@@ -21,13 +23,15 @@ import {
   Radio,
   CheckBox,
   Card,
+  Divider,
   Select,
-  SelectItem
+  SelectItem,
+  RadioGroup,
+  Modal
 } from '@ui-kitten/components';
-import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import {Signing} from '../../Context';
 import axios from 'axios';
-
+import Tag from '../../../components/tag.component'
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
 class AltApplyFormScreen extends React.Component {
@@ -38,8 +42,8 @@ class AltApplyFormScreen extends React.Component {
       alt_aboutme: '',
       alt_content: '',
       alt_answertype: '',
-      alt_status: '',
-      alt_honor: '',
+      alt_status: 'R',
+      alt_honor: '0',
       acv_type: [],
       acv_year: [],
       acv_content: [],
@@ -49,7 +53,11 @@ class AltApplyFormScreen extends React.Component {
       acv_final:[],
       acv_file1:[],
       count:1,
-      arrayForLoop:[]
+      arrayForLoop:[],
+      selectedIndex:'',
+      filterModalVisible:false,
+      actSelected:[],
+      category:[],
     };
   }
   static contextType = Signing;
@@ -69,7 +77,7 @@ class AltApplyFormScreen extends React.Component {
   }
 
   arrayForLoop = () => {
-    const {acv_open,acv_type,acv_year,acv_content,acv_final,acv_file1}=this.state;
+    const {acv_status,acv_open,acv_type,acv_year,acv_content,acv_final,acv_file1}=this.state;
 
     this.setState({count:this.state.count+1});
     acv_open[this.state.count-1]=false;
@@ -78,6 +86,7 @@ class AltApplyFormScreen extends React.Component {
     acv_content[this.state.count-1]='';
     acv_final[this.state.count-1]=false;
     acv_file1[this.state.count-1]=false;
+    acv_status[this.state.count-1]=0;
     var arrayForLoop = []
     for(var i=0 ;i<this.state.count;i++){
       arrayForLoop[i]=''
@@ -147,6 +156,7 @@ class AltApplyFormScreen extends React.Component {
   }
   
   attatchFile= async (i)=>{
+    const {acv_file1} =this.state
     try {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.allFiles],
@@ -163,7 +173,8 @@ class AltApplyFormScreen extends React.Component {
         name:res.name,
         size:res.size
       }
-      this.state.	acv_file1[i]=file
+      this.state.acv_file1[i]=file
+      this.setState({acv_file1})
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         // User cancelled the picker, exit any dialogs or menus and move on
@@ -194,66 +205,54 @@ class AltApplyFormScreen extends React.Component {
   );
 
   setAltruist = async () => {
-    //const {
-    //     mem_id,
-    //     alt_aboutme,
-    //     alt_content,
-    //     alt_answertype,
-    //     alt_status,
-    //     alt_honor,
-    //     acv_type,
-    //     acv_year,
-    //     acv_content,
-    //     acv_status,
-    //     acv_open,
-    //     act_id,
-    // } = this.state;
+    const {
+        mem_id,
+        alt_aboutme,
+        alt_content,
+        alt_answertype,
+        acv_type,
+        acv_year,
+        acv_content,
+        acv_status,
+        acv_open,
+        acv_file1,
+        acv_final,
+        actSelected,
+        count
+    } = this.state;
 
     let formdata = new FormData();
-    // formdata.append("mem_id", mem_id);
-    // formdata.append("alt_aboutme", alt_aboutme);
-    // formdata.append("alt_content", alt_content);
-    // formdata.append("alt_answertype", alt_answertype);
-    // formdata.append("alt_status", 'R');
-    // formdata.append("alt_honor", alt_honor);
-    // // formdata.append("acv_type[]", 'J');
-    // formdata.append("acv_type[]", acv_type);
-    // // formdata.append("acv_year[]", '2021');
-    // formdata.append("acv_year[]", acv_year);
-    // // formdata.append("acv_content[]", '2021초보주부론 편찬의원회');
-    // formdata.append("acv_content[]", acv_content);
-    // // formdata.append("acv_status[]", '0');
-    // formdata.append("acv_status[]", acv_status);
-    // // formdata.append("acv_open[]", '1');
-    // formdata.append("acv_open[]", acv_open);
-    // // formdata.append("act_id[]", '1');
-    // formdata.append("act_id[]", act_id);
+    formdata.append("mem_id", mem_id);
+    formdata.append("alt_aboutme", alt_aboutme);
+    formdata.append("alt_content", alt_content);
+    formdata.append("alt_answertype", alt_answertype);
+    formdata.append("alt_status", 'R');
+    formdata.append("alt_honor", 0);
 
-    // formdata.append("mem_id", "106");
-    // formdata.append("alt_aboutme",'언택트 주부 9단');
-    // formdata.append("alt_content", '안녕하세요 적당히 바람이 시원해 언택트 주부 9단이 왔어요 ');
-    // formdata.append("alt_answertype", '2');
-    // formdata.append("alt_status", 'R');
-    // formdata.append("alt_honor", '0');
-    // formdata.append("acv_type[]", 'J');
-    // formdata.append("acv_type[]", 'J');
-    // formdata.append("acv_year[]", '2021');
-    // formdata.append("acv_year[]", '2022');
-    // formdata.append("acv_content[]", '2021초보주부론 편찬의원회');
-    // formdata.append("acv_content[]", '2020초보주부론 편찬의원회');
-    // formdata.append("acv_status[]", '0');
-    // formdata.append("acv_status[]", '0');
-    // formdata.append("acv_open[]", '1');
-    // formdata.append("acv_open[]", '1');
-    // formdata.append("act_id[]", '1');
-    // formdata.append("act_id[]", '1');
+    for(var i=0;i<count-1;i++){
+      formdata.append("acv_type[]", acv_type[i]);
+      formdata.append("acv_year[]", acv_year[i]);
+      formdata.append("acv_content[]", acv_content[i]);
+      formdata.append("acv_status[]", acv_status[i]);
+      formdata.append("acv_open[]", acv_open[i]);
+      formdata.append("acv_final[]", acv_final[i]);
+    }
+    actSelected.map((item,index)=>{
+      console.log(item,index)
+      formdata.append("act_id[]", actSelected[index].act_id);
 
+    })
+    acv_file1.map((item) => {
+      formdata.append('acv_file1[]', {
+        uri: item.uri,
+        type: item.type,
+        name: item.name,
+      });
+    });
     console.log(formdata);
 
     await axios
-      .post('http://dev.unyict.org/api/altruists/apply', formdata, {
-        'Content-Type': 'application/form-data',
-      })
+      .post('http://dev.unyict.org/api/altruists/apply', formdata)
       .then((response) => {
         console.log(response);
         console.log(response.data.status);
@@ -276,7 +275,7 @@ class AltApplyFormScreen extends React.Component {
       })
 
       .catch((error) => {
-        console.log(error);
+        console.log(JSON.stringify(error));
         alert(error);
       });
   };
@@ -287,7 +286,7 @@ class AltApplyFormScreen extends React.Component {
       .then((res) => {
         //console.log(res)
         this.setState({category: res.data.data});
-        // console.log(this.state.category);
+        console.log(this.state.category);
       })
       .catch((err) => {
         alert(err);
@@ -302,7 +301,7 @@ class AltApplyFormScreen extends React.Component {
   }
 
   render() {
-    const {arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final} = this.state;
+    const {filterModalVisible,alt_content,alt_aboutme,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <TopNavigation title="이타주의자" accessoryLeft={this.BackAction} />
@@ -314,41 +313,45 @@ class AltApplyFormScreen extends React.Component {
             <Text>자기PR</Text>
             <TextInput
               style={styles.contentInput}
-              value={this.state.alt_aboutme}
-              onChangeText={(text) => this.setState({alt_aboutme: alt_aboutme})}
+              value={alt_aboutme}
+              onChangeText={(text) => this.setState({alt_aboutme:text})}
             />
           </View>
           <View style={{flexDirection: 'row'}}>
             <Text>자기소개</Text>
             <TextInput
               style={styles.contentInput}
-              value={this.state.alt_content}
-              onChangeText={(text) => this.setState({alt_content: alt_content})}
+              value={alt_content}
+              onChangeText={(text) => this.setState({alt_content: text})}
             />
           </View>
           <View style={{flexDirection: 'row'}}>
             <Text>답변대기</Text>
-            <TextInput
-              style={styles.contentInput}
-              value={this.state.alt_answertype}
-              onChangeText={(text) =>
-                this.setState({alt_answertype: alt_answertype})
-              }
-            />
+            
+            <RadioGroup
+            style={{flexDirection:'row'}}
+              selectedIndex={selectedIndex}
+              onChange={(index) => {
+                console.log(index)
+                this.setState({selectedIndex:index,alt_answertype:index});
+              }}>
+              <Radio>
+                <Text style={{color: '#63579D'}} category="p1">
+                  답변 x
+                </Text>
+              </Radio>
+              <Radio>
+                <Text style={{color: '#63579D'}} category="p1">
+                  1대1 질문만
+                </Text>
+              </Radio>
+              <Radio>
+                <Text style={{color: '#63579D'}} category="p1">
+                  1대다,1대1둘다
+                </Text>
+              </Radio>
+            </RadioGroup>
           </View>
-          {/* <View style={{flexDirection:'row'}}>
-                            <Text>상태</Text>
-                            <TextInput style={styles.contentInput} value={this.state.alt_status} onChangeText={text =>this.setState({alt_status:alt_status})}/>
-                        </View> */}
-          <View style={{flexDirection: 'row'}}>
-            <Text>명예여부</Text>
-            <TextInput
-              style={styles.contentInput}
-              value={this.state.alt_honor}
-              onChangeText={(text) => this.setState({alt_honor: alt_honor})}
-            />
-          </View>
-
           {/* 경력구분 */}
           <Text>경력 사항</Text>
           <View>
@@ -392,20 +395,43 @@ class AltApplyFormScreen extends React.Component {
           <View>
           {
             arrayForLoop.map((item,index)=>(
-             <TouchableHighlight onPress={()=>this.attatchFile(index)} style={{flexDirection:'row'}}>
-               <Text>첨부파일 {index+1} 추가</Text>
+             <TouchableHighlight onPress={()=>this.attatchFile(index)} >
+              <View style={{flexDirection:'row'}} >
+                <Text>첨부파일 {index+1} 추가</Text>
+                <Text>{!acv_file1[index]? null:acv_file1[index].name}</Text>
+                <TouchableHighlight onPress={()=>{acv_file1.splice(index,1);this.setState({acv_file1})}}><Text>x</Text></TouchableHighlight>
+              </View>
              </TouchableHighlight>
             ))
           }
           </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text>경력 카테고리코드 </Text>
-            <TextInput
-              style={styles.contentInput}
-              value={this.state.act_id}
-              onChangeText={(text) => this.setState({categoryid: text})}
-            />
-          </View>
+          <View style={{display:'flex',flexDirection:'row'}}>
+                    {
+                        <TouchableOpacity 
+                            style = {{height:35,width:35,backgroundColor:'#B09BDE',borderRadius:10,justifyContent:'center'}} 
+                            onPress={()=>this.setState({filterModalVisible:true})}
+                        >
+                            <Text category='h2' style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
+                        </TouchableOpacity>
+                    }
+                    {
+                        this.state.actSelected.length >0 ?
+                        <ScrollView horizontal={true} style={{}} >
+                                {this.state.actSelected.map((act,index) => (
+                                    <Tag style={{marginVertical : 5}}
+                                        key = {act.act_content}
+                                        onPress ={()=>{this.state.actSelected.splice(index,1);this.setState({actSelected:this.state.actSelected})}}>
+                                        {act.act_content}
+                                    </Tag>
+                                ))}
+                        </ScrollView >
+                        :
+                        <View>
+                            <Text style={{marginVertical:9,fontSize:15}} category = 'c2'>전문 분야를 선택하세요</Text>
+                        </View>
+
+                    }
+                    </View>
           <View>
             <Button onPress={()=>console.log(
               '\nacv_file1 : '+JSON.stringify(acv_file1),'\nacv_open : '+JSON.stringify(acv_open),'\nacv_type : '+JSON.stringify(acv_type),'\nacv_year : '+JSON.stringify(acv_year),'\nacv_content : '+JSON.stringify(acv_content),'\nacv_final : '+JSON.stringify( acv_final)
@@ -419,6 +445,45 @@ class AltApplyFormScreen extends React.Component {
             </Button>
           </View>
         </ScrollView>
+        <Modal
+                visible={filterModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({filterModalVisible:false,cmt_id:''})}
+            >
+                <View style = {{flex:1,justifyContent:'space-evenly',backgroundColor:'#ffffff'}}>
+                    <View style = {{flexDirection : 'row', flexWrap: 'wrap',}}>
+                        {this.state.actSelected.map((act,index) => (
+                            <Tag style={{marginVertical : 5}}
+                                key = {act.act_content}
+                                onPress ={()=>{this.state.actSelected.splice(index,1);this.setState({actSelected:this.state.actSelected})}}>
+                                {act.act_content}
+                            </Tag>
+                        ))}
+                    </View>
+                    <Divider />
+                    <View style = {{flexDirection : 'row', flexWrap: 'wrap',}}>
+                        {category.map(act => (
+                            <Tag 
+                                key = {act.act_content}
+                                onPress ={()=>{this.setState({actSelected:this.state.actSelected.concat(act)});console.log(this.state.actSelected)}}
+                                disabled ={this.state.actSelected.includes(act) ? true: false}
+                                style={this.state.actSelected.includes(act) ? styles.tagDisabled:{marginVertical : 2}}
+                            >
+                                {act.act_content}
+                                
+                            </Tag>
+                        ))}
+                    </View>
+                    <View style={{padding:10,}}>
+                        <Text category='h2' style={{fontSize:18}}>
+                            !!1대다 질문은 모든 이타주의자들이 조회하고 답변할 수 있습니다.
+                        </Text>
+                        <Text category='h2' style={{fontSize:18}}>
+                            !!분야를 선택하면 해당 이타주의자들에게 질문 등록에 대한 알림이 갑니다.
+                        </Text>
+                    </View>
+                </View>
+            </Modal>
       </SafeAreaView>
     );
   }
@@ -458,6 +523,11 @@ const styles = StyleSheet.create({
     // 휴대폰 width - titleInput
     width: 350,
   },
+  tagDisabled:{
+    backgroundColor:'#8D8D8D',
+    marginVertical : 2,
+    borderRadius:20
+},
 });
 
 export default AltApplyFormScreen;
