@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  View,
-  Image,
-  ScrollView,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
+import { StyleSheet, SafeAreaView, View, Image, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView,
   VirtualizedList,
   Alert,
   useState,
@@ -35,6 +28,7 @@ import {
   Card,
   Modal,
   Spinner,
+  Popover,
 } from '@ui-kitten/components';
 import HTML from 'react-native-render-html';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -1360,6 +1354,8 @@ class IlbanWrite extends React.Component {
   //     }
   // }
 
+category = ['전체', '아무말있어요', '게임', '지구별소식', '자료실'];
+
   getCategory = async () => {
     await axios
       .get('http://dev.unyict.org/api/board_post/lists/ilban')
@@ -1533,74 +1529,97 @@ class IlbanWrite extends React.Component {
   }
 
   //end: header
-  render() {
-    const {post_category} = this.state;
-    console.log(`ㅇ라ㅣㅁㄴㅇㄹ` + this.state.post_category);
-    return (
-      <Root>
-        <SafeAreaView style={{flex: 4}}>
-          <TopNavigation
-            title="이타게시판"
-            alignment="center"
-            accessoryLeft={this.BackAction}
-            accessoryRight={this.SubmitButtom}
-          />
-          <Divider />
-          <View style={{flex: 4}}>
-            <View style={{flexDirection: 'row'}}>
-              {/* 카테고리 */}
-              {/* <this.SelectItems /> */}
-              {/* <Select>
-                            <SelectItem><Text>HIcd</Text></SelectItem>
-                            <SelectItem><Text>HI</Text></SelectItem>
-                        </Select> */}
-              {/* 제목 */}
+	render() {
+		const {navigation} = this.props;
+		const {post_title, post_content, post_category} = this.state;
+		return (
+			<SafeAreaView style={{flex: 1}}>
+			{/* // <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}> */}
+				<TopBarTune
+				text="이타게시판"
+				func={() => {
+					this.submitPost();
+				}}
+				right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+				gbckfunc={() => {
+					navigation.goBack();
+				}}
+				gbckuse={true}
+				/>
+			{/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
+			<TextInput
+				style={{
+					backgroundColor: '#ffffff',
+					borderRadius: 8.5,
+					marginTop: 18,
+					marginHorizontal: 12,
+					marginBottom: 14,
+					fontSize: 18,
+				}}
+				placeholder="제목"
+				onChangeText={(nextValue) => this.setState({post_title: nextValue})}
+				placeholderTextColor="#A897C2"
+				value={post_title}
+			/>
+			<TextInput
+				value={post_content}
+				style={{
+					height: '80%',
+					maxHeight: '50%',
+					backgroundColor: '#ffffff',
+					borderRadius: 8.5,
+					marginHorizontal: 12,
+					marginBottom: 14,
+					fontSize: 18,
+				}}
+				placeholder="내용"
+				onChangeText={(nextValue) => this.setState({post_content: nextValue})}
+				multiline={true}
+				textAlignVertical="top"
+				textStyle={{minHeight: 100}}
+				placeholderTextColor="#A897C2"
+			/>
 
-              <Input
-                style={{flex: 1, width: 90}}
-                placeholder="제목"
-                onChangeText={(post_title) =>
-                  this.setState({post_title: post_title})
-                }
-              />
-            </View>
-            <View style={{flex: 2}}>
-              {/* 본문 */}
-              <Input
-                style={{padding: 0}}
-                multiline={true}
-                textStyle={{minHeight: 350}}
-                placeholder="본문"
-                onChangeText={(post_content) =>
-                  this.setState({post_content: post_content})
-                }
-              />
-            </View>
-            <Divider />
-            {/* <View style={{flex:1, justifyContent: "center"}}> */}
-            {/* 사진 */}
-            <Layout>
-              <Text>사진</Text>
-              <ScrollView horizontal={true} style={styles.input}>
-                <TouchableOpacity
-                  style={{width: 100, height: 100}}
-                  onPress={() => this.onClickAddImage()}>
-                  <Image
-                    source={{
-                      uri:
-                        'http://dev.unyict.org/react_native/AltruistApp/assets/images/noimage_120x90.gif',
-                    }}
-                    style={{width: 100, height: 100}}
-                  />
-                </TouchableOpacity>
-                {this.state.images
-                  ? this.state.images.map((item) => this.renderAsset(item))
-                  : null}
-              </ScrollView>
-            </Layout>
-          </View>
-        </SafeAreaView>
-      </Root>
+        {/* <Modal
+          visible={modalVisible}
+          backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+          onBackdropPress={() => this.setState({modalVisible: false})}>
+          <Confirm
+            confirmText={
+              this.props.route.params.mode == 'edit'
+                ? '게시글을 수정하시겠습니까?'
+                : '게시글을 작성하시겠습니까?'
+            }
+            frstText="예"
+            OnFrstPress={() => {
+              this.setState({modalVisible: false, spinnerModalVisible: true});
+              this.submitPost();
+            }}
+            scndText="아니오"
+            OnScndPress={() => this.setState({modalVisible: false})}
+          />
+        </Modal>
+        <Modal
+          visible={resultVisible}
+          backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+          onBackdropPress={() => this.setState({resultVisible: false})}>
+          <Confirm
+            type="result"
+            confirmText={this.state.resultText}
+            frstText="닫기"
+            OnFrstPress={() => {
+              this.setState({resultVisible: false});
+              this.gobackfunc();
+            }}
+          />
+        </Modal> */}
+        {/* <Modal
+          visible={spinnerModalVisible}
+          backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
+          <Spinner size="giant" />
+        </Modal> */}
+        {/* </KeyboardAvoidingView> */}
+      </SafeAreaView>
     );
   }
 }

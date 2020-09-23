@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
-import {StyleSheet,  View,  Image,  TouchableOpacity,  SafeAreaView, ScrollView} from 'react-native';
-import { Button, Card,  List,  Text,  Icon,  StyleService,  Spinner,  Divider,} from '@ui-kitten/components';
+import {StyleSheet,  View,  Image,  TouchableOpacity,  ActivityIndicator, SafeAreaView, ScrollView} from 'react-native';
+import { Button, List,  Text,  Icon, Spinner,  } from '@ui-kitten/components';
 import {PlusIcon} from '../../../assets/icons/icons';
 import {getPostList} from './extra/getPost';
 import axios from 'axios';
@@ -18,59 +18,81 @@ import Writesvg from '../../../assets/icons/write.svg';
 import Sharesvg from '../../../assets/icons/share.svg';
 
 class JauScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      	isLoading: true,
-      	lists: [],
-      	refreshing:false,
-      	current_page:1,
-      	post_content: '',
-      	image_url: '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
-      	current_category:0,
-      	post_category: '',
-		no_post: false,
-    };
-  }
+	constructor(props) {
+		super(props);
+		this.state = {
+			isLoading: true,
+			lists: [],
+			refreshing:false,
+			current_page:1,
+			isListLoading : false,
+			isNoMoreData : false,
+			current_category:0,
+			total_rows:0,
+		};
+	}
 
-  ignoredTags = [...IGNORED_TAGS, 'img'];
+	ignoredTags = [...IGNORED_TAGS, 'img'];
 
-  category = ['전체', '아무말있어요', '게임', '지구별소식', '자료실'];
+	category = ['전체', '아무말있어요', '게임', '지구별소식', '자료실'];
 
-  getPostList = async () => {
-	await axios.get( `http://dev.unyict.org/api/board_post/lists/ilban?category_id=${this.category[0]}`)
-		.then((response) => {
-			this.setState({ lists: response.data.view.list.data.list, isLoading: false });
-		})
-		.catch((error) => {
-			alert(error);
-		});
-  };
+	getPostList = async () => {
+		const{current_category, current_page} = this.state;
+		await axios.get( `http://dev.unyict.org/api/board_post/lists/ilban?category_id=${current_category}?page=${current_page}`)
+			.then((response) => {
+				if(response.data.view.list.data.list.length > 0){
+					this.setState({
+						lists:this.state.lists.concat(response.data.view.list.data.list),
+						isLoading:false,
+						isListLoading:false,
+					})
+				}
+				else{
+					console.log('no page data');
+					this.setState({isListLoading:false, isNoMoreData : true});
+				}
+			})
+			.catch((error) => {
+				alert(error);
+			});
+	};
 
-  getCategory = async () => {
-    await axios
-      .get(`http://dev.unyict.org/api/board_post/lists/ilban`)
-      .then((res) => {
-        // console.log(res)
-        this.setState({
-          categorys: res.data.view.list.board.category[0],
-          isLoading: false,
-        });
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  };
+	getPostFirst = async() => {
+		await axios.get(`http://dev.unyict.org/api/board_post/lists/ilban?category_id=${this.state.current_category}`)
+			.then((response)=>{
+				this.setState({
+				lists:response.data.view.list.data.list,
+				isLoading:false,
+				isListLoading:false,
+				refreshing:false,
+				total_rows:response.data.view.list.data.total_rows,
+				})
+			})
+			.catch((error)=>{
+				alert('error'+error);
+			})
+	}
 
-  //LIFECYCLE
-  componentDidMount() {
-    this.getPostList();
-    // this.getCategory();
-  }
+	//LIFECYCLE
+	componentDidMount() {
+		this.getPostFirst();
+	}
 
-  componentDidUpdate() {}
+	onRefresh= () =>{
+		this.setState({current_page:1, isNoMoreData : false, refreshing:true}, this.getPostFirst);
+    }
 
-  renderItem = ({item, index}) => {
+	load_more_data = () => {
+		if(this.state.total_rows < 10){
+			this.setState({isNoMoreData:true});
+		}
+       	else if(!this.state.isNoMoreData){
+			this.setState({ current_page : this.state.current_page + 1, isListLoading : true}, this.getPostList,
+				console.log(this.state.current_page))
+        }
+    }
+
+  	renderItem = ({item, index}) => {
 		const regex = /(<([^>]+)>)|&nbsp;/gi;
 		const post_remove_tags = item.post_content.replace(regex, '');
 		return (
@@ -117,7 +139,17 @@ class JauScreen extends React.Component {
 			</View>
 		</TouchableOpacity>
 		);
-  };
+	};
+
+	renderFooter=()=>{
+        return(
+          this.state.isListLoading ?
+          <View style = {styles.loader}>
+            <ActivityIndicator size='large'/>
+          </View>:null
+        )
+    }
+
 
 	render() {
 		const {current_category} = this.state
@@ -133,8 +165,9 @@ class JauScreen extends React.Component {
 				<ScrollView horizontal={true} style={{flex:1, marginHorizontal : 20, marginVertical: 4,backgroundColor:'#B09BDE', borderRadius:10}}>
 					{this.category.map((str,index) => (
 					<TouchableOpacity 
+						key={index}
 						style={{alignItems:'center', justifyContent:'center', marginHorizontal:5}}
-						onPress={()=>this.setState({current_category:index})}>
+						onPress={async()=>{this.setState({current_category:index, current_page:1},this.getPostFirst)}}>
 						<Text category='h3' key={index} style={{color:(current_category==index?'white':'black')}}> {'#'+str} </Text>
 					</TouchableOpacity>))}
 				</ScrollView>
@@ -144,8 +177,11 @@ class JauScreen extends React.Component {
 						data={this.state.lists}
 						contentContainerStyle={styles.contentContainer}
 						renderItem={this.renderItem}
-						refreshing={this.state.isLoading}
-						onRefresh={this.getPostList}/>
+						refreshing={this.state.refreshing}
+						onRefresh={this.onRefresh}
+						onEndReached={this.load_more_data}
+                		onEndReachedThreshold = {0.1}
+						ListFooterComponent={this.renderFooter}/>
 				</View>
 				<TouchableOpacity
 						style={{position: 'absolute', right: 20, bottom: 14}}

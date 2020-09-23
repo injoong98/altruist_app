@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Altruists class
@@ -18,8 +18,8 @@ class Altruists extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Altruists','Member_nickname', 'Member_meta', 'Member_auth_email', 'Member_userid','Member_group_member','Member_group','Social_meta','Member_extra_vars');
-	
+	protected $models = array('Altruists', 'Member_nickname', 'Member_meta', 'Member_auth_email', 'Member_userid', 'Member_group_member', 'Member_group', 'Social_meta', 'Member_extra_vars');
+
 	protected $modelname = 'Member_model';
 	/**
 	 * 헬퍼를 로딩합니다
@@ -33,9 +33,9 @@ class Altruists extends CB_Controller
 		/**
 		 * 라이브러리를 로딩합니다
 		 */
-		$this->load->library(array('pagination','querystring', 'form_validation', 'email', 'notelib', 'point'));
+		$this->load->library(array('pagination', 'querystring', 'form_validation', 'email', 'notelib', 'point'));
 
-		if ( ! function_exists('password_hash')) {
+		if (!function_exists('password_hash')) {
 			$this->load->helper('password');
 		}
 	}
@@ -56,8 +56,10 @@ class Altruists extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before'] = Events::trigger('before', $eventname);
 
-		if ($this->member->is_member()
-			&& ! ($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))) {
+		if (
+			$this->member->is_member()
+			&& !($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))
+		) {
 			redirect();
 		}
 
@@ -163,7 +165,6 @@ class Altruists extends CB_Controller
 			$this->data = $view;
 			$this->layout = element('layout_skin_file', element('layout', $view));
 			$this->view = element('view_skin_file', element('layout', $view));
-
 		} else {
 			/**
 			 * 유효성 검사를 통과한 경우입니다.
@@ -188,7 +189,7 @@ class Altruists extends CB_Controller
 		$eventname = 'event_Altruists_form';
 		$this->load->event($eventname);
 
-		if ($this->member->is_member() && ! ($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))) {
+		if ($this->member->is_member() && !($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))) {
 			redirect();
 		}
 
@@ -258,9 +259,11 @@ class Altruists extends CB_Controller
 		);
 
 		$password_description = '비밀번호는 ' . $password_length . '자리 이상이어야 ';
-		if ($this->cbconfig->item('password_uppercase_length')
-			OR $this->cbconfig->item('password_numbers_length')
-			OR $this->cbconfig->item('password_specialchars_length')) {
+		if (
+			$this->cbconfig->item('password_uppercase_length')
+			or $this->cbconfig->item('password_numbers_length')
+			or $this->cbconfig->item('password_specialchars_length')
+		) {
 
 			$password_description .= '하며 ';
 			if ($this->cbconfig->item('password_uppercase_length')) {
@@ -382,7 +385,7 @@ class Altruists extends CB_Controller
 			'rules' => 'trim|alphanumunder|min_length[3]|max_length[20]|callback__mem_recommend_check',
 		);
 
-		if ($this->member->is_admin() === false && ! $this->session->userdata('registeragree')) {
+		if ($this->member->is_admin() === false && !$this->session->userdata('registeragree')) {
 			$this->session->set_flashdata(
 				'message',
 				'회원가입약관동의와 개인정보취급방침동의후 회원가입이 가능합니다'
@@ -396,7 +399,7 @@ class Altruists extends CB_Controller
 		$config = array();
 		if ($form && is_array($form)) {
 			foreach ($form as $key => $value) {
-				if ( ! element('use', $value)) {
+				if (!element('use', $value)) {
 					continue;
 				}
 				if (element('func', $value) === 'basic') {
@@ -513,7 +516,6 @@ class Altruists extends CB_Controller
 						$updatephoto = cdate('Y') . '/' . cdate('m') . '/' . $img['file_name'];
 					} else {
 						$file_error = $this->upload->display_errors();
-
 					}
 				}
 			}
@@ -572,7 +574,7 @@ class Altruists extends CB_Controller
 		 * 유효성 검사를 하지 않는 경우, 또는 유효성 검사에 실패한 경우입니다.
 		 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
 		 */
-		if ($form_validation === false OR $file_error !== '' OR $file_error2 !== '') {
+		if ($form_validation === false or $file_error !== '' or $file_error2 !== '') {
 
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formrunfalse'] = Events::trigger('formrunfalse', $eventname);
@@ -582,7 +584,7 @@ class Altruists extends CB_Controller
 			$k = 0;
 			if ($form && is_array($form)) {
 				foreach ($form as $key => $value) {
-					if ( ! element('use', $value)) {
+					if (!element('use', $value)) {
 						continue;
 					}
 
@@ -593,11 +595,13 @@ class Altruists extends CB_Controller
 					$html_content[$k]['input'] = '';
 
 					//field_type : text, url, email, phone, textarea, radio, select, checkbox, date
-					if (element('field_type', $value) === 'text'
-						OR element('field_type', $value) === 'url'
-						OR element('field_type', $value) === 'email'
-						OR element('field_type', $value) === 'phone'
-						OR element('field_type', $value) === 'date') {
+					if (
+						element('field_type', $value) === 'text'
+						or element('field_type', $value) === 'url'
+						or element('field_type', $value) === 'email'
+						or element('field_type', $value) === 'phone'
+						or element('field_type', $value) === 'date'
+					) {
 						if (element('field_type', $value) === 'date') {
 							$html_content[$k]['input'] .= '<input type="text" id="' . element('field_name', $value) . '" name="' . element('field_name', $value) . '" class="form-control input datepicker" value="' . set_value(element('field_name', $value)) . '" readonly="readonly" ' . $required . ' />';
 						} elseif (element('field_type', $value) === 'phone') {
@@ -617,7 +621,7 @@ class Altruists extends CB_Controller
 						} else {
 							$options = explode("\n", element('options', $value));
 						}
-						$i =1;
+						$i = 1;
 						if ($options) {
 							foreach ($options as $okey => $oval) {
 								$radiovalue = (element('field_name', $value) === 'mem_sex') ? $okey : $oval;
@@ -629,7 +633,7 @@ class Altruists extends CB_Controller
 					} elseif (element('field_type', $value) === 'checkbox') {
 						$html_content[$k]['input'] .= '<div class="checkbox">';
 						$options = explode("\n", element('options', $value));
-						$i =1;
+						$i = 1;
 						if ($options) {
 							foreach ($options as $okey => $oval) {
 								$html_content[$k]['input'] .= '<label for="' . element('field_name', $value) . '_' . $i . '"><input type="checkbox" name="' . element('field_name', $value) . '[]" id="' . element('field_name', $value) . '_' . $i . '" value="' . $oval . '" ' . set_checkbox(element('field_name', $value), $oval) . ' /> ' . $oval . ' </label> ';
@@ -735,7 +739,6 @@ class Altruists extends CB_Controller
 			$this->data = $view;
 			$this->layout = element('layout_skin_file', element('layout', $view));
 			$this->view = element('view_skin_file', element('layout', $view));
-
 		} else {
 
 			/**
@@ -800,7 +803,7 @@ class Altruists extends CB_Controller
 			} else {
 				$insertdata['mem_email_cert'] = 1;
 				$metadata['meta_email_cert_datetime'] = cdate('Y-m-d H:i:s');
-			 }
+			}
 
 			if ($updatephoto) {
 				$insertdata['mem_photo'] = $updatephoto;
@@ -830,7 +833,7 @@ class Altruists extends CB_Controller
 			if ($form && is_array($form)) {
 				$this->load->model('Member_extra_vars_model');
 				foreach ($form as $key => $value) {
-					if ( ! element('use', $value)) {
+					if (!element('use', $value)) {
 						continue;
 					}
 					if (element('func', $value) === 'basic') {
@@ -924,9 +927,10 @@ class Altruists extends CB_Controller
 				$this->input->ip_address(),
 			);
 
-			if ( ! $this->cbconfig->item('use_register_email_auth')) {
+			if (!$this->cbconfig->item('use_register_email_auth')) {
 				if (($this->cbconfig->item('send_email_register_user') && $this->input->post('mem_receive_email'))
-					OR $this->cbconfig->item('send_email_register_alluser')) {
+					or $this->cbconfig->item('send_email_register_alluser')
+				) {
 					$title = str_replace(
 						$searchconfig,
 						$replaceconfig,
@@ -1000,9 +1004,11 @@ class Altruists extends CB_Controller
 			$smssendlistuser = array();
 
 			$superadminlist = '';
-			if ($this->cbconfig->item('send_email_register_admin')
-				OR $this->cbconfig->item('send_note_register_admin')
-				OR $this->cbconfig->item('send_sms_register_admin')) {
+			if (
+				$this->cbconfig->item('send_email_register_admin')
+				or $this->cbconfig->item('send_note_register_admin')
+				or $this->cbconfig->item('send_sms_register_admin')
+			) {
 				$mselect = 'mem_id, mem_email, mem_nickname, mem_phone';
 				$superadminlist = $this->Member_model->get_superadmin_list($mselect);
 			}
@@ -1026,7 +1032,8 @@ class Altruists extends CB_Controller
 				}
 			}
 			if (($this->cbconfig->item('send_sms_register_user') && $this->input->post('mem_receive_sms'))
-				OR $this->cbconfig->item('send_sms_register_alluser')) {
+				or $this->cbconfig->item('send_sms_register_alluser')
+			) {
 				if ($this->input->post('mem_phone')) {
 					$smssendlistuser['mem_id'] = $mem_id;
 					$smssendlistuser['mem_nickname'] = $this->input->post('mem_nickname');
@@ -1182,7 +1189,7 @@ class Altruists extends CB_Controller
 				$this->input->post('mem_nickname')
 			);
 
-			if ( ! $this->cbconfig->item('use_register_email_auth')) {
+			if (!$this->cbconfig->item('use_register_email_auth')) {
 				$this->session->set_userdata(
 					'mem_id',
 					$mem_id
@@ -1193,9 +1200,9 @@ class Altruists extends CB_Controller
 		}
 	}
 
-/**
- * 이타주의자들 전문영역 카테고리 가져오기
- */
+	/**
+	 * 이타주의자들 전문영역 카테고리 가져오기
+	 */
 	public function area_category()
 	{
 		// 이벤트 라이브러리를 로딩합니다
@@ -1203,17 +1210,16 @@ class Altruists extends CB_Controller
 		$view = array();
 		$result = array();
 
-	//	$alt_id = $this->Altruists_model->insert($insertdata);
-		
+		//	$alt_id = $this->Altruists_model->insert($insertdata);
+
 		$result = $this->Altruists_model->get_alt_cate();
 		$view['count'] = count($result);
-		$view['data'] =$result;
+		$view['data'] = $result;
 		if ($view['count'] > 0) {
-			response_result($view,'success','OK');
-		}else {
-			response_result($view,'Err','자료가 없습니다.');
+			response_result($view, 'success', 'OK');
+		} else {
+			response_result($view, 'Err', '자료가 없습니다.');
 		}
-
 	}
 	/**
 	 *  이타주의자 프로필 목록입니다.
@@ -1226,31 +1232,28 @@ class Altruists extends CB_Controller
 		$where_alt['alt_status'] = 'Y';
 
 		// 이타주의자들 프로필에 등록이 된 인원
-		
+
 		$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
 		if ($alt_profile) {
 			foreach ($alt_profile['list'] as $key_alt => $val_alt) {
-				$result['list'][$key_alt]['alt_profile'] =$val_alt ;
+				$result['list'][$key_alt]['alt_profile'] = $val_alt;
 				//멤버 기본 정보
 				$result_member = $this->{$this->modelname}->get_by_memid(element('mem_id', $val_alt));
-				$result['list'][$key_alt]['mem_basic_info'] =$result_member ;
-			
+				$result['list'][$key_alt]['mem_basic_info'] = $result_member;
+
 				//전문영역 가져오기
 				$alt_area = $this->Altruists_model->cb_alt_area(element('alt_id', $val_alt));
-				$result['list'][$key_alt]['alt_area'] =$alt_area ;
+				$result['list'][$key_alt]['alt_area'] = $alt_area;
 				//경력내역 가져오기
 				$get_alt_cv = $this->Altruists_model->get_alt_cv(element('alt_id', $val_alt));
-				$result['list'][$key_alt]['get_alt_cv'] =$get_alt_cv ;
-				
+				$result['list'][$key_alt]['get_alt_cv'] = $get_alt_cv;
 			}
 		}
 
 		$view['view']['data'] = $result;
-		
+
 		//json api output
 		response_result($view);
-
-		
 	}
 	/**
 	 *  이타주의자 프로필 목록입니다.
@@ -1260,10 +1263,10 @@ class Altruists extends CB_Controller
 
 		$view = array();
 		$result = array();
-		
+
 		$alt_id = $this->input->post('alt_id');
-		if (empty($alt_id) OR $alt_id < 1) {
-			response_result($view,'Err','alt_id값이 누락 되었습니다.');
+		if (empty($alt_id) or $alt_id < 1) {
+			response_result($view, 'Err', 'alt_id값이 누락 되었습니다.');
 		}
 		$where_alt['alt_status'] = 'Y';
 		$where_alt['alt_id'] = $alt_id;
@@ -1271,25 +1274,22 @@ class Altruists extends CB_Controller
 		$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
 		if ($alt_profile) {
 			foreach ($alt_profile['list'] as $key_alt => $val_alt) {
-				$result['list'][$key_alt]['alt_profile'] =$val_alt ;
+				$result['list'][$key_alt]['alt_profile'] = $val_alt;
 				//멤버 기본 정보
 				$result_member = $this->{$this->modelname}->get_by_memid(element('mem_id', $val_alt));
-				$result['list'][$key_alt]['mem_basic_info'] =$result_member ;
+				$result['list'][$key_alt]['mem_basic_info'] = $result_member;
 				//전문영역 가져오기
 				$alt_area = $this->Altruists_model->cb_alt_area(element('alt_id', $val_alt));
-				$result['list'][$key_alt]['alt_area'] =$alt_area ;
+				$result['list'][$key_alt]['alt_area'] = $alt_area;
 				//경력내역 가져오기
 				$get_alt_cv = $this->Altruists_model->get_alt_cv(element('alt_id', $val_alt));
-				$result['list'][$key_alt]['get_alt_cv'] =$get_alt_cv ;
-				
+				$result['list'][$key_alt]['get_alt_cv'] = $get_alt_cv;
 			}
 		}
 		$view['view']['data'] = $result;
-		
+
 		//json api output
 		response_result($view);
-
-		
 	}
 	/**
 	 *  이타주의자 신청에 대한 승인
@@ -1299,20 +1299,20 @@ class Altruists extends CB_Controller
 
 		$view = array();
 		$result = array();
-		
+
 		$alt_id = $this->input->post('alt_id');
 		$alt_status = $this->input->post('alt_status');
-		if (empty($alt_id) OR $alt_id < 1) {
-			response_result($view,'Err','alt_id 값이 누락 되었습니다.');
+		if (empty($alt_id) or $alt_id < 1) {
+			response_result($view, 'Err', 'alt_id 값이 누락 되었습니다.');
 		}
 		if (empty($alt_status)) {
-			response_result($view,'Err','alt_status 값이 누락 되었습니다.');
+			response_result($view, 'Err', 'alt_status 값이 누락 되었습니다.');
 		}
 		$where_alt['alt_status'] = 'R';
 		$where_alt['alt_id'] = $alt_id;
 		$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
-		if($alt_profile['total_rows'] < 1) {
-			response_result($view,'Err','alt_id:'.$alt_id.', 처리대상 없음');
+		if ($alt_profile['total_rows'] < 1) {
+			response_result($view, 'Err', 'alt_id:' . $alt_id . ', 처리대상 없음');
 		}
 		$data = array(
 			'alt_status' => $alt_status
@@ -1323,11 +1323,10 @@ class Altruists extends CB_Controller
 
 		$result = $this->db->update('alt_profile', $data);
 
-		if ($result)
-		{
-			response_result($view,'success','정상처리');
-		}else {
-			response_result($view,'Err','데이터 저장 도중 오류가 발생하였습니다');	
+		if ($result) {
+			response_result($view, 'success', '정상처리');
+		} else {
+			response_result($view, 'Err', '데이터 저장 도중 오류가 발생하였습니다');
 		}
 	}
 	/**
@@ -1341,18 +1340,18 @@ class Altruists extends CB_Controller
 		//acv_status 0 - 비인증 , 1 - 인증
 		$acv_id = $this->input->post('acv_id');
 		$acv_status = $this->input->post('acv_status');
-		if (empty($acv_id) OR $acv_id < 1) {
-			response_result($view,'Err','acv_id 값이 누락 되었습니다.');
+		if (empty($acv_id) or $acv_id < 1) {
+			response_result($view, 'Err', 'acv_id 값이 누락 되었습니다.');
 		}
 		if ($acv_status) {
-			response_result($view,'Err','acv_status 값이 누락 되었습니다.');
+			response_result($view, 'Err', 'acv_status 값이 누락 되었습니다.');
 		}
-	//	$where_alt['alt_status'] = '0';
+		//	$where_alt['alt_status'] = '0';
 		$where_alt['acv_id'] = $acv_id;
 		$alt_cv = $this->Altruists_model->get_alt_cv_by_id($acv_id);
-		
-		if(count($alt_cv) < 1) {
-			response_result($view,'Err','acv_id:'.$acv_id.', 처리대상 없음');
+
+		if (count($alt_cv) < 1) {
+			response_result($view, 'Err', 'acv_id:' . $acv_id . ', 처리대상 없음');
 		}
 		$data = array(
 			'acv_status' => $acv_status
@@ -1362,11 +1361,10 @@ class Altruists extends CB_Controller
 
 		$result = $this->db->update('alt_cv', $data);
 
-		if ($result)
-		{
-			response_result($view,'success','정상처리');
-		}else {
-			response_result($view,'Err','데이터 저장 도중 오류가 발생하였습니다');	
+		if ($result) {
+			response_result($view, 'success', '정상처리');
+		} else {
+			response_result($view, 'Err', '데이터 저장 도중 오류가 발생하였습니다');
 		}
 	}
 
@@ -1380,7 +1378,7 @@ class Altruists extends CB_Controller
 		// 이벤트 라이브러리를 로딩합니다
 		$eventname = 'event_Altruists_form';
 		$this->load->event($eventname);
-		
+
 		// 이타주의자에 지원 자격 조건
 		if (!$this->member->is_member()) { // 이타주의자들 회원 
 			//response_result($r,'Err','로그인 후 지원해주세요');
@@ -1393,20 +1391,20 @@ class Altruists extends CB_Controller
 		$view['view']['event']['before'] = Events::trigger('before', $eventname);
 
 		$mem_id = $this->input->post('mem_id');
-		
+
 		if (empty($mem_id)) {
-			response_result($r,'Err','mem_id 누락');
+			response_result($r, 'Err', 'mem_id 누락');
 		}
-		$alt_mem_id =0;
+		$alt_mem_id = 0;
 		$alt_mem = $this->Altruists_model->get_by_memid($mem_id);
-		if($alt_mem){
-			if($alt_mem['alt_status'] =='Y' || $alt_mem['alt_status']!=='R') {
-				response_result($alt_mem,'Err','회원님은 이미 이타주의자에 지원하셨습니다.');
+		if ($alt_mem) {
+			if ($alt_mem['alt_status'] == 'Y' || $alt_mem['alt_status'] !== 'R') {
+				response_result($alt_mem, 'Err', '회원님은 이미 이타주의자에 지원하셨습니다.');
 			}
 		}
 		/**
 		 * 유효성 검사 룰 정의 
-		*/
+		 */
 
 		$config = array(
 			array(
@@ -1431,7 +1429,7 @@ class Altruists extends CB_Controller
 			),
 
 		);
-		
+
 		/* 
 		if ($this->member->is_admin() === false && ! $this->session->userdata('registeragree')) {
 			$this->session->set_flashdata(
@@ -1453,13 +1451,13 @@ class Altruists extends CB_Controller
 		$updateicon = '';
 
 
-		if(!$form_validation) {
-			response_result($view,'Err',validation_errors('', ''));
+		if (!$form_validation) {
+			response_result($view, 'Err', validation_errors('', ''));
 		}
 
 
 		/** 첨부 파일 업로드  */
-		
+
 		if ($form_validation) {
 			$this->load->library('upload');
 			if (true) {
@@ -1537,7 +1535,6 @@ class Altruists extends CB_Controller
 						$updatephoto = cdate('Y') . '/' . cdate('m') . '/' . $img['file_name'];
 					} else {
 						$file_error = $this->upload->display_errors();
-
 					}
 				}
 			}
@@ -1591,27 +1588,26 @@ class Altruists extends CB_Controller
 				}
 			}
 		}
-		
+
 		/** 첨부 파일 업로드  끝 */
 
 		/**
 		 * 유효성 검사를 하지 않는 경우, 또는 유효성 검사에 실패한 경우입니다.
 		 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
 		 */
-		if ($file_error !== '' OR $file_error2 !== '') {
-			response_result($file_error,'Err','파일 저장 중 오류가 발생하였습니다.');
-		
+		if ($file_error !== '' or $file_error2 !== '') {
+			response_result($file_error, 'Err', '파일 저장 중 오류가 발생하였습니다.');
 		}
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
 
 		//$mem_level = (int) $this->cbconfig->item('register_level');
-		
+
 		$metadata = array();
-		log_message('error','call Altruists/apply');
-		
+		log_message('error', 'call Altruists/apply');
+
 		try {
-			
+
 			$this->db->trans_start();
 
 			//프로필 저장 
@@ -1629,11 +1625,11 @@ class Altruists extends CB_Controller
 
 			$alt_id = $this->Altruists_model->insert($insertdata);
 
-			
+
 			//경력 정보 저장
 			$acv_insert = array();
-			if(isset($_POST['acv_content'])  && is_array($_POST['acv_content']) && count($_POST['acv_content']) > 0 ) {
-				for( $i= 0 ; count($_POST['acv_content'])-1 >= $i; $i++ ) {
+			if (isset($_POST['acv_content'])  && is_array($_POST['acv_content']) && count($_POST['acv_content']) > 0) {
+				for ($i = 0; count($_POST['acv_content']) - 1 >= $i; $i++) {
 					$acv_insert[$i]['acv_type']    =    $_POST['acv_type'][$i];
 					$acv_insert[$i]['acv_year']    =    $_POST['acv_year'][$i];
 					$acv_insert[$i]['acv_content'] = 	$_POST['acv_content'][$i];
@@ -1647,34 +1643,32 @@ class Altruists extends CB_Controller
 				}
 			}
 
-			$acv_result = $this->db->insert_batch('cb_alt_cv',$acv_insert);
-		
+			$acv_result = $this->db->insert_batch('cb_alt_cv', $acv_insert);
+
 			//전문영역 저장
 			$area_insert = array();
-			if(isset($_POST['act_id'])  && is_array($_POST['act_id']) && count($_POST['act_id']) > 0 ) {
-				for( $i= 0 ; count($_POST['act_id'])-1 >= $i; $i++ ) {
+			if (isset($_POST['act_id'])  && is_array($_POST['act_id']) && count($_POST['act_id']) > 0) {
+				for ($i = 0; count($_POST['act_id']) - 1 >= $i; $i++) {
 					$area_insert[$i]['alt_id']      = 	$alt_id;
 					$area_insert[$i]['act_id']    =    $_POST['act_id'][$i];
 				}
 			}
 
-			$area_result = $this->db->insert_batch('cb_alt_area',$area_insert);
+			$area_result = $this->db->insert_batch('cb_alt_area', $area_insert);
 
 			//commit 
 			$this->db->trans_complete();
 
-			if ($this->db->trans_status() === FALSE)
-			{
-				response_result($view,'Err','데이터 저장 도중 오류가 발생하였습니다');	
-			}else {
-				response_result($view,'success','정상적으로 지원되었습니다.');
+			if ($this->db->trans_status() === FALSE) {
+				response_result($view, 'Err', '데이터 저장 도중 오류가 발생하였습니다');
+			} else {
+				response_result($view, 'success', '정상적으로 지원되었습니다.');
 			}
-        }
-        catch(Exception $e) {
-            log_message('error',$e->getMessage());
-			response_result($view,'Err','지원에 실패하였습니다');
-        }
-        
+		} catch (Exception $e) {
+			log_message('error', $e->getMessage());
+			response_result($view, 'Err', '지원에 실패하였습니다');
+		}
+
 
 		// 지원이력이 필요할경우 입력.
 		/* 	$nickinsert = array(
@@ -1690,7 +1684,6 @@ class Altruists extends CB_Controller
 			$this->input->post('mem_nickname')
 		);
 		*/
-	
 	}
 
 
@@ -1712,7 +1705,7 @@ class Altruists extends CB_Controller
 		$this->session->keep_flashdata('nickname');
 		$this->session->keep_flashdata('email_auth_message');
 
-		if ( ! $this->session->flashdata('nickname')) {
+		if (!$this->session->flashdata('nickname')) {
 			redirect();
 		}
 
@@ -1772,10 +1765,12 @@ class Altruists extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		if ( ! preg_match("/^([a-z0-9_])+$/i", $userid)) {
+		// if (!preg_match("/^([a-z0-9_])+$/i", $userid)) {
+		if (!preg_match("/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i", $userid)) {
 			$result = array(
 				'result' => 'no',
-				'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
+				// 'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
+				'reason' => '이메일을 입력해주세요 / 이메일과 아이디 동일하게 사용합니다',
 			);
 			exit(json_encode($result));
 		}
@@ -1832,8 +1827,10 @@ class Altruists extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		if ($this->member->item('mem_email')
-			&& $this->member->item('mem_email') === $email) {
+		if (
+			$this->member->item('mem_email')
+			&& $this->member->item('mem_email') === $email
+		) {
 			$result = array(
 				'result' => 'available',
 				'reason' => '사용 가능한 이메일입니다',
@@ -1930,8 +1927,10 @@ class Altruists extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		if ($this->member->item('mem_nickname')
-			&& $this->member->item('mem_nickname') === $nickname) {
+		if (
+			$this->member->item('mem_nickname')
+			&& $this->member->item('mem_nickname') === $nickname
+		) {
 			$result = array(
 				'result' => 'available',
 				'reason' => '사용 가능한 닉네임입니다',
@@ -2061,7 +2060,7 @@ class Altruists extends CB_Controller
 	 */
 	public function _mem_recommend_check($str)
 	{
-		if( ! $str) {
+		if (!$str) {
 			return true;
 		}
 
@@ -2089,7 +2088,7 @@ class Altruists extends CB_Controller
 	public function _check_captcha($str)
 	{
 		$captcha = $this->session->userdata('captcha');
-		if ( ! is_array($captcha) OR ! element('word', $captcha) OR strtolower(element('word', $captcha)) !== strtolower($str)) {
+		if (!is_array($captcha) or !element('word', $captcha) or strtolower(element('word', $captcha)) !== strtolower($str)) {
 			$this->session->unset_userdata('captcha');
 			$this->form_validation->set_message(
 				'_check_captcha',
@@ -2148,7 +2147,7 @@ class Altruists extends CB_Controller
 		$str_num = count_numbers($str);
 		$str_spc = count_specialchars($str);
 
-		if ($str_uc < $uppercase OR $str_num < $number OR $str_spc < $specialchar) {
+		if ($str_uc < $uppercase or $str_num < $number or $str_spc < $specialchar) {
 
 			$description = '비밀번호는 ';
 			if ($str_uc < $uppercase) {
@@ -2167,7 +2166,6 @@ class Altruists extends CB_Controller
 				$description
 			);
 			return false;
-
 		}
 
 		return true;
