@@ -1651,9 +1651,9 @@ class Altruists extends CB_Controller
 					$acv_insert[$i]['acv_year']    =    $_POST['acv_year'][$i];
 					$acv_insert[$i]['acv_content'] = 	$_POST['acv_content'][$i];
 					$acv_insert[$i]['acv_final']   = 	$_POST['acv_final'][$i];
-					$acv_insert[$i]['acv_file11']   = 	$uploadfiledata[$i]['file'];
-					$acv_insert[$i]['acv_file12']   = 	$_POST['acv_file12'][$i];
-					$acv_insert[$i]['acv_file13']   = 	$_POST['acv_file13'][$i];
+					$acv_insert[$i]['acv_file1']   = 	$uploadfiledata[$i]['file'];
+					$acv_insert[$i]['acv_file2']   = 	$_POST['acv_file2'][$i];
+					$acv_insert[$i]['acv_file3']   = 	$_POST['acv_file3'][$i];
 					$acv_insert[$i]['acv_status']  = 	$_POST['acv_status'][$i];
 					$acv_insert[$i]['acv_open']    = 	$_POST['acv_open'][$i];
 					$acv_insert[$i]['alt_id']      = 	$alt_id;
