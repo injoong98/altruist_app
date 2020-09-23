@@ -1355,64 +1355,6 @@ class Register extends CB_Controller
 	}
 
 
-	// public function ajax_userid_check()
-	// {
-	// 	// 이벤트 라이브러리를 로딩합니다
-	// 	$eventname = 'event_register_ajax_userid_check';
-	// 	$this->load->event($eventname);
-
-	// 	$result = array();
-	// 	$this->output->set_content_type('application/json');
-
-	// 	// 이벤트가 존재하면 실행합니다
-	// 	Events::trigger('before', $eventname);
-
-	// 	$userid = trim($this->input->post('userid'));
-	// 	if (empty($userid)) {
-	// 		$result = array(
-	// 			'result' => 'no',
-	// 			'reason' => '아이디값이 넘어오지 않았습니다',
-	// 		);
-	// 		exit(json_encode($result));
-	// 	}
-
-	// 	if (!preg_match("/^([a-z0-9_])+$/i", $userid)) {
-	// 		$result = array(
-	// 			'result' => 'no',
-	// 			'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
-	// 		);
-	// 		exit(json_encode($result));
-	// 	}
-
-	// 	$where = array(
-	// 		'mem_userid' => $userid,
-	// 	);
-	// 	$count = $this->Member_userid_model->count_by($where);
-	// 	if ($count > 0) {
-	// 		$result = array(
-	// 			'result' => 'no',
-	// 			'reason' => '이미 사용중인 아이디입니다',
-	// 		);
-	// 		exit(json_encode($result));
-	// 	}
-
-	// 	if ($this->_mem_userid_check($userid) === false) {
-	// 		$result = array(
-	// 			'result' => 'no',
-	// 			'reason' => $userid . '은(는) 예약어로 사용하실 수 없는 회원아이디입니다',
-	// 		);
-	// 		exit(json_encode($result));
-	// 	}
-
-	// 	// 이벤트가 존재하면 실행합니다
-	// 	Events::trigger('after', $eventname);
-
-	// 	$result = array(
-	// 		'result' => 'available',
-	// 		'reason' => '사용 가능한 아이디입니다',
-	// 	);
-	// 	exit(json_encode($result));
-	// }
 	public function ajax_userid_check()
 	{
 		// 이벤트 라이브러리를 로딩합니다
@@ -1429,18 +1371,17 @@ class Register extends CB_Controller
 		if (empty($userid)) {
 			$result = array(
 				'result' => 'no',
-				'reason' => '아이디가 넘어오지 않았습니다',
+				'reason' => '아이디값이 넘어오지 않았습니다',
 			);
 			exit(json_encode($result));
 		}
 
-		if (
-			$this->member->item('mem_userid')
-			&& $this->member->item('mem_userid') === $userid
-		) {
+		// if (!preg_match("/^([a-z0-9_])+$/i", $userid)) {
+		if (!preg_match("/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i", $userid)) {
 			$result = array(
-				'result' => 'available',
-				'reason' => '사용 가능한 이메일입니다',
+				'result' => 'no',
+				// 'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
+				'reason' => '이메일을 입력해주세요 / 이메일과 아이디 동일하게 사용합니다',
 			);
 			exit(json_encode($result));
 		}
@@ -1448,29 +1389,29 @@ class Register extends CB_Controller
 		$where = array(
 			'mem_userid' => $userid,
 		);
-		$count = $this->Member_model->count_by($where);
+		$count = $this->Member_userid_model->count_by($where);
 		if ($count > 0) {
 			$result = array(
 				'result' => 'no',
-				'reason' => '이미 사용중인 이메일입니다',
+				'reason' => '이미 사용중인 아이디입니다',
 			);
 			exit(json_encode($result));
 		}
 
-		if ($this->_mem_email_check($userid) === false) {
+		if ($this->_mem_userid_check($userid) === false) {
 			$result = array(
 				'result' => 'no',
-				'reason' => $userid . '은(는) 예약어로 사용하실 수 없는 이메일입니다',
+				'reason' => $userid . '은(는) 예약어로 사용하실 수 없는 회원아이디입니다',
 			);
 			exit(json_encode($result));
 		}
 
 		// 이벤트가 존재하면 실행합니다
-		Events::trigger('before', $eventname);
+		Events::trigger('after', $eventname);
 
 		$result = array(
 			'result' => 'available',
-			'reason' => '사용 가능한 이메일입니다',
+			'reason' => '사용 가능한 아이디입니다',
 		);
 		exit(json_encode($result));
 	}
