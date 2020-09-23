@@ -15,8 +15,7 @@ class AltApplyScreen extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            checkboxes : [],
-            
+            checkboxes : [false,false,false],   
         }
     }
     
@@ -25,9 +24,7 @@ class AltApplyScreen extends React.Component{
     )
 
     CheckAgrees = ({i}) => {
-
         const [checked, setChecked] = useState(false);
-        
         return (
           <CheckBox
             checked={checked}
@@ -44,26 +41,18 @@ class AltApplyScreen extends React.Component{
       };
 
     handleClick(i, checked){
-        console.log(i)
-        console.log(checked)
         const checkboxes = this.state.checkboxes;
         checkboxes[i] = checked == true ? true : false
-        this.setState({checkboxes : checkboxes}) 
-        console.log(this.state)
+        this.setState({checkboxes : checkboxes})
     }
-
+    
     goNextStep(){
-        for(let j=0; j < this.state.checkboxes.length; j++){
-            if(this.state.checkboxes[j] == false){
-                // console.log('동의 눌러줘')
-                // return false
-                this.props.navigation.navigate('AltMain')
-                alert('동의가 필요합니다.')
-            }else{
-                this.props.navigation.navigate('AltApplyForm')
-                
-            }
+        if(this.state.checkboxes.includes(false)){
+            alert('이용 약관 동의가 필요합니다.')
+        }else{
+            this.props.navigation.navigate('AltApplyForm')
         }
+
     }
     
     render(){ 
