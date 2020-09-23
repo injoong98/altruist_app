@@ -576,7 +576,13 @@ class MarketContent extends React.Component {
             deleteModalVisible:false,
             spinnerModalVisible:false,
             popoverVisibel:false,
+            dealStatusVisible:false
         }
+    }
+    
+    statefunction=(str)=>{
+        this.setState({isLoading:true});
+        this.componentDidMount()    
     }
     
     componentWillUnmount() {
@@ -661,6 +667,11 @@ class MarketContent extends React.Component {
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
                     <Text category='h3'>삭제</Text>
                 </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{this.setState({popoverVisibel:false,dealStatusVisible:true})}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>판매완료</Text>
+                </TouchableOpacity>
             </View>
         </Popover>
     )
@@ -718,6 +729,7 @@ class MarketContent extends React.Component {
             { cancelable: false }
         );
     }
+
     postDelete = async () => {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
@@ -733,6 +745,7 @@ class MarketContent extends React.Component {
             alert(JSON.stringify(err))
         })
     }
+
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
@@ -893,7 +906,7 @@ class MarketContent extends React.Component {
             alert(`${JSON.stringify(error)}`)
         })
     }
-
+    
     
     renderCommentsList=({item,index})=>(
         <Layout style={{padding:15, marginHorizontal:10}}>
@@ -949,11 +962,6 @@ class MarketContent extends React.Component {
         </Layout>
     )
     
-    onRefresh=()=>{
-        const {post_id} = this.props.route.params
-        this.getCommentData(post_id)
-
-    }
 
     renderPostBody = (post, width) =>{
 
@@ -1024,7 +1032,7 @@ class MarketContent extends React.Component {
     render(){
 
         const { width } = Dimensions.get("window");
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,replyModalVisible,deleteModalVisible,spinnerModalVisible} = this.state;
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,replyModalVisible,deleteModalVisible,spinnerModalVisible, dealStatusVisible} = this.state;
 
         return(
             this.state.isLoading ?
@@ -1112,6 +1120,19 @@ class MarketContent extends React.Component {
                     />
                 </Modal>
                 <Modal
+                    visible={dealStatusVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                    onBackdropPress={() => this.setState({dealStatusVisible:false})}
+                >
+                    <Confirm 
+                        confirmText="게시글을 삭제하시겠습니까?"
+                        frstText="예"
+                        OnFrstPress={() =>{this.setState({dealStatusVisible:false,spinnerModalVisible:true});this.postDealStatus()}}
+                        scndText="아니오"
+                        OnScndPress={() => this.setState({dealStatusVisible:false})}
+                    />
+                </Modal>
+                <Modal
                     visible={spinnerModalVisible}
                     backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
                 >
@@ -1134,8 +1155,8 @@ class AlbaContent extends React.Component {
             visible : false,
             OF_visible : false,
             post : {} ,
-            thumb_image : '../assets/images/noimage.png',
-            file_images : null,
+            thumb_image : [],
+            file_images : [],
             phoneNumber : '010 9999 9999',
             isLoading : true,
             image_height : 0,
@@ -1166,11 +1187,17 @@ class AlbaContent extends React.Component {
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
                 if(response.data.view.post.post_thumb_use > 0)
-                    this.setState({thumb_image: response.data.view.file_image.shift().origin_image_url});
+                    this.setState({thumb_image: response.data.view.file_image[0]});
                 this.setState({
-                    file_images : response.data.view.file_image.map(i => {
+                    file_images : response.data.view.file_image.map((i, index) => {
                         console.log('received image', i);
-                        return {uri : 'http://dev.unyict.org'+i.origin_image_url, height : this.scaledHeight(i.pfi_width, i.pfi_height, Dimensions.get('window').width)};
+                        return {
+                            id : i.pfi_id,
+                            edit : true,
+                            index : index,
+                            uri : 'http://dev.unyict.org'+i.origin_image_url, 
+                            height : this.scaledHeight(i.pfi_width, i.pfi_height, Dimensions.get('window').width)
+                        };
                     })
                 })
                 // console.log(this.state.file_images);
@@ -1181,8 +1208,13 @@ class AlbaContent extends React.Component {
         })
     }
 
-    renderImage(image) {
-        return <Image style={{width: '100%', height: image.height, resizeMode: 'contain'}} source={{uri : image.uri}}/>
+    renderImage(image, index) {
+        if(index==0){
+            return null;
+        }
+        else {
+            return <Image style={{width: '100%', height: image.height, resizeMode: 'contain'}} source={{uri : image.uri}}/>
+        }
     }
 
     scaledHeight(oldW, oldH, newW) {
@@ -1335,7 +1367,7 @@ class AlbaContent extends React.Component {
                                 </Text>
                             </View>
                             <Layout style={{flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
-                                {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org/'+this.state.thumb_image}}/>
+                                {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org/'+this.state.thumb_image.origin_image_url}}/>
                                 :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
                                 <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>
@@ -1390,7 +1422,7 @@ class AlbaContent extends React.Component {
                                 imagesMaxWidth={Dimensions.get('window').width}
                                 imagesInitialDimensions={{width:400, height : 400}}
                                 />
-                            {this.state.file_images ? this.state.file_images.map(i => <View key={i.uri}>{this.renderImage(i)}</View>) : null} 
+                            {this.state.file_images ? this.state.file_images.map((i,index) => <View key={i.uri}>{this.renderImage(i,index)}</View>) : null} 
                         </Card>
                     </ScrollView>
                     <TouchableOpacity style={styles.bottomButton} onPress={()=>this.setVisible(true)}>

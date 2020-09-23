@@ -88,7 +88,7 @@ class MarketScreen extends React.Component {
                 </View>
             </View>
           </View>
-          <View style={{flex:1, backgroundColor:'white', paddingHorizontal:5, paddingVertical:3, borderRadius:15, marginTop:5, justifyContent:'space-between', marginRight:30}}>
+          <View style={{flex:1, backgroundColor:'white', paddingHorizontal:5, paddingVertical:3, borderRadius:15, marginTop:5, justifyContent:'space-between', marginRight:35}}>
             <View style={styles.textTop}>
               <Text style={styles.text} category='h4'>
                   {item.title}
@@ -194,8 +194,8 @@ const styles = StyleSheet.create({
     },
     textArea: {
         flex: 1,
-        paddingHorizontal: 10,
         paddingVertical: 10,
+        paddingRight: 5,
         paddingLeft: 10,
         maxHeight: 100,
     },
