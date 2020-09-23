@@ -21,6 +21,7 @@ import {
   Card,
 } from '@ui-kitten/components';
 import {FlatList, ScrollView} from 'react-native-gesture-handler';
+import {Signing} from '../../Context';
 import axios from 'axios';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
@@ -29,7 +30,7 @@ class AltApplyFormScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mem_id: '',
+      mem_id:'',
       alt_aboutme: '',
       alt_content: '',
       alt_answertype: '',
@@ -43,7 +44,8 @@ class AltApplyFormScreen extends React.Component {
       act_id: '',
     };
   }
-
+  static contextType = Signing;
+  
   handleSubmit() {
     const {userForm, user} = this.props;
 
@@ -158,7 +160,7 @@ class AltApplyFormScreen extends React.Component {
       .then((res) => {
         //console.log(res)
         this.setState({category: res.data.data});
-        console.log(this.state.category);
+        // console.log(this.state.category);
       })
       .catch((err) => {
         alert(err);
@@ -168,6 +170,7 @@ class AltApplyFormScreen extends React.Component {
   componentDidMount() {
     //this.setAltruist()
     this.getAreaCat();
+    this.setState({mem_id:this.context.session_mem_id})
   }
 
   // renderItem = ({item, key}) => {
