@@ -88,7 +88,10 @@ class AltMainScreen extends React.Component{
                                     placeholderTextColor='#A897C2'
                                     onEndEditing={()=>navigation.navigate('AltList',{title:title})}
                                 />
-                                <TouchableOpacity style={{position:"absolute",right:5,top:6}}>
+                                <TouchableOpacity 
+                                    style={{position:"absolute",right:5,top:6}}
+                                    onPress={()=>navigation.navigate('AltList',{title:title})}
+                                >
                                     <Searchsvg height={25} width={25} fill='#A9C' />
                                 </TouchableOpacity>
                             </View>

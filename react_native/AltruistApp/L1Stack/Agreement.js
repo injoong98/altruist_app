@@ -7,13 +7,16 @@ import {
   TopNavigation,
 } from '@ui-kitten/components';
 import axios from 'axios';
+import {Button, Footer} from 'native-base';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
 class AgreementScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      information: [],
+    };
   }
 
   BackAction = () => (
@@ -25,11 +28,34 @@ class AgreementScreen extends Component {
     />
   );
 
+  componentDidMount() {
+    this.GetAgreement();
+    // this.setState();
+  }
+
   GetAgreement = async () => {
     await axios
       .get('http://dev.unyict.org/api/register/get_register_policy')
       .then((res) => {
         console.log(res);
+        console.log(res.data.view);
+        this.state = {
+          information: [
+            {
+              // id: res.key,
+              id: 1,
+              name: '회원약관',
+              content: res.data.view.member_register_policy1,
+            },
+            {
+              id: 2,
+              name: '개인정보취급방침',
+              content: res.data.view.member_register_policy2,
+            },
+          ],
+        };
+        // for(let i=0; i < res.data.view.)
+        console.log('rendr', this.state);
       })
       .catch((error) => {
         console.log('ERROR', error);
@@ -38,17 +64,18 @@ class AgreementScreen extends Component {
   };
 
   render() {
-    console.log(this.state);
+    console.log('this.state', this.state);
     return (
       <>
         <TopNavigation
-          title="이용방침"
+          title={this.state.information.name}
           alignment="center"
           accessoryLeft={this.BackAction}
         />
         <SafeAreaView style={styles.container}>
           <View style={styles.contentSection}>
-            <Text>이용방침</Text>
+            <Text>{this.state.information.content}</Text>
+            <Button onPress={() => this.GetAgreement()}></Button>
           </View>
         </SafeAreaView>
       </>

@@ -105,6 +105,38 @@
 					</label>
 				</div>
 			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">이타 새글이 등록되었을때 </label>
+				<div class="col-sm-10">
+					<label for="notification_itta" class="checkbox-inline">
+						<input type="checkbox" name="notification_itta" id="notification_itta" class="chk" value="1" <?php echo set_checkbox('notification_itta', '1', (element('notification_itta', element('data', $view)) ? true : false)); ?> /> 사용합니다
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">고민 새글 등록되었을때 </label>
+				<div class="col-sm-10">
+					<label for="notification_gomin" class="checkbox-inline">
+						<input type="checkbox" name="notification_gomin" id="notification_gomin" class="chk" value="1" <?php echo set_checkbox('notification_gomin', '1', (element('notification_gomin', element('data', $view)) ? true : false)); ?> /> 사용합니다
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">수수마켓 새글 등록되었을때 </label>
+				<div class="col-sm-10">
+					<label for="notification_givetake" class="checkbox-inline">
+						<input type="checkbox" name="notification_givetake" id="notification_givetake" class="chk" value="1" <?php echo set_checkbox('notification_givetake', '1', (element('notification_givetake', element('data', $view)) ? true : false)); ?> /> 사용합니다
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">알바천일국 새글 등록되었을때 </label>
+				<div class="col-sm-10">
+					<label for="notification_alba" class="checkbox-inline">
+						<input type="checkbox" name="notification_alba" id="notification_alba" class="chk" value="1" <?php echo set_checkbox('notification_alba', '1', (element('notification_alba', element('data', $view)) ? true : false)); ?> /> 사용합니다
+					</label>
+				</div>
+			</div>
 			<div class="btn-group pull-right" role="group" aria-label="...">
 				<button type="submit" class="btn btn-success btn-sm">저장하기</button>
 			</div>
