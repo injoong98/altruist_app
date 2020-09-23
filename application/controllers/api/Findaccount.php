@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Findaccount class
@@ -18,7 +18,7 @@ class Findaccount extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array( 'Member_auth_email');
+	protected $models = array('Member_auth_email');
 
 	/**
 	 * 헬퍼를 로딩합니다
@@ -45,10 +45,10 @@ class Findaccount extends CB_Controller
 		$eventname = 'event_findaccount_index';
 		$this->load->event($eventname);
 
-		if ($this->member->is_member() !== false
-			&& ! (
-				$this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin')
-			)) {
+		if (
+			$this->member->is_member() !== false
+			&& !($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))
+		) {
 			redirect();
 		}
 
@@ -60,7 +60,7 @@ class Findaccount extends CB_Controller
 
 		$this->load->library(array('form_validation'));
 
-		if ( ! function_exists('password_hash')) {
+		if (!function_exists('password_hash')) {
 			$this->load->helper('password');
 		}
 
@@ -84,7 +84,8 @@ class Findaccount extends CB_Controller
 			$config[] = array(
 				'field' => 'change_userid',
 				'label' => '아이디',
-				'rules' => 'trim|required|alphanumunder|min_length[3]|max_length[20]',
+				'rules' => 'trim|required|alphanumunder|min_length[3]|max_length[50]',
+				// 'rules' => 'trim|required|alphanumunder|min_length[3]|max_length[20]',
 			);
 			$config[] = array(
 				'field' => 'change_password',
@@ -107,7 +108,6 @@ class Findaccount extends CB_Controller
 
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formrunfalse'] = Events::trigger('formrunfalse', $eventname);
-
 		} else {
 
 			// 이벤트가 존재하면 실행합니다
@@ -119,7 +119,7 @@ class Findaccount extends CB_Controller
 				$view['view']['event']['findidpw_before'] = Events::trigger('findidpw_before', $eventname);
 
 				$mb = $this->Member_model->get_by_email($this->input->post('idpw_email'));
-				if ( ! $mb) {
+				if (!$mb) {
 					$this->load->model('Member_dormant_model');
 					$mb = $this->Member_dormant_model->get_by_email($this->input->post('idpw_email'));
 				}
@@ -217,14 +217,13 @@ class Findaccount extends CB_Controller
 
 				// 이벤트가 존재하면 실행합니다
 				$view['view']['event']['findidpw_after'] = Events::trigger('findidpw_after', $eventname);
-
 			} elseif ($this->input->post('findtype') === 'verifyemail') {
 
 				// 이벤트가 존재하면 실행합니다
 				$view['view']['event']['verifyemail_before'] = Events::trigger('verifyemail_before', $eventname);
 
 				$mb = $this->Member_model->get_by_email($this->input->post('verify_email'));
-				if ( ! $mb) {
+				if (!$mb) {
 					$this->load->model('Member_dormant_model');
 					$mb = $this->Member_dormant_model->get_by_email($this->input->post('verify_email'));
 				}
@@ -321,14 +320,13 @@ class Findaccount extends CB_Controller
 
 				// 이벤트가 존재하면 실행합니다
 				$view['view']['event']['verifyemail_after'] = Events::trigger('verifyemail_after', $eventname);
-
 			} elseif ($this->input->post('findtype') === 'changeemail') {
 
 				// 이벤트가 존재하면 실행합니다
 				$view['view']['event']['changeemail_before'] = Events::trigger('changeemail_before', $eventname);
 
 				$mb = $this->Member_model->get_by_userid($this->input->post('change_userid'));
-				if ( ! $mb) {
+				if (!$mb) {
 					$this->load->model('Member_dormant_model');
 					$mb = $this->Member_dormant_model->get_by_userid($this->input->post('change_userid'));
 				}
@@ -471,12 +469,12 @@ class Findaccount extends CB_Controller
 	{
 		$userinfo = $this->Member_model
 			->get_by_email($str, 'mem_id, mem_email, mem_denied, mem_email_cert');
-		if ( ! $userinfo) {
+		if (!$userinfo) {
 			$this->load->model('Member_dormant_model');
 			$userinfo = $this->Member_dormant_model
 				->get_by_email($str, 'mem_id, mem_email, mem_denied, mem_email_cert');
 		}
-		if ( ! element('mem_id', $userinfo)) {
+		if (!element('mem_id', $userinfo)) {
 			$this->form_validation->set_message(
 				'_existemail',
 				'존재하지 않는 이메일주소입니다'
@@ -489,7 +487,7 @@ class Findaccount extends CB_Controller
 				'회원님의 계정은 접근이 금지되어 있습니다'
 			);
 			return false;
-		} elseif ($this->cbconfig->item('use_register_email_auth') && ! element('mem_email_cert', $userinfo)) {
+		} elseif ($this->cbconfig->item('use_register_email_auth') && !element('mem_email_cert', $userinfo)) {
 			$this->form_validation->set_message(
 				'_existemail',
 				'회원님은 아직 이메일 인증을 받지 않으셨습니다<br> 아래 인증메일 재발송 란에서 이메일을 받아 인증해주시기 바랍니다'
@@ -506,7 +504,7 @@ class Findaccount extends CB_Controller
 	 */
 	public function _verifyemail($str)
 	{
-		if ( ! $this->cbconfig->item('use_register_email_auth')) {
+		if (!$this->cbconfig->item('use_register_email_auth')) {
 			$this->form_validation->set_message(
 				'_verifyemail',
 				'이 웹사이트는 이메일 인증 기능을 사용하고 있지 않습니다'
@@ -516,12 +514,12 @@ class Findaccount extends CB_Controller
 
 		$userinfo = $this->Member_model
 			->get_by_email($str, 'mem_id, mem_email, mem_denied, mem_email_cert');
-		if ( ! $userinfo) {
+		if (!$userinfo) {
 			$this->load->model('Member_dormant_model');
 			$userinfo = $this->Member_dormant_model
 				->get_by_email($str, 'mem_id, mem_email, mem_denied, mem_email_cert');
 		}
-		if ( ! element('mem_id', $userinfo)) {
+		if (!element('mem_id', $userinfo)) {
 			$this->form_validation->set_message(
 				'_verifyemail',
 				'존재하지 않는 이메일주소입니다'
@@ -552,7 +550,7 @@ class Findaccount extends CB_Controller
 	 */
 	public function _change_email($str)
 	{
-		if ( ! $this->cbconfig->item('use_register_email_auth')) {
+		if (!$this->cbconfig->item('use_register_email_auth')) {
 			$this->form_validation->set_message(
 				'_change_email',
 				'이 웹사이트는 이메일 인증 기능을 사용하고 있지 않습니다'
@@ -562,7 +560,7 @@ class Findaccount extends CB_Controller
 
 		$userinfo = $this->Member_model
 			->get_by_email($str, 'mem_id, mem_email, mem_denied, mem_email_cert');
-		if ( ! $userinfo) {
+		if (!$userinfo) {
 			$this->load->model('Member_dormant_model');
 			$userinfo = $this->Member_dormant_model
 				->get_by_email($str, 'mem_id, mem_email, mem_denied, mem_email_cert');
@@ -598,7 +596,7 @@ class Findaccount extends CB_Controller
 	 */
 	public function _check_id_pw($password, $userid)
 	{
-		if ( ! $this->cbconfig->item('use_register_email_auth')) {
+		if (!$this->cbconfig->item('use_register_email_auth')) {
 			$this->form_validation->set_message(
 				'_check_id_pw',
 				'이 웹사이트는 이메일 인증 기능을 사용하고 있지 않습니다'
@@ -606,7 +604,7 @@ class Findaccount extends CB_Controller
 			return false;
 		}
 
-		if ( ! function_exists('password_hash')) {
+		if (!function_exists('password_hash')) {
 			$this->load->helper('password');
 		}
 
@@ -646,7 +644,7 @@ class Findaccount extends CB_Controller
 					$this->form_validation->set_message(
 						'_check_id_pw',
 						'회원님은 패스워드를 연속으로 ' . $loginfailnum . '회 잘못 입력하셨기 때문에 '
-						. $next_login . '초 후에 다시 시도가 가능합니다'
+							. $next_login . '초 후에 다시 시도가 가능합니다'
 					);
 					return false;
 				}
@@ -657,14 +655,14 @@ class Findaccount extends CB_Controller
 
 		$userselect = 'mem_id, mem_password, mem_denied';
 		$userinfo = $this->Member_model->get_by_userid($userid, $userselect);
-		if ( ! $userinfo) {
+		if (!$userinfo) {
 			$this->load->model('Member_dormant_model');
 			$userinfo = $this->Member_dormant_model->get_by_userid($userid, $userselect);
 		}
 
 		$hash = password_hash($password, PASSWORD_BCRYPT);
 
-		if ( ! element('mem_id', $userinfo) OR ! element('mem_password', $userinfo)) {
+		if (!element('mem_id', $userinfo) or !element('mem_password', $userinfo)) {
 
 			$this->form_validation->set_message(
 				'_check_id_pw',
@@ -673,8 +671,7 @@ class Findaccount extends CB_Controller
 			$this->member->update_login_log(0, $userid, 0, '회원아이디가 존재하지 않습니다');
 
 			return false;
-
-		} elseif ( ! password_verify($password, element('mem_password', $userinfo))) {
+		} elseif (!password_verify($password, element('mem_password', $userinfo))) {
 			$this->form_validation->set_message(
 				'_check_id_pw',
 				'회원 아이디와 패스워드가 서로 맞지 않습니다' . $loginfailmessage
@@ -682,7 +679,6 @@ class Findaccount extends CB_Controller
 			$this->member->update_login_log(element('mem_id', $userinfo), $userid, 0, '패스워드가 올바르지 않습니다');
 
 			return false;
-
 		} elseif (element('mem_denied', $userinfo)) {
 			if (element('mem_denied', $userinfo)) {
 				$this->form_validation->set_message(

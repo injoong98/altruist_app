@@ -91,7 +91,7 @@ class GominScreen extends React.Component {
             <ActivityIndicator size='large'/>
           </View>:null
         )
-      }
+    }
       getPostList = async() =>{
         await axios.get(`http://dev.unyict.org/api/board_post/lists/b-a-1?page=${this.state.current_page}`)
         .then((response)=>{
@@ -122,7 +122,7 @@ class GominScreen extends React.Component {
             })
         })
         .catch((error)=>{
-            alert('error')
+            alert('error'+error);
         })
       }
     componentDidMount(){
