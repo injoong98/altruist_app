@@ -171,12 +171,13 @@ class AltListScreen extends React.Component{
     
     render(){
         const {name}= this.state
+        const title =this.props.route.params ? this.props.route.params.title:null
         return (
 
             <SafeAreaView style={{flex:1,backgroundColor:'#ffffff'}}>
                 <TopBarTune 
                     text="이타주의자들" 
-                    func={()=>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:this.props.route.params.title})} 
+                    func={()=>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:title})} 
                     right='opq'
                     gbckuse={true}
                     gbckfunc={()=>{this.props.navigation.goBack()}}                
