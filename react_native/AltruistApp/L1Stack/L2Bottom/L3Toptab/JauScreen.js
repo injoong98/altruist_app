@@ -29,7 +29,7 @@ class JauScreen extends React.Component {
       	image_url: '/react_native/AltruistApp/assets/images/noimage_120x90.gif',
       	current_category:0,
       	post_category: '',
-      	no_post: false,
+		no_post: false,
     };
   }
 
@@ -76,86 +76,44 @@ class JauScreen extends React.Component {
 		return (
 		<TouchableOpacity
 			style={styles.itembox}
-			onPress={() => {
-			this.props.navigation.navigate('GominContent', {
-				OnGoback: () => this.onRefresh(),
-				post_id: item.post_id,
-			});
-			}}>
-			{/* 헤더 */}
-			<View
-			style={{
-				flex: 1,
-				flexDirection: 'row',
-				justifyContent: 'space-between',
-				marginLeft: 10,
-				marginRight: 10,
-			}}>
-			{/*카테고리(이미지)/ 제목 / 공유*/}
-			{/* */}
-			<View style={{flexDirection: 'row'}}>
-				<Text>{item.post_category}</Text>
-				<Text>{item.post_title}</Text>
+			onPress={() => {this.props.navigation.navigate('GominContent', {OnGoback: () => this.onRefresh(),post_id: item.post_id});}}
+			>
+			<View style={{flex:1, backgroundColor:'white', width:111, borderBottomRightRadius:15}}>
+				<Text category='p2' style={{padding:5, flex:1}}>{'#'+this.category[item.post_category]}</Text>
 			</View>
-			<Sharesvg />
-			</View>
-			{/* 본문 */}
-			<View
-			style={{
-				flex: 2,
-				marginTop: 20,
-				marginBottom: 20,
-				marginLeft: 20,
-				marginRight: 20,
-				alignContent: 'center',
-			}}>
-			<Text
-				numberOfLines={3}
-				ellipsizeMode="tail"
-				AccessibilityRole="button">
-				{post_remove_tags}
-			</Text>
-			{item.origin_image_url ? (
-				<View style={{flexDirection: 'row'}}>
-				<Image
-					source={{uri: 'https://dev.unyict.org' + item.origin_image_url}}
-				/>
+			<View style={{marginHorizontal:20}}>
+				<View style={{paddingVertical:4}}>
+					<Text category = 'h2' numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
+					<Text
+						category = 'h6'
+						numberOfLines={3}
+						ellipsizeMode="tail"
+						AccessibilityRole="button">
+						{post_remove_tags}
+					</Text>
 				</View>
-			) : (
-				<View style={{flexDirection: 'row'}}></View>
-			)}
-			</View>
-			{/* 푸터 */}
-			<View
-			style={{
-				flex: 1,
-				flexDirection: 'row',
-				justifyContent: 'space-between',
-				marginLeft: 10,
-				marginRight: 10,
-			}}>
-			<View style={{flexDirection: 'row', alignSelf: 'center'}}>
-				<Text category="s2" style={{fontWeight: '100', marginRight: 10}}>
-				{item.display_name}
-				</Text>
-				<PostTime datetime={item.post_datetime} />
-			</View>
-			<View>
-				<View style={{flexDirection: 'row'}}>
-				<View>
-					<Heartsvg />
-					<Text>{item.post_like}</Text>
+				<View style={{flexDirection:'row', flex:1}}>
+					<View style={{flex:2, flexDirection:'row'}}> 
+						<View style={{flexDirection:'row', flex:1, alignItems:'flex-end', paddingBottom:8}}>
+							<Text category="c2">{item.display_name} </Text>
+							<PostTime category="c2" datetime = {item.post_datetime}/>
+						</View>
+					</View>
+					<View style={styles.subtitle}>
+						<View style={{alignItems:'center', marginHorizontal:10}}>
+							<Heartsvg width = {20} height={20}/>
+							<Text style={styles.infotext} category="s1">{item.post_like}</Text>
+						</View>
+						<View style={{alignItems:'center', marginHorizontal:10}}>
+							<Commentsvg width = {24} height={24}/>
+							<Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
+						</View>
+						<View style={{alignItems:'center', marginHorizontal:10}}>
+							<Viewsvg width = {24} height={24}/>
+							<Text style={styles.infotext} category="s1">{item.post_hit}</Text>
+						</View>
+					</View>
 				</View>
-				<View>
-					<Commentsvg />
-					<Text>{item.post_comment_count}</Text>
-				</View>
-				<View>
-					<Viewsvg />
-					<Text>{item.post_hit}</Text>
-				</View>
-				</View>
-			</View>
 			</View>
 		</TouchableOpacity>
 		);
@@ -200,43 +158,60 @@ class JauScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  contentContainer: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  renderers: {},
-  root: {
-    backgroundColor: '#FFFFFF',
-  },
-  category : {
-	alignContent: 'center',
-	marginHorizontal: 4,
-	borderWidth: 1,
-	padding: 10,
-	marginRight: 10,
-	marginLeft: 10,
-  },
-  //ita geasipan
-  itembox: {
-    flex: 1,
-    backgroundColor: '#F4F4F4',
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    borderBottomLeftRadius: 20,
-    marginLeft: 20,
-    marginRight: 20,
-    paddingTop: 10,
-    marginVertical: 4,
-  },
-  itemContent: {
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  category: {
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
+	contentContainer: {
+		paddingHorizontal: 8,
+		paddingVertical: 4,
+	},
+	renderers: {},
+	root: {
+		backgroundColor: '#FFFFFF',
+	},
+	category : {
+		alignContent: 'center',
+		marginHorizontal: 4,
+		borderWidth: 1,
+		padding: 10,
+		marginRight: 10,
+		marginLeft: 10,
+	},
+	container:{
+        backgroundColor:"#F4F4F4",
+        borderRadius : 10,
+        marginVertical:4.5,
+        marginHorizontal:19,
+        padding:0,
+        paddingLeft:21
+    },
+	subtitle:{
+		flex:1, flexDirection:"row", alignItems:'center', justifyContent:'center',
+	},
+	infocontainer:{
+        flexDirection:"row",justifyContent:'space-evenly',
+        borderTopLeftRadius:23,
+        width:116,
+        backgroundColor:"#ffffff",
+        position:"relative",bottom:0,right:0,
+        paddingTop:5,
+        paddingLeft:20,
+        paddingRight:10
+    },
+	//ita geasipan
+	itembox: {
+		flex: 1,
+		backgroundColor: '#F4F4F4',
+		borderRadius : 20,
+		marginLeft: 20,
+		marginRight: 20,
+		marginVertical: 4,
+	},
+	itemContent: {
+		marginTop: 10,
+		marginBottom: 10,
+	},
+	category: {
+		paddingTop: 10,
+		paddingBottom: 10,
+	},
 });
 
 export {JauScreen};

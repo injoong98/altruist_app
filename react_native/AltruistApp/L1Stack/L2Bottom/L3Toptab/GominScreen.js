@@ -80,9 +80,7 @@ class GominScreen extends React.Component {
                         <Viewsvg />
                         <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                     </View>
-
                 </View>
-
             </View>
         </TouchableOpacity>
     )};

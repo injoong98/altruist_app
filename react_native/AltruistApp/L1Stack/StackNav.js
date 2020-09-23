@@ -61,6 +61,7 @@ export class StackNav extends React.Component{
             isLoading:true,
             isSignedIn:false,
             isSignedOut:false,
+            session_mem_id:'',
             context:{
                 signIn:(mem_userid,mem_password,autologin)=>{
                     var formdata= new FormData();
@@ -97,7 +98,8 @@ export class StackNav extends React.Component{
                     })
                     .catch(error =>{
                     })
-                }
+                },
+                session_mem_id:''
             }
         }
         
@@ -125,6 +127,7 @@ export class StackNav extends React.Component{
             if(res.data.status == 200){
                 const {mem_id} =res.data.session
                 this.setState({isSignedIn:true});
+                this.state.context.session_mem_id = mem_id;
                 messaging().getToken()
                 .then(token=>{
                     this.syncPushToken(token,mem_id)

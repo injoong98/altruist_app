@@ -4,6 +4,7 @@ import {Text,Icon,Button} from '@ui-kitten/components'
 import BellLargesvg from '../assets/icons/bell-large.svg'
 import Uploadsvg from '../assets/icons/upload.svg'
 import Backsvg from '../assets/icons/back-arrow-white.svg'
+import Pensvg from '../assets/icons/pencil-outline-color.svg'
 
 export class TopBarTune extends React.Component {
     constructor(props){
@@ -37,10 +38,19 @@ export class TopBarTune extends React.Component {
                                     </TouchableOpacity>
                                 :
                                 this.props.right =='edit' ?
-                                    <Button onPress={this.props.func} appearance='ghost'>
+                                <Button onPress={this.props.func} appearance='ghost'>
                                         수정
                                     </Button>
-                                : null}
+                                : 
+                                this.props.right =='opq' ?
+                                <TouchableOpacity 
+                                    onPress={this.props.func}
+                                    style={{flexDirection:'row',width:'100%',alignItems:'center',justifyContent:'center',paddingLeft:20}}>
+                                    <Text category='h2' style={{fontSize:13,color:'#A897C2'}}>모두에게 질문하기</Text>
+                                    <Pensvg width={28} height={22}/>
+                                </TouchableOpacity>
+                                :
+                                null}
                         </View>
                     </View>
                 </View>
@@ -72,7 +82,8 @@ const styles = StyleSheet.create({
     rightside:{
         backgroundColor:"#B09BDE",
         width:"41%",
-        height:"100%"
+        height:"100%",
+        
     },
     rightinner:{
         borderTopLeftRadius:16,
@@ -97,7 +108,7 @@ const styles = StyleSheet.create({
         height:"100%",
         justifyContent:'center',
         alignItems:"flex-end",
-        paddingRight:20
+        paddingRight:20,
     },
     bckicon:{
         position:'absolute',

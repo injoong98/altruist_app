@@ -1,7 +1,7 @@
 import React,{Component} from 'react'
 import {Text} from '@ui-kitten/components'
 
-export const PostTime = ({datetime}) =>{
+export const PostTime = ({category, datetime}) =>{
     const datetimestr = datetime.replace(' ','T');
     const postdatetime = new Date(datetimestr)
     const datetimeUTC = Date.parse(datetimestr);
@@ -22,5 +22,5 @@ export const PostTime = ({datetime}) =>{
         res = `${(postdatetime.getMonth()+1)}/${(postdatetime.getDate()-1)}`
     }
 
-    return (<Text category="s2">{`${res}`}</Text> )
+    return (<Text category={category?category:"s2"}>{`${res}`}</Text> )
 }
