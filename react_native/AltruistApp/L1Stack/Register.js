@@ -32,36 +32,10 @@ import axios from 'axios';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CalendarIcon = (props) => <Icon {...props} name="calendar" />;
-const ApprovedIcon = (props) => (
-  <Icon
-    {...props}
-    name="checkmark-outline
-"
-  />
-);
-const OneCheckIcon = (props) => (
-  <Icon
-    {...props}
-    name="checkmark-outline
-"
-  />
-);
-const DoubleCheckcon = (props) => (
-  <Icon
-    {...props}
-    name="done-all-outline
-
-
-"
-  />
-);
-const DangerIcon = (props) => (
-  <Icon
-    {...props}
-    name="alert-circle-outline
-"
-  />
-);
+const ApprovedIcon = (props) => <Icon {...props} name="checkmark-outline" />;
+const OneCheckIcon = (props) => <Icon {...props} name="checkmark-outline" />;
+const DoubleCheckcon = (props) => <Icon {...props} name="done-all-outline" />;
+const DangerIcon = (props) => <Icon {...props} name="alert-circle-outline" />;
 
 const LoadingIndicator = (props) => (
   <View style={[props.style, styles.indicator]}>
@@ -142,7 +116,7 @@ class RegisterScreen extends Component {
       return;
     }
     console.log('no');
-    // this.SubmitForm();
+    this.SubmitForm();
   };
 
   checkNotNull = () => {
@@ -245,6 +219,9 @@ class RegisterScreen extends Component {
       } else {
         console.log('checkNotNull : passwordmatched');
         this.setState({goNext: false});
+        this.setState({
+          pwreStyle: '',
+        });
       }
       //이메일 체크
       if (this.state.EmailCaption.includes('없는')) {
@@ -290,14 +267,11 @@ class RegisterScreen extends Component {
         console.log('status', res.data.status);
         console.log('data', res.data);
         if (res.status == 500) {
-          Alert.aler(
-            '실패',
-            res.data.reason[
-              {
-                text: '확인',
-              }
-            ],
-          );
+          Alert.aler('실패', res.data.reason, [
+            {
+              text: '확인',
+            },
+          ]);
           //실패시,
           return;
         } else if (res.status == 200) {
@@ -358,6 +332,19 @@ class RegisterScreen extends Component {
     }
     var value = phone;
     this.setState({mem_phone: value});
+  };
+
+  phoneSubstr = (overwrited) => {
+    let phonefinal = '';
+    if (13 < overwrited.length) {
+      console.log('14이상', overwrited.length);
+      phonefinal += overwrited.substr(0, 13);
+      // } else if (13 < overwrited.length < 13) {
+      //   console.log('13이상', overwrited.length);
+      //   phonefinal = overwrited.substr(-1);
+    }
+    console.log('phonefinal', phonefinal);
+    this.setState({mem_phone: phonefinal});
   };
 
   //   TODO : 이메일 중복 확인
@@ -573,11 +560,12 @@ class RegisterScreen extends Component {
               {/* 필수 */}
               <View style={{marginBottom: 10}}>
                 <Input
-                  style={
-                    this.state.usernameStyle
-                      ? this.state.usernameStyle
-                      : styles.inputs
-                  }
+                  style={[
+                    styles.inputs,
+                    this.state.mem_username
+                      ? {borderColor: '#FFFFFFF'}
+                      : {borderColor: 'red'},
+                  ]}
                   placeholder="* 이름"
                   onChangeText={(mem_username) => {
                     this.setState({mem_username: mem_username});
@@ -653,7 +641,6 @@ class RegisterScreen extends Component {
                   placeholder="* 비밀번호 확인"
                   onChangeText={(mem_password_re) => {
                     this.setState({mem_password_re: mem_password_re});
-                    //{} 하면 obj로 던져서 obj.이름 해야지 됌
                     this.CheckPassword(
                       this.state.mem_password,
                       mem_password_re,
@@ -662,13 +649,6 @@ class RegisterScreen extends Component {
                   onEndEditing={() => {
                     this.checkNotNull();
                   }}
-                  caption={() =>
-                    this.state.captionCheck ? (
-                      <Text category="c1" style={{color: 'red'}}>
-                        {this.state.captionCheck}
-                      </Text>
-                    ) : null
-                  }
                 />
               </View>
               <View style={{marginBottom: 10}}>
@@ -682,14 +662,14 @@ class RegisterScreen extends Component {
                     this.setState({mem_phone: mem_phone});
                     this.PhoneHyphen(mem_phone);
                   }}
-                  onEndEditing={() => this.PhoneHyphen(this.state.mem_phone)}
+                  onEndEditing={() => this.phoneSubstr(this.state.mem_phone)}
                   caption={this.state.phoneCaption}
                   value={this.state.mem_phone}
                 />
                 {/* <this.DatepickerBday /> */}
                 <Input
                   style={styles.inputs}
-                  placeholder="생년월일"
+                  placeholder="생년월일(ex. 2000-01-01)"
                   onChangeText={(mem_birthday) =>
                     this.setState({mem_birthday: mem_birthday})
                   }
@@ -700,7 +680,7 @@ class RegisterScreen extends Component {
                 />
                 <Input
                   style={styles.inputs}
-                  placeholder="추천인 이메일"
+                  placeholder="추천인 아이디"
                   onChangeText={(mem_recommend) =>
                     this.setState({mem_recommend: mem_recommend})
                   }
@@ -785,7 +765,7 @@ class RegisterScreen extends Component {
                 alignSelf: 'flex-end',
                 marginRight: 50,
               }}
-              activeOpacity={1}
+              activeOpacity={0.5}
               disabled={this.state.goNext}
               onPress={() => this.checkInputs()}>
               <Text style={{color: '#63579D', textAlign: 'center'}}>다음</Text>

@@ -1299,10 +1299,12 @@ class Register extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		if (!preg_match("/^([a-z0-9_])+$/i", $userid)) {
+		// if (!preg_match("/^([a-z0-9_])+$/i", $userid)) {
+		if (!preg_match("/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i", $userid)) {
 			$result = array(
 				'result' => 'no',
-				'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
+				// 'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
+				'reason' => '이메일을 입력해주세요 / 이메일과 아이디 동일하게 사용합니다',
 			);
 			exit(json_encode($result));
 		}
@@ -1527,10 +1529,11 @@ class Register extends CB_Controller
 			response_result($result, 'Err', $result['reason']);
 		}
 
-		if (!preg_match("/^([a-z0-9_])+$/i", $userid)) {
+		// if (!preg_match("/^([a-z0-9_])+$/i", $userid)) {
+		if (!preg_match("/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i", $userid)) {
 			$result = array(
 				'result' => 'no',
-				'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
+				'reason' => '이메일을 입력해주세요 / 이메일과 아이디 동일하게 사용합니다',
 			);
 			response_result($result, 'Err', $result['reason']);
 		}
