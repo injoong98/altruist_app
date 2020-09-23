@@ -381,6 +381,10 @@ class MarketWrite extends React.Component {
           : [],
       image: '',
       thumbModalVisible: false,
+      modalVisible: false,
+      resultVisible: false,
+      spinnerModalVisible: false,
+      resultText : '',
     };
   }
 
@@ -440,17 +444,13 @@ class MarketWrite extends React.Component {
     await axios
       .post(url, formdata)
       .then((response) => {
-        Alert.alert(
-          '게시글',
-          JSON.stringify(response.data),
-          [
-            {
-              text: 'OK',
-              onPress: () => this.gobackfunc(),
-            },
-          ],
-          {cancelable: false},
-        );
+        const {message, status} = response.data;
+        if (status == '500') {
+          this.setState({spinnerModalVisible: false, resultVisible: true, resultText : message});
+        } else if (status == '200') {
+          this.setState({spinnerModalVisible: false, resultVisible: true, 
+            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -567,6 +567,32 @@ class MarketWrite extends React.Component {
     />
   );
 
+	filterSpamKeyword = async () => {
+    const {post_title, post_content} = this.state;
+
+    var formdata = new FormData();
+    formdata.append('title', post_title);
+    formdata.append('content', post_content);
+    formdata.append('csrf_test_name', '');
+
+    //Keyboard
+    Keyboard.dismiss();
+
+    await axios
+      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .then((response) => {
+        const {message, status} = response.data;
+        if (status == '500') {
+          alert(message);
+        } else if (status == '200') {
+          this.setState({modalVisible: true});
+        }
+      })
+      .catch((error) => {
+        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+      });
+  };
+
   render() {
     const {navigation} = this.props;
     const {
@@ -578,7 +604,10 @@ class MarketWrite extends React.Component {
       deal_type,
       deal_status,
       post_thumb_use,
-      post_main_thumb,
+			post_main_thumb,
+			modalVisible,
+			spinnerModalVisible,
+			resultVisible,
     } = this.state;
 
     return (
@@ -588,7 +617,7 @@ class MarketWrite extends React.Component {
             text="수수마켓"
             right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
             func={() => {
-              this.submitPost();
+              this.filterSpamKeyword();
             }}
             gbckfunc={() => {
               navigation.goBack();
@@ -667,18 +696,7 @@ class MarketWrite extends React.Component {
                     onPress={() => this.setState({deal_type: 0})}>
                     <View
                       style={
-                        this.state.deal_type == 0
-                          ? {...styles.deal_box, opacity: 1.0}
-                          : styles.deal_box
-                      }>
-                      <Text style={styles.deal_type_text}>직거래</Text>
-                    </View>
-                  </TouchableWithoutFeedback>
-                  <TouchableWithoutFeedback
-                    onPress={() => this.setState({deal_type: 1})}>
-                    <View
-                      style={
-                        this.state.deal_type == 1
+                        deal_type == 0
                           ? {...styles.deal_box, opacity: 1.0}
                           : styles.deal_box
                       }>
@@ -686,10 +704,21 @@ class MarketWrite extends React.Component {
                     </View>
                   </TouchableWithoutFeedback>
                   <TouchableWithoutFeedback
+                    onPress={() => this.setState({deal_type: 1})}>
+                    <View
+                      style={
+                        deal_type == 1
+                          ? {...styles.deal_box, opacity: 1.0}
+                          : styles.deal_box
+                      }>
+                      <Text style={styles.deal_type_text}>직거래</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
                     onPress={() => this.setState({deal_type: 2})}>
                     <View
                       style={
-                        this.state.deal_type == 2
+                        deal_type == 2
                           ? {...styles.deal_box, opacity: 1.0}
                           : styles.deal_box
                       }>
@@ -767,6 +796,44 @@ class MarketWrite extends React.Component {
               OnScndPress={() => this.setState({thumbModalVisible: false})}
             />
           </Modal>
+					<Modal
+						visible={modalVisible}
+						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+						onBackdropPress={() => this.setState({modalVisible: false})}>
+						<Confirm
+							confirmText={
+								this.props.route.params.mode == 'edit'
+									? '게시글을 수정하시겠습니까?'
+									: '게시글을 작성하시겠습니까?'
+							}
+							frstText="예"
+							OnFrstPress={() => {
+								this.setState({modalVisible: false, spinnerModalVisible: true});
+								this.submitPost();
+							}}
+							scndText="아니오"
+							OnScndPress={() => this.setState({modalVisible: false})}
+						/>
+					</Modal>
+					<Modal
+						visible={resultVisible}
+						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+						onBackdropPress={() => this.setState({resultVisible: false})}>
+						<Confirm
+							type="result"
+							confirmText={this.state.resultText}
+							frstText="닫기"
+							OnFrstPress={() => {
+								this.setState({resultVisible: false});
+								this.gobackfunc();
+							}}
+						/>
+					</Modal>
+					<Modal
+						visible={spinnerModalVisible}
+						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
+						<Spinner size="giant" />
+					</Modal>
         </SafeAreaView>
       </Root>
     );

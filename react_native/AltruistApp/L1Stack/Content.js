@@ -906,6 +906,28 @@ class MarketContent extends React.Component {
             alert(`${JSON.stringify(error)}`)
         })
     }
+
+    // onRefresh=()=>{
+    //     const {post_id} = this.props.route.params
+    //     this.getCommentData(post_id)
+
+    // }
+
+    // postDealStatus = async () => {
+    //     var formdata = new FormData();
+    //     formdata.append('deal_status', 0);
+    //     console.log(formdata);
+    //     await Axios.post('http://dev.unyict.org/api/board_write/write/b-a-2',formdata)
+    //     .then(res=>{
+    //         this.setState({spinnerModalVisible:false})
+    //         this.props.navigation.goBack();
+    //         this.props.route.params.OnGoback();
+    //         alert(JSON.stringify(res.data))
+    //     })
+    //     .catch(err=>{
+    //         alert(JSON.stringify(err))
+    //     })
+    // }
     
     
     renderCommentsList=({item,index})=>(
@@ -974,7 +996,7 @@ class MarketContent extends React.Component {
                     <Layout>
                         <Text style={{marginVertical:10, color:'#439DB1'}} category='c2'>
                             {post.deal_status=0? '판매완료'
-                            :post.deal_type=0? '판매중 / 배송':post.deal_type=1? '판매중 / 직거래':'판매중 / 배송 & 직거래'}
+                            :post.deal_type==0? '판매중 / 배송':post.deal_type==1? '판매중 / 직거래':'판매중 / 배송 & 직거래'}
                         </Text>
                     </Layout>
                     <Layout>
@@ -1020,7 +1042,7 @@ class MarketContent extends React.Component {
                         <Layout style={{marginLeft:20}}>
                             <Text style={styles.marketText} category='s1'>{post.post_hp}</Text>
                             <Text style={styles.marketText} category='s1'>{post.post_location}</Text>
-                            <Text style={styles.marketText} category='s1'>{post.deal_type=0? '배송':post.deal_type=1? '직거래':'배송 & 직거래'}</Text>
+                            <Text style={styles.marketText} category='s1'>{post.deal_type==0? '배송':post.deal_type==1? '직거래':'배송 & 직거래'}</Text>
                         </Layout>
                     </Layout>
                 </Layout>
