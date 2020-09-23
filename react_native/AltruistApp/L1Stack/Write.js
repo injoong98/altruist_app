@@ -381,6 +381,10 @@ class MarketWrite extends React.Component {
           : [],
       image: '',
       thumbModalVisible: false,
+      modalVisible: false,
+      resultVisible: false,
+      spinnerModalVisible: false,
+      resultText : '',
     };
   }
 
@@ -393,8 +397,13 @@ class MarketWrite extends React.Component {
     StatusBar.setBackgroundColor('#B09BDE');
     StatusBar.setBarStyle('default');
   }
+
   submitPost = async () => {
     console.log(this.state);
+    const url =
+      this.props.route.params.mode == 'edit'
+        ? 'http://dev.unyict.org/api/board_write/modify'
+        : 'http://dev.unyict.org/api/board_write/write/b-a-2';
     const {
       post_title,
       post_content,
@@ -426,21 +435,22 @@ class MarketWrite extends React.Component {
         name: 'image.jpg',
       });
     });
+    
+    this.props.route.params.mode == 'edit'
+      ? formdata.append('post_id', this.props.route.params.post.post_id)
+      : null;
+
     //10.0.1.1  dev.unyict.org
     await axios
-      .post('http://dev.unyict.org/api/board_write/write/b-a-2', formdata)
+      .post(url, formdata)
       .then((response) => {
-        Alert.alert(
-          '게시글',
-          JSON.stringify(response.data),
-          [
-            {
-              text: 'OK',
-              onPress: () => this.gobackfunc(),
-            },
-          ],
-          {cancelable: false},
-        );
+        const {message, status} = response.data;
+        if (status == '500') {
+          this.setState({spinnerModalVisible: false, resultVisible: true, resultText : message});
+        } else if (status == '200') {
+          this.setState({spinnerModalVisible: false, resultVisible: true, 
+            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -557,6 +567,32 @@ class MarketWrite extends React.Component {
     />
   );
 
+	filterSpamKeyword = async () => {
+    const {post_title, post_content} = this.state;
+
+    var formdata = new FormData();
+    formdata.append('title', post_title);
+    formdata.append('content', post_content);
+    formdata.append('csrf_test_name', '');
+
+    //Keyboard
+    Keyboard.dismiss();
+
+    await axios
+      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .then((response) => {
+        const {message, status} = response.data;
+        if (status == '500') {
+          alert(message);
+        } else if (status == '200') {
+          this.setState({modalVisible: true});
+        }
+      })
+      .catch((error) => {
+        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+      });
+  };
+
   render() {
     const {navigation} = this.props;
     const {
@@ -568,7 +604,10 @@ class MarketWrite extends React.Component {
       deal_type,
       deal_status,
       post_thumb_use,
-      post_main_thumb,
+			post_main_thumb,
+			modalVisible,
+			spinnerModalVisible,
+			resultVisible,
     } = this.state;
 
     return (
@@ -578,7 +617,7 @@ class MarketWrite extends React.Component {
             text="수수마켓"
             right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
             func={() => {
-              this.submitPost();
+              this.filterSpamKeyword();
             }}
             gbckfunc={() => {
               navigation.goBack();
@@ -657,18 +696,7 @@ class MarketWrite extends React.Component {
                     onPress={() => this.setState({deal_type: 0})}>
                     <View
                       style={
-                        this.state.deal_type == 0
-                          ? {...styles.deal_box, opacity: 1.0}
-                          : styles.deal_box
-                      }>
-                      <Text style={styles.deal_type_text}>직거래</Text>
-                    </View>
-                  </TouchableWithoutFeedback>
-                  <TouchableWithoutFeedback
-                    onPress={() => this.setState({deal_type: 1})}>
-                    <View
-                      style={
-                        this.state.deal_type == 1
+                        deal_type == 0
                           ? {...styles.deal_box, opacity: 1.0}
                           : styles.deal_box
                       }>
@@ -676,10 +704,21 @@ class MarketWrite extends React.Component {
                     </View>
                   </TouchableWithoutFeedback>
                   <TouchableWithoutFeedback
+                    onPress={() => this.setState({deal_type: 1})}>
+                    <View
+                      style={
+                        deal_type == 1
+                          ? {...styles.deal_box, opacity: 1.0}
+                          : styles.deal_box
+                      }>
+                      <Text style={styles.deal_type_text}>직거래</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
                     onPress={() => this.setState({deal_type: 2})}>
                     <View
                       style={
-                        this.state.deal_type == 2
+                        deal_type == 2
                           ? {...styles.deal_box, opacity: 1.0}
                           : styles.deal_box
                       }>
@@ -757,6 +796,44 @@ class MarketWrite extends React.Component {
               OnScndPress={() => this.setState({thumbModalVisible: false})}
             />
           </Modal>
+					<Modal
+						visible={modalVisible}
+						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+						onBackdropPress={() => this.setState({modalVisible: false})}>
+						<Confirm
+							confirmText={
+								this.props.route.params.mode == 'edit'
+									? '게시글을 수정하시겠습니까?'
+									: '게시글을 작성하시겠습니까?'
+							}
+							frstText="예"
+							OnFrstPress={() => {
+								this.setState({modalVisible: false, spinnerModalVisible: true});
+								this.submitPost();
+							}}
+							scndText="아니오"
+							OnScndPress={() => this.setState({modalVisible: false})}
+						/>
+					</Modal>
+					<Modal
+						visible={resultVisible}
+						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+						onBackdropPress={() => this.setState({resultVisible: false})}>
+						<Confirm
+							type="result"
+							confirmText={this.state.resultText}
+							frstText="닫기"
+							OnFrstPress={() => {
+								this.setState({resultVisible: false});
+								this.gobackfunc();
+							}}
+						/>
+					</Modal>
+					<Modal
+						visible={spinnerModalVisible}
+						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
+						<Spinner size="giant" />
+					</Modal>
         </SafeAreaView>
       </Root>
     );
@@ -789,19 +866,32 @@ class AlbaWrite extends React.Component {
           : 0,
       alba_salary_type:
         this.props.route.params.mode == 'edit'
-          ? new IndexPath(this.props.route.params.post.alba_salary_type)
-          : new IndexPath(0),
+				? new IndexPath(this.props.route.params.post.alba_salary_type)
+				: new IndexPath(0),
       alba_salary:
         this.props.route.params.mode == 'edit'
-          ? this.props.route.params.post.alba_salary
-          : '',
+					? this.props.route.params.post.alba_salary=='추후협의'
+						? '추후협의'
+						: this.props.route.params.post.alba_salary
+					:'',
       images:
         this.props.route.params.mode == 'edit'
           ? this.props.route.params.file_images
           : [],
       isTipVisible: false,
-      isFollowUp: false,
-      isNoSumnail: true,
+			isFollowUp: 
+				this.props.route.params.mode == 'edit'
+					? this.props.route.params.post.alba_salary=='추후협의'
+						? true
+						: false
+					:false,
+			post_thumb_use: 
+				this.props.route.params.mode == 'edit'
+					? this.props.route.params.post.post_thumb_use == 0
+						? true
+						: false
+					: false,
+			salary_storage: 0
     };
   }
 
@@ -815,15 +905,29 @@ class AlbaWrite extends React.Component {
   //     <TopNavigationAction icon={UpIcon} onPress={() =>{this.submit_alba_Alert()}}/>
   // )
 
+  
+  componentDidMount() {
+    StatusBar.setBackgroundColor('#F4F4F4');
+    StatusBar.setBarStyle('dark-content');
+  }
+
+  componentWillUnmount() {
+    StatusBar.setBackgroundColor('#B09BDE');
+    StatusBar.setBarStyle('default');
+  }
+  
+
   setTipVisible = (bool) => {
     this.setState({isTipVisible: bool});
   };
   setFollowUp = (nextChecked) => {
-    this.setState({isFollowUp: nextChecked});
-    this.setState({alba_salary: '추후협의'});
+		this.setState({isFollowUp: nextChecked});
+		nextChecked==true
+		? this.setState({salary_storage: this.state.alba_salary, alba_salary: '추후협의'})
+		: this.setState({alba_salary: this.state.salary_storage});
   };
   setSumnailCheck = (nextChecked) => {
-    this.setState({isNoSumnail: nextChecked});
+    this.setState({post_thumb_use: nextChecked});
   };
   submit_alba_post = async () => {
     const url =
@@ -840,7 +944,8 @@ class AlbaWrite extends React.Component {
       alba_salary_type,
       alba_salary,
       images,
-      isNoSumnail,
+			post_thumb_use,
+			isFollowUp,
     } = this.state;
     let formdata = new FormData();
     formdata.append('brd_key', 'b-a-3');
@@ -851,8 +956,8 @@ class AlbaWrite extends React.Component {
     formdata.append('alba_type', alba_type);
     formdata.append('alba_salary_type', alba_salary_type.row);
     formdata.append('alba_salary', alba_salary);
-    console.log(isNoSumnail ? 0 : 1);
-    formdata.append('post_thumb_use', isNoSumnail ? 0 : 1);
+    console.log(post_thumb_use ? 0 : 1);
+    formdata.append('post_thumb_use', post_thumb_use ? 0 : 1);
 
     images.map((item) => {
       formdata.append('post_file[]', {
@@ -973,12 +1078,14 @@ class AlbaWrite extends React.Component {
   renderImage(image) {
     //console.log(image);
     return (
-      <View key={image.uri}>
-        {this.props.route.params.mode == 'edit' ? (
-          <Image style={styles.market_RenderImage} source={image.uri} />
-        ) : (
-          <Image style={styles.market_RenderImage} source={image.url} />
-        )}
+      <View key={image.id}>
+					<Image 
+						style={styles.market_RenderImage} 
+						source={
+							image.edit
+								? {uri : image.uri}
+								: image.url} 
+					/>
       </View>
     );
   }
@@ -998,8 +1105,6 @@ class AlbaWrite extends React.Component {
     </TouchableOpacity>
   );
 
-  componentDidMount = () => {};
-
   render() {
     const {
       post_title,
@@ -1008,16 +1113,17 @@ class AlbaWrite extends React.Component {
       post_hp,
       alba_salary,
       alba_salary_type,
-      alba_type,
+			alba_type,
+			isFollowUp,
     } = this.state;
     const {navigation} = this.props;
     return (
       <SafeAreaView style={{flex: 1}}>
-        <TopBarTune
-          text="채용 정보 작성"
+        <WriteContentToptab
+          text="채용공고"
           right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
           func={() => {
-            this.submit_alba_Alert();
+            this.submit_alba_post();
           }}
           gbckfunc={() => {
             navigation.goBack();
@@ -1055,9 +1161,8 @@ class AlbaWrite extends React.Component {
                 }}>
                 <View style={{flexDirection: 'row'}}>
                   <RadioGroup
-                    value={this.state.alba_salary_type}
                     style={{flexDirection: 'row'}}
-                    selectedIndex={this.state.alba_type}
+                    selectedIndex={alba_type*1}
                     onChange={(index) => {
                       this.setState({alba_type: index});
                     }}>
@@ -1078,10 +1183,10 @@ class AlbaWrite extends React.Component {
                   </Text>
                   <CheckBox
                     style={{margin: 10}}
-                    checked={this.state.isFollowUp}
+                    checked={isFollowUp}
                     onChange={(nextChecked) =>
                       this.setFollowUp(nextChecked)
-                    }></CheckBox>
+                    }/>
                   <Select
                     style={{margin: 5, width: 100}}
                     value={this.Salary_Type[this.state.alba_salary_type.row]}
@@ -1186,7 +1291,7 @@ class AlbaWrite extends React.Component {
               <ScrollView horizontal style={{height: 150}}>
                 {this.state.images
                   ? this.state.images.map((i) => (
-                      <View key={i.uri}>{this.renderAsset(i)}</View>
+                      <View key={i.id}>{this.renderAsset(i)}</View>
                     ))
                   : null}
               </ScrollView>
@@ -1194,14 +1299,14 @@ class AlbaWrite extends React.Component {
                 style={{flexDirection: 'row', flex: 1, alignItems: 'center'}}>
                 <CheckBox
                   style={{margin: 5}}
-                  checked={this.state.isNoSumnail}
+                  checked={this.state.post_thumb_use}
                   onChange={(nextChecked) =>
                     this.setSumnailCheck(nextChecked)
                   }></CheckBox>
                 <Text style={{fontSize: 12}} category="c2">
                   {' '}
-                  {this.state.isNoSumnail
-                    ? '회사 로고(썸네일)가 없을경우 선택해주세요.'
+                  {this.state.post_thumb_use
+                    ? '회사 로고(썸네일)가 없을경우 체크해주세요.'
                     : '맨 첫 이미지로 썸네일을 넣어주세요.'}
                 </Text>
               </View>

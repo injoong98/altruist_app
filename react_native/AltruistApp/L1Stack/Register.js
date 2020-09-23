@@ -436,34 +436,81 @@ class RegisterScreen extends Component {
   };
 
   //   TODO : 생년월일
-  DatepickerBday = () => {
-    const [date, setDate] = useState(new Date());
-    const formatDateService = new NativeDateService('en', {
-      format: 'YYYY-MM-DD',
-    });
-    return (
-      <View
-        style={{
-          backgroundColor: '#F8F8F8',
-          borderColor: '#FFFFFF',
-          borderRadius: 15,
-        }}>
-        <Datepicker
-          size="small"
-          appearance="ghost"
-          style={{
-            margin: 10,
-          }}
-          min={new Date(1900, 1, 1)}
-          date={date}
-          dateService={formatDateService}
-          onSelect={(nextDate) => {
-            setDate(nextDate);
-          }}
-        />
-      </View>
-    );
-  };
+  // DatepickerBday = () => {
+  //   const [date, setDate] = useState(new Date());
+  //   const i18n = {
+  //     dayNames: {
+  //       short: ['월', '화', '수', '목', '금', '토', '일'],
+  //       long: [
+  //         '월요일',
+  //         '화요일',
+  //         '수요일',
+  //         '목요일',
+  //         '금요일',
+  //         '토요일',
+  //         '일요일',
+  //       ],
+  //     },
+  //     monthNames: {
+  //       short: [
+  //         '1월',
+  //         '2월',
+  //         '3월',
+  //         '4월',
+  //         '5월',
+  //         '6월',
+  //         '7월',
+  //         '8월',
+  //         '9월',
+  //         '10월',
+  //         '11월',
+  //         '12월',
+  //       ],
+  //       long: [
+  //         '1월',
+  //         '2월',
+  //         '3월',
+  //         '4월',
+  //         '5월',
+  //         '6월',
+  //         '7월',
+  //         '8월',
+  //         '9월',
+  //         '10월',
+  //         '11월',
+  //         '12월',
+  //       ],
+  //     },
+  //   };
+
+  //   const localeDateService = new NativeDateService('ko', {
+  //     i18n,
+  //     startDayOfWeek: 6,
+  //     format: 'YYYY-MM-DD',
+  //   });
+
+  //   return (
+  //     <View
+  //       style={{
+  //         backgroundColor: '#F8F8F8',
+  //         borderColor: '#FFFFFF',
+  //         borderRadius: 15,
+  //       }}>
+  //       <Datepicker
+  //         size="small"
+  //         style={{
+  //           margin: 10,
+  //         }}
+  //         min={new Date(1900, 1, 1)}
+  //         date={new NativeDateService(date, {format: 'YYYY-MM-DD'})}
+  //         dateService={localeDateService}
+  //         onSelect={(nextDate) => {
+  //           setDate(nextDate);
+  //         }}
+  //       />
+  //     </View>
+  //   );
+  // };
 
   //   TODO : 성별
   RadioSexSelection = () => {
@@ -477,8 +524,16 @@ class RegisterScreen extends Component {
           setSelectedIndex(index);
           this.setState({mem_sex: this.ConvertString(index + 1)});
         }}>
-        <Radio>남자</Radio>
-        <Radio>여자</Radio>
+        <Radio>
+          <Text style={{color: '#63579D'}} category="p1">
+            남자
+          </Text>
+        </Radio>
+        <Radio>
+          <Text style={{color: '#63579D'}} category="p1">
+            여자
+          </Text>
+        </Radio>
       </RadioGroup>
     );
   };
@@ -496,8 +551,6 @@ class RegisterScreen extends Component {
     }
     this.setState({captionCheck: checkPassword});
   };
-
-  changeBorderColor = () => {};
 
   render() {
     console.log(this.state);
@@ -517,143 +570,163 @@ class RegisterScreen extends Component {
                 paddingRight: 60,
                 paddingLeft: 60,
               }}>
-              <Input
-                style={
-                  this.state.usernameStyle
-                    ? this.state.usernameStyle
-                    : styles.inputs
-                }
-                placeholder="* 이름"
-                onChangeText={(mem_username) => {
-                  this.setState({mem_username: mem_username});
-                }}
-                onEndEditing={() => {
-                  this.checkNotNull();
-                }}
-              />
-              <Input
-                style={
-                  this.state.nicknameStyle
-                    ? this.state.nicknameStyle
-                    : styles.inputs
-                }
-                placeholder="* 닉네임 "
-                onChangeText={(mem_nickname) => {
-                  this.setState({mem_nickname: mem_nickname});
-                  this.checkNotNull();
-                }}
-                onEndEditing={() => {
-                  this.checkNotNull();
-                }}
-                caption={this.state.nicknameCaption}
-              />
-              <this.RadioSexSelection />
-              {/* validation : 사용자가 input창에서 딱 벗어났을 때 
+              {/* 필수 */}
+              <View style={{marginBottom: 10}}>
+                <Input
+                  style={
+                    this.state.usernameStyle
+                      ? this.state.usernameStyle
+                      : styles.inputs
+                  }
+                  placeholder="* 이름"
+                  onChangeText={(mem_username) => {
+                    this.setState({mem_username: mem_username});
+                  }}
+                  onEndEditing={() => {
+                    this.checkNotNull();
+                  }}
+                />
+                <Input
+                  style={
+                    this.state.nicknameStyle
+                      ? this.state.nicknameStyle
+                      : styles.inputs
+                  }
+                  placeholder="* 닉네임 "
+                  onChangeText={(mem_nickname) => {
+                    this.setState({mem_nickname: mem_nickname});
+                    this.checkNotNull();
+                  }}
+                  onEndEditing={() => {
+                    this.checkNotNull();
+                  }}
+                  caption={this.state.nicknameCaption}
+                />
+                <this.RadioSexSelection />
+                {/* validation : 사용자가 input창에서 딱 벗어났을 때 
             1. null 값 체크 
             2. mem_email 마지막으로 입력된 값*/}
-              <Input
-                style={
-                  this.state.emailStyle ? this.state.emailStyle : styles.inputs
-                }
-                keyboardType="email-address"
-                textContentType="emailAddress" //ios
-                placeholder="* 이메일 (ID겸용)"
-                onChangeText={(mem_email) => {
-                  this.setState({
-                    mem_email: mem_email,
-                    mem_userid: mem_email,
-                  });
-                  this.checkEmail(mem_email);
-                }}
-                onEndEditing={() => {
-                  this.checkNotNull();
-                  this.checkEmail(this.state.mem_email);
-                }}
-                caption={this.state.EmailCaption}
-              />
-              <Input
-                style={this.state.pwStyle ? this.state.pwStyle : styles.inputs}
-                secureTextEntry={true}
-                placeholder="* 비밀번호"
-                onChangeText={(mem_password) => {
-                  this.setState({mem_password: mem_password});
-                  this.CheckPassword(mem_password, this.state.mem_password_re);
-                }}
-                onEndEditing={() => {
-                  this.checkNotNull();
-                }}
-              />
-              <Input
-                style={
-                  this.state.pwreStyle ? this.state.pwreStyle : styles.inputs
-                }
-                secureTextEntry={true}
-                placeholder="* 비밀번호 확인"
-                onChangeText={(mem_password_re) => {
-                  this.setState({mem_password_re: mem_password_re});
-                  //{} 하면 obj로 던져서 obj.이름 해야지 됌
-                  this.CheckPassword(this.state.mem_password, mem_password_re);
-                }}
-                onEndEditing={() => {
-                  this.checkNotNull();
-                }}
-                caption={() =>
-                  this.state.captionCheck ? (
-                    <Text category="c1" style={{color: 'red'}}>
-                      {this.state.captionCheck}
-                    </Text>
-                  ) : null
-                }
-              />
-              <Input
-                style={styles.inputs}
-                maxLength={13}
-                keyboardType="phone-pad"
-                dataDetectorTypes="phoneNumber"
-                placeholder="휴대전화"
-                onChangeText={(mem_phone) => {
-                  this.setState({mem_phone: mem_phone});
-                  this.PhoneHyphen(mem_phone);
-                }}
-                onEndEditing={() => this.PhoneHyphen(this.state.mem_phone)}
-                caption={this.state.phoneCaption}
-                value={this.state.mem_phone}
-              />
-              <this.DatepickerBday />
-              <Input
-                style={styles.inputs}
-                placeholder="추천인 이메일"
-                onChangeText={(mem_recommend) =>
-                  this.setState({mem_recommend: mem_recommend})
-                }
-                onEndEditing={() => {
-                  this.checkNotNull();
-                  this.checkRecommend();
-                  this.changeBorderColor();
-                }}
-                caption={this.state.recommendCaption}
-              />
-              <View>
+                <Input
+                  style={
+                    this.state.emailStyle
+                      ? this.state.emailStyle
+                      : styles.inputs
+                  }
+                  keyboardType="email-address"
+                  textContentType="emailAddress" //ios
+                  placeholder="* 이메일 (ID겸용)"
+                  onChangeText={(mem_email) => {
+                    this.setState({
+                      mem_email: mem_email,
+                      mem_userid: mem_email,
+                    });
+                    this.checkEmail(mem_email);
+                  }}
+                  onEndEditing={() => {
+                    this.checkNotNull();
+                    this.checkEmail(this.state.mem_email);
+                  }}
+                  caption={this.state.EmailCaption}
+                />
+                <Input
+                  style={
+                    this.state.pwStyle ? this.state.pwStyle : styles.inputs
+                  }
+                  secureTextEntry={true}
+                  placeholder="* 비밀번호"
+                  onChangeText={(mem_password) => {
+                    this.setState({mem_password: mem_password});
+                    this.CheckPassword(
+                      mem_password,
+                      this.state.mem_password_re,
+                    );
+                  }}
+                  onEndEditing={() => {
+                    this.checkNotNull();
+                  }}
+                />
+                <Input
+                  style={
+                    this.state.pwreStyle ? this.state.pwreStyle : styles.inputs
+                  }
+                  secureTextEntry={true}
+                  placeholder="* 비밀번호 확인"
+                  onChangeText={(mem_password_re) => {
+                    this.setState({mem_password_re: mem_password_re});
+                    //{} 하면 obj로 던져서 obj.이름 해야지 됌
+                    this.CheckPassword(
+                      this.state.mem_password,
+                      mem_password_re,
+                    );
+                  }}
+                  onEndEditing={() => {
+                    this.checkNotNull();
+                  }}
+                  caption={() =>
+                    this.state.captionCheck ? (
+                      <Text category="c1" style={{color: 'red'}}>
+                        {this.state.captionCheck}
+                      </Text>
+                    ) : null
+                  }
+                />
+              </View>
+              <View style={{marginBottom: 10}}>
+                <Input
+                  style={styles.inputs}
+                  maxLength={13}
+                  keyboardType="phone-pad"
+                  dataDetectorTypes="phoneNumber"
+                  placeholder="휴대전화"
+                  onChangeText={(mem_phone) => {
+                    this.setState({mem_phone: mem_phone});
+                    this.PhoneHyphen(mem_phone);
+                  }}
+                  onEndEditing={() => this.PhoneHyphen(this.state.mem_phone)}
+                  caption={this.state.phoneCaption}
+                  value={this.state.mem_phone}
+                />
+                {/* <this.DatepickerBday /> */}
+                <Input
+                  style={styles.inputs}
+                  placeholder="생년월일"
+                  onChangeText={(mem_birthday) =>
+                    this.setState({mem_birthday: mem_birthday})
+                  }
+                  onEndEditing={() => {
+                    this.checkNotNull();
+                    this.checkRecommend();
+                  }}
+                />
+                <Input
+                  style={styles.inputs}
+                  placeholder="추천인 이메일"
+                  onChangeText={(mem_recommend) =>
+                    this.setState({mem_recommend: mem_recommend})
+                  }
+                  onEndEditing={() => {
+                    this.checkNotNull();
+                    this.checkRecommend();
+                  }}
+                  caption={this.state.recommendCaption}
+                />
+              </View>
+
+              <View style={{marginBottom: 20, textDecorationColor: '#63579D'}}>
                 <Text style={styles.statementfont}>서명문</Text>
 
                 <Input
                   style={styles.inputs}
                   label={() => (
-                    <Text category="s2" style={styles.statementfont}>
+                    <Text
+                      category="s1"
+                      style={{color: '#63579D', paddingLeft: 20}}>
                       이타주의자 사용중에 욕을 하지 않겠습니다.
                     </Text>
                   )}
                   placeholder="위와 동일하게 작성"
                   onChangeText={(text) => this.setState({mustInput: text})}
                 />
-
-                {/* <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-around',
-                  alignItems: 'stretch',
-                  alignContent: 'stretch',
-                }}></View> */}
               </View>
             </View>
             {/* 동의 및 다음 버튼 */}
@@ -662,7 +735,7 @@ class RegisterScreen extends Component {
                 alignSelf: 'center',
                 flexDirection: 'row',
                 padding: 3,
-                color: '#63579D',
+                marginBottom: 25,
               }}>
               <TouchableOpacity
                 onPress={() =>
@@ -670,30 +743,41 @@ class RegisterScreen extends Component {
                 }>
                 <Text
                   style={{
-                    color: 'blue',
+                    color: '#63579D',
                     textDecorationLine: 'underline',
                     //ios
-                    textDecorationColor: 'blue',
+                    textDecorationColor: '#63579D',
                   }}>
                   이용 방침
                 </Text>
               </TouchableOpacity>
-              <Text> 과 </Text>
+              <Text
+                style={{
+                  color: '#63579D',
+                }}>
+                {' '}
+                과{' '}
+              </Text>
               <TouchableOpacity
                 onPress={() =>
                   this.props.navigation.navigate('AgreementScreen')
                 }>
                 <Text
                   style={{
-                    color: 'blue',
+                    color: '#63579D',
                     textDecorationLine: 'underline',
                     //ios
-                    textDecorationColor: 'blue',
+                    textDecorationColor: '#63579D',
                   }}>
                   개인정보 취급방침
                 </Text>
               </TouchableOpacity>
-              <Text>에 동의합니다</Text>
+              <Text
+                style={{
+                  color: '#63579D',
+                }}>
+                에 동의합니다
+              </Text>
             </View>
             <TouchableOpacity
               style={{
@@ -736,6 +820,7 @@ const styles = StyleSheet.create({
     // marginTop: 15,
   },
   radio: {
+    fontSize: 13,
     padding: 3,
     // marginTop: 15,
     flexDirection: 'row',
@@ -743,6 +828,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statementfont: {
+    fontWeight: 'bold',
     color: '#63579D',
     paddingLeft: 15,
   },
