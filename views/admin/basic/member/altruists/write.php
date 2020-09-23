@@ -7,7 +7,7 @@
 		$attributes = array('class' => 'form-horizontal', 'name' => 'fadminwrite', 'id' => 'fadminwrite');
 		echo form_open_multipart(current_full_url(), $attributes);
 		?>
-			<input type="hidden" name="<?php echo element('primary_key', $view); ?>"	value="<?php echo element(element('primary_key', $view), element('data', $view)); ?>" />
+			<input type="hidden" name="alt_id"	value="<?php echo element('alt_id', element('data', $view)); ?>" />
 			<div class="form-group">
 				<label class="col-sm-2 control-label">회원아이디</label>
 				<div class="col-sm-10 form-inline">
@@ -131,6 +131,7 @@
 										foreach (element('alt_cv', element('data', $view)) as $alt_cv) {
 											?>
 											<tr>
+												<input type="hidden" name="acv_id_update[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="<?php echo html_escape(element('acv_id', $alt_cv)); ?>" /></td> <!-- 키 -->
 												<td><input type="checkbox" name="acv_open_update[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="1" <?php echo (element('acv_open', $alt_cv)) ? ' checked="checked" ' : ''; ?> /></td> <!-- 공개 -->
 												<td><?php echo html_escape(element('acv_type', $alt_cv)); ?></td> <!-- 타입 -->
 												<td><?php echo html_escape(element('acv_year', $alt_cv)); ?></td> <!-- 년도 -->
@@ -192,9 +193,9 @@
 				<label class="col-sm-2 control-label">승인상태</label>
 				<div class="col-sm-10 form-inline">
 					<select name="alt_status" class="form-control">
-						<option value="R" <?php echo set_select('alt_status', 'R', ( ! element('alt_status', element('data', $view)=='R') ? true : false)); ?>>대기</option>
-						<option value="Y" <?php echo set_select('alt_status', 'Y', ( ! element('alt_status', element('data', $view) =='Y') ? true : false)); ?>>승인</option>
-						<option value="J" <?php echo set_select('alt_status', 'J', (! element('alt_status', element('data', $view)=='J') ? true : false)); ?>>거절</option>
+						<option value="R" <?php echo set_select('alt_status', 'R', ( element('alt_status', element('data', $view))=='R') ? true : false); ?>>대기</option>
+						<option value="Y" <?php echo set_select('alt_status', 'Y', ( element('alt_status', element('data', $view)) =='Y') ? true : false); ?>>승인</option>
+						<option value="J" <?php echo set_select('alt_status', 'J', ( element('alt_status', element('data', $view))=='J') ? true : false); ?>>거절</option>
 					</select>
 				</div>
 			</div>				
