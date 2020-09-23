@@ -189,6 +189,8 @@ class Register extends CB_Controller
 
 		$view['view']['member_register_policy1'] = $this->cbconfig->item('member_register_policy1');
 		$view['view']['member_register_policy2'] = $this->cbconfig->item('member_register_policy2');
+		$view['view']['member_register_policy3'] = $this->cbconfig->item('member_register_policy3');
+		$view['view']['member_register_policy4'] = $this->cbconfig->item('member_register_policy4');
 		response_result($view, 'success', 'OK');
 	}
 
