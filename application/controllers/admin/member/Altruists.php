@@ -19,12 +19,12 @@ class Altruists extends CB_Controller
 	 * 관리자 페이지 상의 현재 디렉토리입니다
 	 * 페이지 이동시 필요한 정보입니다
 	 */
-	public $pagedir = 'altruists/altruists';
+	public $pagedir = 'member/altruists';
 
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Member_meta', 'Member_group', 'Member_group_member', 'Member_nickname', 'Member_extra_vars', 'Member_userid', 'Social_meta');
+	protected $models = array('Member_meta', 'Member_group', 'Member_group_member', 'Member_nickname', 'Member_extra_vars', 'Member_userid', 'Social_meta','Altruists');
 
 	/**
 	 * 이 컨트롤러의 메인 모델 이름입니다
@@ -94,6 +94,12 @@ class Altruists extends CB_Controller
 		$this->{$this->modelname}->allow_order_field = array('member.mem_id', 'mem_userid', 'mem_username', 'mem_nickname', 'mem_email', 'mem_point', 'mem_register_datetime', 'mem_lastlogin_datetime', 'mem_level'); // 정렬이 가능한 필드
 
 		$where = array();
+		//승인된 이타주의자들
+		if ($this->input->get('alt_status')) {
+			$where['alt_status'] = $this->input->get('alt_status');
+		}
+		
+
 		if ($this->input->get('mem_is_admin')) {
 			$where['mem_is_admin'] = 1;
 		}
@@ -105,8 +111,10 @@ class Altruists extends CB_Controller
 				$where['mgr_id'] = $mgr_id;
 			}
 		}
-		$result = $this->{$this->modelname}
-			->get_admin_list($per_page, $offset, $where, '', $findex, $forder, $sfield, $skeyword);
+		
+		
+		//$result = $this->{$this->modelname}->get_admin_list($per_page, $offset, $where, '', $findex, $forder, $sfield, $skeyword);
+		$result = $this->{$this->modelname}->get_alt_list($per_page, $offset, $where, '', $findex, $forder, $sfield, $skeyword);
 		$list_num = $result['total_rows'] - ($page - 1) * $per_page;
 
 		if (element('list', $result)) {
@@ -217,7 +225,23 @@ class Altruists extends CB_Controller
 		 */
 		$getdata = array();
 		if ($pid) {
-			$getdata = $this->{$this->modelname}->get_one($pid);
+
+			// 이타주의자들 기본 정보 			
+			$where['cb_member.mem_id'] =  $pid;
+			$getdata_alt = $this->{$this->modelname}->get_alt_list('','', $where);
+			$getdata = $getdata_alt['list'][0];
+			$alt_id = 0;
+			$alt_id = $getdata_alt['list'][0]['alt_id']; //이타주의자 프로필 키
+			//이타주의자들 경력 정보
+			$getdata['alt_cv'] = $this->Altruists_model->get_alt_cv($alt_id);
+			
+			//이타주의자들 선택한 전문분야 카테고리
+			$getdata['alt_area'] = $this->Altruists_model->cb_alt_area($alt_id);
+			
+			//이타주의자들 전체 카테고리 
+			$getdata['alt_cat'] = $this->Altruists_model->get_alt_cate();
+
+
 			$getdata['extras'] = $this->Member_extra_vars_model->get_all_meta($pid);
 			$getdata['meta'] = $this->Member_meta_model->get_all_meta($pid);
 			$where = array(
@@ -492,6 +516,7 @@ class Altruists extends CB_Controller
 			$view['view']['message'] = $file_error . $file_error2;
 
 			$view['view']['data'] = $getdata;
+			
 
 			if (empty($pid)) {
 				$view['view']['data']['mem_receive_email'] = 1;
