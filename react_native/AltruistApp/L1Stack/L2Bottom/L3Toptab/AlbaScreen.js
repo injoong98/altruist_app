@@ -21,6 +21,7 @@ class AlbaScreen extends React.Component {
       lists : [],
       image_url : '/react_native/AltruistApp/assets/images/noimage.png',
       refreshing : false,
+      total_rows : 0,
     }
   }
 
