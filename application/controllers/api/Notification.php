@@ -199,18 +199,10 @@ class Notification extends CB_Controller
 		$result = $this->Notification_model->mark_read($not_id, $mem_id);
 		if($result) {
 			response_result($view,'Success','읽음 처리 되었습니다.');
-			
 		}else{
 			response_result($view,'Err','처리 하지 못했습니다..');
-
-
 		}
 
-		// 이벤트가 존재하면 실행합니다
-		//Events::trigger('after', $eventname);
-
-	//	$redirecturl = element('not_url', $notification);
-	//	redirect($redirecturl);
 	}
 
 
@@ -296,6 +288,33 @@ class Notification extends CB_Controller
 
 		$result = array('success' => '읽음으로 처리하였습니다');
 		exit(json_encode($result));
+	}
+
+	public function readall()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_notification_readallajax';
+		$this->load->event($eventname);
+
+		$this->output->set_content_type('application/json');
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('before', $eventname);
+
+		/**
+		 * 로그인이 필요한 페이지입니다
+		 */
+		if ($this->member->is_member() === false) {
+			response_result($view,'Err','로그인 후 이용해주세요');
+		}
+
+		$readall_result = $this->Notification_model->mark_allread($this->member->item('mem_id'));
+
+		if($readall_result) {
+			response_result($view,'Success','읽음 처리 되었습니다.');
+		}else{
+			response_result($view,'Err','처리 하지 못했습니다..');
+		}
 	}
 
 
