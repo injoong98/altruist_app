@@ -1,30 +1,13 @@
 import React, {Component, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  Keyboard,
-  Alert,
-  DatePickerAndroid,
-} from 'react-native';
+import {View, StyleSheet, SafeAreaView, Alert} from 'react-native';
 import {
   Text,
   Input,
   Button,
-  CheckBox,
   TopNavigation,
   TopNavigationAction,
   Icon,
-  TextInput,
-  Radio,
-  RadioGroup,
-  Datepicker,
-  Calendar,
-  NativeDateService,
 } from '@ui-kitten/components';
-import moment from 'moment';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import PropTypes from 'prop-types';
 import axios from 'axios';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
@@ -45,14 +28,16 @@ class FindPwScreen extends Component {
     />
   );
 
-  SubmitForm = async (checkUserid) => {
+  SubmitForm = async () => {
     let formdata = new FormData();
+    const {mem_userid} = this.state;
 
-    formdata.append('userid', checkUserid);
+    formdata.append('findtype', 'findidpw');
+    formdata.append('idpw_email', mem_userid);
     console.info('form', this.state);
 
     await axios
-      .post('http://dev.unyict.org/api/findaccount/findpw', formdata)
+      .post(`http://dev.unyict.org/api/findaccount/findpw`, formdata)
       .then((res) => {
         if (res.status == 500) {
           console.log('status500', res);
@@ -85,31 +70,24 @@ class FindPwScreen extends Component {
       });
   };
 
-  //   TODO : 휴대폰 번호
-  PhoneHyphen = () => {};
+  //TODO : 이메일 확인
+  // checkEmail = async () => {
+  //   const {mem_userid} = this.state;
 
-  //   TODO : 이메일 중복 확인
-  checkEmail = async () => {
-    const {mem_userid} = this.state;
+  //   let formdata = new FormData();
+  //   formdata.append('userid', mem_userid);
 
-    let formdata = new FormData();
-    formdata.append('userid', mem_userid);
+  //   await axios
+  //     .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+  //     .then((res) => {
+  //       // const checkUserid = res.data.userid;
+  //       console.log(res.data);
+  //       console.log(res.data.userid);
 
-    await axios
-      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
-      .then((res) => {
-        const checkUserid = res.data.userid;
-        console.log(res.data.userid);
-        if (!checkUserid) {
-          Alert('아이디없음');
-        } else {
-          this.SubmitForm(checkUserid);
-        }
-        console.log(res);
-      });
-  };
+  //       // console.log(res);
+  //     });
+  // };
 
-  // TODO : 이메일 입력
   render() {
     console.log(this.state);
     return (
@@ -143,22 +121,18 @@ class FindPwScreen extends Component {
             </Text>
           </View>
           <Input
-            style={
-              this.state.emailStyle ? this.state.emailStyle : styles.inputs
-            }
-            keyboardType="email-address"
+            style={styles.inputs}
             textContentType="emailAddress" //ios
             placeholder="* 이메일 (ID겸용)"
             onChangeText={(mem_email) => {
               this.setState({
-                mem_email: mem_email,
                 mem_userid: mem_email,
               });
-              this.checkEmail(mem_email);
+              // this.checkEmail(mem_email);
             }}
             onEndEditing={() => {
               // this.checkNotNull();
-              this.checkEmail(this.state.mem_email);
+              // this.checkEmail(this.state.mem_email);
             }}
           />
           <Button
@@ -168,7 +142,7 @@ class FindPwScreen extends Component {
               height: 34,
               borderRadius: 6,
             }}
-            onPress={() => this.checkEmail()}>
+            onPress={() => this.SubmitForm()}>
             PW 재설정
           </Button>
         </View>
