@@ -663,7 +663,11 @@ class AltQuestionWrite extends React.Component
                     <View style={{display:'flex',flexDirection:'row',paddingHorizontal:10}}>
                     {
                         this.props.route.params.answer_mem_id ? 
-                        null
+                        <View>
+                            <Text style={{fontSize:13, fontWeight:'700',color:'#63579D',marginLeft:16}} >
+                            개인 질문을 보냅니다.
+                            </Text>
+                        </View>
                         :
                         <TouchableOpacity 
                             style = {{height:21,width:23,backgroundColor:'#B09BDE',borderRadius:7,justifyContent:'center'}} 
