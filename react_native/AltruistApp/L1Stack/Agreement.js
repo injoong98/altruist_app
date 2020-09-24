@@ -63,16 +63,24 @@ class AgreementScreen extends Component {
     // });
 
     return (
-      <SafeAreaView>
+      <>
         <TopNavigation
           title={name}
           alignment="center"
           accessoryLeft={this.BackAction}
         />
-        <ScrollView>
-          <Text></Text>
-        </ScrollView>
-      </SafeAreaView>
+        <SafeAreaView style={styles.container}>
+          <ScrollView>
+            <View style={styles.content}>
+              {id === 1 ? (
+                <Text>{this.state.information.member_register_policy1}</Text>
+              ) : (
+                <Text>{this.state.information.member_register_policy2}</Text>
+              )}
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </>
     );
   }
 }
@@ -80,26 +88,11 @@ class AgreementScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-  },
-  contentSection: {
-    flex: 10,
+    backgroundColor: '#FFFFFF',
   },
   content: {
-    flex: 7,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 15,
   },
-  goLogin: {
-    alignSelf: 'center',
-    flexDirection: 'row',
-    padding: 3,
-  },
-  btnSection: {
-    flex: 4,
-    margin: 30,
-  },
-  gobtn: {},
 });
 
 export default AgreementScreen;
