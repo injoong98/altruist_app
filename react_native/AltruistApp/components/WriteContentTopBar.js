@@ -15,7 +15,7 @@ export class WriteContentToptab extends React.Component {
         const {right,gbckfunc,text,func} = this.props
         const bckclr = right =='upload'||right =='edit'? '#f4f4f4': '#ffffff'
         return(
-            <View style={{backgroundColor:bckclr,height:49, flexDirection:'row'}}>
+            <View style={[{backgroundColor:bckclr,height:49, flexDirection:'row'},this.props.style]} >
                 <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                     <TouchableOpacity onPress={gbckfunc}>
                         <Backsvg width={25} height={25}/>
