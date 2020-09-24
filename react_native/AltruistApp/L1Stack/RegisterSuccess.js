@@ -42,31 +42,48 @@ class RegisterSuccessScreen extends Component {
   render() {
     console.log(this.state);
     return (
-      <>
+      <SafeAreaView style={{flex: 2, backgroundColor: '#FFFFFF'}}>
         <TopNavigation
-          title="회원가입 인증요청"
+          title={() => <Text category="h2">메일 전송</Text>}
           alignment="center"
           accessoryLeft={this.BackAction}
         />
-        <SafeAreaView style={styles.container}>
-          <View style={styles.contentSection}>
-            <View style={styles.content}>
-              <Text>조금만 더 ...</Text>
-              <Text>작성한 이메일로 가입인증 메일이 전송됩니다.</Text>
-              <Text>인증 완료시, 로그인이 가능합니다</Text>
-            </View>
-            <View style={styles.btnSection}>
-              <Button
-                style={styles.gobtn}
-                onPress={() => {
-                  this.props.navigation.navigate('Login');
-                }}>
-                <Text>확인</Text>
-              </Button>
-            </View>
+        <View style={{flex: 4}}>
+          <View style={{flex: 1}}>
+            <Text
+              category="h3"
+              style={{
+                alignSelf: 'center',
+                paddingTop: 60,
+                paddingBottom: 20,
+                color: '#A897C2',
+                fontWeight: 'bold',
+              }}>
+              메일 전송
+            </Text>
+            <Text style={{alignSelf: 'center', color: '#A897C2'}}>
+              메일 전송이 성공하였습니다.
+            </Text>
+            <Text style={{alignSelf: 'center', color: '#A897C2'}}>
+              메일함을 확인해주세요.
+            </Text>
           </View>
-        </SafeAreaView>
-      </>
+          <View style={{flex: 2}}>
+            <Button
+              style={{
+                alignSelf: 'center',
+                width: 114,
+                height: 34,
+                borderRadius: 6,
+              }}
+              onPress={() => {
+                this.props.navigation.navigate('Login');
+              }}>
+              확인
+            </Button>
+          </View>
+        </View>
+      </SafeAreaView>
     );
   }
 }

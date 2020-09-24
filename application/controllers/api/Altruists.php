@@ -1381,7 +1381,7 @@ class Altruists extends CB_Controller
 
 		// 이타주의자에 지원 자격 조건
 		if (!$this->member->is_member()) { // 이타주의자들 회원 
-			//response_result($r,'Err','로그인 후 지원해주세요');
+			response_result($r,'Err','로그인 후 지원해주세요');
 		}
 
 		$view = array();
@@ -1398,6 +1398,7 @@ class Altruists extends CB_Controller
 		$alt_mem_id = 0;
 		$alt_mem = $this->Altruists_model->get_by_memid($mem_id);
 		if ($alt_mem) {
+			// 테스트 끝나면 !== R 부분의 ! 제거 해주기
 			if ($alt_mem['alt_status'] == 'Y' || $alt_mem['alt_status'] !== 'R') {
 				response_result($alt_mem, 'Err', '회원님은 이미 이타주의자에 지원하셨습니다.');
 			}
@@ -1620,6 +1621,50 @@ class Altruists extends CB_Controller
 			if ($this->db->trans_status() === FALSE) {
 				response_result($view, 'Err', '데이터 저장 도중 오류가 발생하였습니다');
 			} else {
+				
+				//관리자에게 푸시 / 알림 저장.
+					//알림 저장
+					$mem_nickname = $this->session->userdata('mem_nickname');
+					$not_message = $mem_nickname . '님이 이타주의자에 지원하셨습니다.';
+					$not_url = '/';
+
+					//관리자 리스트 가져오기
+					$sql =<<<EOT
+					SELECT * FROM cb_member WHERE mem_is_admin =1
+EOT;
+					$query = $this->db->query($sql);
+					$target_members =   $query->result();
+					foreach ($target_members as $key => $value) {
+					
+						if ($this->cbconfig->item('use_notification') ) {
+							$this->load->library('notificationlib');
+							$this->notificationlib->set_noti(
+								$value->mem_id,
+								$this->input->post('mem_id'),
+								'이타주의자들',
+								$value->mem_id,
+								$not_message,
+								$not_url
+							);
+						}
+						
+						//푸시 전송
+						if ($this->cbconfig->item('use_push') ) {
+							$this->load->library('pushlib');
+							$this->pushlib->set_push(
+								$value->mem_id,
+								$this->input->post('mem_id'),
+								'이타주의자들',
+								$value->mem_id,
+								$not_message,
+								$not_url,
+								'token',
+								''
+							);
+						}
+					
+					
+					}
 				response_result($view, 'success', '정상적으로 지원되었습니다.');
 			}
 		} catch (Exception $e) {

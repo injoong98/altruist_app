@@ -269,10 +269,12 @@ class RegisterScreen extends Component {
         if (res.data.status == 500) {
           console.log('status', res.data.status);
           console.log(res.data.message);
+          console.log(실패);
+          //실패 모달
         } else if (res.data.status == 200) {
           console.log('status', res.data.status);
           console.log(res.data.message);
-          // this.props.navigation.navigate('RegisterSuccessScreen');
+          this.props.navigation.navigate('RegisterSuccessScreen');
         } else {
         }
         // console.log('this.state', this.state);
@@ -360,11 +362,14 @@ class RegisterScreen extends Component {
       phone += number.substr(6);
     }
 
-    if (1900 < number.substr(0, 4) < this_year) {
-      this.setState({
-        bdayCaption: '먼저 태어난 해를 4글자로 먼저 입력해주세요',
-      });
-    }
+    // if (1900 < phone.substr(0, 4) < this_year) {
+    //   console.log('1990]]]=fsaf', number.substr(0, 4).toString());
+    // } else {
+    //   this.setState({
+    //     bdayCaption: '먼저 태어난 해를 4글자로 먼저 입력해주세요',
+    //   });
+    //   console.log('1990', number.substr(0, 4).toString());
+    // }
 
     var value = phone;
     this.setState({mem_birthday: value});
