@@ -23,7 +23,7 @@ import Viewsvg from '../assets/icons/view.svg'
 
 
 const BackIcon =  (props) =>(
-    <Icon {...props} fill ="#63579D"name = "back-arrow" pack="alticons"/>
+    <Icon style={{width:24, height:24}} fill="#63579D" name = "back-arrow" pack="alticons"/>
 )
 const CommentIcon = (props)=>(
     <Icon style={styles.icon} fill='#8F9BB3' name="message-circle"/>
@@ -678,7 +678,7 @@ class MarketContent extends React.Component {
     
     renderPostMore=()=>(
         <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisibel:true})}>
-            <MoreLsvg height={24} width={24}/>
+            <MoreLsvg height={18} width={18}/>
         </TouchableOpacity>
     )
     
@@ -989,7 +989,7 @@ class MarketContent extends React.Component {
 
         return(
             <View style={{backgroundColor:'#F4F4F4'}}>
-                <Layout style={{...styles.container, marginTop:0, paddingTop:50, paddingBottom:15}}>
+                <Layout style={{...styles.container, marginTop:0, paddingTop:40, paddingBottom:15}}>
                     <Layout>
                         <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
                     </Layout>
@@ -1013,7 +1013,7 @@ class MarketContent extends React.Component {
                         <Layout style={{width:30}}>
                             <Image source={require('../assets/images/icon-social-dark.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                         </Layout>
-                        <Layout style={{flex:1, justifyContent:'center'}}>
+                        <Layout style={{flex:1, justifyContent:'center', paddingLeft:5}}>
                             <Text category='h6'>{post.post_nickname}</Text>
                         </Layout>
                         <Layout style={{flexDirection:'row'}}>
@@ -1548,7 +1548,8 @@ const styles = StyleSheet.create({
     }, 
     topbar : {
         backgroundColor : '#F4F4F4',
-        height : 10
+        height : 40,
+        minHeight : 0,
     },
     title : {
         backgroundColor : '#E9E9E9',
