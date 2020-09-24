@@ -771,7 +771,10 @@ class RegisterScreen extends Component {
               }}>
               <TouchableOpacity
                 onPress={() =>
-                  this.props.navigation.navigate('AgreementScreen')
+                  this.props.navigation.navigate('AgreementScreen', {
+                    name: '회원약관',
+                    id: 1,
+                  })
                 }>
                 <Text
                   style={{
@@ -780,7 +783,7 @@ class RegisterScreen extends Component {
                     //ios
                     textDecorationColor: '#63579D',
                   }}>
-                  이용 방침
+                  회원약관
                 </Text>
               </TouchableOpacity>
               <Text
@@ -792,7 +795,10 @@ class RegisterScreen extends Component {
               </Text>
               <TouchableOpacity
                 onPress={() =>
-                  this.props.navigation.navigate('AgreementScreen')
+                  this.props.navigation.navigate('AgreementScreen', {
+                    name: '개인정보 취급방침',
+                    id: 2,
+                  })
                 }>
                 <Text
                   style={{

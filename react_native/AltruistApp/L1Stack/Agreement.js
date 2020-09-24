@@ -8,6 +8,7 @@ import {
 } from '@ui-kitten/components';
 import axios from 'axios';
 import {Button, Footer} from 'native-base';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
@@ -37,25 +38,11 @@ class AgreementScreen extends Component {
     await axios
       .get('http://dev.unyict.org/api/register/get_register_policy')
       .then((res) => {
+        // let key = 0;
+        // //리스트에 key값 넣기
         console.log(res);
         console.log(res.data.view);
-        this.state = {
-          information: [
-            {
-              // id: res.key,
-              id: 1,
-              name: '회원약관',
-              content: res.data.view.member_register_policy1,
-            },
-            {
-              id: 2,
-              name: '개인정보취급방침',
-              content: res.data.view.member_register_policy2,
-            },
-          ],
-        };
-        // for(let i=0; i < res.data.view.)
-        console.log('rendr', this.state);
+        this.setState({information: res.data.view});
       })
       .catch((error) => {
         console.log('ERROR', error);
@@ -65,20 +52,27 @@ class AgreementScreen extends Component {
 
   render() {
     console.log('this.state', this.state);
+    // const {route} = this.props;
+    const {information, info} = this.state;
+    const {id, name} = this.props.route.params;
+    // Object.keys(information).map((key) => [Number(key), information[key]]);
+    // Object.keys(information).map((key) => [key, obj[key]]);
+    // Object.entries(information).map((key) => {
+    //   [Number(k++), information[key]];
+    //   console.log('information2', [Number(k), information[key]]);
+    // });
+
     return (
-      <>
+      <SafeAreaView>
         <TopNavigation
-          title={this.state.information.name}
+          title={name}
           alignment="center"
           accessoryLeft={this.BackAction}
         />
-        <SafeAreaView style={styles.container}>
-          <View style={styles.contentSection}>
-            <Text>{this.state.information.content}</Text>
-            <Button onPress={() => this.GetAgreement()}></Button>
-          </View>
-        </SafeAreaView>
-      </>
+        <ScrollView>
+          <Text></Text>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
