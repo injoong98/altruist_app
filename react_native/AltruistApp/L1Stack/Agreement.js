@@ -53,7 +53,7 @@ class AgreementScreen extends Component {
   render() {
     console.log('this.state', this.state);
     // const {route} = this.props;
-    const {information, info} = this.state;
+    const {information} = this.state;
     const {id, name} = this.props.route.params;
     // Object.keys(information).map((key) => [Number(key), information[key]]);
     // Object.keys(information).map((key) => [key, obj[key]]);
@@ -73,9 +73,9 @@ class AgreementScreen extends Component {
           <ScrollView>
             <View style={styles.content}>
               {id === 1 ? (
-                <Text>{this.state.information.member_register_policy1}</Text>
+                <Text>{information.member_register_policy1}</Text>
               ) : (
-                <Text>{this.state.information.member_register_policy2}</Text>
+                <Text>{information.member_register_policy2}</Text>
               )}
             </View>
           </ScrollView>
