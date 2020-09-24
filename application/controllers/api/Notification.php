@@ -169,35 +169,48 @@ class Notification extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		if ($this->member->is_member() === false) {
+			response_result($view,'Err','로그인 후 이용해주세요');
+		}
 
 		$mem_id = (int) $this->member->item('mem_id');
 
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
 
-		$not_id = (int) $not_id;
+		$not_id = $this->input->post('not_id');
 		if (empty($not_id) OR $not_id < 1) {
-			show_404();
+			response_result($view,'Err','not_id 값이 없거나 비어 있습니다.');
+			//show_404();
 		}
 
 		$notification = $this->Notification_model->get_one($not_id);
 
 		if ( ! element('not_id', $notification)) {
-			show_404();
+			response_result($view,'Err','not_id 값이 없거나 비어 있습니다.');
+			//show_404();
 		}
 
 		if ((int) element('mem_id', $notification) !== $mem_id) {
-			show_404();
+			response_result($view,'Err','mem_id 값이 없거나 비어 있습니다.');
+			//show_404();
+		}
+		
+		$result = $this->Notification_model->mark_read($not_id, $mem_id);
+		if($result) {
+			response_result($view,'Success','읽음 처리 되었습니다.');
+			
+		}else{
+			response_result($view,'Err','처리 하지 못했습니다..');
+
+
 		}
 
-		$this->Notification_model->mark_read($not_id, $mem_id);
-
 		// 이벤트가 존재하면 실행합니다
-		Events::trigger('after', $eventname);
+		//Events::trigger('after', $eventname);
 
-		$redirecturl = element('not_url', $notification);
-		redirect($redirecturl);
+	//	$redirecturl = element('not_url', $notification);
+	//	redirect($redirecturl);
 	}
 
 
