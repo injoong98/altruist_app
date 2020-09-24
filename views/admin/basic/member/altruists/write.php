@@ -96,7 +96,7 @@
 							$chkvalue = is_array(element('alt_area', element('data', $view))) && in_array(element('act_id', $gval), element('alt_area', element('data', $view))) ? element('act_id', $gval) : '';
 					?>
 						<label for="alt_area_<?php echo element('act_id', $gval); ?>" class="checkbox-inline">
-							<input type="checkbox" name="alt_area[]" id="alt_area_<?php echo element('act_id', $gval); ?>" value="<?php echo element('act_id', $gval); ?>" <?php echo set_checkbox('alt_area[]', element('act_id', $gval), ($chkvalue ? true : false)); ?> /> <?php echo element('act_content', $gval); ?>
+							<input type="checkbox" name="alt_area[]"  value="" <?php echo set_checkbox('alt_area[]', element('act_id', $alt_area), ($chkvalue ? true : false)); ?> /> <?php echo element('act_content', $gval); ?>
 						</label>
 					<?php
 						}
