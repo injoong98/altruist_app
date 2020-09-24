@@ -199,18 +199,10 @@ class Notification extends CB_Controller
 		$result = $this->Notification_model->mark_read($not_id, $mem_id);
 		if($result) {
 			response_result($view,'Success','읽음 처리 되었습니다.');
-			
 		}else{
 			response_result($view,'Err','처리 하지 못했습니다..');
-
-
 		}
 
-		// 이벤트가 존재하면 실행합니다
-		//Events::trigger('after', $eventname);
-
-	//	$redirecturl = element('not_url', $notification);
-	//	redirect($redirecturl);
 	}
 
 
@@ -298,6 +290,33 @@ class Notification extends CB_Controller
 		exit(json_encode($result));
 	}
 
+	public function readall()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_notification_readallajax';
+		$this->load->event($eventname);
+
+		$this->output->set_content_type('application/json');
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('before', $eventname);
+
+		/**
+		 * 로그인이 필요한 페이지입니다
+		 */
+		if ($this->member->is_member() === false) {
+			response_result($view,'Err','로그인 후 이용해주세요');
+		}
+
+		$readall_result = $this->Notification_model->mark_allread($this->member->item('mem_id'));
+
+		if($readall_result) {
+			response_result($view,'Success','읽음 처리 되었습니다.');
+		}else{
+			response_result($view,'Err','처리 하지 못했습니다..');
+		}
+	}
+
 
 	/**
 	 * 알림 AJAX 리스트 입니다
@@ -370,8 +389,9 @@ class Notification extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
-
+		if ($this->member->is_member() === false) {
+			response_result($view,'Err','로그인 후 이용해주세요');
+		}
 		$mem_id = (int) $this->member->item('mem_id');
 
 		// 이벤트가 존재하면 실행합니다
@@ -379,20 +399,20 @@ class Notification extends CB_Controller
 
 		$not_id = (int) $not_id;
 		if (empty($not_id) OR $not_id < 1) {
-			show_404();
+			response_result($view,'Err','not_id 값이 없거나 비어 있습니다.');
 		}
 
 		$notification = $this->Notification_model->get_one($not_id);
 
 		if ( ! element('not_id', $notification)) {
-			show_404();
+			response_result($view,'Err','not_id 값이 없거나 비어 있습니다.');
 		}
 
 		if ((int) element('mem_id', $notification) !== $mem_id) {
-			show_404();
+			response_result($view,'Err','mem_id 값이 없거나 비어 있습니다.');
 		}
 
-		$this->Notification_model->delete($not_id);
+		$result = $this->Notification_model->delete($not_id);
 
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('after', $eventname);
@@ -400,12 +420,12 @@ class Notification extends CB_Controller
 		/**
 		 * 삭제가 끝난 후 목록페이지로 이동합니다
 		 */
-		$this->session->set_flashdata(
-			'message',
-			'정상적으로 삭제되었습니다'
-		);
-		$param =& $this->querystring;
-		redirect('notification?' . $param->output());
+		if($result) {
+			response_result($view,'Success','읽음 처리 되었습니다.');
+		}else{
+			response_result($view,'Err','처리 하지 못했습니다..');
+		}
+
 	}
 
 
