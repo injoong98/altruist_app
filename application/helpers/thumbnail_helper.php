@@ -55,7 +55,9 @@ if ( ! function_exists('thumbnail')) {
 			$source_file .= $type . '/';
 		}
 		$source_file .= $filename;
-
+		
+		if($type =='altruists_apply') $source_file = $filename;
+		
 		if (is_file($source_file) === false) { // 원본 파일이 없다면
 			return;
 		}
