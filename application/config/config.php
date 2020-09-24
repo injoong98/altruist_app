@@ -1,29 +1,29 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * CiBoard 주 : URL 주소에 쓰이는 URI 부분의 첫번째 요소를 정의합니다.
  * 예를 들어 갤러리 게시판을 세팅할 경우
  * http://www.도메인.com/board/gallery 와 같이 될 때에 board 라는 부분을 다른 이름으로 변경할 수 있습니다.
  */
-$config['uri_segment_admin'] ='admin';  //관리자 페이지 주소
-$config['uri_segment_board'] ='board';  //게시판 목록 부분 주소
-$config['uri_segment_write'] ='write';  //게시글 쓰기 주소
-$config['uri_segment_reply'] ='reply';  //게시물 답변하기 주소
-$config['uri_segment_modify'] ='modify';  //게시글 수정하기 주소
-$config['uri_segment_rss'] ='rss';  // RSS 주소
-$config['uri_segment_group'] ='group';  //게시판 그룹 메인 주소
-$config['uri_segment_document'] ='document';  //일반 페이지 주소
-$config['uri_segment_faq'] ='faq';  //FAQ 페이지 주소
+$config['uri_segment_admin'] = 'admin';  //관리자 페이지 주소
+$config['uri_segment_board'] = 'board';  //게시판 목록 부분 주소
+$config['uri_segment_write'] = 'write';  //게시글 쓰기 주소
+$config['uri_segment_reply'] = 'reply';  //게시물 답변하기 주소
+$config['uri_segment_modify'] = 'modify';  //게시글 수정하기 주소
+$config['uri_segment_rss'] = 'rss';  // RSS 주소
+$config['uri_segment_group'] = 'group';  //게시판 그룹 메인 주소
+$config['uri_segment_document'] = 'document';  //일반 페이지 주소
+$config['uri_segment_faq'] = 'faq';  //FAQ 페이지 주소
 
 //게시글 주소 ( http://www.ciboard.co.kr/post/123  과 같은 형식의 post 부분)
-$config['uri_segment_post'] ='post';
+$config['uri_segment_post'] = 'post';
 
 //게시글 주소형식
 // A :  http://www.ciboard.co.kr/post/123 과 같이 uri_segment_post  와 post_id 가 순서대로 주소에 붙는 형식
 // B :  http://www.ciboard.co.kr/boardkey/post/123 과 같이 boardkey, uri_segment_post , post_id 가 순서대로 주소에 붙는 형식
 // C :  http://www.ciboard.co.kr/post/boardkey/123 과 같이 uri_segment_post , boardkey, post_id 가 순서대로 주소에 붙는 형식
-$config['uri_segment_post_type'] ='A';
+$config['uri_segment_post_type'] = 'A';
 
 
 /*
@@ -492,7 +492,7 @@ $config['encryption_key'] = 'altruists';
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] =  APPPATH.'cache/session/';
+$config['sess_save_path'] =  APPPATH . 'cache/session/';
 //$config['sess_save_path'] =  NULL;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;

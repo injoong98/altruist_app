@@ -342,9 +342,9 @@ class RegisterScreen extends Component {
       // } else if (13 < overwrited.length < 13) {
       //   console.log('13이상', overwrited.length);
       //   phonefinal = overwrited.substr(-1);
+      this.setState({mem_phone: phonefinal});
     }
     console.log('phonefinal', phonefinal);
-    this.setState({mem_phone: phonefinal});
   };
 
   //   TODO : 이메일 중복 확인
@@ -560,12 +560,11 @@ class RegisterScreen extends Component {
               {/* 필수 */}
               <View style={{marginBottom: 10}}>
                 <Input
-                  style={[
-                    styles.inputs,
-                    this.state.mem_username
-                      ? {borderColor: '#FFFFFFF'}
-                      : {borderColor: 'red'},
-                  ]}
+                  style={
+                    this.state.usernameStyle
+                      ? this.state.usernameStyle
+                      : styles.inputs
+                  }
                   placeholder="* 이름"
                   onChangeText={(mem_username) => {
                     this.setState({mem_username: mem_username});
