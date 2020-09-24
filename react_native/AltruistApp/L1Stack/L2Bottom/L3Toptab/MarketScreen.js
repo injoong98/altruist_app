@@ -84,7 +84,7 @@ class MarketScreen extends React.Component {
                     {item.post_nickname}
                 </Text>
                 <View style={{position:'absolute', top:16}}>
-                  <PostTime color='#878787' datetime={item.post_datetime}/>
+                  <PostTime style={{color:'#878787'}} datetime={item.post_datetime}/>
                 </View>
             </View>
           </View>

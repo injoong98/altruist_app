@@ -989,40 +989,41 @@ class MarketContent extends React.Component {
 
         return(
             <View style={{backgroundColor:'#F4F4F4'}}>
-                <Layout style={styles.container}>
+                <Layout style={{...styles.container, paddingBottom:15}}>
                     <Layout>
                         <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
                     </Layout>
                     <Layout>
                         <Text style={{marginVertical:10, color:'#439DB1'}} category='c2'>
-                            {post.deal_status=0? '판매완료'
-                            :post.deal_type==0? '판매중 / 배송':post.deal_type==1? '판매중 / 직거래':'판매중 / 배송 & 직거래'}
+                            {post.deal_status=0? '•판매완료'
+                            :post.deal_type==0? '•판매중 / 배송':post.deal_type==1? '•판매중 / 직거래':'•판매중 / 배송 & 직거래'}
                         </Text>
                     </Layout>
-                    <Layout>
+                    <Layout style={{paddingLeft:5}}>
                         <Layout style={{marginVertical:5}}>
-                            <Text category='h1'>{post.post_title}</Text>
+                            <Text category='h1' style={{fontSize:25}}>{post.post_title}</Text>
                         </Layout>
-                        <Layout style={{marginTop : 10, flexDirection:'row'}}>
-                            <Text category='h5' style={{color:'gray'}}>가격</Text>
+                        <Layout style={{marginVertical : 10, flexDirection:'row'}}>
+                            <Text category='h5' style={{color:'#989898'}}>가격</Text>
                             <Text category='h5' style={{marginLeft:20}}>{post.deal_price} 원</Text>
                         </Layout>
                     </Layout>
-                    <Layout style={{height:50,flexDirection:'row', marginTop:10}}>
-                        <Layout style={{width:50}}>
+                    <Divider/>
+                    <Layout style={{height:30,flexDirection:'row', marginTop:10}}>
+                        <Layout style={{width:30}}>
                             <Image source={require('../assets/images/icon-social-dark.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                         </Layout>
                         <Layout style={{flex:1, justifyContent:'center'}}>
-                            <Text category='h4'>{post.post_nickname}</Text>
+                            <Text category='h6'>{post.post_nickname}</Text>
                         </Layout>
                         <Layout style={{flexDirection:'row'}}>
                             <Layout style={{justifyContent:'center', alignItems:'center'}}>
                                 <Viewsvg/>
-                                <Text>{post.post_hit}</Text>
+                                <Text style={{color:'#878787', fontSize:10}} category='s2'>{post.post_hit}</Text>
                             </Layout>
                             <Layout style={{justifyContent:'center', alignItems:'center', marginHorizontal:10}}>
                                 <Viewsvg/>
-                                <PostTime datetime={post.post_datetime}/>
+                                <PostTime style={{color:'#878787', fontSize:10}} datetime={post.post_datetime}/>
                             </Layout>
                         </Layout>
                     </Layout>
