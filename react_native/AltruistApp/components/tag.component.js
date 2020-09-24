@@ -23,7 +23,7 @@ export default class Tag extends React.Component{
     render(){
         return(
             <TouchableOpacity style={this.props.style} onPress={this.props.onPress} disabled ={this.props.disabled}>
-                <Text style={[styles.defaultStyle, {backgroundColor : color_array[this.state.color]}, this.props.style]} category = 'c2'>
+                <Text style={[styles.defaultStyle, this.props.style]}>
                     {this.props.children}
                 </Text>
             </TouchableOpacity>
@@ -33,12 +33,11 @@ export default class Tag extends React.Component{
 
 const styles = StyleSheet.create({
     defaultStyle:{
-        borderRadius : 20, 
-        padding : 4, 
-        marginHorizontal : 5,
         textAlignVertical : 'center',
         justifyContent : 'center',
-        fontSize : 14,
+        fontSize : 13,
+        color:'#BEBEBE',
+        fontWeight:'700',
     }
 })
 
