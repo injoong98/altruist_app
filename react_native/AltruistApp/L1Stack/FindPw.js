@@ -33,24 +33,7 @@ const CalendarIcon = (props) => <Icon {...props} name="calendar" />;
 class FindPwScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      mem_userid: '',
-      mem_email: '',
-      mem_password: '',
-      mem_password_re: '',
-      mem_username: '',
-      mem_nickname: '',
-      mem_homepage: '',
-      mem_phone: '',
-      mem_birthday: '',
-      mem_sex: '1',
-      mem_address: '',
-      mem_profile_content: '',
-      mem_recommend: '',
-      captionCheck: '',
-      column: '',
-      date: new Date(),
-    };
+    this.state = {};
   }
 
   BackAction = () => (
@@ -62,43 +45,22 @@ class FindPwScreen extends Component {
     />
   );
 
-  //form submit
-  SubmitForm = async () => {
-    const {
-      mem_userid,
-      mem_password,
-      mem_password_re,
-      mem_nickname,
-      mem_phone,
-      mem_email,
-      mem_sex,
-      mem_birthday,
-      mem_recommend,
-    } = this.state;
-
+  SubmitForm = async (checkUserid) => {
     let formdata = new FormData();
-    formdata.append('mem_userid', mem_userid);
-    formdata.append('mem_email', mem_email);
-    formdata.append('mem_password', mem_password);
-    formdata.append('mem_password_re', mem_password_re);
-    formdata.append('mem_phone', mem_phone);
-    formdata.append('mem_nickname', mem_nickname);
-    formdata.append('mem_sex', mem_sex);
-    formdata.append('mem_birthday', mem_birthday);
-    formdata.append('mem_recommend', mem_recommend);
+
+    formdata.append('userid', checkUserid);
     console.info('form', this.state);
 
     await axios
-      .post('http://dev.unyict.org/api/register/form', formdata)
+      .post('http://dev.unyict.org/api/findaccount/findpw', formdata)
       .then((res) => {
-        console.log('response', res);
-        console.log('status', res.status);
         if (res.status == 500) {
-          // () => this.props.navigation.navigate('AgreementScreen');
-          this.props.navigation.navigate('RegisterSuccessScreen');
+          console.log('status500', res);
+          console.log('status', res.status);
         } else if (res.status == 200) {
+          console.log('status200', res);
+          console.log('status', res.status);
           //실패시,
-          this.props.navigation.navigate('RegisterSuccessScreen');
         } else {
         }
         // console.log('this.state', this.state);
@@ -126,14 +88,9 @@ class FindPwScreen extends Component {
   //   TODO : 휴대폰 번호
   PhoneHyphen = () => {};
 
-  //TODO :
-
-  //TODO : 모달 (실패)
-
   //   TODO : 이메일 중복 확인
   checkEmail = async () => {
-    const {mem_userid, checkEmail} = this.state;
-    console.log('jklsajf');
+    const {mem_userid} = this.state;
 
     let formdata = new FormData();
     formdata.append('userid', mem_userid);
@@ -141,37 +98,81 @@ class FindPwScreen extends Component {
     await axios
       .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
       .then((res) => {
+        const checkUserid = res.data.userid;
+        console.log(res.data.userid);
+        if (!checkUserid) {
+          Alert('아이디없음');
+        } else {
+          this.SubmitForm(checkUserid);
+        }
         console.log(res);
-        console.log(res.data);
-        this.setState({EmailCaption: res.data.message});
       });
   };
 
   // TODO : 이메일 입력
-
-  // TODO :
-
   render() {
     console.log(this.state);
     return (
-      <>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
         <TopNavigation
-          title="비밀번호찾기"
+          title={() => <Text category="h2">비밀번호 재설정</Text>}
           alignment="center"
           accessoryLeft={this.BackAction}
         />
-        <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-          <ScrollView>
-            <Text>비밀번호 찾기</Text>
-            <Button
-              style={{alignSelf: 'center', width: 200}}
-              // onPress={() => this.SubmitForm()}
-            >
-              다음
-            </Button>
-          </ScrollView>
-        </SafeAreaView>
-      </>
+        <View style={{flex: 3}}>
+          <View style={{paddingBottom: 30}}>
+            <Text
+              category="h3"
+              style={{
+                alignSelf: 'center',
+                paddingTop: 40,
+                paddingBottom: 20,
+                color: '#A897C2',
+                fontWeight: 'bold',
+              }}>
+              비밀번호 재설정
+            </Text>
+            <Text style={{alignSelf: 'center', color: '#A897C2'}}>
+              가입하신 메일 주소로 알려드립니다.
+            </Text>
+            <Text style={{alignSelf: 'center', color: '#A897C2'}}>
+              가입할 때 등록한 메일 주소를 입력하고
+            </Text>
+            <Text style={{alignSelf: 'center', color: '#A897C2'}}>
+              "PW 재설정" 버튼을 클릭해주세요.
+            </Text>
+          </View>
+          <Input
+            style={
+              this.state.emailStyle ? this.state.emailStyle : styles.inputs
+            }
+            keyboardType="email-address"
+            textContentType="emailAddress" //ios
+            placeholder="* 이메일 (ID겸용)"
+            onChangeText={(mem_email) => {
+              this.setState({
+                mem_email: mem_email,
+                mem_userid: mem_email,
+              });
+              this.checkEmail(mem_email);
+            }}
+            onEndEditing={() => {
+              // this.checkNotNull();
+              this.checkEmail(this.state.mem_email);
+            }}
+          />
+          <Button
+            style={{
+              alignSelf: 'center',
+              width: 114,
+              height: 34,
+              borderRadius: 6,
+            }}
+            onPress={() => this.checkEmail()}>
+            PW 재설정
+          </Button>
+        </View>
+      </SafeAreaView>
     );
   }
 }
@@ -180,6 +181,15 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  inputs: {
+    marginLeft: 35,
+    marginRight: 35,
+    paddingBottom: 30,
+    backgroundColor: '#F8F8F8',
+    borderRadius: 15,
+    borderColor: '#FFFFFF',
+    color: '#A897C2',
   },
 });
 
