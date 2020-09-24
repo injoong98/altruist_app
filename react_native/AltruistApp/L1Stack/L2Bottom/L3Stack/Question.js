@@ -186,7 +186,8 @@ class AltQueContent extends React.Component{
             spinnerModalVisible:false,
             resultModalVisible:false,
             resultText:'',
-            modalType:1
+            modalType:1,
+            brd_key:''
         }
     }
     static contextType =Signing; 
@@ -300,12 +301,13 @@ class AltQueContent extends React.Component{
         })
     }
     renderCommentsList=({item,index})=>{
+        const {post,brd_key,cmt_id} =this.state
         return(
         item==false?
-            this.context.session_mem_id !=this.state.post.mem_id? 
+            this.context.session_mem_id !=post.mem_id? 
             <View>
                 <Button 
-                    onPress = {()=>{this.props.navigation.navigate('AltReplying',{post:this.state.post,onGoBack:this.onRefresh})}}
+                    onPress = {()=>{this.props.navigation.navigate('AltReplying',{post:post,brd_key:brd_key,onGoBack:this.onRefresh})}}
                     style={{marginHorizontal:15,}}
                 >
                     
@@ -335,7 +337,7 @@ class AltQueContent extends React.Component{
                     paddingVertical:10,
                     paddingLeft: 15,
                     marginLeft:item.cmt_reply==""?15:50,
-                    backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
+                    backgroundColor:item.cmt_id==cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
                         <View>
@@ -433,7 +435,7 @@ class AltQueContent extends React.Component{
     getPostData = async (post_id)=>{
         await axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post});
+            this.setState({post:response.data.view.post,brd_key:response.data.view.board_key});
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
             this.setState({content:post_remove_tagsf})
@@ -456,7 +458,7 @@ class AltQueContent extends React.Component{
     }
 
     render(){
-        const {isLoading,post,comment,modalVisible,cmt_id,confirmModalVisible,modalType,spinnerModalVisible,resultModalVisible} = this.state;
+        const {isLoading,post,comment,modalVisible,cmt_id,confirmModalVisible,modalType,spinnerModalVisible,resultModalVisible,brd_key} = this.state;
         console.log(this.state.post.post_comment_count);
         
        return(
@@ -468,7 +470,7 @@ class AltQueContent extends React.Component{
 
         <SafeAreaView style={{flex:1,backgroundColor:'#ffffff'}}>
             <WriteContentToptab
-                text='오픈질문'
+                text={brd_key=='indi'?'1대1질문':'오픈질문'}
                 gbckfunc={() => {
                     this.props.navigation.goBack();
                 }}
