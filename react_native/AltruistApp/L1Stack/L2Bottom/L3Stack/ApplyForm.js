@@ -12,7 +12,9 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   ScrollView,
-  Dimensions
+  Dimensions,
+  StatusBar,
+  Image
 } from 'react-native';
 import {
   Layout,
@@ -30,11 +32,21 @@ import {
   RadioGroup,
   Modal
 } from '@ui-kitten/components';
+import {WriteContentToptab} from '../../../components/WriteContentTopBar';
 import {Signing} from '../../Context';
 import axios from 'axios';
 import Tag from '../../../components/tag.component'
+import Camsvg from '../../../assets/icons/Icon_Cam.svg';
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
-
+const CommonTextInput = (props) =>
+(
+  <TextInput 
+    {...props}
+    style={[styles.contentInput,props.styles]}
+    multiline={true}
+    placeholderTextColor='#A897C2'
+  />
+)
 class AltApplyFormScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -327,10 +339,15 @@ class AltApplyFormScreen extends React.Component {
   };
 
   componentDidMount() {
-    //this.setAltruist()
+    StatusBar.setBackgroundColor('#F4F4F4');
+    StatusBar.setBarStyle('dark-content');
     this.getAreaCat();
     this.setState({mem_id:this.context.session_mem_id});
     this.arrayForLoop();
+  }
+  componentWillUnmount(){
+    StatusBar.setBackgroundColor('#B09BDE');
+    StatusBar.setBarStyle('default');
   }
 
   render() {
@@ -338,36 +355,42 @@ class AltApplyFormScreen extends React.Component {
     const {filterModalVisible,actSelected,alt_content,alt_aboutme,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,alt_photo} = this.state;
     return (
       <SafeAreaView style={styles.container}>
-        <TopNavigation title="이타주의자" accessoryLeft={this.BackAction} />
-        <View>
-          <Text> 이타주의자 지원하기 FORM </Text>
-        </View>
-        <ScrollView>
-          <TouchableHighlight onPress={()=>this.attatchProfImg()} >
-              <View style={{flexDirection:'row'}} >
-                <Text>프로필 사진 추가</Text>
-                <Text>{!alt_photo? null:alt_photo.name}</Text>
-                 <TouchableHighlight onPress={()=>{this.setState({alt_photo:{}})}}><Text>x</Text></TouchableHighlight>
-              </View>
-             </TouchableHighlight>
-          <View style={{flexDirection: 'row'}}>
-            <Text>자기PR</Text>
-            <TextInput
-              style={styles.contentInput}
-              value={alt_aboutme}
-              onChangeText={(text) => this.setState({alt_aboutme:text})}
-            />
+        <WriteContentToptab
+          text='지원하기'
+          gbckfunc={() => {
+              this.props.navigation.goBack();
+          }}
+          gbckuse={true}
+          style={{backgroundColor:'#f4f4f4'}}
+        />
+        <ScrollView style={{paddingHorizontal:"5%"}}>
+          <View style={{flexDirection:'row'}}>
+            <TouchableHighlight onPress={()=>this.attatchProfImg()} >
+                <View >
+                  <Image 
+                    style={{width:100,height:100}}
+                    source={{uri:!alt_photo.uri? 'http://dev.unyict.org/uploads/noimage.gif':alt_photo.uri}}/>
+                  <Camsvg style={{position:'absolute',bottom:0,right:0}}/>
+                </View>
+              </TouchableHighlight>
+            <View style={{width:(width-100)*0.9}}>
+              <CommonTextInput
+                value={alt_aboutme}
+                onChangeText={(text) => this.setState({alt_aboutme:text})}
+                placeholder='자기PR (50자 이내)'
+                />
+            </View>
           </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text>자기소개</Text>
-            <TextInput
-              style={styles.contentInput}
+          <View style={{marginTop:25}}>
+            <CommonTextInput
               value={alt_content}
               onChangeText={(text) => this.setState({alt_content: text})}
+              placeholder='자기소개'
+              style={{height:100}}
             />
           </View>
           <View style={{flexDirection: 'row'}}>
-            <Text>답변대기</Text>
+            <Text>답변허용</Text>
             
             <RadioGroup
             style={{flexDirection:'row'}}
@@ -572,11 +595,11 @@ const styles = StyleSheet.create({
   },
   contentInput: {
     backgroundColor: '#ffffff',
-    borderRadius: 15,
+    borderRadius: 14,
     marginHorizontal: 10,
     marginBottom: 20,
+    minHeight:100
     // 휴대폰 width - titleInput
-    width: 350,
   },
   tagSelected:{
     color:'#63579D'

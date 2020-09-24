@@ -312,7 +312,7 @@ class Board_post extends CB_Controller
 			}
 		}
 		if (element('use_personal', $board) && $is_admin === false
-			&& $mem_id !== abs(element('mem_id', $post))) {
+			&& $mem_id !== abs(element('mem_id', $post))&& $mem_id !== abs(element('answer_mem_id', $post))) {
 			alert('1:1 게시판은 본인의 글 이외의 열람이 금지되어있습니다.');
 			return false;
 		}
@@ -1229,7 +1229,7 @@ class Board_post extends CB_Controller
 				$result['list'][$key]['origin_image_url'] = '';
 
 				if (element('use_gallery_list', $board)) {
-					if (element('post_thumb_use', $val)) {
+					if (element('post_thumb_use', $val) ||element('brd_key', $board) == 'b-a-2' ) { // 썸네일 표기 및 수수마켓은 무조건
 						if (element('post_image', $val)) { //post_image : 이미지 카운트
 							//post_main_thumb  로 대표 썸네일을 가져온다.  0 부터 
 							$file = $this->Post_file_model->get_main_thumb(element('post_id', $val),element('post_main_thumb', $val));
@@ -1245,8 +1245,8 @@ class Board_post extends CB_Controller
 	
 							$result['list'][$key]['origin_image_url'] = $thumb_url;
 						}
-					}else{
-						$thumb_url = '/assets/images/social_twitter.png';
+					}else{//../../../assets/images/noimage.png
+						$thumb_url = site_url('/assets/images/noimage.png');
 						$result['list'][$key]['thumb_url'] =$thumb_url;
 						$result['list'][$key]['origin_image_url'] = $thumb_url;
 					}

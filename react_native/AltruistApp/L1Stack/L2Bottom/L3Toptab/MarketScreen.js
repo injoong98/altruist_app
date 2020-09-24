@@ -110,7 +110,7 @@ class MarketScreen extends React.Component {
         </View>
         <View style={{width:100, justifyContent:'center', alignItems:'center'}}>
             <Image 
-              source={item.origin_image_url? {uri : item.origin_image_url}:{uri : "http://dev.unyict.org/assets/images/social_twitter.png"}} 
+              source={item.thumb_url? {uri : item.thumb_url}:{uri : "http://dev.unyict.org/assets/images/noimage.png"}} 
               style={{width:86, height:86, resizeMode:'cover', borderRadius:10}}
             />
         </View>

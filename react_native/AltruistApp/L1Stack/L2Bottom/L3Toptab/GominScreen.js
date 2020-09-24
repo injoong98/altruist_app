@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity,Animated,YellowBox} from 'react-native';
+import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity,Animated,LogBox} from 'react-native';
 import { Icon,Layout,Button,Text,ListItem,List, Divider,Card,Spinner} from '@ui-kitten/components';
 import axios from 'axios';
 import {PostTime} from '../../../components/PostTime'
@@ -9,7 +9,7 @@ import Viewsvg from '../../../assets/icons/view.svg'
 import Commentsvg from '../../../assets/icons/comment.svg'
 import Writesvg from '../../../assets/icons/write.svg'
 
-YellowBox.ignoreWarnings([
+LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
 ]);
     const WriteIcon = (props)=>(
@@ -52,38 +52,6 @@ class GominScreen extends React.Component {
 
     // }
 
-    renderItem = ({ item, index }) => {
-        const regex = /(<([^>]+)>)|&nbsp;/ig;
-        const post_remove_tags = item.post_content.replace(regex, '');
-        
-        return(
-        <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}}>
-            <View>
-                <Text style ={styles.headtext}category="h4" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
-                <Text style={styles.subtext}category="s2" numberOfLines={1}>{post_remove_tags}</Text>
-            </View>
-            <View style={styles.subtitle}>
-                <View style={{display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4}}> 
-                    <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{item.display_name}</Text>
-                    <PostTime datetime = {item.post_datetime}/>
-                </View>
-                <View style={styles.infocontainer}>
-                    <View style={{alignItems:'center',}}>
-                        <Heartsvg />
-                        <Text style={styles.infotext} category="s1">{item.post_like}</Text>
-                    </View>
-                    <View style={{alignItems:'center',}}>
-                        <Commentsvg />
-                        <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
-                    </View>
-                    <View style={{alignItems:'center',}}>
-                        <Viewsvg />
-                        <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
-                    </View>
-                </View>
-            </View>
-        </TouchableOpacity>
-    )};
     renderFooter=()=>{
         return(
           this.state.isListLoading ?
@@ -145,6 +113,38 @@ class GominScreen extends React.Component {
             this.getPostList, console.log(this.state.current_page))
         }
     }
+    renderItem = ({ item, index }) => {
+        const regex = /(<([^>]+)>)|&nbsp;/ig;
+        const post_remove_tags = item.post_content.replace(regex, '');
+        
+        return(
+        <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}}>
+            <View>
+                <Text style ={styles.headtext}category="h4" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
+                <Text style={styles.subtext}category="s2" numberOfLines={1}>{post_remove_tags}</Text>
+            </View>
+            <View style={styles.subtitle}>
+                <View style={{display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4}}> 
+                    <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{item.display_name}</Text>
+                    <PostTime datetime = {item.post_datetime}/>
+                </View>
+                <View style={styles.infocontainer}>
+                    <View style={{alignItems:'center',}}>
+                        <Heartsvg />
+                        <Text style={styles.infotext} category="s1">{item.post_like}</Text>
+                    </View>
+                    <View style={{alignItems:'center',}}>
+                        <Commentsvg />
+                        <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
+                    </View>
+                    <View style={{alignItems:'center',}}>
+                        <Viewsvg />
+                        <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
+                    </View>
+                </View>
+            </View>
+        </TouchableOpacity>
+    )};
     render(){
         // const {searchOpenClose} = this.state
         return(
