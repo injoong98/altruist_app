@@ -128,7 +128,7 @@ class Verify extends CB_Controller
 		$page_title = '이메일 인증';
 		$layoutconfig = array(
 			'path' => 'findaccount',
-			'layout' => 'layout',
+			'layout' => 'layout_none',
 			'skin' => 'verifyemail',
 			'layout_dir' => $this->cbconfig->item('layout_findaccount'),
 			'mobile_layout_dir' => $this->cbconfig->item('mobile_layout_findaccount'),
@@ -299,7 +299,7 @@ class Verify extends CB_Controller
 		$page_title = '패스워드 변경';
 		$layoutconfig = array(
 			'path' => 'findaccount',
-			'layout' => 'layout',
+			'layout' => 'layout_none',
 			'skin' => 'findaccount_change_pw',
 			'layout_dir' => $this->cbconfig->item('layout_findaccount'),
 			'mobile_layout_dir' => $this->cbconfig->item('mobile_layout_findaccount'),
