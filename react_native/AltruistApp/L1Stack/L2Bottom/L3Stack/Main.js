@@ -1,12 +1,13 @@
 import React from 'react';
 import {ScrollView,SafeAreaView, TouchableWithoutFeedback,TextInput,StyleSheet,View,TouchableOpacity,Dimensions,TouchableHighlight,Animated} from 'react-native';
-import {TopNavigation,Layout,Text,Button,Icon,Modal} from '@ui-kitten/components';
+import {TopNavigation,Layout,Text,Button,Icon,Modal,Spinner,List} from '@ui-kitten/components';
+import axios from 'axios'
 import Slider from '../../../components/slider.component'
 import {TopBarTune} from '../../../components/TopBarTune'
 
 import LogoSvg from '../../../assets/icons/logo.svg'
 import Searchsvg from '../../../assets/icons/search-outline.svg'
-
+import {renderAltList} from './List'
 const {width,height} = Dimensions.get('window')
 
 
@@ -23,7 +24,8 @@ class AltMainScreen extends React.Component{
             title:'',
             modalVisible:false,
             btnContainerWidth: new Animated.Value(0),
-            btnContainerCompressed:true
+            btnContainerCompressed:true,
+            isLoading:true
         }
     }
     minimizing = () => {
@@ -46,9 +48,24 @@ class AltMainScreen extends React.Component{
         }).start();
         
     }
+    getAltruistsList = async() => {
+        await axios.get('http://dev.unyict.org/api/altruists/lists')
+        .then((response) => {
+            this.setState({lists:response.data.view.data.list,alt_list_showing:response.data.view.data.list})
+        })
+        .catch((error)=>{
+            alert(error);
+            console.log(error);
+        })
+    }
+    componentDidMount(){
+        this.getAltruistsList()
+        this.setState({isLoading:false})
+
+    }
     render(){
         const {navigation} =this.props
-        const {title,modalVisible,btnContainerCompressed,btnContainerWidth} =this.state
+        const {title,btnContainerCompressed,btnContainerWidth,isLoading} =this.state
 
         const btnContainerWidthInterpolate = btnContainerWidth.interpolate({
             inputRange:[0,1],
@@ -135,29 +152,24 @@ class AltMainScreen extends React.Component{
                             </Animated.View>
                         </View>
                         <View>
-                            <View style={{marginVertical:20}}>    
+                            <View style={{marginVertical:20,alignItems:'center',justifyContent:'center'}}>    
                                 <Text category='h2' style={{color:'#63579D'}}>멘토리스트</Text>
                             </View>
-                            <View style={styles.mentorItem}>
-                                <View>
-                                    <Text>멘토 리스트 </Text>
+                            {
+                                isLoading ? 
+                                <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                                    <Spinner size="giant"/>
                                 </View>
-                            </View>
-                            <View style={styles.mentorItem}>
-                                <View>
-                                    <Text>멘토 리스트 </Text>
-                                </View>
-                            </View>
-                            <View style={styles.mentorItem}>
-                                <View>
-                                    <Text>멘토 리스트 </Text>
-                                </View>
-                            </View>
-                            <View style={styles.mentorItem}>
-                                <View>
-                                    <Text>멘토 리스트 </Text>
-                                </View>
-                            </View>
+                                :
+                                <View style={{flex: 25,marginTop:15}}>
+                                    <List
+                                    contentContainerStyle={styles.contentContainer}
+                                    data={this.state.lists}
+                                    renderItem={renderAltList}
+                                    style={{backgroundColor:'#ffffff'}}
+                                    />
+                                </View> 
+                            }
                         </View>
                     </View>
                 </ScrollView>
