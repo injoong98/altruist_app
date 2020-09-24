@@ -266,16 +266,13 @@ class RegisterScreen extends Component {
         console.log('response', res);
         console.log('status', res.data.status);
         console.log('data', res.data);
-        if (res.status == 500) {
-          Alert.aler('실패', res.data.reason, [
-            {
-              text: '확인',
-            },
-          ]);
-          //실패시,
-          return;
-        } else if (res.status == 200) {
-          this.props.navigation.navigate('RegisterSuccessScreen');
+        if (res.data.status == 500) {
+          console.log('status', res.data.status);
+          console.log(res.data.message);
+        } else if (res.data.status == 200) {
+          console.log('status', res.data.status);
+          console.log(res.data.message);
+          // this.props.navigation.navigate('RegisterSuccessScreen');
         } else {
         }
         // console.log('this.state', this.state);
@@ -296,16 +293,11 @@ class RegisterScreen extends Component {
       .catch((error) => {
         console.log('ERROR', error);
         console.error();
-        //alert('')
       });
   };
 
   //   TODO : 휴대폰 번호
   PhoneHyphen = (phonenum) => {
-    //넣었다가 아니면 뱉어주고
-    //11자 되기 전에는 3자리, 8자리 기준으로
-    //3자리에서 뱉어주고 뱉어준거 다시 받아서
-    //4자리부터는 -가지고 다시 이어나갈 수 있도록
     console.log(phonenum);
     var number = phonenum.replace(/[^0-9]/g, '');
     var phone = '';
@@ -334,14 +326,66 @@ class RegisterScreen extends Component {
     this.setState({mem_phone: value});
   };
 
+  BdayHyphen = (phonenum) => {
+    //넣었다가 아니면 뱉어주고
+    //11자 되기 전에는 3자리, 8자리 기준으로
+    //3자리에서 뱉어주고 뱉어준거 다시 받아서
+    //4자리부터는 -가지고 다시 이어나갈 수 있도록
+    console.log(phonenum);
+    var number = phonenum.replace(/[^0-9]/g, '');
+    var phone = '';
+    console.log(number);
+
+    let this_year = new Date().getFullYear();
+    console.log(this_year);
+
+    if (number.length < 5) {
+      console.log(number);
+      return number;
+    } else if (number.length < 7) {
+      phone += number.substr(0, 4);
+      phone += '-';
+      phone += number.substr(4);
+    } else if (number.length < 11) {
+      phone += number.substr(0, 4);
+      phone += '-';
+      phone += number.substr(4, 2);
+      phone += '-';
+      phone += number.substr(6);
+    } else {
+      phone += number.substr(0, 4);
+      phone += '-';
+      phone += number.substr(4, 2);
+      phone += '-';
+      phone += number.substr(6);
+    }
+
+    if (1900 < number.substr(0, 4) < this_year) {
+      this.setState({
+        bdayCaption: '먼저 태어난 해를 4글자로 먼저 입력해주세요',
+      });
+    }
+
+    var value = phone;
+    this.setState({mem_birthday: value});
+  };
+
+  bdaySubstr = (overwrited) => {
+    let phonefinal = '';
+
+    if (10 < overwrited.length) {
+      console.log('14이상', overwrited.length);
+      phonefinal = overwrited.substr(0, 10);
+      this.setState({mem_birthday: phonefinal});
+    }
+    console.log('bdaySubstr', phonefinal);
+  };
+
   phoneSubstr = (overwrited) => {
     let phonefinal = '';
     if (13 < overwrited.length) {
       console.log('14이상', overwrited.length);
       phonefinal += overwrited.substr(0, 13);
-      // } else if (13 < overwrited.length < 13) {
-      //   console.log('13이상', overwrited.length);
-      //   phonefinal = overwrited.substr(-1);
       this.setState({mem_phone: phonefinal});
     }
     console.log('phonefinal', phonefinal);
@@ -668,15 +712,19 @@ class RegisterScreen extends Component {
                 {/* <this.DatepickerBday /> */}
                 <Input
                   style={styles.inputs}
-                  placeholder="생년월일(ex. 2000-01-01)"
-                  onChangeText={(mem_birthday) =>
-                    this.setState({mem_birthday: mem_birthday})
-                  }
-                  onEndEditing={() => {
-                    this.checkNotNull();
-                    this.checkRecommend();
+                  maxLength={10}
+                  keyboardType="numeric"
+                  dataDetectorTypes="phoneNumber"
+                  placeholder="생년월일 ( ex. 2000-01-01 ) "
+                  onChangeText={(mem_birthday) => {
+                    this.setState({mem_birthday: mem_birthday});
+                    this.BdayHyphen(mem_birthday);
                   }}
+                  onEndEditing={() => this.bdaySubstr(this.state.mem_birthday)}
+                  caption={this.state.bdayCaption}
+                  value={this.state.mem_birthday}
                 />
+
                 <Input
                   style={styles.inputs}
                   placeholder="추천인 아이디"
