@@ -58,6 +58,7 @@ class AltApplyFormScreen extends React.Component {
       filterModalVisible:false,
       actSelected:[],
       category:[],
+      alt_photo:{}
     };
   }
   static contextType = Signing;
@@ -154,7 +155,32 @@ class AltApplyFormScreen extends React.Component {
             </View>
     )
   }
-  
+  attatchProfImg = async ()=>{
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images],
+      });
+      console.log(
+        'uri'+res.uri,
+        'type'+res.type, // mime type
+        'name'+res.name,
+        'size'+res.size
+      );
+      const file = {
+        uri:res.uri,
+        type:res.type, // mime type
+        name:res.name,
+        size:res.size
+      }
+      this.setState({alt_photo:file})
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
+  }
   attatchFile= async (i)=>{
     const {acv_file1} =this.state
     try {
@@ -207,6 +233,7 @@ class AltApplyFormScreen extends React.Component {
   setAltruist = async () => {
     const {
         mem_id,
+        alt_photo,
         alt_aboutme,
         alt_content,
         alt_answertype,
@@ -228,6 +255,11 @@ class AltApplyFormScreen extends React.Component {
     formdata.append("alt_answertype", alt_answertype);
     formdata.append("alt_status", 'R');
     formdata.append("alt_honor", 0);
+    formdata.append("alt_photo[]", {
+      uri: alt_photo.uri,
+      type: alt_photo.type,
+      name: alt_photo.name,
+    });
 
     for(var i=0;i<count-1;i++){
       formdata.append("acv_type[]", acv_type[i]);
@@ -240,7 +272,7 @@ class AltApplyFormScreen extends React.Component {
     actSelected.map((item,index)=>{
       console.log(item,index)
       formdata.append("act_id[]", actSelected[index].act_id);
-
+      
     })
     acv_file1.map((item) => {
       formdata.append('acv_file1[]', {
@@ -263,7 +295,7 @@ class AltApplyFormScreen extends React.Component {
         } else {
           Alert.alert(
             '이타주의자',
-            '작성 완료',
+            `${response.data.message}`,
             [
               {
                 text: 'OK',
@@ -301,7 +333,7 @@ class AltApplyFormScreen extends React.Component {
   }
 
   render() {
-    const {filterModalVisible,alt_content,alt_aboutme,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category} = this.state;
+    const {filterModalVisible,alt_content,alt_aboutme,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,alt_photo} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <TopNavigation title="이타주의자" accessoryLeft={this.BackAction} />
@@ -309,6 +341,13 @@ class AltApplyFormScreen extends React.Component {
           <Text> 이타주의자 지원하기 FORM </Text>
         </View>
         <ScrollView>
+          <TouchableHighlight onPress={()=>this.attatchProfImg()} >
+              <View style={{flexDirection:'row'}} >
+                <Text>프로필 사진 추가</Text>
+                <Text>{!alt_photo? null:alt_photo.name}</Text>
+                 <TouchableHighlight onPress={()=>{this.setState({alt_photo:{}})}}><Text>x</Text></TouchableHighlight>
+              </View>
+             </TouchableHighlight>
           <View style={{flexDirection: 'row'}}>
             <Text>자기PR</Text>
             <TextInput
@@ -384,7 +423,7 @@ class AltApplyFormScreen extends React.Component {
             </View>
             {
               arrayForLoop.map((item,index)=>(
-                <this.RenderCareerInput i={index}/>
+                <this.RenderCareerInput i={index} key={index}/>
               ))
             }
             <View style={{flexDirection:'row'}}>
@@ -395,7 +434,7 @@ class AltApplyFormScreen extends React.Component {
           <View>
           {
             arrayForLoop.map((item,index)=>(
-             <TouchableHighlight onPress={()=>this.attatchFile(index)} >
+             <TouchableHighlight onPress={()=>this.attatchFile(index)} key={index} >
               <View style={{flexDirection:'row'}} >
                 <Text>첨부파일 {index+1} 추가</Text>
                 <Text>{!acv_file1[index]? null:acv_file1[index].name}</Text>
