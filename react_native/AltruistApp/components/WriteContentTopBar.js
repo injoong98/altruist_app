@@ -24,16 +24,11 @@ export class WriteContentToptab extends React.Component {
                     <Text category='h2' style={styles.toptext}>{this.props.text}</Text>
                 </View>
                 <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                        {this.props.right =='upload' ? 
-                            <TouchableOpacity onPress={this.props.func}>
-                                <Uploadsvg height={35} width={35}/>
-                            </TouchableOpacity>
-                        :
-                        this.props.right =='edit' ?
-                            <Button onPress={this.props.func}>
-                                수정
-                            </Button>
-                        : null}
+                    <TouchableOpacity onPress={this.props.func} style={{paddingHorizontal:13,paddingVertical:8,backgroundColor:'#63579D',borderRadius:8.5}}>
+                            <Text style={{fontSize:18,fontWeight:'700',color:'#ffffff'}}>
+                            {this.props.right =='upload' ? '완료' :'수정'}
+                            </Text>
+                    </TouchableOpacity>
                 </View>
             </View>
                 /* <View style={styles.rightside}>
