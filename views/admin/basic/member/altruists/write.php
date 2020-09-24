@@ -12,7 +12,7 @@
 				<label class="col-sm-2 control-label">회원아이디</label>
 				<div class="col-sm-10 form-inline">
 				<span  class="form-control" style="border:none; -webkit-box-shadow:none;" >
-					<!-- <input type="text" class="form-control" name="mem_userid" value="<?php echo set_value('mem_userid', element('mem_userid', element('data', $view))); ?>" disabled/> -->
+					 <input type="hidden" class="form-control" name="alt_mem_id" value="<?php echo set_value('mem_id', element('mem_id', element('data', $view))); ?>" /> 
 					<?php echo set_value('mem_userid', element('mem_userid', element('data', $view))); ?>
 				</span>
 				</div>
@@ -132,11 +132,14 @@
 											?>
 											<tr>
 												<input type="hidden" name="acv_id_update[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="<?php echo html_escape(element('acv_id', $alt_cv)); ?>" /></td> <!-- 키 -->
-												<td><input type="checkbox" name="acv_open_update[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="1" <?php echo (element('acv_open', $alt_cv)) ? ' checked="checked" ' : ''; ?> /></td> <!-- 공개 -->
+												<td><input type="hidden" name="acv_status_org[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="<?php echo (element('acv_status', $alt_cv))?>" />
+												<input type="checkbox" name="acv_open_update[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="1" <?php echo (element('acv_open', $alt_cv)) ? ' checked="checked" ' : ''; ?> /> <!-- 공개 -->
+												</td> <!-- 공개 -->
 												<td><?php echo html_escape(element('acv_type', $alt_cv)); ?></td> <!-- 타입 -->
 												<td><?php echo html_escape(element('acv_year', $alt_cv)); ?></td> <!-- 년도 -->
 												<td><p><?php echo html_escape(element('acv_content', $alt_cv)); ?></p></td> <!-- 경력 -->
-												<td><?php echo html_escape(element('acv_file1', $alt_cv)); ?></td> <!-- 첨부파일 -->
+												<td><a href="<?php echo site_url(element('acv_file1', $alt_cv)); ?>" target="_blank">다운로드</a> </td> <!-- 첨부파일 -->
+											
 												<td><?php echo html_escape(element('acv_final', $alt_cv)); ?></td> <!-- 최종여부 -->
 												
 												<td><input type="checkbox" name="acv_status_update[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="1" <?php echo (element('acv_status', $alt_cv)) ? ' checked="checked" ' : ''; ?> /></td> <!-- 인증 -->
@@ -170,7 +173,7 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label">이타주의자 프로필 사진</label>
 				<div class="col-sm-10">
-					<?php echo set_value('alt_photo', element('alt_photo', element('data', $view))); ?>
+					<img src="<?php echo element('profile_thumb_url', element('data', $view)); ?>" alt="<?php echo element('profile_thumb_url', element('data', $view)); ?>" title="" class="thumbnail mg0 view_full_image" style="width:80px;cursor:pointer;" data-origin-image-url="" />
 				</div>
 			</div>
 			<div class="form-group">
@@ -192,6 +195,7 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label">승인상태</label>
 				<div class="col-sm-10 form-inline">
+				<input type="hidden" class="form-control" name="alt_status_org" value="<?php echo element('alt_status', element('data', $view)); ?>" />
 					<select name="alt_status" class="form-control">
 						<option value="R" <?php echo set_select('alt_status', 'R', ( element('alt_status', element('data', $view))=='R') ? true : false); ?>>대기</option>
 						<option value="Y" <?php echo set_select('alt_status', 'Y', ( element('alt_status', element('data', $view)) =='Y') ? true : false); ?>>승인</option>

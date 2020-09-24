@@ -1253,6 +1253,39 @@ class Board_post extends CB_Controller
 
 				}
 
+				if (element('post_file', $val) OR element('post_image', $val)) {
+					$post_id = element('post_id', $val);
+					$this->load->model('Post_file_model');
+					$filewhere = array(
+						'post_id' => $post_id,
+					);
+					$result['list'][$key]['file'] = $file = $this->Post_file_model
+						->get('', '', $filewhere, '', '', 'pfi_id', 'ASC');
+					$result['list'][$key]['file_download'] = array();
+					$result['list'][$key]['file_image'] = array();
+		
+					$play_extension = array('acc', 'flv', 'f4a', 'f4v', 'mov', 'mp3', 'mp4', 'm4a', 'm4v', 'oga', 'ogg', 'rss', 'webm');
+		
+					if ($file && is_array($file)) {
+						foreach ($file as $key => $value) {
+							if (element('pfi_is_image', $value)) {
+								$value['origin_image_url'] = site_url(config_item('uploads_dir') . '/post/' . element('pfi_filename', $value));
+								$value['thumb_image_url'] = thumb_url('post', element('pfi_filename', $value), $image_width);
+								$result['list'][$key]['file_image'][] = $value;
+							} else {
+								$value['download_link'] = site_url('postact/download/' . element('pfi_id', $value));
+								$result['list'][$key]['file_download'][] = $value;
+								if (element('use_autoplay', $board) && in_array(element('pfi_type', $value), $play_extension)) {
+									$file_player .= $this->videoplayer->get_jwplayer(site_url(config_item('uploads_dir') . '/post/' . element('pfi_filename', $value)), $image_width);
+								}
+							}
+						}
+					}
+					$result['list'][$key]['file_count'] = count($file);
+					$result['list'][$key]['file_download_count'] = count($result['list']['file_download']);
+					$result['list'][$key]['file_image_count'] = count($result['list']['file_image']);
+				}
+
 			}
 		}
 
