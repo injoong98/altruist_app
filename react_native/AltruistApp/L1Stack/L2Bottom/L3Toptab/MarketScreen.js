@@ -80,15 +80,15 @@ class MarketScreen extends React.Component {
             </View>
             }
             <View style={{flexDirection: 'row-reverse', marginTop:3}}>
-                <Text category='h4' style={{fontSize:11}}>
+                <Text category='h4' style={{fontSize:12}}>
                     {item.post_nickname}
                 </Text>
-                <View style={{position:'absolute', top:20}}>
-                  <PostTime datetime={item.post_datetime}/>
+                <View style={{position:'absolute', top:16}}>
+                  <PostTime color='#878787' datetime={item.post_datetime}/>
                 </View>
             </View>
           </View>
-          <View style={{flex:1, backgroundColor:'white', paddingHorizontal:5, paddingVertical:3, borderRadius:15, marginTop:5, justifyContent:'space-between', marginRight:35}}>
+          <View style={{flex:1, backgroundColor:'white', paddingHorizontal:5, paddingVertical:3, borderRadius:10, marginTop:5, justifyContent:'space-between', marginRight:40}}>
             <View style={styles.textTop}>
               <Text style={styles.text} category='h4'>
                   {item.title}
@@ -111,7 +111,7 @@ class MarketScreen extends React.Component {
         <View style={{width:100, justifyContent:'center', alignItems:'center'}}>
             <Image 
               source={item.origin_image_url? {uri : item.origin_image_url}:{uri : "http://dev.unyict.org/assets/images/social_twitter.png"}} 
-              style={{width:86, height:86, resizeMode:'cover', borderRadius:15}}
+              style={{width:86, height:86, resizeMode:'cover', borderRadius:10}}
             />
         </View>
     </TouchableOpacity>
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white'
     },
     contentContainer: {
-        paddingHorizontal: 10,
+        paddingHorizontal: 15,
         paddingVertical: 4,
     },
     item: {
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
         height:100, 
         margin:5,
         backgroundColor:'#F4F4F4',
-        borderRadius:15,
+        borderRadius:10,
     },
     textArea: {
         flex: 1,
