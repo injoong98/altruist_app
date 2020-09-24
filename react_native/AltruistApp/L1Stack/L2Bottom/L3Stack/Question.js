@@ -3,6 +3,8 @@ import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity,KeyboardAvoiding
 import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,Divider,Modal,Popover} from '@ui-kitten/components'
 import axios from 'axios'
 
+import {Signing} from '../../Context'
+
 import {PostTime} from '../../../components/PostTime'
 
 import Confirm from '../../../components/confirm.component'
@@ -16,6 +18,9 @@ import UploadCirclesvg from '../../../assets/icons/upload-circle.svg'
 import Tag from '../../../components/tag.component'
 import {TopBarTune} from '../../../components/TopBarTune'
 import {WriteContentToptab} from '../../../components/WriteContentTopBar'
+import Heartsvg from '../../../assets/icons/heart.svg'
+import Viewsvg from '../../../assets/icons/view.svg'
+import Commentsvg from '../../../assets/icons/comment.svg'
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -113,14 +118,73 @@ class AltQueContent extends React.Component{
         super(props);
         this.state={
             isLoading:true,
-            post:'',
+            post:{},
             comment:[],
             refreshing:false,
             modalVisible:false,
-            cmt_id:''
+            cmt_id:'',
+            popoverVisibel:false
 
         }
     }
+    static contextType =Signing; 
+    renderPostMore=(props)=>(
+        <TouchableOpacity {...props} style = {{paddingRight:10}} onPress={()=>{this.setState({popoverVisibel:true}),console.log('gd')}}>
+            <MoreLsvg height={24} width={24}/>
+        </TouchableOpacity>
+    )
+    MoreAction = (props) =>(
+        <Popover
+        {...props}
+            anchor={this.renderPostMore}
+            visible={this.state.popoverVisibel}
+            placement='bottom start'
+            onBackdropPress={() => this.setState({popoverVisibel:false})}>
+            <View>
+                <TouchableOpacity 
+                    onPress={()=>{this.postscrap();this.setState({popoverVisibel:false})}} 
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>스크랩</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{this.setState({popoverVisibel:false, confirmModalVisible:true, modalType : 0})}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>신고</Text>
+                </TouchableOpacity>
+                {
+                    this.context.session_mem_id ==this.state.post.mem_id
+                    ?
+                    <>
+                    {
+                    this.state.post.post_comment_count == 0 ?
+                        <TouchableOpacity 
+                            onPress={()=>{
+                                this.setState({popoverVisibel:false});
+                                this.props.navigation.navigate('GominWrite',
+                                    {
+                                        statefunction:this.statefunction,
+                                        mode:'edit',
+                                        post:this.state.post,
+                                        content:this.state.content,
+                                    })}}
+                            style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                            <Text category='h3'>수정</Text>
+                        </TouchableOpacity>
+                        :null
+                                }
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({popoverVisibel:false,confirmModalVisible:true, modalType : 1})}}
+                            style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                            <Text category='h3'>삭제</Text>
+                        </TouchableOpacity>
+                    </>
+                    :
+                    null
+                }
+
+            </View>
+        </Popover>
+    )
     cmtDelete = (cmt_id) =>{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
@@ -293,7 +357,7 @@ class AltQueContent extends React.Component{
 
     render(){
         const {isLoading,post,comment,modalVisible,cmt_id} = this.state;
-        console.log(this.state.comment.length);
+        console.log(this.state.post.post_comment_count);
         
        return(
         isLoading?
@@ -302,13 +366,14 @@ class AltQueContent extends React.Component{
         </View>
         :
 
-        <SafeAreaView style={{flex:1}}>
-            <TopBarTune 
-                text='질문' 
-                right="bell"
-                func={() =>{this.props.navigation.navigate('Meet')}} 
-                gbckfunc={()=>{this.props.navigation.goBack()}} 
+        <SafeAreaView style={{flex:1,backgroundColor:'#ffffff'}}>
+            <WriteContentToptab
+                text='오픈질문'
+                gbckfunc={() => {
+                    this.props.navigation.goBack();
+                }}
                 gbckuse={true}
+                right={<this.MoreAction/>}
             />
             <View style={{}}>
                 <List
@@ -350,14 +415,14 @@ class AltOpqQueList extends React.Component{
 
     render(){
         return(
-            <SafeAreaView>
-                <TopBarTune 
-                    text='오픈 질문' 
-                    right="bell"
-                    func={() =>{this.filterSpamKeyword()}} 
-                    gbckfunc={()=>{this.props.navigation.goBack()}} 
-                    gbckuse={true}
-                />
+            <SafeAreaView style={{flex:1,backgroundColor:'#ffffff'}}>
+                <WriteContentToptab
+                text='오픈질문'
+                gbckfunc={() => {
+                    this.props.navigation.goBack();
+                }}
+                gbckuse={true}
+            />
                <AltQueList {...this.props} type='opq'/>
             </SafeAreaView>
             )
@@ -391,20 +456,41 @@ class AltQueList extends React.Component{
         })
     }
 
-    renderQueList = ({item,list}) =>{
-        return(
-            <TouchableOpacity onPress={()=>{this.props.navigation.navigate('AltQueContent',{post_id:item.post_id})}}>
-                <Text>보낸 사람 {item.post_userid}</Text>
-                <Text>질문 제목 {item.post_title}</Text>
-                <Text>받는 사람 {item.answer_mem_id}</Text>
-            </TouchableOpacity>
-        )
-    }
-
     componentDidMount(){
         this.getQuestions();    
     }
-
+    renderQueList = ({item}) =>{
+        const regex = /(<([^>]+)>)|&nbsp;/ig;
+        const post_remove_tags = item.post_content.replace(regex, '');
+        return(
+            <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('AltQueContent',{post_id:item.post_id})}}>
+            <View>
+                <Text style ={styles.headtext}category="h4" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
+                <Text style={styles.subtext}category="s2" numberOfLines={1}>{post_remove_tags}</Text>
+            </View>
+            <View style={styles.subtitle}>
+                <View style={{display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4}}> 
+                    <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{item.display_name}</Text>
+                    <PostTime datetime = {item.post_datetime}/>
+                </View>
+                <View style={styles.infocontainer}>
+                    <View style={{alignItems:'center',}}>
+                        <Heartsvg />
+                        <Text style={styles.infotext} category="s1">{item.post_like}</Text>
+                    </View>
+                    <View style={{alignItems:'center',}}>
+                        <Commentsvg />
+                        <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
+                    </View>
+                    <View style={{alignItems:'center',}}>
+                        <Viewsvg />
+                        <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
+                    </View>
+                </View>
+            </View>
+        </TouchableOpacity>
+        )
+    }
     render(){
         const {isLoading,list} = this.state;
         
@@ -414,11 +500,10 @@ class AltQueList extends React.Component{
                 <Spinner size='giant'/>
             </View>
             :
-
-            <List 
-                ItemSeparatorComponent={Divider}
+            <List
                 data={list}
-                renderItem={this.renderQueList}
+                renderItem={this.renderQueList }
+                style={{backgroundColor:'#ffffff',}}
             />
             )
     }
@@ -806,6 +891,56 @@ const styles = StyleSheet.create({
     topbar : {
         backgroundColor : '#ffffff',
     },
+    container:{
+        backgroundColor:"#F4F4F4",
+        borderRadius : 20,
+        marginVertical:4.5,
+        marginHorizontal:19,
+        padding:0,
+        paddingLeft:21
+
+
+    },
+    buttoncontainer:{
+        width:"100%",bottom:0,
+        display :"flex", 
+        justifyContent:"center", 
+        alignItems:"center"
+    },
+    icon:{
+        // width: 15,
+        // height: 15
+    },
+    subtitle:{
+        marginTop:10, display:"flex",flexDirection:"row", justifyContent:"space-between",
+    },
+    infocontainer:{
+        display:"flex",flexDirection:"row",justifyContent:'space-evenly',
+        borderTopLeftRadius:23,
+        width:116,
+        backgroundColor:"#ffffff",
+        position:"relative",bottom:0,right:0,
+        paddingTop:5,
+        paddingLeft:20,
+        paddingRight:10
+    },
+    loader:{
+        marginTop : 10,
+        alignItems : 'center',
+    },
+    infotext:{
+        color:'#141552',
+        fontSize:9
+    },
+    headtext:{
+        marginTop:11,
+        paddingTop:10,
+        fontWeight:'bold'
+    },
+    subtext:{
+        marginTop:5,
+        maxWidth:200
+    }
 
 })
 

@@ -17,6 +17,11 @@ const Search = (props) =>(
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
+const Loading = () =>(
+    <View style={{justifyContent:'center',alignItems:'center'}}>
+        <Spinner size="giant"/>
+    </View>
+)
 class AltMainScreen extends React.Component{
     constructor(props){
         super(props)
@@ -63,16 +68,99 @@ class AltMainScreen extends React.Component{
         this.setState({isLoading:false})
 
     }
-    render(){
-        const {navigation} =this.props
-        const {title,btnContainerCompressed,btnContainerWidth,isLoading} =this.state
 
+    renderHeadSection = () =>{
+        const {navigation} =this.props
+        const {title,btnContainerCompressed,btnContainerWidth} =this.state
         const btnContainerWidthInterpolate = btnContainerWidth.interpolate({
             inputRange:[0,1],
             outputRange:["0%","90%"]
         })
         const wdithLogo = (width*0.47);
         const heightLogo = (wdithLogo*0.57);
+        return(
+        <>
+            <View style={{flex:1, alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff'}}>
+                <Slider
+                    height={100} 
+                    image={[
+                        {id:0,url:'/uploads/6e3a7e4e1f77abb3b060_20200904100225599.jpg'},
+                        {id:1,url:'/uploads/59901fc0cb0b6526dee1_20200903153758446.jpg'}    
+                    ]}
+                    dotStyle={{position:'absolute'}}
+                />
+                <View style={{ alignItems:'center',justifyContent:'space-evenly'}}>
+                    <View style={{marginTop:91}}>
+                        <LogoSvg  width={wdithLogo} height={heightLogo}/>
+                    </View>
+                    <View style={{marginTop:22}}>
+                        <TextInput 
+                            style={styles.titleInput} 
+                            value={title} 
+                            onChangeText={text =>this.setState({title:text})}
+                            placeholder="이타주의자들에게 질문 해보세요"
+                            placeholderTextColor='#A897C2'
+                            onEndEditing={()=>navigation.navigate('AltList',{title:title})}
+                        />
+                        <TouchableOpacity 
+                            style={{position:"absolute",right:5,top:6}}
+                            onPress={()=>navigation.navigate('AltList',{title:title})}
+                        >
+                            <Searchsvg height={25} width={25} fill='#A9C' />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{marginTop:28}} >
+                        <TouchableOpacity 
+                            style={{display:'flex', flexDirection:'row',padding:5}}
+                            onPress={()=>navigation.navigate('AltList',{title:title})}
+                        >
+                            <Text category='h2' style={{color:'#A897C2',fontSize:18}}>이타주의자 찾기</Text>
+                        
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={{marginTop:150,flexDirection:'row',width:'100%',paddingHorizontal:12}}>                        
+                    <TouchableHighlight style={[styles.btn,{borderRadius:15}]} onPress={btnContainerCompressed?this.maximizing:this.minimizing}>
+                        <Text category="h2" style={{color:'#ffffff'}}>
+                        {btnContainerCompressed? '+' :'-'}
+                        </Text>
+                    </TouchableHighlight>
+                    <Animated.View style={{flexDirection:'row',justifyContent:'space-evenly',overflow:'hidden',width:btnContainerWidthInterpolate}}>
+                        <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltApply')}>
+                            <Text numberOfLines={1} category="h1" style={styles.btnText}>
+                            지원
+                            </Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltList')}>
+                            <Text numberOfLines={1} category="h1" style={styles.btnText}>
+                            멘토리스트
+                            </Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltOpqQueList')}>
+                            <Text numberOfLines={1} category="h1" style={styles.btnText}>
+                            오픈 질문
+                            </Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltQueToptab')}>
+                            <Text numberOfLines={1} category="h1" style={styles.btnText}>
+                            일대일 질문
+                            </Text>
+                        </TouchableHighlight>
+                    </Animated.View>
+                </View>
+                <View style={{marginVertical:40,alignItems:'center',justifyContent:'center'}}>    
+                    <Text category='h2' style={{color:'#63579D'}}>멘토리스트</Text>
+                </View>
+            </View>
+        </>
+    )}
+
+    
+    render(){
+        const {navigation} =this.props
+        const {title,btnContainerCompressed,btnContainerWidth,isLoading} =this.state
+
+        
         return(
             <SafeAreaView style={{flex:1}}>
                 {/* <TopNavigation title="메인" alignment="center"/>  */}
@@ -82,97 +170,13 @@ class AltMainScreen extends React.Component{
                     gbckfunc={()=>{navigation.goBack()}} 
                     gbckuse={false}
                 /> */}
-                <ScrollView style={{flex:1}}>
-                    <View style={{flex:1, alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff'}}>
-                        <Slider
-                            height={100} 
-                            image={[
-                                {id:0,url:'/uploads/6e3a7e4e1f77abb3b060_20200904100225599.jpg'},
-                                {id:1,url:'/uploads/59901fc0cb0b6526dee1_20200903153758446.jpg'}    
-                            ]}
-                            dotStyle={{position:'absolute'}}
-                        />
-                        <View style={{ alignItems:'center',justifyContent:'space-evenly'}}>
-                            <View style={{marginTop:91}}>
-                                <LogoSvg  width={wdithLogo} height={heightLogo}/>
-                            </View>
-                            <View style={{marginTop:22}}>
-                                <TextInput 
-                                    style={styles.titleInput} 
-                                    value={title} 
-                                    onChangeText={text =>this.setState({title:text})}
-                                    placeholder="이타주의자들에게 질문 해보세요"
-                                    placeholderTextColor='#A897C2'
-                                    onEndEditing={()=>navigation.navigate('AltList',{title:title})}
-                                />
-                                <TouchableOpacity 
-                                    style={{position:"absolute",right:5,top:6}}
-                                    onPress={()=>navigation.navigate('AltList',{title:title})}
-                                >
-                                    <Searchsvg height={25} width={25} fill='#A9C' />
-                                </TouchableOpacity>
-                            </View>
-                            <View style={{marginTop:28}} >
-                                <TouchableOpacity 
-                                    style={{display:'flex', flexDirection:'row',padding:5}}
-                                    onPress={()=>navigation.navigate('AltList',{title:title})}
-                                >
-                                    <Text category='h2' style={{color:'#A897C2',fontSize:18}}>이타주의자 찾기</Text>
-                                
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View style={{marginTop:150,flexDirection:'row',width:'100%',paddingHorizontal:12}}>                        
-                            <TouchableHighlight style={[styles.btn,{borderRadius:15}]} onPress={btnContainerCompressed?this.maximizing:this.minimizing}>
-                                <Text category="h2" style={{color:'#ffffff'}}>
-                                {btnContainerCompressed? '+' :'-'}
-                                </Text>
-                            </TouchableHighlight>
-                            <Animated.View style={{flexDirection:'row',justifyContent:'space-evenly',overflow:'hidden',width:btnContainerWidthInterpolate}}>
-                                <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltApply')}>
-                                    <Text numberOfLines={1} category="h1" style={styles.btnText}>
-                                    지원
-                                    </Text>
-                                </TouchableHighlight>
-                                <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltList')}>
-                                    <Text numberOfLines={1} category="h1" style={styles.btnText}>
-                                    멘토리스트
-                                    </Text>
-                                </TouchableHighlight>
-                                <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltOpqQueList')}>
-                                    <Text numberOfLines={1} category="h1" style={styles.btnText}>
-                                    오픈 질문
-                                    </Text>
-                                </TouchableHighlight>
-                                <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltQueToptab')}>
-                                    <Text numberOfLines={1} category="h1" style={styles.btnText}>
-                                    일대일 질문
-                                    </Text>
-                                </TouchableHighlight>
-                            </Animated.View>
-                        </View>
-                        <View>
-                            <View style={{marginVertical:20,alignItems:'center',justifyContent:'center'}}>    
-                                <Text category='h2' style={{color:'#63579D'}}>멘토리스트</Text>
-                            </View>
-                            {
-                                isLoading ? 
-                                <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                                    <Spinner size="giant"/>
-                                </View>
-                                :
-                                <View style={{flex: 25,marginTop:15}}>
-                                    <List
-                                    contentContainerStyle={styles.contentContainer}
-                                    data={this.state.lists}
-                                    renderItem={renderAltList}
-                                    style={{backgroundColor:'#ffffff'}}
-                                    />
-                                </View> 
-                            }
-                        </View>
-                    </View>
-                </ScrollView>
+                <List
+                contentContainerStyle={styles.contentContainer}
+                ListHeaderComponent={this.renderHeadSection}
+                data={this.state.lists}
+                renderItem={isLoading ? Loading: renderAltList}
+                style={{backgroundColor:'#ffffff'}}
+                />    
             </SafeAreaView>
         )
     }
