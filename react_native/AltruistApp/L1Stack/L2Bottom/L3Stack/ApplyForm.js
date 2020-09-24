@@ -11,7 +11,8 @@ import {
   Alert,
   TouchableHighlight,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Dimensions
 } from 'react-native';
 import {
   Layout,
@@ -333,7 +334,8 @@ class AltApplyFormScreen extends React.Component {
   }
 
   render() {
-    const {filterModalVisible,alt_content,alt_aboutme,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,alt_photo} = this.state;
+    const {width,height} =Dimensions.get('window')
+    const {filterModalVisible,actSelected,alt_content,alt_aboutme,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,alt_photo} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <TopNavigation title="이타주의자" accessoryLeft={this.BackAction} />
@@ -454,16 +456,28 @@ class AltApplyFormScreen extends React.Component {
                         </TouchableOpacity>
                     }
                     {
-                        this.state.actSelected.length >0 ?
+                        actSelected.length >0 ?
                         <ScrollView horizontal={true} style={{}} >
-                                {this.state.actSelected.map((act,index) => (
-                                    <Tag style={{marginVertical : 5}}
+                          {actSelected.map((act,index) => (
+                            <TouchableHighlight
+                                onPress ={()=>{actSelected.splice(index,1);this.setState({actSelected})}}
+                                key = {act.act_content}
+                            >
+                                <View 
+                                    style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',padding:5}} 
+                                >
+                                    <Tag style={[styles.tagSelected,{marginRight:3}]}
                                         key = {act.act_content}
-                                        onPress ={()=>{this.state.actSelected.splice(index,1);this.setState({actSelected:this.state.actSelected})}}>
+                                    >
                                         {act.act_content}
                                     </Tag>
-                                ))}
-                        </ScrollView >
+                                    <View style={{backgroundColor:'#000000',opacity:0.3,borderRadius:5}}>
+                                        <Text> x </Text>
+                                    </View>
+                                </View>
+                            </TouchableHighlight>
+                          ))}
+                      </ScrollView >
                         :
                         <View>
                             <Text style={{marginVertical:9,fontSize:15}} category = 'c2'>전문 분야를 선택하세요</Text>
@@ -484,42 +498,44 @@ class AltApplyFormScreen extends React.Component {
             </Button>
           </View>
         </ScrollView>
-        <Modal
+            <Modal
                 visible={filterModalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({filterModalVisible:false,cmt_id:''})}
+                onBackdropPress={() => this.setState({filterModalVisible:false})}
+                style={{justifyContent:'center'}}
             >
-                <View style = {{flex:1,justifyContent:'space-evenly',backgroundColor:'#ffffff'}}>
-                    <View style = {{flexDirection : 'row', flexWrap: 'wrap',}}>
-                        {this.state.actSelected.map((act,index) => (
-                            <Tag style={{marginVertical : 5}}
-                                key = {act.act_content}
-                                onPress ={()=>{this.state.actSelected.splice(index,1);this.setState({actSelected:this.state.actSelected})}}>
-                                {act.act_content}
-                            </Tag>
-                        ))}
+                <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
+                    <View style={{alignItems:'center',justifyContent:'center'}}>
+                        <Text category='h2' style={{fontSize:13,marginVertical:11,color:'#63579D'}}>필터 적용하기</Text>
+                        <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginBottom:15}}></View>
                     </View>
-                    <Divider />
-                    <View style = {{flexDirection : 'row', flexWrap: 'wrap',}}>
-                        {category.map(act => (
-                            <Tag 
-                                key = {act.act_content}
-                                onPress ={()=>{this.setState({actSelected:this.state.actSelected.concat(act)});console.log(this.state.actSelected)}}
-                                disabled ={this.state.actSelected.includes(act) ? true: false}
-                                style={this.state.actSelected.includes(act) ? styles.tagDisabled:{marginVertical : 2}}
-                            >
-                                {act.act_content}
-                                
-                            </Tag>
-                        ))}
-                    </View>
-                    <View style={{padding:10,}}>
-                        <Text category='h2' style={{fontSize:18}}>
-                            !!1대다 질문은 모든 이타주의자들이 조회하고 답변할 수 있습니다.
-                        </Text>
-                        <Text category='h2' style={{fontSize:18}}>
-                            !!분야를 선택하면 해당 이타주의자들에게 질문 등록에 대한 알림이 갑니다.
-                        </Text>
+                    <ScrollView ScrollViewstyle = {{}}>
+                        <View style = {{justifyContent:'space-between',flexDirection : 'row', flexWrap: 'wrap',paddingHorizontal:'5%'}}>
+                            {category.map(act => (
+                                <Tag 
+                                    key = {act.act_content}
+                                    onPress ={()=>{
+                                        if(actSelected.includes(act)){
+                                            actSelected.splice(actSelected.indexOf(act),1)
+                                            this.setState({actSelected})
+                                        }else{
+                                            this.setState({actSelected:actSelected.concat(act)})
+                                        }
+                                    }}
+                                    style={[{padding:4},actSelected.includes(act) ? styles.tagSelected:{}]}
+                                >
+                                    {act.act_content}
+                                    
+                                </Tag>
+                            ))}
+                        </View>
+                    </ScrollView>
+                    <View style={{alignItems:'center',justifyContent:'center',marginVertical:20}}>
+                        <TouchableHighlight 
+                            onPress={()=>{this.setState({filterModalVisible:false})}} 
+                            style={{backgroundColor:'#63579D', paddingVertical:4,paddingHorizontal:20,borderRadius:8.5}}>
+                            <Text style={{fontSize:18,fontWeight:'700',color:'#ffffff'}}>적용</Text>
+                        </TouchableHighlight>
                     </View>
                 </View>
             </Modal>
@@ -562,10 +578,8 @@ const styles = StyleSheet.create({
     // 휴대폰 width - titleInput
     width: 350,
   },
-  tagDisabled:{
-    backgroundColor:'#8D8D8D',
-    marginVertical : 2,
-    borderRadius:20
+  tagSelected:{
+    color:'#63579D'
 },
 });
 

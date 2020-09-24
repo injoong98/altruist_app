@@ -519,6 +519,19 @@ class MarketWrite extends React.Component {
     this.setState({images: newImages});
   }
 
+  deleteImage(index) {
+    const {images, Image_index} = this.state;
+    index==this.state.post_main_thumb
+    ?this.setState({post_main_thumb:0})
+    :null;
+    images.splice(index,1);
+    images.map(i => i.index>index
+      ?i.index=index
+      :null
+    );
+    this.setState({images: images, Image_index:Image_index-1});
+  }
+  
   renderImage(image) {
     //console.log(image);
     // console.log(index);
@@ -531,14 +544,27 @@ class MarketWrite extends React.Component {
               thumb_index_storage: image.index,
             })
           }>
-          <Image
-            style={styles.market_RenderImage}
-            source={
-              image.edit
-                ? {uri: 'http://dev.unyict.org' + image.url}
-                : image.url
+          <View>
+            {image.index==this.state.post_main_thumb
+            ?<View style={{position:'absolute', backgroundColor:'#63579D', zIndex:1, marginLeft:10, width:35, height:20, alignItems:'center', justifyContent:'center'}}>
+              <Text style={{color:'white', fontSize:13}} category='c1'>대표</Text>
+            </View>
+            :null
             }
-          />
+            <Image
+              style={styles.market_RenderImage}
+              source={
+                image.edit
+                  ? {uri: image.url}
+                  : image.url
+              }
+            />
+            <View style={{position:'absolute', right:0, zIndex:2, width:20, height:20}}>
+              <TouchableWithoutFeedback onPress={()=>this.deleteImage(image.index)}>
+                <Icon style={{width:20, height:20}} fill='#63579D' name='close-outline'/>
+              </TouchableWithoutFeedback>
+            </View>
+          </View>
         </TouchableWithoutFeedback>
       </View>
     );
@@ -1694,7 +1720,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     resizeMode: 'cover',
-    borderRadius: 10,
   },
   picture: {
     borderRadius: 20,

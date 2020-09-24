@@ -31,7 +31,7 @@ export default class Slider extends React.Component {
         const height = this.props.height ?this.props.height :width
         const modalImages = this.props.image.map(function(item){
             var newImage = {};
-            newImage['url'] = 'http://dev.unyict.org'+item.url;
+            newImage['url'] = item.url;
             newImage['props'] = {};
             return newImage;
         })
@@ -53,7 +53,7 @@ export default class Slider extends React.Component {
                                     <Image
                                         style={slide_style.image}
                                         key={item.id}
-                                        source={{uri : 'http://dev.unyict.org'+item.url}}
+                                        source={{uri : item.url}}
                                         style={{width:width-50, height:height-50, resizeMode: 'cover'}}
                                     />
                                 </TouchableWithoutFeedback>
