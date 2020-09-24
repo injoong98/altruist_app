@@ -10,12 +10,12 @@ import {AltQueList} from './Question'
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
 const AltQueListSend = (props) => (
-            <SafeAreaView>
+            <SafeAreaView style={{flex:1}}>
                <AltQueList {...props} type='indi' scndType='send'/>
             </SafeAreaView>
 )
 const AltQueListRecieve = (props) => (
-            <SafeAreaView>
+            <SafeAreaView style={{flex:1}}>
                <AltQueList {...props} type='indi' scndType='recieve'/>
             </SafeAreaView>
 )
