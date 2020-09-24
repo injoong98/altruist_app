@@ -39,12 +39,15 @@ class FindPwScreen extends Component {
     await axios
       .post(`http://dev.unyict.org/api/findaccount/findpw`, formdata)
       .then((res) => {
-        if (res.status == 500) {
+        if (res.data.status == 500) {
+          //실패 모달
           console.log('status500', res);
           console.log('status', res.status);
-        } else if (res.status == 200) {
+          console.log('실패');
+        } else if (res.data.status == 200) {
           console.log('status200', res);
           console.log('status', res.status);
+          this.props.navigation.navigate('RegisterSuccessScreen');
           //실패시,
         } else {
         }
@@ -71,22 +74,24 @@ class FindPwScreen extends Component {
   };
 
   //TODO : 이메일 확인
-  // checkEmail = async () => {
-  //   const {mem_userid} = this.state;
+  checkEmail = async () => {
+    const {mem_userid} = this.state;
 
-  //   let formdata = new FormData();
-  //   formdata.append('userid', mem_userid);
+    let formdata = new FormData();
+    formdata.append('email', mem_userid);
 
-  //   await axios
-  //     .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
-  //     .then((res) => {
-  //       // const checkUserid = res.data.userid;
-  //       console.log(res.data);
-  //       console.log(res.data.userid);
-
-  //       // console.log(res);
-  //     });
-  // };
+    await axios
+      .post(`http://dev.unyict.org/api/register/email_check`, formdata)
+      .then((res) => {
+        if (!res.data.email) {
+          this.setState({checkEmailCaption: '존재하지 않는 아이디 입니다.'});
+        } else {
+          this.setState({checkEmailCaption: ''});
+        }
+        console.log('res.data', res.data);
+        console.log('res.data.email', res.data.email);
+      });
+  };
 
   render() {
     console.log(this.state);
@@ -124,16 +129,17 @@ class FindPwScreen extends Component {
             style={styles.inputs}
             textContentType="emailAddress" //ios
             placeholder="* 이메일 (ID겸용)"
-            onChangeText={(mem_email) => {
+            onChangeText={(mem_userid) => {
               this.setState({
-                mem_userid: mem_email,
+                mem_userid: mem_userid,
               });
-              // this.checkEmail(mem_email);
+              this.checkEmail(mem_userid);
             }}
             onEndEditing={() => {
               // this.checkNotNull();
-              // this.checkEmail(this.state.mem_email);
+              this.checkEmail(this.state.mem_userid);
             }}
+            caption={this.state.checkEmailCaption}
           />
           <Button
             style={{
@@ -142,7 +148,14 @@ class FindPwScreen extends Component {
               height: 34,
               borderRadius: 6,
             }}
-            onPress={() => this.SubmitForm()}>
+            onPress={() =>
+              !this.state.checkEmailCaption
+                ? this.SubmitForm()
+                : this.setState({
+                    checkEmailCaption:
+                      '입력한 이메일을 다시 한번 확인해주세요.',
+                  })
+            }>
             PW 재설정
           </Button>
         </View>
