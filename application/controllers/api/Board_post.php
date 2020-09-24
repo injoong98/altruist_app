@@ -312,7 +312,7 @@ class Board_post extends CB_Controller
 			}
 		}
 		if (element('use_personal', $board) && $is_admin === false
-			&& $mem_id !== abs(element('mem_id', $post))) {
+			&& $mem_id !== abs(element('mem_id', $post))&& $mem_id !== abs(element('answer_mem_id', $post))) {
 			alert('1:1 게시판은 본인의 글 이외의 열람이 금지되어있습니다.');
 			return false;
 		}
