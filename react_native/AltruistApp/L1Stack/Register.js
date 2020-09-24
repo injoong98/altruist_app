@@ -342,9 +342,9 @@ class RegisterScreen extends Component {
       // } else if (13 < overwrited.length < 13) {
       //   console.log('13이상', overwrited.length);
       //   phonefinal = overwrited.substr(-1);
+      this.setState({mem_phone: phonefinal});
     }
     console.log('phonefinal', phonefinal);
-    this.setState({mem_phone: phonefinal});
   };
 
   //   TODO : 이메일 중복 확인
