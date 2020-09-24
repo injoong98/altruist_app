@@ -52,7 +52,10 @@ class Notification extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login();
+		if ($this->member->is_member() === false) {
+			response_result($view,'Err','로그인 후 이용해주세요');
+		}
+		//required_user_login();
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -60,7 +63,7 @@ class Notification extends CB_Controller
 		$view['view'] = array();
 
 		// 이벤트가 존재하면 실행합니다
-		$view['view']['event']['before'] = Events::trigger('before', $eventname);
+		// $view['view']['event']['before'] = Events::trigger('before', $eventname);
 
 		// 2개월 이상된 알림은 하루에 한번씩 체크해서 삭제합니다.
 		$cachename = 'delete_old_notifications_cache';
@@ -147,9 +150,10 @@ class Notification extends CB_Controller
 			'page_name' => $page_name,
 		);
 		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		$this->data = $view;
+		/* $this->data = $view;
 		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view));
+		$this->view = element('view_skin_file', element('layout', $view)); */
+		response_result($view);
 	}
 
 
