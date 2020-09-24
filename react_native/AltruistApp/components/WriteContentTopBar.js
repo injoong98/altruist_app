@@ -12,23 +12,33 @@ export class WriteContentToptab extends React.Component {
     }
 
     render(){
-        const bckclr = this.props.right =='upload'||this.props.right =='edit'? '#f4f4f4': '#ffffff'
+        const {right,gbckfunc,text,func} = this.props
+        const bckclr = right =='upload'||right =='edit'? '#f4f4f4': '#ffffff'
         return(
             <View style={{backgroundColor:bckclr,height:49, flexDirection:'row'}}>
                 <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                    <TouchableOpacity onPress={this.props.gbckfunc}>
+                    <TouchableOpacity onPress={gbckfunc}>
                         <Backsvg width={25} height={25}/>
                     </TouchableOpacity>
                 </View>
                 <View style={{flex:3, justifyContent:'center', alignItems:'center'}}>
-                    <Text category='h2' style={styles.toptext}>{this.props.text}</Text>
+                    <Text category='h2' style={styles.toptext}>{text}</Text>
                 </View>
                 <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                    <TouchableOpacity onPress={this.props.func} style={{paddingHorizontal:13,paddingVertical:8,backgroundColor:'#63579D',borderRadius:8.5}}>
+                {
+                    !right ?
+                    null
+                    :
+                    right =='upload'||right =='edit' ?
+                    <TouchableOpacity onPress={func} style={{paddingHorizontal:13,paddingVertical:8,backgroundColor:'#63579D',borderRadius:8.5}}>
                             <Text style={{fontSize:18,fontWeight:'700',color:'#ffffff'}}>
-                            {this.props.right =='upload' ? '완료' :'수정'}
+                            {right =='upload' ? '완료' :'수정'}
                             </Text>
                     </TouchableOpacity>
+                    
+                    :
+                    right
+                }
                 </View>
             </View>
                 /* <View style={styles.rightside}>
