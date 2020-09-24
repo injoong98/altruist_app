@@ -1498,7 +1498,7 @@ class Altruists extends CB_Controller
 							if ($this->upload->do_upload()) {
 								$filedata = $this->upload->data();
 								$uploadfiledata[$i] = array();
-								$uploadfiledata[$i]['file'] = $upload_path. '/' . element('file_name', $filedata);
+								$uploadfiledata[$i]['file'] = $upload_path. element('file_name', $filedata);
 							} else {
 								$file_error = $this->upload->display_errors();
 								break;
@@ -1508,8 +1508,8 @@ class Altruists extends CB_Controller
 				}
 			}
 			if ($this->cbconfig->item('use_member_photo') && $this->cbconfig->item('member_photo_width') > 0 && $this->cbconfig->item('member_photo_height') > 0) {
-				if (isset($_FILES) && isset($_FILES['mem_photo']) && isset($_FILES['mem_photo']['name']) && $_FILES['mem_photo']['name']) {
-					$upload_path = config_item('uploads_dir') . '/member_photo/';
+				if (isset($_FILES) && isset($_FILES['alt_photo']) && isset($_FILES['alt_photo']['name']) && $_FILES['alt_photo']['name']) {
+					$upload_path = config_item('uploads_dir') . '/altruists_apply/';
 					if (is_dir($upload_path) === false) {
 						mkdir($upload_path, 0707);
 						$file = $upload_path . 'index.php';
@@ -1518,16 +1518,7 @@ class Altruists extends CB_Controller
 						@fclose($f);
 						@chmod($file, 0644);
 					}
-					$upload_path .= cdate('Y') . '/';
-					if (is_dir($upload_path) === false) {
-						mkdir($upload_path, 0707);
-						$file = $upload_path . 'index.php';
-						$f = @fopen($file, 'w');
-						@fwrite($f, '');
-						@fclose($f);
-						@chmod($file, 0644);
-					}
-					$upload_path .= cdate('m') . '/';
+					$upload_path .= $mem_id. '/';
 					if (is_dir($upload_path) === false) {
 						mkdir($upload_path, 0707);
 						$file = $upload_path . 'index.php';
@@ -1540,70 +1531,20 @@ class Altruists extends CB_Controller
 					$uploadconfig = array();
 					$uploadconfig['upload_path'] = $upload_path;
 					$uploadconfig['allowed_types'] = 'jpg|jpeg|png|gif';
-					$uploadconfig['max_size'] = '2000';
-					$uploadconfig['max_width'] = '1000';
-					$uploadconfig['max_height'] = '1000';
+					$uploadconfig['max_size'] = 10 * 1024;
 					$uploadconfig['encrypt_name'] = true;
 
 					$this->upload->initialize($uploadconfig);
 
-					if ($this->upload->do_upload('mem_photo')) {
+					if ($this->upload->do_upload()) {
 						$img = $this->upload->data();
-						$updatephoto = cdate('Y') . '/' . cdate('m') . '/' . $img['file_name'];
+						$updatephoto = $upload_path . $img['file_name'];
 					} else {
 						$file_error = $this->upload->display_errors();
 					}
 				}
 			}
 
-			if ($this->cbconfig->item('use_member_icon') && $this->cbconfig->item('member_icon_width') > 0 && $this->cbconfig->item('member_icon_height') > 0) {
-				if (isset($_FILES) && isset($_FILES['mem_icon']) && isset($_FILES['mem_icon']['name']) && $_FILES['mem_icon']['name']) {
-					$upload_path = config_item('uploads_dir') . '/member_icon/';
-					if (is_dir($upload_path) === false) {
-						mkdir($upload_path, 0707);
-						$file = $upload_path . 'index.php';
-						$f = @fopen($file, 'w');
-						@fwrite($f, '');
-						@fclose($f);
-						@chmod($file, 0644);
-					}
-					$upload_path .= cdate('Y') . '/';
-					if (is_dir($upload_path) === false) {
-						mkdir($upload_path, 0707);
-						$file = $upload_path . 'index.php';
-						$f = @fopen($file, 'w');
-						@fwrite($f, '');
-						@fclose($f);
-						@chmod($file, 0644);
-					}
-					$upload_path .= cdate('m') . '/';
-					if (is_dir($upload_path) === false) {
-						mkdir($upload_path, 0707);
-						$file = $upload_path . 'index.php';
-						$f = @fopen($file, 'w');
-						@fwrite($f, '');
-						@fclose($f);
-						@chmod($file, 0644);
-					}
-
-					$uploadconfig = array();
-					$uploadconfig['upload_path'] = $upload_path;
-					$uploadconfig['allowed_types'] = 'jpg|jpeg|png|gif';
-					$uploadconfig['max_size'] = '2000';
-					$uploadconfig['max_width'] = '1000';
-					$uploadconfig['max_height'] = '1000';
-					$uploadconfig['encrypt_name'] = true;
-
-					$this->upload->initialize($uploadconfig);
-
-					if ($this->upload->do_upload('mem_icon')) {
-						$img = $this->upload->data();
-						$updateicon = cdate('Y') . '/' . cdate('m') . '/' . $img['file_name'];
-					} else {
-						$file_error2 = $this->upload->display_errors();
-					}
-				}
-			}
 		}
 
 		/** 첨부 파일 업로드  끝 */
@@ -1636,7 +1577,7 @@ class Altruists extends CB_Controller
 			$insertdata['alt_status'] = $this->input->post('alt_status');
 			$insertdata['alt_score'] = $this->input->post('alt_score');
 			$insertdata['alt_honor'] = $this->input->post('alt_honor');
-			$insertdata['alt_photo'] = $this->input->post('alt_photo');
+			$insertdata['alt_photo'] = $updatephoto;
 			$insertdata['alt_title'] = $this->input->post('alt_title');
 			// alt_datetime - 자동 입력으로 생략 cdate('Y-m-d H:i:s');
 

@@ -541,16 +541,56 @@ class Altruists extends CB_Controller
 					$acv_open_update_update[$i]['acv_status'] = $value;
 				}
 			}
+			if ($this->input->post('acv_status_org')) {
+				foreach ($this->input->post('acv_status_org') as $i => $value) {
+					$acv_open_update_update[$i]['acv_status_org'] = $value;
+				}
+			}
 		
 			/**
 			 * 게시물을 수정하는 경우입니다
 			 */
 			if ($this->input->post('alt_id')) {
 				$alt_id = $this->input->post('alt_id');
-				$this->Altruists_model->update($alt_id, $updatedata);
+				$alt_mem_id = $this->input->post('alt_mem_id');
+				$alt_update_result = false;
 
+				$alt_update_result = $this->Altruists_model->update($alt_id, $updatedata);
+				if ($alt_update_result && $updatedata['alt_status'] == 'Y' &&  $this->input->post('alt_status_org', null, '') != 'Y' ) {
+					//알림 저장
+					$not_message =  '축하합니다. 회원님의 이타주의자 신청이 승인 되었습니다.';
+					$not_url = "post_url(element('brd_id', $board), $post_id)";
+					if ($this->cbconfig->item('use_notification') ) {
+						$this->load->library('notificationlib');
+						$this->notificationlib->set_noti(
+							$alt_mem_id,
+							$this->session->userdata('mem_id'), 
+							'이타주의자들',
+							$alt_mem_id,
+							$not_message,
+							$not_url
+						);
+					}
+					log_message('error', $alt_mem_id.':'.$not_message);
+					//푸시 전송
+					if ($this->cbconfig->item('use_push') ) {
+						$this->load->library('pushlib');
+						$this->pushlib->set_push(
+							$alt_mem_id,
+							$this->session->userdata('mem_id'),
+							'이타주의자들',
+							$alt_mem_id,
+							$not_message,
+							$not_url,
+							'token',
+							''
+						);
+					}
+
+				}
 				if ($acv_open_update_update && is_array($acv_open_update_update) && count($acv_open_update_update) > 0) {
 					foreach ($acv_open_update_update as $pkey => $pval) {
+						$cv_update_result = false;
 						if ($pval) {
 							$fileupdate =[];
 							if (element('acv_open', $pval)) {
@@ -564,7 +604,40 @@ class Altruists extends CB_Controller
 								$fileupdate['acv_status'] = 0;
 
 							}
-							   $this->Altruists_cv_model->update($pkey, $fileupdate);
+							   
+							$cv_update_result = $this->Altruists_cv_model->update($pkey, $fileupdate);
+							//업데이트가 성공하였고, acv_status 가 승인이면 알림 및 푸시
+							if($cv_update_result && $fileupdate['acv_status'] == 1 && element('acv_status_org', $pval ) != 1) {
+								//알림 저장
+								$not_message =  '회원님의 경력사항이 인증처리 되었습니다.';
+								$not_url = "post_url(element('brd_id', $alt_mem_id), $alt_mem_id)";
+								if ($this->cbconfig->item('use_notification') ) {
+									$this->load->library('notificationlib');
+									$this->notificationlib->set_noti(
+										$alt_mem_id,
+										$this->session->userdata('mem_id'), 
+										'이타주의자들',
+										$alt_mem_id,
+										$not_message,
+										$not_url
+									);
+								}
+								log_message('error', $pkey.':'.$not_message);
+								//푸시 전송
+								if ($this->cbconfig->item('use_push') ) {
+									$this->load->library('pushlib');
+									$this->pushlib->set_push(
+										$alt_mem_id,
+										$this->session->userdata('mem_id'),
+										'이타주의자들',
+										$alt_mem_id,
+										$not_message,
+										$not_url,
+										'token',
+										''
+									);
+								}
+							}
 						}
 					}
 				}
