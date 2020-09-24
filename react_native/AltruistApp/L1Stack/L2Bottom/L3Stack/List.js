@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {StyleSheet, SafeAreaView, Image, View, ScrollView, TouchableOpacity,TextInput} from 'react-native'
+import {StyleSheet, SafeAreaView, Image, View, ScrollView, TouchableOpacity,TextInput,TouchableHighlight} from 'react-native'
 import {Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal, Spinner} from '@ui-kitten/components'
 import axios from 'axios';
 import Tag from '../../../components/tag.component';
@@ -96,40 +96,53 @@ class AltListScreen extends React.Component{
 
     renderAltList= ({item,index}) => (
         <TouchableOpacity
-            style={{flexDirection:'row',height:100,marginBottom:15,marginHorizontal:18,backgroundColor:'#F4F4F4',alignItems:'center'}}
+            style={{flexDirection:'row',height:100,marginBottom:15,marginHorizontal:18,backgroundColor:'#F4F4F4',alignItems:'center',borderTopRightRadius:7,borderBottomRightRadius:7}}
             onPress = {()=>{this.props.navigation.navigate('AltProfile', item.alt_profile.alt_id)}}
         >
             <View>
                 <Image 
-                    source = {{uri : 'http://dev.unyict.org/uploads/noimage.gif'}} 
+                    source = {{uri : 'http://dev.unyict.org/'+ (item.alt_profile.alt_photo !=null ? item.alt_profile.alt_photo: 'uploads/noimage.gif')}} 
                     style = {{flex : 1, width : 100, height : 100, resizeMode:'contain'}}
                 />
             </View>
-            <View style={{justifyContent:'space-evenly',height:'100%',marginLeft:0,width:'30%',paddingHorizontal:10}}>
-                <View>
-                    <Text style={{fontSize:18,fontWeight:'700'}}>
-                        {item.mem_basic_info.mem_nickname}
-                    </Text>
+            
+            <View style={{width:'65%',height:'100%',paddingLeft:10}}>
+                <View style={{flexDirection:'row',height:'90%'}}>
+                    <View style={{justifyContent:'space-evenly',marginLeft:0,width:'45%'}}>
+                        <View>
+                            <Text style={{fontSize:18,fontWeight:'700'}}>
+                                {item.mem_basic_info.mem_nickname}
+                            </Text>
+                        </View>
+                        <View>
+                            <Text style={{fontSize:12,fontWeight:'600'}}>
+                                {item.alt_profile.alt_aboutme}
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={{marginLeft:'5%',width:'45%',paddingVertical:10,alignItems:'flex-start',justifyContent:'center'}}>
+                        {item.get_alt_cv.map((i)=>
+                            <Text 
+                                category ='p1'
+                                style = {{color:'#63579D',fontSize:10,marginBottom:4}} 
+                                key={i.acv_id}
+                                numberOfLines={1} 
+                                ellipsizeMode="tail"    
+                            >
+                                {i.acv_year.trim()+') '}{i.acv_content.trim()}
+                            </Text>
+                        )}                
+                    </View>
                 </View>
-                <View>
-                    <Text style={{fontSize:12,fontWeight:'600'}}>
-                        {item.alt_profile.alt_aboutme}
-                    </Text>
+                <View style={{flexDirection:'row',left:10,bottom:0,position:'absolute'}}>
+                    {
+                        item.alt_area.map(({act_content})=>(
+                            <Text style={{fontSize:8,paddingVertical:4,fontWeight:'700'}}>{act_content}</Text>
+                        ))
+                    }
                 </View>
             </View>
-            <View style={{width:'35%'}}>
-                {item.get_alt_cv.map((i)=>
-                    <Text 
-                        category ='p1'
-                        style = {{color:'#63579D',fontSize:10,marginBottom:4}} 
-                        key={i.acv_id}
-                        numberOfLines={1} 
-                        ellipsizeMode="tail"    
-                    >
-                        {i.acv_year.trim()+') '}{i.acv_content.trim()}
-                    </Text>
-                )}                
-            </View>
+
             <View style={{right:0,position:'absolute'}}>
                 <Rightsvg width={22} height={22}/>
             </View>
@@ -195,7 +208,9 @@ class AltListScreen extends React.Component{
                             <Searchsvg height={25} width={25} fill='#A9C' />
                         </TouchableOpacity>
                     </View>
-
+                    <TouchableHighlight onPress={()=>{this.setState({})}}>
+                        <Text>필터</Text>
+                    </TouchableHighlight>
                 </View>
                 <View style={{flex: 25,marginTop:30}}>
                     <List
