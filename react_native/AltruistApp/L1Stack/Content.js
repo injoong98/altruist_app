@@ -989,7 +989,7 @@ class MarketContent extends React.Component {
 
         return(
             <View style={{backgroundColor:'#F4F4F4'}}>
-                <Layout style={{...styles.container, paddingBottom:15}}>
+                <Layout style={{...styles.container, marginTop:0, paddingTop:50, paddingBottom:15}}>
                     <Layout>
                         <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
                     </Layout>
@@ -1003,13 +1003,13 @@ class MarketContent extends React.Component {
                         <Layout style={{marginVertical:5}}>
                             <Text category='h1' style={{fontSize:25}}>{post.post_title}</Text>
                         </Layout>
-                        <Layout style={{marginVertical : 10, flexDirection:'row'}}>
+                        <Layout style={{marginVertical : 10, marginBottom:15, flexDirection:'row'}}>
                             <Text category='h5' style={{color:'#989898'}}>가격</Text>
                             <Text category='h5' style={{marginLeft:20}}>{post.deal_price} 원</Text>
                         </Layout>
                     </Layout>
                     <Divider/>
-                    <Layout style={{height:30,flexDirection:'row', marginTop:10}}>
+                    <Layout style={{height:30,flexDirection:'row', marginTop:15}}>
                         <Layout style={{width:30}}>
                             <Image source={require('../assets/images/icon-social-dark.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
                         </Layout>
@@ -1548,6 +1548,7 @@ const styles = StyleSheet.create({
     }, 
     topbar : {
         backgroundColor : '#F4F4F4',
+        height : 10
     },
     title : {
         backgroundColor : '#E9E9E9',
