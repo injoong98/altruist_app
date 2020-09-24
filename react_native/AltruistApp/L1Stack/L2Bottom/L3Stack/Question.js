@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity,KeyboardAvoidingView,Alert, ScrollView, Dimensions,TouchableHighlight} from 'react-native'
+import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity,KeyboardAvoidingView,Alert, ScrollView, Dimensions,TouchableHighlight,StatusBar} from 'react-native'
 import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,Divider,Modal,Popover} from '@ui-kitten/components'
 import axios from 'axios'
 
@@ -15,6 +15,7 @@ import Thumbsvg from '../../../assets/icons/thumb-up.svg'
 import UploadCirclesvg from '../../../assets/icons/upload-circle.svg'
 import Tag from '../../../components/tag.component'
 import {TopBarTune} from '../../../components/TopBarTune'
+import {WriteContentToptab} from '../../../components/WriteContentTopBar'
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -628,20 +629,30 @@ class AltQuestionWrite extends React.Component
         })
     }
     componentDidMount(){
+        StatusBar.setBackgroundColor('#F4F4F4');
+        StatusBar.setBarStyle('dark-content');
         this.getAreaCategory()
     }
 
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+    }
     render(){
         const {title,content,filterModalVisible,actSelected} = this.state;
         const {act,answer_mem_id,brd_key,item,} = this.props.route.params;
         const {width,height} =Dimensions.get('window')
         return(
         <SafeAreaView style={{flex:1}}>
-            <TopBarTune 
-                text={ item ? `${item.mem_basic_info.mem_username}님께 질문`: '모두에게 질문'} 
-                right="upload"
-                func={() =>{this.filterSpamKeyword()}} 
-                gbckfunc={()=>{this.props.navigation.goBack()}} 
+            <WriteContentToptab
+                text={ item ? '질문하기': '오픈질문'}
+                right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+                func={() => {
+                    this.filterSpamKeyword();
+                }}
+                gbckfunc={() => {
+                    this.props.navigation.goBack();
+                }}
                 gbckuse={true}
             />
             <KeyboardAvoidingView
@@ -649,16 +660,16 @@ class AltQuestionWrite extends React.Component
                     behavior={Platform.OS == "ios" ? "padding" : "height"}
             >
                 <View style={{ flex:1,backgroundColor:"#f4f4f4",padding:10}}>
-                    <View style={{display:'flex',flexDirection:'row'}}>
+                    <View style={{display:'flex',flexDirection:'row',paddingHorizontal:10}}>
                     {
                         this.props.route.params.answer_mem_id ? 
                         null
                         :
                         <TouchableOpacity 
-                            style = {{height:35,width:35,backgroundColor:'#B09BDE',borderRadius:10,justifyContent:'center'}} 
+                            style = {{height:21,width:23,backgroundColor:'#B09BDE',borderRadius:7,justifyContent:'center'}} 
                             onPress={()=>this.setState({filterModalVisible:true})}
                         >
-                            <Text category='h2' style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
+                            <Text style={{color:'#ffffff',fontSize:24,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
                         </TouchableOpacity>
                     }
                     {
@@ -670,7 +681,7 @@ class AltQuestionWrite extends React.Component
                                         key = {act.act_content}
                                     >
                                         <View 
-                                            style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',padding:5}} 
+                                            style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',paddingHorizontal:5}} 
                                         >
                                             <Tag style={[styles.tagSelected,{marginRight:3}]}
                                                 key = {act.act_content}
@@ -688,7 +699,7 @@ class AltQuestionWrite extends React.Component
                         this.props.route.params.answer_mem_id ? 
                         null:
                         <View>
-                            <Text style={{marginVertical:9,fontSize:15}} category = 'c2'>알림을 보낼 이타주의자 분야를 선택할 수 있습니다.</Text>
+                            <Text style={{fontSize:13, fontWeight:'700',color:'#63579D',marginLeft:16}} >알림을 보낼 이타주의자 전문 분야를 선택할 수 있습니다.</Text>
                         </View>
 
                     }
