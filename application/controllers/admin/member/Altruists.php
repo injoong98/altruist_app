@@ -24,7 +24,7 @@ class Altruists extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Member_meta', 'Member_group', 'Member_group_member', 'Member_nickname', 'Member_extra_vars', 'Member_userid', 'Social_meta','Altruists');
+	protected $models = array('Member_meta', 'Member_group', 'Member_group_member', 'Member_nickname', 'Member_extra_vars', 'Member_userid', 'Social_meta','Altruists','Altruists_cv');
 
 	/**
 	 * 이 컨트롤러의 메인 모델 이름입니다
@@ -278,124 +278,12 @@ class Altruists extends CB_Controller
 				'rules' => 'trim|min_length[2]|max_length[20]',
 			),
 			array(
-				'field' => 'mem_level',
-				'label' => '레벨',
-				'rules' => 'trim|required|numeric|less_than_equal_to[' . element('config_max_level', $getdata) . ']|is_natural_no_zero',
-			),
-			array(
-				'field' => 'mem_homepage',
-				'label' => '홈페이지',
-				'rules' => 'valid_url',
-			),
-			array(
-				'field' => 'mem_birthday',
-				'label' => '생일',
-				'rules' => 'trim|exact_length[10]',
-			),
-			array(
-				'field' => 'mem_sex',
-				'label' => '성별',
-				'rules' => 'trim|exact_length[1]',
-			),
-			array(
-				'field' => 'mem_phone',
-				'label' => '전화번호',
-				'rules' => 'trim|valid_phone',
-			),
-			array(
-				'field' => 'mem_zipcode',
-				'label' => '우편번호',
-				'rules' => 'trim|min_length[5]|max_length[7]',
-			),
-			array(
-				'field' => 'mem_address1',
-				'label' => '기본주소',
-				'rules' => 'trim',
-			),
-			array(
-				'field' => 'mem_address2',
-				'label' => '상세주소',
-				'rules' => 'trim',
-			),
-			array(
-				'field' => 'mem_address3',
-				'label' => '참고항목',
-				'rules' => 'trim',
-			),
-			array(
-				'field' => 'mem_address4',
-				'label' => '지번',
-				'rules' => 'trim',
-			),
-			array(
-				'field' => 'mem_profile_content',
-				'label' => '자기소개',
-				'rules' => 'trim',
-			),
-			array(
-				'field' => 'mem_open_profile',
-				'label' => '정보공개',
-				'rules' => 'trim|exact_length[1]',
-			),
-			array(
-				'field' => 'mem_use_note',
-				'label' => '쪽지사용',
-				'rules' => 'trim|exact_length[1]',
-			),
-			array(
-				'field' => 'mem_receive_email',
-				'label' => '이메일수신여부',
-				'rules' => 'trim|exact_length[1]',
-			),
-			array(
 				'field' => 'mem_receive_sms',
 				'label' => 'SMS 문자수신여부',
 				'rules' => 'trim|exact_length[1]',
 			),
 		);
-		if ($this->input->post($primary_key)) {
-			$config[] = array(
-				'field' => 'mem_userid',
-				'label' => '회원아이디',
-				'rules' => 'trim|required|alphanumunder|min_length[3]|max_length[20]|is_unique[member_userid.mem_userid.mem_id.' . element('mem_id', $getdata) . ']|callback__mem_userid_check',
-			);
-			$config[] = array(
-				'field' => 'mem_password',
-				'label' => '패스워드',
-				'rules' => 'trim|min_length[4]',
-			);
-			$config[] = array(
-				'field' => 'mem_email',
-				'label' => '회원이메일',
-				'rules' => 'trim|required|valid_email|is_unique[member.mem_email.mem_id.' . element('mem_id', $getdata) . ']',
-			);
-			$config[] = array(
-				'field' => 'mem_nickname',
-				'label' => '회원닉네임',
-				'rules' => 'trim|required|min_length[2]|max_length[20]|callback__mem_nickname_check|is_unique[member.mem_nickname.mem_id.' . element('mem_id', $getdata) . ']',
-			);
-		} else {
-			$config[] = array(
-				'field' => 'mem_userid',
-				'label' => '회원아이디',
-				'rules' => 'trim|required|alphanumunder|min_length[3]|max_length[20]|is_unique[member_userid.mem_userid]',
-			);
-			$config[] = array(
-				'field' => 'mem_password',
-				'label' => '패스워드',
-				'rules' => 'trim|required|min_length[4]',
-			);
-			$config[] = array(
-				'field' => 'mem_email',
-				'label' => '회원이메일',
-				'rules' => 'trim|required|valid_email|is_unique[member.mem_email]',
-			);
-			$config[] = array(
-				'field' => 'mem_nickname',
-				'label' => '회원닉네임',
-				'rules' => 'trim|required|min_length[2]|max_length[20]|callback__mem_nickname_check|is_unique[member.mem_nickname]',
-			);
-		}
+		// 
 		$this->form_validation->set_rules($config);
 		$form_validation = $this->form_validation->run();
 		$file_error = '';
@@ -629,151 +517,56 @@ class Altruists extends CB_Controller
 
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
-
-			$mem_sex = $this->input->post('mem_sex') ? $this->input->post('mem_sex') : 0;
-			$mem_receive_email = $this->input->post('mem_receive_email') ? 1 : 0;
-			$mem_use_note = $this->input->post('mem_use_note') ? 1 : 0;
-			$mem_receive_sms = $this->input->post('mem_receive_sms') ? 1 : 0;
-			$mem_open_profile = $this->input->post('mem_open_profile') ? 1 : 0;
-			$mem_email_cert = $this->input->post('mem_email_cert') ? 1 : 0;
-			$mem_is_admin = $this->input->post('mem_is_admin') ? 1 : 0;
-
 			$updatedata = array(
-				'mem_userid' => $this->input->post('mem_userid', null, ''),
-				'mem_email' => $this->input->post('mem_email', null, ''),
-				'mem_username' => $this->input->post('mem_username', null, ''),
-				'mem_level' => $this->input->post('mem_level', null, ''),
-				'mem_homepage' => $this->input->post('mem_homepage', null, ''),
-				'mem_birthday' => $this->input->post('mem_birthday', null, ''),
-				'mem_phone' => $this->input->post('mem_phone', null, ''),
-				'mem_sex' => $mem_sex,
-				'mem_zipcode' => $this->input->post('mem_zipcode', null, ''),
-				'mem_address1' => $this->input->post('mem_address1', null, ''),
-				'mem_address2' => $this->input->post('mem_address2', null, ''),
-				'mem_address3' => $this->input->post('mem_address3', null, ''),
-				'mem_address4' => $this->input->post('mem_address4', null, ''),
-				'mem_receive_email' => $mem_receive_email,
-				'mem_use_note' => $mem_use_note,
-				'mem_receive_sms' => $mem_receive_sms,
-				'mem_open_profile' => $mem_open_profile,
-				'mem_denied' => $this->input->post('mem_denied', null, ''),
-				'mem_email_cert' => $mem_email_cert,
-				'mem_is_admin' => $mem_is_admin,
-				'mem_profile_content' => $this->input->post('mem_profile_content', null, ''),
-				'mem_adminmemo' => $this->input->post('mem_adminmemo', null, ''),
+				'alt_score' => $this->input->post('alt_score', null, ''),
+				'alt_status' => $this->input->post('alt_status', null, ''),
+				'alt_honor' => $this->input->post('alt_honor', null, ''),
+				'alt_approve_datetime' => date("Y-m-d H:i:s"), 
 			);
 
-			$metadata = array();
-
-			if (empty($getdata['mem_denied']) && $this->input->post('mem_denied')) {
-				$metadata['meta_denied_datetime'] = cdate('Y-m-d H:i:s');
-				$metadata['meta_denied_by_mem_id'] = $this->member->item('mem_id');
+			//경력사항 업데이트 
+			if ($this->input->post('acv_id_update')) {
+				foreach ($this->input->post('acv_id_update') as $i => $value) {
+					$acv_open_update_update[$i]['acv_id'] = $i;
+				
+				}
 			}
-			if ( ! empty($getdata['mem_denied']) && ! $this->input->post('mem_denied')) {
-				$metadata['meta_denied_datetime'] = '';
-				$metadata['meta_denied_by_mem_id'] = '';
+			if ($this->input->post('acv_open_update')) {
+				foreach ($this->input->post('acv_open_update') as $i => $value) {
+					$acv_open_update_update[$i]['acv_open'] = $value;
+				}
 			}
-			if (empty($getdata['mem_email_cert']) && $this->input->post('mem_email_cert')) {
-				$metadata['meta_email_cert_datetime'] = cdate('Y-m-d H:i:s');
+			if ($this->input->post('acv_status_update')) {
+				foreach ($this->input->post('acv_status_update') as $i => $value) {
+					$acv_open_update_update[$i]['acv_status'] = $value;
+				}
 			}
-			if ( ! empty($getdata['mem_email_cert']) && ! $this->input->post('mem_email_cert')) {
-					$metadata['meta_email_cert_datetime'] = '';
-			}
-			if (element('mem_nickname', $getdata) !== $this->input->post('mem_nickname')) {
-				$updatedata['mem_nickname'] = $this->input->post('mem_nickname', null, '');
-				$metadata['meta_nickname_datetime'] = cdate('Y-m-d H:i:s');
-			}
-			if ($this->input->post('mem_password')) {
-				$updatedata['mem_password'] = password_hash($this->input->post('mem_password'), PASSWORD_BCRYPT);
-			}
-
-			if ($this->input->post('mem_photo_del')) {
-				$updatedata['mem_photo'] = '';
-			} elseif ($updatephoto) {
-				$updatedata['mem_photo'] = $updatephoto;
-			}
-			if (element('mem_photo', $getdata) && ($this->input->post('mem_photo_del') OR $updatephoto)) {
-				// 기존 파일 삭제
-				@unlink(config_item('uploads_dir') . '/member_photo/' . element('mem_photo', $getdata));
-			}
-			if ($this->input->post('mem_icon_del')) {
-				$updatedata['mem_icon'] = '';
-			} elseif ($updateicon) {
-				$updatedata['mem_icon'] = $updateicon;
-			}
-			if (element('mem_icon', $getdata) && ($this->input->post('mem_icon_del') OR $updateicon)) {
-				// 기존 파일 삭제
-				@unlink(config_item('uploads_dir') . '/member_icon/' . element('mem_icon', $getdata));
-			}
-
+		
 			/**
 			 * 게시물을 수정하는 경우입니다
 			 */
-			if ($this->input->post($primary_key)) {
-				$mem_id = $this->input->post($primary_key);
-				$this->{$this->modelname}->update($mem_id, $updatedata);
-				$this->Member_meta_model->save($mem_id, $metadata);
-				if (element('mem_userid', $getdata) !== $this->input->post('mem_userid')) {
-					$useriddata = array('mem_userid' => $this->input->post('mem_userid'));
-					$useridwhere = array('mem_id' => element('mem_id', $getdata));
-					$this->Member_userid_model->update('', $useriddata, $useridwhere);
-				}
-				if (element('mem_nickname', $getdata) !== $this->input->post('mem_nickname')) {
-					$upnick = array(
-						'mni_end_datetime' => cdate('Y-m-d H:i:s'),
-					);
-					$upwhere = array(
-						'mem_id' => $mem_id,
-					);
-					$this->Member_nickname_model->update('', $upnick, $upwhere);
+			if ($this->input->post('alt_id')) {
+				$alt_id = $this->input->post('alt_id');
+				$this->Altruists_model->update($alt_id, $updatedata);
 
-					$nickinsert = array(
-						'mem_id' => $mem_id,
-						'mni_nickname' => $this->input->post('mem_nickname'),
-						'mni_start_datetime' => cdate('Y-m-d H:i:s'),
-					);
-					$this->Member_nickname_model->insert($nickinsert);
-				}
+				if ($acv_open_update_update && is_array($acv_open_update_update) && count($acv_open_update_update) > 0) {
+					foreach ($acv_open_update_update as $pkey => $pval) {
+						if ($pval) {
+							$fileupdate =[];
+							if (element('acv_open', $pval)) {
+								$fileupdate['acv_open'] = element('acv_open', $pval); 
+							}else{
+								$fileupdate['acv_open'] = 0;
+							}
+							if (element('acv_status', $pval)) {
+								$fileupdate['acv_status'] = element('acv_status', $pval); 
+							}else {
+								$fileupdate['acv_status'] = 0;
 
-				if (element('mem_level', $getdata) !== $this->input->post('mem_level')) {
-					$levelhistoryinsert = array(
-						'mem_id' => $mem_id,
-						'mlh_from' => element('mem_level', $getdata),
-						'mlh_to' => $this->input->post('mem_level'),
-						'mlh_datetime' => cdate('Y-m-d H:i:s'),
-						'mlh_reason' => '관리자에 의한 레벨변경',
-						'mlh_ip' => $this->input->ip_address(),
-					);
-					$this->load->model('Member_level_history_model');
-					$this->Member_level_history_model->insert($levelhistoryinsert);
-				}
-
-				$deletewhere = array(
-					'mem_id' => $mem_id,
-				);
-				$this->Member_group_member_model->delete_where($deletewhere);
-				if ($this->input->post('member_group')) {
-					foreach ($this->input->post('member_group') as $gkey => $gval) {
-						$mginsert = array(
-							'mgr_id' => $gval,
-							'mem_id' => $mem_id,
-							'mgm_datetime' => cdate('Y-m-d H:i:s'),
-						);
-						$this->Member_group_member_model->insert($mginsert);
-					}
-				}
-				$extradata = array();
-				if ($form && is_array($form)) {
-					foreach ($form as $key => $value) {
-						if ( ! element('use', $value)) {
-							continue;
+							}
+							   $this->Altruists_cv_model->update($pkey, $fileupdate);
 						}
-						if (element('func', $value) === 'basic') {
-							continue;
-						}
-						$extradata[element('field_name', $value)] = $this->input->post(element('field_name', $value), null, '');
 					}
-					$this->Member_extra_vars_model->save($mem_id, $extradata);
 				}
 
 				$this->session->set_flashdata(
@@ -784,7 +577,7 @@ class Altruists extends CB_Controller
 				/**
 				 * 게시물을 새로 입력하는 경우입니다
 				 */
-				$updatedata['mem_register_datetime'] = cdate('Y-m-d H:i:s');
+			/* 	$updatedata['mem_register_datetime'] = cdate('Y-m-d H:i:s');
 				$updatedata['mem_register_ip'] = $this->input->ip_address();
 
 				$mem_id = $this->{$this->modelname}->insert($updatedata);
@@ -841,7 +634,7 @@ class Altruists extends CB_Controller
 				$this->session->set_flashdata(
 					'message',
 					'정상적으로 입력되었습니다'
-				);
+				); */
 			}
 
 			// 이벤트가 존재하면 실행합니다

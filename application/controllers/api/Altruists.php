@@ -1460,6 +1460,53 @@ class Altruists extends CB_Controller
 
 		if ($form_validation) {
 			$this->load->library('upload');
+			if (true) {
+				if (isset($_FILES) && isset($_FILES['acv_file1']) && isset($_FILES['acv_file1']['name']) && is_array($_FILES['acv_file1']['name'])) {
+					$upload_path = config_item('uploads_dir') . '/altruists_apply/';
+					if (is_dir($upload_path) === false) {
+						mkdir($upload_path, 0707);
+						$file = $upload_path . 'index.php';
+						$f = @fopen($file, 'w');
+						@fwrite($f, '');
+						@fclose($f);
+						@chmod($file, 0644);
+					}
+					$upload_path .= $mem_id. '/';
+					if (is_dir($upload_path) === false) {
+						mkdir($upload_path, 0707);
+						$file = $upload_path . 'index.php';
+						$f = @fopen($file, 'w');
+						@fwrite($f, '');
+						@fclose($f);
+						@chmod($file, 0644);
+					}
+
+					foreach ($_FILES['acv_file1']['name'] as $i => $value) {
+						if ($value) {
+							$uploadconfig = array();
+							$uploadconfig['upload_path'] = $upload_path;
+							$uploadconfig['allowed_types'] = '*';
+							$uploadconfig['max_size'] = 10 * 1024;
+							$uploadconfig['encrypt_name'] = true;
+	
+							$this->upload->initialize($uploadconfig);
+							$_FILES['userfile']['name'] = $_FILES['acv_file1']['name'][$i];
+							$_FILES['userfile']['type'] = $_FILES['acv_file1']['type'][$i];
+							$_FILES['userfile']['tmp_name'] = $_FILES['acv_file1']['tmp_name'][$i];
+							$_FILES['userfile']['error'] = $_FILES['acv_file1']['error'][$i];
+							$_FILES['userfile']['size'] = $_FILES['acv_file1']['size'][$i];
+							if ($this->upload->do_upload()) {
+								$filedata = $this->upload->data();
+								$uploadfiledata[$i] = array();
+								$uploadfiledata[$i]['file'] = $upload_path. '/' . element('file_name', $filedata);
+							} else {
+								$file_error = $this->upload->display_errors();
+								break;
+							}
+						}
+					}
+				}
+			}
 			if ($this->cbconfig->item('use_member_photo') && $this->cbconfig->item('member_photo_width') > 0 && $this->cbconfig->item('member_photo_height') > 0) {
 				if (isset($_FILES) && isset($_FILES['mem_photo']) && isset($_FILES['mem_photo']['name']) && $_FILES['mem_photo']['name']) {
 					$upload_path = config_item('uploads_dir') . '/member_photo/';
@@ -1604,7 +1651,7 @@ class Altruists extends CB_Controller
 					$acv_insert[$i]['acv_year']    =    $_POST['acv_year'][$i];
 					$acv_insert[$i]['acv_content'] = 	$_POST['acv_content'][$i];
 					$acv_insert[$i]['acv_final']   = 	$_POST['acv_final'][$i];
-					$acv_insert[$i]['acv_file1']   = 	$_POST['acv_file1'][$i];
+					$acv_insert[$i]['acv_file1']   = 	$uploadfiledata[$i]['file'];
 					$acv_insert[$i]['acv_file2']   = 	$_POST['acv_file2'][$i];
 					$acv_insert[$i]['acv_file3']   = 	$_POST['acv_file3'][$i];
 					$acv_insert[$i]['acv_status']  = 	$_POST['acv_status'][$i];
