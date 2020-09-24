@@ -1217,7 +1217,7 @@ class AlbaContent extends React.Component {
                             id : i.pfi_id,
                             edit : true,
                             index : index,
-                            uri : 'http://dev.unyict.org'+i.origin_image_url, 
+                            uri : i.origin_image_url, 
                             height : this.scaledHeight(i.pfi_width, i.pfi_height, Dimensions.get('window').width)
                         };
                     })
@@ -1389,7 +1389,7 @@ class AlbaContent extends React.Component {
                                 </Text>
                             </View>
                             <Layout style={{flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
-                                {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:'http://dev.unyict.org/'+this.state.thumb_image.origin_image_url}}/>
+                                {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:this.state.thumb_image.origin_image_url}}/>
                                 :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
                                 <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
                             </Layout>

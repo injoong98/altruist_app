@@ -535,7 +535,7 @@ class MarketWrite extends React.Component {
             style={styles.market_RenderImage}
             source={
               image.edit
-                ? {uri: 'http://dev.unyict.org' + image.url}
+                ? {uri: image.url}
                 : image.url
             }
           />
