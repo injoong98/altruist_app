@@ -106,7 +106,7 @@ class AltListScreen extends React.Component{
                 <View style={{flexDirection:'row',left:10,bottom:0,position:'absolute'}}>
                     {
                         item.alt_area.map(({act_content})=>(
-                            <Text style={{fontSize:8,paddingVertical:4,fontWeight:'700'}}>{act_content}</Text>
+                            <Text key={act_content} style={{fontSize:8,paddingVertical:4,fontWeight:'700'}}>{act_content}</Text>
                         ))
                     }
                 </View>
