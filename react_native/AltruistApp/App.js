@@ -24,6 +24,7 @@ import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';
 const App = () => {
   StatusBar.setBackgroundColor('#B09BDE');
+
   useEffect(() => {
     messaging().onTokenRefresh(async(token)=>{
       var formdata = new FormData();
