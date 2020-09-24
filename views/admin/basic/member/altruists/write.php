@@ -132,11 +132,14 @@
 											?>
 											<tr>
 												<input type="hidden" name="acv_id_update[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="<?php echo html_escape(element('acv_id', $alt_cv)); ?>" /></td> <!-- 키 -->
-												<td><input type="hidden" name="acv_status_org[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="<?php echo (element('acv_status', $alt_cv))?>" /></td> <!-- 공개 -->
+												<td><input type="hidden" name="acv_status_org[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="<?php echo (element('acv_status', $alt_cv))?>" />
+												<input type="checkbox" name="acv_open_update[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="1" <?php echo (element('acv_open', $alt_cv)) ? ' checked="checked" ' : ''; ?> /> <!-- 공개 -->
+												</td> <!-- 공개 -->
 												<td><?php echo html_escape(element('acv_type', $alt_cv)); ?></td> <!-- 타입 -->
 												<td><?php echo html_escape(element('acv_year', $alt_cv)); ?></td> <!-- 년도 -->
 												<td><p><?php echo html_escape(element('acv_content', $alt_cv)); ?></p></td> <!-- 경력 -->
-												<td><?php echo html_escape(element('acv_file1', $alt_cv)); ?></td> <!-- 첨부파일 -->
+												<td><a href="<?php echo site_url(element('acv_file1', $alt_cv)); ?>" target="_blank">다운로드</a> </td> <!-- 첨부파일 -->
+											
 												<td><?php echo html_escape(element('acv_final', $alt_cv)); ?></td> <!-- 최종여부 -->
 												
 												<td><input type="checkbox" name="acv_status_update[<?php echo html_escape(element('acv_id', $alt_cv)); ?>]" value="1" <?php echo (element('acv_status', $alt_cv)) ? ' checked="checked" ' : ''; ?> /></td> <!-- 인증 -->
@@ -170,7 +173,7 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label">이타주의자 프로필 사진</label>
 				<div class="col-sm-10">
-					<?php echo set_value('alt_photo', element('alt_photo', element('data', $view))); ?>
+					<img src="<?php echo element('profile_thumb_url', element('data', $view)); ?>" alt="<?php echo element('profile_thumb_url', element('data', $view)); ?>" title="" class="thumbnail mg0 view_full_image" style="width:80px;cursor:pointer;" data-origin-image-url="" />
 				</div>
 			</div>
 			<div class="form-group">

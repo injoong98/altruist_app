@@ -148,7 +148,7 @@ class Altruists extends CB_Controller
 				);
 				$result['list'][$key]['meta'] = $this->Member_meta_model->get_all_meta(element('mem_id', $val));
 				$result['list'][$key]['social'] = $this->Social_meta_model->get_all_meta(element('mem_id', $val));
-
+				$result['list'][$key]['profile_thumb_url'] = thumb_url(element('alt_photo', $val), '80');
 				$result['list'][$key]['num'] = $list_num--;
 			}
 		}
@@ -230,6 +230,11 @@ class Altruists extends CB_Controller
 			$where['cb_member.mem_id'] =  $pid;
 			$getdata_alt = $this->{$this->modelname}->get_alt_list('','', $where);
 			$getdata = $getdata_alt['list'][0];
+
+				
+				$getdata['profile_thumb_url'] = thumb_url('altruists_apply',element('alt_photo', $getdata), '80');
+
+
 			$alt_id = 0;
 			$alt_id = $getdata_alt['list'][0]['alt_id']; //이타주의자 프로필 키
 			//이타주의자들 경력 정보
