@@ -170,7 +170,7 @@ class GominContent extends React.Component{
         </TouchableOpacity>
     )
     BackAction = () =>(
-        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack()}}/>
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
     )
     MoreAction = () =>(
         // <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{this.setState({modalVisible:true})}}/>
@@ -1637,7 +1637,7 @@ class IlbanContent extends Component {
         </TouchableOpacity>
     )
     BackAction = () =>(
-        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack()}}/>
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
     )
     MoreAction = () =>(
         // <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{this.setState({modalVisible:true})}}/>
@@ -1790,11 +1790,19 @@ class IlbanContent extends Component {
         const {post_id} = this.props.route.params
         this.getCommentData(post_id);
     } 
+
     async componentDidMount(){
+        StatusBar.setBackgroundColor('#FFFFFF');
+        StatusBar.setBarStyle('dark-content');
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
+    }
+
+    componentWillUnmount() {
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
     }
     
     modalList = [
@@ -2039,7 +2047,7 @@ const styles = StyleSheet.create({
         paddingBottom : 25
     }, 
     topbar : {
-        backgroundColor : '#F4F4F4',
+        backgroundColor : '#FFFFFF',
         height : 40,
         minHeight : 0,
     },

@@ -1334,15 +1334,14 @@ class IlbanWrite extends React.Component {
 
   constructor(props) {
     super(props);
+    const {mode, post} = this.props.route.params;
     this.state = {
       isLoading: true,
       brd_key: 'ilban',
-      post_title: '',
-      post_content: '',
-      post_nickname: '',
-      post_email: '',
+      post_title: mode == 'edit'?post.post_title:'',
+      post_content: mode == 'edit'?post.post_content:'',
       images: [],
-      post_category: 0,
+      post_category: mode == 'edit'?post.post_category-1:0,
       popoverVisible : false,
       confirmVisible : false,
       resultVisible : false,
@@ -1354,23 +1353,34 @@ class IlbanWrite extends React.Component {
   categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정보있어요'];
 
   submitPost = async () => {
-    const {post_title, post_content, post_category, category} = this.state;
+    
+    const {post_title, post_content, post_category} = this.state;
+    const url =
+      this.props.route.params.mode == 'edit'
+        ? 'http://dev.unyict.org/api/board_write/modify'
+        : 'http://dev.unyict.org/api/board_write/write/ilban';
 
     let formdata = new FormData();
     formdata.append('brd_key', 'ilban');
     formdata.append('post_title', post_title);
     formdata.append('post_category', post_category+1);
     formdata.append('post_content', post_content);
+    
+    this.props.route.params.mode == 'edit'
+      ? formdata.append('post_id', this.props.route.params.post.post_id)
+      : null;
+    
+    console.log(formdata);
 
     await axios
-      .post('http://dev.unyict.org/api/board_write/write/ilban', formdata)
+      .post(url, formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
           this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
           this.setState({spinnerVisible: false, resultVisible: true, 
-            resultText : ('게시글 작성 완료')});
+            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
         }
       })
       .catch((error) => {
@@ -1502,7 +1512,6 @@ class IlbanWrite extends React.Component {
   componentDidMount() {
     StatusBar.setBackgroundColor('#F4F4F4');
     StatusBar.setBarStyle('dark-content');
-    console.log(this.props.route.params);
   }
 
   componentWillUnmount() {
@@ -1518,7 +1527,7 @@ class IlbanWrite extends React.Component {
 			<SafeAreaView style={{flex: 1}}>
 				<WriteContentToptab
             text="이타게시판"
-            right='upload'
+            right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
             func={() => {this.filterSpamKeyword();}}
             gbckfunc={() => {navigation.goBack();}}
             gbckuse={true}
@@ -1580,7 +1589,9 @@ class IlbanWrite extends React.Component {
           onBackdropPress={() => this.setState({modalVisible: false})}>
           <Confirm
             confirmText={
-              '게시글을 작성하시겠습니까?'
+              this.props.route.params.mode == 'edit'
+                ? '게시글을 수정하시겠습니까?'
+                : '게시글을 작성하시겠습니까?'
             }
             frstText="예"
             OnFrstPress={() => {
