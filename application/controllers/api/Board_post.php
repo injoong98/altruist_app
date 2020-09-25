@@ -150,7 +150,8 @@ class Board_post extends CB_Controller
 		 */
 		$post_id = (int) $post_id;
 		if (empty($post_id) OR $post_id < 1) {
-			show_404();
+			response_result($r,'Err','게시물 키'.$post_id.'로 게시판을 조회하지 못했습니다.');
+		//	show_404();
 		}
 
 		$post = $this->Post_model->get_one($post_id);
