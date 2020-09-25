@@ -75,7 +75,9 @@ class AltApplyFormScreen extends React.Component {
       spinnerModalVisible:false,
       actSelected:[],
       category:[],
-      alt_photo:{}
+      alt_photo:{},
+      userinfo:{},
+      isLoading:true
     };
   }
   static contextType = Signing;
@@ -357,19 +359,31 @@ class AltApplyFormScreen extends React.Component {
       .then((res) => {
         //console.log(res)
         this.setState({category: res.data.data});
-        console.log(this.state.category);
       })
       .catch((err) => {
         alert(err);
       });
   };
-
+  getUserInfo = async() =>{
+    await axios
+      .get('http://dev.unyict.org/api/mypage')
+      .then((res) => {
+        //console.log(res)
+        this.setState({userinfo:res.data.myinfo});
+        console.log('userinfo = '+JSON.stringify(res.data.myinfo));
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  }
   componentDidMount() {
     StatusBar.setBackgroundColor('#F4F4F4');
     StatusBar.setBarStyle('dark-content');
     this.getAreaCat();
-    this.setState({mem_id:this.context.session_mem_id});
+    this.getUserInfo();
+    this.setState({mem_id:this.context.session_mem_id,isLoading:false});
     this.arrayForLoop();
+
   }
   componentWillUnmount(){
     StatusBar.setBackgroundColor('#B09BDE');
@@ -378,7 +392,7 @@ class AltApplyFormScreen extends React.Component {
 
   render() {
     const {width,height} =Dimensions.get('window')
-    const {spinnerModalVisible,filterModalVisible,actSelected,alt_content,alt_aboutme,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,alt_photo} = this.state;
+    const {isLoading,userinfo,spinnerModalVisible,filterModalVisible,actSelected,alt_content,alt_aboutme,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,alt_photo} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <WriteContentToptab
@@ -395,13 +409,13 @@ class AltApplyFormScreen extends React.Component {
                 <View >
                   <Image 
                     style={{width:100,height:100}}
-                    source={{uri:!alt_photo.uri? 'http://dev.unyict.org/uploads/noimage.gif':alt_photo.uri}}/>
+                    source={{uri:!alt_photo.uri? 'http://dev.unyict.org/uploads/altwink.png':alt_photo.uri}}/>
                   <Camsvg style={{position:'absolute',bottom:0,right:0}}/>
                 </View>
               </TouchableHighlight>
             <View style={{width:(width-100)*0.9}}>
               <Text style={[styles.nameText]}>
-                본명입니다
+                {isLoading ? null : userinfo.mem_username !='' ? userinfo.mem_username : userinfo.mem_nickname}
               </Text>
               <TextInput
                 value={alt_aboutme}
