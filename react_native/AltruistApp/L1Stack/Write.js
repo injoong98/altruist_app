@@ -195,6 +195,9 @@ class GominWrite extends React.Component {
       }}
     />
   );
+  componentDidMount = () => {
+    console.log(this.props.route.params);
+  }
   render() {
     const {navigation} = this.props;
     const {
@@ -1348,45 +1351,9 @@ class IlbanWrite extends React.Component {
     };
   }
 
-  // constructor(props){
-  //     super(props);
-  //     this.state = {
-  //         isLoading: true,
-  //         brd_key: 'ilban',
-  //         post_title:'',
-  //         post_content:'',
-  //         post_category:'',
-  //         post_nickname:'',
-  //         post_email:'',
-  //         post_image: null,
-  //         post_images: null,
-  //         imagesource : {},
-  //         image: null,
-  //         images: {
-  //             value: null,
-  //             valid: false
-  //         }
-  //             //isTipVisible:false,
-  //         //isFollowUp:false,
-  //     }
-  // }
-
-categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정보있어요'];
-
-  // getCategory = async () => {
-  //   await axios
-  //     .get('http://dev.unyict.org/api/board_post/lists/ilban')
-  //     .then((res) => {
-  //       console.log(res.data.view.list.board.category);
-  //       this.setState({post_category: res.data.view.list.board.category});
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
+  categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정보있어요'];
 
   submitPost = async () => {
-    console.log(this.state);
     const {post_title, post_content, post_category, category} = this.state;
 
     let formdata = new FormData();
@@ -1411,11 +1378,37 @@ categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정
       });
   };
 
+  filterSpamKeyword = async () => {
+    const {post_title, post_content} = this.state;
+
+    var formdata = new FormData();
+    formdata.append('title', post_title);
+    formdata.append('content', post_content);
+    formdata.append('csrf_test_name', '');
+
+    //Keyboard
+    Keyboard.dismiss();
+
+    await axios
+      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .then((response) => {
+        const {message, status} = response.data;
+        if (status == '500') {
+          alert(message);
+        } else if (status == '200') {
+          this.setState({modalVisible: true});
+        }
+      })
+      .catch((error) => {
+        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+      });
+  };
+
   gobackfunc = () => {
     this.cleanupImages();
     const {navigation, route} = this.props;
+    route.params.statefunction();
     navigation.goBack();
-    // route.params.statefunction();
   };
 
   cleanupImages() {
@@ -1493,24 +1486,8 @@ categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정
     if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
       return this.renderVideo(image);
     }
-
     return this.renderImage(image);
   }
-
-  BackAction = () => (
-    <TopNavigationAction
-      icon={BackIcon}
-      onPress={() => {
-        this.props.navigation.goBack();
-      }}
-    />
-  );
-
-  SubmitButtom = () => (
-    <Button style={{width: 100}} onPress={() => this.submitPost()}>
-      글작성
-    </Button>
-  );
 
   renderSelectItems = () => (
     <View style = {{marginLeft : 12, marginVertical : 10, alignItems:'center', justifyContent:'center'}}>
@@ -1525,6 +1502,7 @@ categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정
   componentDidMount() {
     StatusBar.setBackgroundColor('#F4F4F4');
     StatusBar.setBarStyle('dark-content');
+    console.log(this.props.route.params);
   }
 
   componentWillUnmount() {
@@ -1541,7 +1519,7 @@ categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정
 				<WriteContentToptab
             text="이타게시판"
             right='upload'
-            func={() => {this.submitPost();}}
+            func={() => {this.filterSpamKeyword();}}
             gbckfunc={() => {navigation.goBack();}}
             gbckuse={true}
           />
