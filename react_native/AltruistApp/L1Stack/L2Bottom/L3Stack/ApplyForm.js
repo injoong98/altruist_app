@@ -326,9 +326,8 @@ class AltApplyFormScreen extends React.Component {
       .then((response) => {
         this.setState({spinnerModalVisible:false})
         if (response.data.status == '500') {
-          Alert.alert('오류', `${response.data.message}`, [{text: 'OK'}], {
-            cancelable: false,
-          });
+          this.props.navigation.navigate('ApplyFail',{message:response.data.message});
+          
         } else {
           this.props.navigation.navigate('ApplyComplete');
         }
@@ -337,7 +336,8 @@ class AltApplyFormScreen extends React.Component {
       .catch((error) => {
         this.setState({spinnerModalVisible:false})
         console.log('error2'+JSON.stringify(error));
-        alert('오류가 발생하였습니다.');
+        this.props.navigation.navigate('ApplyFail',{message:error});
+
       });
   };
 
