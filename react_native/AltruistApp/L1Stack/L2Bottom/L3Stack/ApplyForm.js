@@ -261,6 +261,7 @@ class AltApplyFormScreen extends React.Component {
         count
     } = this.state;
 
+    console.log('mem_id = '+this.state.mem_id)
     let formdata = new FormData();
     formdata.append("mem_id", mem_id);
     formdata.append("alt_aboutme", alt_aboutme);
@@ -268,7 +269,7 @@ class AltApplyFormScreen extends React.Component {
     formdata.append("alt_answertype", alt_answertype);
     formdata.append("alt_status", 'R');
     formdata.append("alt_honor", 0);
-    formdata.append("alt_photo[]", {
+    formdata.append("alt_photo", {
       uri: alt_photo.uri,
       type: alt_photo.type,
       name: alt_photo.name,
@@ -302,13 +303,13 @@ class AltApplyFormScreen extends React.Component {
         console.log(response);
         console.log(response.data.status);
         if (response.data.status == '500') {
-          Alert.alert('Error', `${response.data.message}`, [{text: 'OK'}], {
+          Alert.alert('Error1', `${response.data.message}`, [{text: 'OK'}], {
             cancelable: false,
           });
         } else {
           Alert.alert(
             '이타주의자',
-            `${response.data.message}`,
+            `'지원 완료 \n'${response.data.message}`,
             [
               {
                 text: 'OK',
@@ -320,8 +321,8 @@ class AltApplyFormScreen extends React.Component {
       })
 
       .catch((error) => {
-        console.log(JSON.stringify(error));
-        alert(error);
+        console.log('error2'+JSON.stringify(error));
+        alert('error2'+error);
       });
   };
 
