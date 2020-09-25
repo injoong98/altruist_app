@@ -526,7 +526,7 @@ class Altruists extends CB_Controller
 				'alt_score' => $this->input->post('alt_score', null, ''),
 				'alt_status' => $this->input->post('alt_status', null, ''),
 				'alt_honor' => $this->input->post('alt_honor', null, ''),
-				'alt_approve_datetime' => date("Y-m-d H:i:s"), 
+				'alt_approve_datetime' => cdate("Y-m-d H:i:s"), 
 			);
 
 			//경력사항 업데이트 
