@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {StyleSheet,  View,  Image,  TouchableOpacity,  ActivityIndicator, SafeAreaView, ScrollView} from 'react-native';
+import {StyleSheet,  View,  Image,  TouchableOpacity,  ActivityIndicator, SafeAreaView, ScrollView, Dimensions} from 'react-native';
 import { Button, List,  Text,  Icon, Spinner,  } from '@ui-kitten/components';
 import {PlusIcon} from '../../../assets/icons/icons';
 import {getPostList} from './extra/getPost';
@@ -67,6 +67,17 @@ class JauScreen extends React.Component {
 				refreshing:false,
 				total_rows:response.data.view.list.data.total_rows,
 				})
+				// if (response.data.view.file_image){
+				// 	this.setState({image: response.data.view.file_image.map(function(item, index){
+				// 		var image_info = {};
+				// 		image_info['id'] = item.pfi_id;
+				// 		image_info['title'] = item.pfi_originname;
+				// 		image_info['url'] = item.origin_image_url;
+				// 		image_info['index'] = index;
+				// 		image_info['edit'] = true;
+				// 		return image_info;
+				// 	})});
+				// }
 			})
 			.catch((error)=>{
 				alert('error'+error);
@@ -95,11 +106,40 @@ class JauScreen extends React.Component {
 			this.setState({ current_page : this.state.current_page + 1, isListLoading : true}, this.getPostList,
 				console.log(this.state.current_page))
         }
-    }
+	}
+	
+	listImageData = (item) => {
+		item.file
+		// console.log(item.file):null;
+		?item.file.filter(i=>i.pfi_type=='jpg'||i.pfi_type=='png').map(function(image,index){
+			var image_info = {};
+			image_info['id'] = image.pfi_id;
+			image_info['url'] = image.pfi_filename;
+			return image_info;
+		})
+		:null;
+	}
+
+	renderListImage = ({item, index}) => {
+		return(
+			<Image 
+				source={{uri : 'http://dev.unyict.org/uploads/post/2020/09/6bac647fc03c42ecf3991917072cbf17.jpg'}}
+				style={{width:'100%', height:Dimensions.get("window").width-96}}
+			/>
+		)
+	}
 
   	renderItem = ({item, index}) => {
 		const regex = /(<([^>]+)>)|&nbsp;/gi;
 		const post_remove_tags = item.post_content.replace(regex, '');
+		const imageData = item.file
+			?item.file.filter(i=>i.pfi_type=='jpg'||i.pfi_type=='png').map(function(image,index){
+				var image_info = {};
+				image_info['id'] = image.pfi_id;
+				image_info['url'] = image.pfi_filename;
+				return image_info;
+			})
+			:null;
 		return (
 		<TouchableOpacity
 			style={styles.itembox}
@@ -118,6 +158,33 @@ class JauScreen extends React.Component {
 						AccessibilityRole="button">
 						{post_remove_tags}
 					</Text>
+				</View>
+				<View style={{flexDirection:'row', justifyContent:'space-between'}}>
+					{imageData
+					?imageData.length==1
+					?imageData.map(i=>
+						<Image 
+							source={{uri : 'http://dev.unyict.org/uploads/post/'+i.url}}
+							style={{width:'100%', height:(Dimensions.get("window").width-96), borderRadius:10}}
+						/>
+					)
+					:imageData.length==2
+					?imageData.map(i=>
+						<Image 
+							source={{uri : 'http://dev.unyict.org/uploads/post/'+i.url}}
+							style={{width:'49%', height:(Dimensions.get("window").width-96)/2, borderRadius:10}}
+						/>
+					)
+					:imageData.length>2
+					?imageData.slice(0,3).map(i=>
+						<Image 
+							source={{uri : 'http://dev.unyict.org/uploads/post/'+i.url}}
+							style={{width:'32%', height:(Dimensions.get("window").width-96)/3, borderRadius:10}}
+						/>
+					)
+					:null
+					:null
+					}
 				</View>
 				<View style={{flexDirection:'row', flex:1}}>
 					<View style={{flex:2, flexDirection:'row'}}> 

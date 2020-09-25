@@ -55,7 +55,10 @@ class Board_post extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before'] = Events::trigger('before', $eventname);
 
+		// 리스트 불러오기
 		$view['view']['list'] = $list = $this->_get_list($brd_key);
+		
+		
 		$view['view']['board_key'] = element('brd_key', element('board', $list));
 
 		// stat_count_board ++
@@ -147,7 +150,8 @@ class Board_post extends CB_Controller
 		 */
 		$post_id = (int) $post_id;
 		if (empty($post_id) OR $post_id < 1) {
-			show_404();
+			response_result($r,'Err','게시물 키'.$post_id.'로 게시판을 조회하지 못했습니다.');
+		//	show_404();
 		}
 
 		$post = $this->Post_model->get_one($post_id);
@@ -1282,31 +1286,18 @@ class Board_post extends CB_Controller
 					$filewhere = array(
 						'post_id' => $post_id,
 					);
-					$result['list'][$key]['file'] = $file = $this->Post_file_model
-						->get('', '', $filewhere, '', '', 'pfi_id', 'ASC');
-					$result['list'][$key]['file_download'] = array();
-					$result['list'][$key]['file_image'] = array();
-		
-					$play_extension = array('acc', 'flv', 'f4a', 'f4v', 'mov', 'mp3', 'mp4', 'm4a', 'm4v', 'oga', 'ogg', 'rss', 'webm');
-		
+					 $file = $this->Post_file_model->get('', '', $filewhere, '', '', 'pfi_id', 'ASC');
+
 					if ($file && is_array($file)) {
-						foreach ($file as $key => $value) {
-							if (element('pfi_is_image', $value)) {
-								$value['origin_image_url'] = site_url(config_item('uploads_dir') . '/post/' . element('pfi_filename', $value));
-								$value['thumb_image_url'] = thumb_url('post', element('pfi_filename', $value), $image_width);
-								$result['list'][$key]['file_image'][] = $value;
-							} else {
-								$value['download_link'] = site_url('postact/download/' . element('pfi_id', $value));
-								$result['list'][$key]['file_download'][] = $value;
-								if (element('use_autoplay', $board) && in_array(element('pfi_type', $value), $play_extension)) {
-									$file_player .= $this->videoplayer->get_jwplayer(site_url(config_item('uploads_dir') . '/post/' . element('pfi_filename', $value)), $image_width);
-								}
+						foreach ($file as $key1 => $value1) {
+							if (element('pfi_is_image', $value1)) { 
+								$value1['origin_image_url'] = site_url(config_item('uploads_dir') . '/post/' . element('pfi_filename', $value1));
+								$value1['thumb_image_url'] = thumb_url('post', element('pfi_filename', $value1), $image_width);
 							}
+							$result['list'][$key]['file'][$key1] = $value1;
 						}
 					}
 					$result['list'][$key]['file_count'] = count($file);
-					$result['list'][$key]['file_download_count'] = count($result['list']['file_download']);
-					$result['list'][$key]['file_image_count'] = count($result['list']['file_image']);
 				}
 
 			}

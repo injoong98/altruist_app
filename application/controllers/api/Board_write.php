@@ -87,6 +87,38 @@ class Board_write extends CB_Controller
 
 		$this->_write_common($board);
 	}
+	/**
+	 * 수수마켓 판매완료 처리
+	 */
+	public function finish_deal()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$post_id = $this->input->post('post_id');
+		
+		if (empty($post_id)) {
+			response_result($r,'Err','post_id 누락');
+		}
+
+		
+		if(!$this->member->is_member()) response_result($r,'Err','로그인 후 이용하세요.');
+
+		$post = $this->Post_model->get_one($post_id);
+
+		if(!$post) response_result($r,'Err',$post_id.'로 post 자료를 조회하지 못했습니다..');
+
+		if ( ! $this->session->userdata('mem_id') == element('mem_id',$post)) response_result($r,'Err','글 작성자가 아닙니다.');
+
+		$updatedata = array(
+			'deal_status' => 1,
+		);
+		log_message('error',date("Y-m-d H:i:s"));
+		$result = $this->Post_model->update($post_id, $updatedata);
+		if($result) {
+			response_result($r,'success','성공');
+		}else{
+			response_result($r,'Err','저장 실패');
+		}
+	}
 
 
 	/**
