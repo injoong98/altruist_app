@@ -143,20 +143,6 @@ class GominWrite extends React.Component {
           this.setState({spinnerModalVisible: false, resultVisible: true, 
             resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
         }
-        // Alert.alert(
-        //     "게시글",
-        //     this.props.route.params.mode=='edit' ?
-        //     `"게시글 수정 완료"\n${JSON.stringify(response.data)}`
-        //     :
-        //     `"게시글 작성 완료"\n${JSON.stringify(response.data)}`,
-        //     [
-        //         {
-        //             text: "닫기",
-        //             onPress: ()=> this.gobackfunc()
-        //         }
-        //     ],
-        //     { cancelable: false }
-        // );
       })
       .catch((error) => {
         alert(JSON.stringify(error));
@@ -1353,9 +1339,12 @@ class IlbanWrite extends React.Component {
       post_nickname: '',
       post_email: '',
       images: [],
-      post_category: [],
-      category : 0,
+      post_category: 0,
       popoverVisible : false,
+      confirmVisible : false,
+      resultVisible : false,
+      resultText : '',
+      spinnerVisible : false,
     };
   }
 
@@ -1398,39 +1387,27 @@ categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정
 
   submitPost = async () => {
     console.log(this.state);
-    const {post_title, post_content, post_category} = this.state;
+    const {post_title, post_content, post_category, category} = this.state;
 
     let formdata = new FormData();
     formdata.append('brd_key', 'ilban');
     formdata.append('post_title', post_title);
-    formdata.append('post_category', '1');
+    formdata.append('post_category', post_category+1);
     formdata.append('post_content', post_content);
-    formdata.append('post_nickname', 'ryeMhi');
-    formdata.append('post_email', 'yhr0901@gmail.com');
-    formdata.append('post_password', '0000');
 
     await axios
       .post('http://dev.unyict.org/api/board_write/write/ilban', formdata)
       .then((response) => {
-        console.log(response);
-        Alert.alert(
-          '게시글',
-          '게시글 작성 완료',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                this.gobackfunc();
-              },
-            },
-          ],
-          {cancelable: false},
-        );
+        const {message, status} = response.data;
+        if (status == '500') {
+          this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
+        } else if (status == '200') {
+          this.setState({spinnerVisible: false, resultVisible: true, 
+            resultText : ('게시글 작성 완료')});
+        }
       })
       .catch((error) => {
-        console.log(error);
-        console.error();
-        //alert('')
+        alert(JSON.stringify(error));
       });
   };
 
@@ -1539,31 +1516,35 @@ categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정
     <View style = {{marginLeft : 12, marginVertical : 10, alignItems:'center', justifyContent:'center'}}>
         <TouchableOpacity style={{flexDirection:'row', borderRadius:10, backgroundColor:'#978DC7', padding:15, width:130, justifyContent:'space-between'}} onPress={()=>this.setState({popoverVisible:true})}>    
           <Text category='h5' style={{color:'white'}}>
-            {this.categoryList[this.state.category]}</Text>
+            {this.categoryList[this.state.post_category]}</Text>
           <Text style={{color:'white'}}>▼</Text>
         </TouchableOpacity>
     </View>
   );
 
   componentDidMount() {
-    // this.getCategory();
+    StatusBar.setBackgroundColor('#F4F4F4');
+    StatusBar.setBarStyle('dark-content');
+  }
+
+  componentWillUnmount() {
+    StatusBar.setBackgroundColor('#B09BDE');
+    StatusBar.setBarStyle('default');
   }
 
   //end: header
 	render() {
 		const {navigation} = this.props;
-		const {post_title, post_content, post_category} = this.state;
+		const {post_title, post_content, post_category, resultVisible, modalVisible, spinnerVisible, resultText} = this.state;
 		return (
 			<SafeAreaView style={{flex: 1}}>
-			{/* // <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}> */}
-				<TopBarTune
-				text="이타게시판"
-				func={() => {	this.submitPost();}}
-				// right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-				gbckfunc={() => {	navigation.goBack();}}
-				gbckuse={true}
-				/>
-			{/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
+				<WriteContentToptab
+            text="이타게시판"
+            right='upload'
+            func={() => {this.submitPost();}}
+            gbckfunc={() => {navigation.goBack();}}
+            gbckuse={true}
+          />
 			<View style = {{flexDirection:'row'}}>
         <Popover
           anchor={this.renderSelectItems}
@@ -1573,7 +1554,7 @@ categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정
           onBackdropPress={() => this.setState({popoverVisible:false})}>
             <View style={{borderRadius:10, backgroundColor:'#B09BDE'}}>
                 {this.categoryList.map((val,index)=>(
-                  <TouchableOpacity key = {index} onPress = {()=>this.setState({category:index, popoverVisible:false})}>
+                  <TouchableOpacity key = {index} onPress = {()=>this.setState({post_category:index, popoverVisible:false})}>
                     <Text category='h5' style={{color:'white', margin : 10}}>{val}</Text>
                     {index==this.categoryList.length?null:<Divider/>}
                   </TouchableOpacity>
@@ -1615,19 +1596,17 @@ categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정
 				placeholderTextColor="#A897C2"
 			/>
 
-        {/* <Modal
+        <Modal
           visible={modalVisible}
           backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
           onBackdropPress={() => this.setState({modalVisible: false})}>
           <Confirm
             confirmText={
-              this.props.route.params.mode == 'edit'
-                ? '게시글을 수정하시겠습니까?'
-                : '게시글을 작성하시겠습니까?'
+              '게시글을 작성하시겠습니까?'
             }
             frstText="예"
             OnFrstPress={() => {
-              this.setState({modalVisible: false, spinnerModalVisible: true});
+              this.setState({modalVisible: false, spinnerVisible: true});
               this.submitPost();
             }}
             scndText="아니오"
@@ -1647,13 +1626,12 @@ categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정
               this.gobackfunc();
             }}
           />
-        </Modal> */}
-        {/* <Modal
-          visible={spinnerModalVisible}
+        </Modal>
+        <Modal
+          visible={spinnerVisible}
           backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
           <Spinner size="giant" />
-        </Modal> */}
-        {/* </KeyboardAvoidingView> */}
+        </Modal>
       </SafeAreaView>
     );
   }
