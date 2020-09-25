@@ -1180,7 +1180,6 @@ class AlbaContent extends React.Component {
             post : {} ,
             thumb_image : [],
             file_images : [],
-            phoneNumber : '010 9999 9999',
             isLoading : true,
             image_height : 0,
             popoverVisibel: false,
