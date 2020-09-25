@@ -7,7 +7,7 @@ import {TopBarTune} from '../../../components/TopBarTune'
 
 import LogoSvg from '../../../assets/icons/logo.svg'
 import Searchsvg from '../../../assets/icons/search-outline.svg'
-import {renderAltList} from './List'
+import {RenderAltList} from './List'
 const {width,height} = Dimensions.get('window')
 
 
@@ -174,7 +174,7 @@ class AltMainScreen extends React.Component{
                 contentContainerStyle={styles.contentContainer}
                 ListHeaderComponent={this.renderHeadSection}
                 data={this.state.lists}
-                renderItem={isLoading ? Loading: renderAltList}
+                renderItem={isLoading ? Loading: (arg)=>{return(<RenderAltList {...this.props} arg={arg} />)} }
                 style={{backgroundColor:'#ffffff'}}
                 />    
             </SafeAreaView>
