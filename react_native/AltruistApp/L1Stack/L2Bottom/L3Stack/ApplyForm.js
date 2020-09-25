@@ -256,7 +256,17 @@ class AltApplyFormScreen extends React.Component {
       // show errors
     }
   }
-
+  actSelect = (act) =>{
+    const {actSelected} = this.state
+    if(actSelected.includes(act)){
+      actSelected.splice(actSelected.indexOf(act),1)
+      this.setState({actSelected})
+    }else{
+      if(actSelected.length<5){
+        this.setState({actSelected:actSelected.concat(act)})
+      }
+    }
+  }
   BackAction = () => (
     <TopNavigationAction
       icon={BackIcon}
@@ -558,9 +568,11 @@ class AltApplyFormScreen extends React.Component {
                 style={{justifyContent:'center'}}
             >
                 <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
-                    <View style={{alignItems:'center',justifyContent:'center'}}>
-                        <Text category='h2' style={{fontSize:13,marginVertical:11,color:'#63579D'}}>필터 적용하기</Text>
-                        <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginBottom:15}}></View>
+                    <View style={{alignItems:'center',justifyContent:'center',marginTop:23}}>
+                        <Text category='h2' style={{fontSize:18,color:'#000000'}}>전문 분야 선택</Text>
+                        <Text style={{fontSize:10,color:'#878787',marginTop:10}}>최대 5가지 선택할 수 있습니다.</Text>
+                        <Text style={{fontSize:10,color:'#878787'}}>가장 자신있는 분야를 선택해주세요.abs</Text>
+                        <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginVertical:15}}></View>
                     </View>
                     <ScrollView ScrollViewstyle = {{}}>
                         <View style = {{justifyContent:'space-between',flexDirection : 'row', flexWrap: 'wrap',paddingHorizontal:'5%'}}>
@@ -568,12 +580,7 @@ class AltApplyFormScreen extends React.Component {
                                 <Tag 
                                     key = {act.act_content}
                                     onPress ={()=>{
-                                        if(actSelected.includes(act)){
-                                            actSelected.splice(actSelected.indexOf(act),1)
-                                            this.setState({actSelected})
-                                        }else{
-                                            this.setState({actSelected:actSelected.concat(act)})
-                                        }
+                                      this.actSelect(act);  
                                     }}
                                     style={[{padding:4},actSelected.includes(act) ? styles.tagSelected:{}]}
                                 >
