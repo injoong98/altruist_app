@@ -1537,7 +1537,7 @@ class Altruists extends CB_Controller
 
 					$this->upload->initialize($uploadconfig);
 
-					if ($this->upload->do_upload()) {
+					if ($this->upload->do_upload('alt_photo')) {
 						$img = $this->upload->data();
 						$updatephoto = $upload_path . $img['file_name'];
 					} else {
@@ -1555,7 +1555,7 @@ class Altruists extends CB_Controller
 		 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
 		 */
 		if ($file_error !== '' or $file_error2 !== '') {
-			response_result($file_error, 'Err', '파일 저장 중 오류가 발생하였습니다.');
+			response_result(array($file_error), 'Err', '파일 저장 중 오류가 발생하였습니다.');
 		}
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
