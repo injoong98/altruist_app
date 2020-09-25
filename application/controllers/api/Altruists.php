@@ -1234,6 +1234,7 @@ class Altruists extends CB_Controller
 		// 이타주의자들 프로필에 등록이 된 인원
 
 		$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
+		//shuffle($alt_profile); 
 		if ($alt_profile) {
 			foreach ($alt_profile['list'] as $key_alt => $val_alt) {
 				$result['list'][$key_alt]['alt_profile'] = $val_alt;
@@ -1250,6 +1251,11 @@ class Altruists extends CB_Controller
 			}
 		}
 
+		// 이타주의자들 메인페이지용 랜덤 
+		if($this->input->get('rand') == 'Y') {
+			shuffle($result['list']); 
+		}
+		
 		$view['view']['data'] = $result;
 
 		//json api output
