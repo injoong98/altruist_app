@@ -1530,6 +1530,7 @@ class IlbanContent extends Component {
             content:'',
             cmt_content:'',
             cmt_id:'',
+            image:[],
             replying:false,
             isLoading:true,
             refreshing:false,
@@ -1665,6 +1666,7 @@ class IlbanContent extends Component {
                                 statefunction:this.statefunction,
                                 mode:'edit',
                                 post:this.state.post,
+                                image:this.state.image,
                                 content:this.state.content,
                             })}}
                     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
@@ -1781,11 +1783,23 @@ class IlbanContent extends Component {
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
             this.setState({content:post_remove_tagsf})
+            if (response.data.view.file_image){
+                this.setState({image: response.data.view.file_image.map(function(item, index){
+                    var image_info = {};
+                    image_info['id'] = item.pfi_id;
+                    image_info['title'] = item.pfi_originname;
+                    image_info['url'] = item.origin_image_url;
+                    image_info['index'] = index;
+                    image_info['edit'] = true;
+                    return image_info;
+                })});
+            }
         })
         .catch((error)=>{
             alert(JSON.stringify(error))
         })
     }
+    
      onRefresh=()=>{
         const {post_id} = this.props.route.params
         this.getCommentData(post_id);
@@ -2047,7 +2061,7 @@ const styles = StyleSheet.create({
         paddingBottom : 25
     }, 
     topbar : {
-        backgroundColor : '#FFFFFF',
+        backgroundColor : '#F4F4F4',
         height : 40,
         minHeight : 0,
     },
