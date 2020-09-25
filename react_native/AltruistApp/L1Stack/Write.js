@@ -1354,6 +1354,8 @@ class IlbanWrite extends React.Component {
       post_email: '',
       images: [],
       post_category: [],
+      category : 0,
+      popoverVisible : false,
     };
   }
 
@@ -1380,19 +1382,19 @@ class IlbanWrite extends React.Component {
   //     }
   // }
 
-category = ['전체', '아무말있어요', '게임', '지구별소식', '자료실'];
+categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정보있어요'];
 
-  getCategory = async () => {
-    await axios
-      .get('http://dev.unyict.org/api/board_post/lists/ilban')
-      .then((res) => {
-        console.log(res.data.view.list.board.category);
-        this.setState({post_category: res.data.view.list.board.category});
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  // getCategory = async () => {
+  //   await axios
+  //     .get('http://dev.unyict.org/api/board_post/lists/ilban')
+  //     .then((res) => {
+  //       console.log(res.data.view.list.board.category);
+  //       this.setState({post_category: res.data.view.list.board.category});
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
   submitPost = async () => {
     console.log(this.state);
@@ -1533,25 +1535,18 @@ category = ['전체', '아무말있어요', '게임', '지구별소식', '자료
     </Button>
   );
 
-  SelectItems = (props) => {
-    return (
-      <Select
-        style={{flex: 1, width: 10}}
-        // value={this.props.post_category.bca_id}
-        //  selectedIndex={this.props.post_category.bca_id}
-        //onSelect={(index)=>{this.setState({post_category:index})}}
-        placeholder="게시판 선택"
-        //selectedIndex={selectedIndex}
-        //onSelect={index => setSelectedIndex(index)}
-      >
-        {/* <SelectItem title={evaProps => <Text {...evaProps}>{this.props.post_category.bca_value}</Text>} />  */}
-        {/* <SelectItem title={evaProps => <Text {...evaProps}>option</Text>} />  */}
-      </Select>
-    );
-  };
+  renderSelectItems = () => (
+    <View style = {{marginLeft : 12, marginVertical : 10, alignItems:'center', justifyContent:'center'}}>
+        <TouchableOpacity style={{flexDirection:'row', borderRadius:10, backgroundColor:'#978DC7', padding:15, width:130, justifyContent:'space-between'}} onPress={()=>this.setState({popoverVisible:true})}>    
+          <Text category='h5' style={{color:'white'}}>
+            {this.categoryList[this.state.category]}</Text>
+          <Text style={{color:'white'}}>▼</Text>
+        </TouchableOpacity>
+    </View>
+  );
 
   componentDidMount() {
-    this.getCategory();
+    // this.getCategory();
   }
 
   //end: header
@@ -1563,30 +1558,44 @@ category = ['전체', '아무말있어요', '게임', '지구별소식', '자료
 			{/* // <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}> */}
 				<TopBarTune
 				text="이타게시판"
-				func={() => {
-					this.submitPost();
-				}}
-				right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-				gbckfunc={() => {
-					navigation.goBack();
-				}}
+				func={() => {	this.submitPost();}}
+				// right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+				gbckfunc={() => {	navigation.goBack();}}
 				gbckuse={true}
 				/>
 			{/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
-			<TextInput
-				style={{
-					backgroundColor: '#ffffff',
-					borderRadius: 8.5,
-					marginTop: 18,
-					marginHorizontal: 12,
-					marginBottom: 14,
-					fontSize: 18,
-				}}
-				placeholder="제목"
-				onChangeText={(nextValue) => this.setState({post_title: nextValue})}
-				placeholderTextColor="#A897C2"
-				value={post_title}
-			/>
+			<View style = {{flexDirection:'row'}}>
+        <Popover
+          anchor={this.renderSelectItems}
+          visible={this.state.popoverVisible}
+          fullWidth={true}
+          placement='bottom start'
+          onBackdropPress={() => this.setState({popoverVisible:false})}>
+            <View style={{borderRadius:10, backgroundColor:'#B09BDE'}}>
+                {this.categoryList.map((val,index)=>(
+                  <TouchableOpacity key = {index} onPress = {()=>this.setState({category:index, popoverVisible:false})}>
+                    <Text category='h5' style={{color:'white', margin : 10}}>{val}</Text>
+                    {index==this.categoryList.length?null:<Divider/>}
+                  </TouchableOpacity>
+                ))}
+            </View>
+        </Popover>
+        <TextInput
+          style={{
+            backgroundColor: '#ffffff',
+            borderRadius: 8.5,
+            marginTop: 18,
+            marginHorizontal: 12,
+            marginBottom: 14,
+            fontSize: 18,
+            flex : 1,
+          }}
+          placeholder="제목"
+          onChangeText={(nextValue) => this.setState({post_title: nextValue})}
+          placeholderTextColor="#A897C2"
+          value={post_title}
+			  />
+      </View>
 			<TextInput
 				value={post_content}
 				style={{

@@ -185,7 +185,7 @@ class JauScreen extends React.Component {
 				</View>
 				<TouchableOpacity
 						style={{position: 'absolute', right: 20, bottom: 14}}
-						onPress={() => {this.props.navigation.navigate('IlbanWrite', {statefunction: this.statefunction});}}>
+						onPress={() => {this.props.navigation.navigate('IlbanWrite')}}>
 						<Writesvg />
 				</TouchableOpacity>
 			</View>
