@@ -170,7 +170,7 @@ class GominContent extends React.Component{
         </TouchableOpacity>
     )
     BackAction = () =>(
-        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack()}}/>
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
     )
     MoreAction = () =>(
         // <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{this.setState({modalVisible:true})}}/>
@@ -1521,15 +1521,515 @@ class AlbaContent extends React.Component {
             )
     }
 }
-
 class IlbanContent extends Component {
-    render(){
-        return(
+    constructor(props){
+        super(props);
+        this.state={
+            post:'',
+            comment:'',
+            content:'',
+            cmt_content:'',
+            cmt_id:'',
+            replying:false,
+            isLoading:true,
+            refreshing:false,
+            modalVisible:false,
+            resultModalVisible:false,
+            confirmModalVisible:false,
+            spinnerModalVisible:false,
+            popoverVisibel:false,
+            resultText : '',
+            modalType : 0,
+        }
+    }
+
+    postDelete = async () => {
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+
+        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        .then((res)=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
+            this.props.navigation.goBack();
+            this.props.route.params.OnGoback();
+        })
+        .catch((error)=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
+        })
+    }
+    commentWrite= ()=>{
+        this.setState({replying:false, cmt_id:''});
+        this.refs.commentInput.blur();
+        console.log(this.refs);
+    }
+    postscrap = async()=>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        
+        await Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        .then(response=>{
+            if(response.data.success)
+                this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
+            else if (response.data.error)
+                this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
+        })
+        .catch(error=>{
+            this.setState({resultModalVisible:true, replying:false, resultText:error.message});
+        })
+    }
+    
+    commentUpload= async()=>{
+        const {cmt_content,post,cmt_id}=this.state;
+        var formdata = new FormData();
+        formdata.append("post_id",post.post_id);
+        formdata.append("cmt_content",cmt_content);
+        cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+        
+        // this.commentWrite()
+        
+        Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
+        .then(response=>{
+            const {status, message}=response.data;
+            if(status=='200'){
+                Keyboard.dismiss();
+                this.getCommentData(post.post_id);
+                this.setState({resultModalVisible:true, cmt_id:'', cmt_content:'', replying:false, resultText:message});
+
+                this.refs.pstcmtlist.scrollToEnd();
+            }else if(status=='500'){
+                this.setState({resultModalVisible:true, resultText:message});
+            }
+        })
+        .catch(error=>{
+            alert(error);
+        })
+    }
+    
+    commentValid =async() =>{
+        const {cmt_content} =this.state;
+        var formdata = new FormData();
+        formdata.append("content",cmt_content);
+        
+        await Axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        .then(response=>{
+            const {status,message} = response.data;
+            if(status=='500'){
+                alert(message);
+            }else if(status=="200"){
+                console.log("valid check");
+                this.commentUpload();
+            }
+        })
+        .catch(error=>{
+            alert(error);
+        })
+
+    }
+    UploadButton=(props)=>(
+        <TouchableOpacity onPress={()=>{this.commentValid()}}>
+            <UploadIcon {...props}/>
+        </TouchableOpacity>
+    )
+
+    renderPostMore=()=>(
+        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisibel:true})}>
+            <MoreLsvg height={24} width={24}/>
+        </TouchableOpacity>
+    )
+    BackAction = () =>(
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
+    )
+    MoreAction = () =>(
+        // <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{this.setState({modalVisible:true})}}/>
+        <Popover
+        anchor={this.renderPostMore}
+        visible={this.state.popoverVisibel}
+        placement='bottom start'
+        onBackdropPress={() => this.setState({popoverVisibel:false})}>
             <View>
-                <Text>HI</Text>
+                <TouchableOpacity 
+                    onPress={()=>{this.postscrap();this.setState({popoverVisibel:false})}} 
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>스크랩</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{this.setState({popoverVisibel:false, confirmModalVisible:true, modalType : 0})}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>신고</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{
+                        this.setState({popoverVisibel:false});
+                        this.props.navigation.navigate('IlbanWrite',
+                            {
+                                statefunction:this.statefunction,
+                                mode:'edit',
+                                post:this.state.post,
+                                content:this.state.content,
+                            })}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>수정</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={()=>{this.setState({popoverVisibel:false,confirmModalVisible:true, modalType : 1})}}
+                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                    <Text category='h3'>삭제</Text>
+                </TouchableOpacity>
+            </View>
+        </Popover>
+    )
+    statefunction=(str)=>{
+        this.setState({isLoading:true});
+        this.componentDidMount()    
+    }
+    postBlame = async () =>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+
+        await Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+        .then(response=>{
+            if(response.data.status == 500){
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+            }else{
+                this.getPostData(this.state.post.post_id)
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+            }
+        })
+        .catch(error=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+        })
+    }
+    cmtBlame = () =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',this.state.cmt_id);
+
+        Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+            }else{
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                this.getCommentData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+        })
+    }
+    cmtDelete = () =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',this.state.cmt_id);
+
+        Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+            }else{
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                this.getCommentData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
+        })
+    }
+    postLike = () =>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        formdata.append('like_type',1)
+        Axios.post('http://dev.unyict.org/api/postact/post_like',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                this.setState({resultModalVisible:true, resultText : response.data.message});
+            }else{
+                this.getPostData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            this.setState({resultModalVisible:true, resultText : error.message});
+        })
+    }
+    cmtLike = (cmt_id) =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',cmt_id)
+        formdata.append('like_type',1)
+        Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+            this.getCommentData(this.state.post.post_id)}
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    
+    getCommentData = async (post_id)=>{
+        await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
+        .then((response)=>{
+            this.setState({comment:response.data.view.data.list})
+        })
+        .catch((error)=>{
+            alert('error')
+        })
+    }
+    getPostData = async (post_id)=>{
+        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
+        .then((response)=>{
+            this.setState({post:response.data.view.post});
+            const regexf = /(<([^>]+)>)|&nbsp;/ig;
+            const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
+            this.setState({content:post_remove_tagsf})
+        })
+        .catch((error)=>{
+            alert(JSON.stringify(error))
+        })
+    }
+     onRefresh=()=>{
+        const {post_id} = this.props.route.params
+        this.getCommentData(post_id);
+    } 
+
+    async componentDidMount(){
+        StatusBar.setBackgroundColor('#FFFFFF');
+        StatusBar.setBarStyle('dark-content');
+        const {post_id} = this.props.route.params
+        await this.getPostData(post_id)
+        .then(()=>this.getCommentData(post_id))
+        .then(()=>{this.setState({isLoading:false})})
+    }
+
+    componentWillUnmount() {
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+    }
+    
+    modalList = [
+        {
+            text : '이 게시글을 신고하시겠습니까?',
+            func : this.postBlame,
+        },
+        {
+            text : '이 게시글을 삭제하시겠습니까?',
+            func : this.postDelete,
+        },
+        {
+            text : '이 댓글을 신고하시겠습니까?',
+            func : this.cmtBlame,
+        },
+        {
+            text : '이 댓글을 삭제하시겠습니까?',
+            func : this.cmtDelete,
+        },
+    ]
+
+    renderPostBody = (post)=>{
+        
+        const regex = /(<([^>]+)>)|&nbsp;/ig;
+        const post_remove_tags = post.post_content.replace(regex, '\n');
+        return (
+            <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10}} >
+                <View style={{marginLeft:15,marginTop:10,marginBottom:13}}>
+                    <View style={{display:"flex",flexDirection:'row'}}>
+                        <StarIcon />
+                        <View>
+                            <Text>{post.display_name}</Text>
+                            <View style={{display:"flex",flexDirection:'row'}}>
+                                <PostTime datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
+                                {
+                                    post.post_datetime ==post.post_updated_datetime?
+                                    null
+                                    :
+                                    <Text category="s2"> 수정됨</Text>
+                                }
+                            </View>
+                        </View>
+                    </View>
+                </View>
+                <View style={{marginLeft:15,paddingBottom:5}}>
+                    <Text style={{fontSize:14,fontWeight:'bold'}}>{post.post_title}</Text>
+                </View>
+                <View style={{marginLeft:15,marginBottom:16}}>
+                    <Text style={{fontSize:12,fontWeight:'800'}}>
+                    {post_remove_tags}
+                    </Text>
+                </View>
+                <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
+                    <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
+                        <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
+                            <Thumbsvg/>
+                        </TouchableOpacity>
+                        <Text>{post.post_like}</Text>
+                        {/* <TouchableOpacity onPress={()=>alert("저장!")}>
+                            <PlusIcon />
+                            <Text>{post.scrap_count}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={()=>this.postBlameConfirm()}>
+                            <BlameIcon />
+                            <Text>{post.post_blame}</Text>
+                        </TouchableOpacity> */}
+                    </View>
+                </View>
             </View>
         )
     }
+
+    renderCommentsList=({item,index})=>(
+        <View style={{marginVertical:3}}>
+        {item.cmt_reply==""?
+        null
+        :
+        <View style={{position:'absolute',left:0,paddingLeft:25}}>
+            <ReplyLsvg />
+        </View> 
+        }
+        <View 
+            style ={{
+                borderRadius:8,
+                paddingRight:15,
+                marginRight:15,
+                paddingVertical:10,
+                paddingLeft: 15,
+                marginLeft:item.cmt_reply==""?15:50,
+                backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
+            <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <View style={{flexDirection:"row"}}>
+                    <StarIcon />
+                    <View>
+                        <Text category="s2">{item.cmt_nickname}</Text>
+                        <PostTime datetime={item.cmt_datetime}/>
+                    </View>
+                </View>
+                <View style={{display:'flex',flexDirection:'row'}}>
+                    {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
+                        <BlameIcon />
+                    </TouchableOpacity> */}
+                    <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
+                        <MoreSsvg/>
+                    </TouchableOpacity>
+                </View>
+            </View>
+            <View style={{padding:5}}>
+                <Text category="s1">{item.cmt_content}</Text>
+            </View>
+            <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
+                {item.cmt_reply ==""?
+                <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
+                    <ReplySsvg />
+                </TouchableOpacity>
+                :null
+                }
+                <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
+                    <Thumbsvg />
+                </TouchableOpacity>
+                    <Text>{item.cmt_like}</Text>
+            </View>
+        </View>
+        </View>
+    )
+     render(){
+        const {navigation,route} =this.props
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType} = this.state
+         return(
+        this.state.isLoading ?
+        <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+            <Text>is Loading now...</Text>
+            <Spinner size="giant"/>
+        </View>
+        :
+        <SafeAreaView style={{flex:1}}>
+            <TopNavigation title="" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.MoreAction} style={styles.topbar}/> 
+            <TouchableWithoutFeedback onPress={()=>{ this.commentWrite; Keyboard.dismiss()}}>
+                <Layout style={{flex:1}}>
+                        <List
+                        ref={"pstcmtlist"} 
+                        data={comment}
+                        ListHeaderComponent={this.renderPostBody(post)}
+                        renderItem={this.renderCommentsList}
+                        onRefresh={this.onRefresh}
+                        refreshing={this.state.refreshing}
+                        style={{backgroundColor:'#ffffff'}}
+                        />
+                </Layout>
+            </TouchableWithoutFeedback>
+            
+            <View style={{backgroundColor:'#ffffff',padding:8}}>
+                {this.state.replying ?
+                <TouchableOpacity onPress={this.commentWrite}>
+                    <Text category="h2" style={{color:'#63579D'}}>X</Text>
+                </TouchableOpacity>
+                :
+                null
+                }
+                <TextInput
+                    ref="commentInput"
+                    style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                    value={cmt_content}
+                    placeholder={ replying?"대댓글" :"댓글"}
+                    placeholderTextColor='#A897C2'
+                    plac
+                    multiline={true}
+                    onChangeText={nextValue => this.setState({cmt_content:nextValue})}
+                />
+                <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
+                    <UploadCirclesvg width={50} height={50}/>
+                </TouchableOpacity>
+                
+            </View>
+            <Modal
+                visible={modalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}
+            >
+                <View>
+                    <TouchableOpacity 
+                        onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
+                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
+                        <Text category='h3'>댓글 신고</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
+                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
+                        <Text category='h3'>댓글 삭제</Text>
+                    </TouchableOpacity>
+                </View>   
+            </Modal>
+            <Modal
+                visible={resultModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({resultModalVisible:false, cmt_id:''})}
+                >
+                <Confirm 
+                    type = 'result'
+                    confirmText={this.state.resultText}
+                    frstText="닫기"
+                    OnFrstPress={() => this.setState({resultModalVisible:false, cmt_id:''})}
+                />
+            </Modal>
+            <Modal
+                visible={confirmModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({confirmModalVisible:false})}
+            >
+                <Confirm 
+                    confirmText={this.modalList[modalType].text}
+                    frstText="예"
+                    OnFrstPress={() =>{this.setState({confirmModalVisible:false,spinnerModalVisible:true});this.modalList[modalType].func();}}
+                    scndText="아니오"
+                    OnScndPress={() => this.setState({confirmModalVisible:false})}
+                />
+            </Modal>
+            <Modal
+                visible={spinnerModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
+            >
+                <Spinner size='giant'/>
+            </Modal>
+            
+        </SafeAreaView>
+         )
+     }
 }
 
 
@@ -1547,7 +2047,7 @@ const styles = StyleSheet.create({
         paddingBottom : 25
     }, 
     topbar : {
-        backgroundColor : '#F4F4F4',
+        backgroundColor : '#FFFFFF',
         height : 40,
         minHeight : 0,
     },

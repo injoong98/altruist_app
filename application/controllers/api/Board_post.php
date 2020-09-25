@@ -331,6 +331,29 @@ class Board_post extends CB_Controller
 			);
 		}
 
+		//1대1 질문일경우 글을 읽는 사람이 답변 지정자라면 질문 확인 시간을 저장해준다.
+		//질문 저장 시간이 없다면/ 
+		//1:1 게시판글인가 , 답변 지정자가 본인인가
+
+		if(element('brd_key', $board)=='indi' && $this->session->userdata('mem_id') == element('answer_mem_id', $post) ){
+			//질문 저장 시간이 있는가
+			if(element('question_status', $post)== '답변대기중') {
+				$updatedata = array(
+					'question_read_date' => cdate('Y-m-d H:i:s'),
+					'question_status' => '답변중',
+				);
+				log_message('error',date("Y-m-d H:i:s"));
+				$this->Post_model->update($post_id, $updatedata);
+			}
+			//알람 추가 예정 
+
+
+			//푸시 추가 예정
+			
+		}
+
+
+
 		$use_sideview = ($this->cbconfig->get_device_view_type() === 'mobile')
 			? element('use_mobile_sideview', $board)
 			: element('use_sideview', $board);

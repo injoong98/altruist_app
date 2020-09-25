@@ -143,20 +143,6 @@ class GominWrite extends React.Component {
           this.setState({spinnerModalVisible: false, resultVisible: true, 
             resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
         }
-        // Alert.alert(
-        //     "게시글",
-        //     this.props.route.params.mode=='edit' ?
-        //     `"게시글 수정 완료"\n${JSON.stringify(response.data)}`
-        //     :
-        //     `"게시글 작성 완료"\n${JSON.stringify(response.data)}`,
-        //     [
-        //         {
-        //             text: "닫기",
-        //             onPress: ()=> this.gobackfunc()
-        //         }
-        //     ],
-        //     { cancelable: false }
-        // );
       })
       .catch((error) => {
         alert(JSON.stringify(error));
@@ -209,6 +195,9 @@ class GominWrite extends React.Component {
       }}
     />
   );
+  componentDidMount = () => {
+    console.log(this.props.route.params);
+  }
   render() {
     const {navigation} = this.props;
     const {
@@ -1345,98 +1334,91 @@ class IlbanWrite extends React.Component {
 
   constructor(props) {
     super(props);
+    const {mode, post} = this.props.route.params;
     this.state = {
       isLoading: true,
       brd_key: 'ilban',
-      post_title: '',
-      post_content: '',
-      post_nickname: '',
-      post_email: '',
+      post_title: mode == 'edit'?post.post_title:'',
+      post_content: mode == 'edit'?post.post_content:'',
       images: [],
-      post_category: [],
+      post_category: mode == 'edit'?post.post_category-1:0,
+      popoverVisible : false,
+      confirmVisible : false,
+      resultVisible : false,
+      resultText : '',
+      spinnerVisible : false,
     };
   }
 
-  // constructor(props){
-  //     super(props);
-  //     this.state = {
-  //         isLoading: true,
-  //         brd_key: 'ilban',
-  //         post_title:'',
-  //         post_content:'',
-  //         post_category:'',
-  //         post_nickname:'',
-  //         post_email:'',
-  //         post_image: null,
-  //         post_images: null,
-  //         imagesource : {},
-  //         image: null,
-  //         images: {
-  //             value: null,
-  //             valid: false
-  //         }
-  //             //isTipVisible:false,
-  //         //isFollowUp:false,
-  //     }
-  // }
-
-category = ['전체', '아무말있어요', '게임', '지구별소식', '자료실'];
-
-  getCategory = async () => {
-    await axios
-      .get('http://dev.unyict.org/api/board_post/lists/ilban')
-      .then((res) => {
-        console.log(res.data.view.list.board.category);
-        this.setState({post_category: res.data.view.list.board.category});
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정보있어요'];
 
   submitPost = async () => {
-    console.log(this.state);
+    
     const {post_title, post_content, post_category} = this.state;
+    const url =
+      this.props.route.params.mode == 'edit'
+        ? 'http://dev.unyict.org/api/board_write/modify'
+        : 'http://dev.unyict.org/api/board_write/write/ilban';
 
     let formdata = new FormData();
     formdata.append('brd_key', 'ilban');
     formdata.append('post_title', post_title);
-    formdata.append('post_category', '1');
+    formdata.append('post_category', post_category+1);
     formdata.append('post_content', post_content);
-    formdata.append('post_nickname', 'ryeMhi');
-    formdata.append('post_email', 'yhr0901@gmail.com');
-    formdata.append('post_password', '0000');
+    
+    this.props.route.params.mode == 'edit'
+      ? formdata.append('post_id', this.props.route.params.post.post_id)
+      : null;
+    
+    console.log(formdata);
 
     await axios
-      .post('http://dev.unyict.org/api/board_write/write/ilban', formdata)
+      .post(url, formdata)
       .then((response) => {
-        console.log(response);
-        Alert.alert(
-          '게시글',
-          '게시글 작성 완료',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                this.gobackfunc();
-              },
-            },
-          ],
-          {cancelable: false},
-        );
+        const {message, status} = response.data;
+        if (status == '500') {
+          this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
+        } else if (status == '200') {
+          this.setState({spinnerVisible: false, resultVisible: true, 
+            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+        }
       })
       .catch((error) => {
-        console.log(error);
-        console.error();
-        //alert('')
+        alert(JSON.stringify(error));
+      });
+  };
+
+  filterSpamKeyword = async () => {
+    const {post_title, post_content} = this.state;
+
+    var formdata = new FormData();
+    formdata.append('title', post_title);
+    formdata.append('content', post_content);
+    formdata.append('csrf_test_name', '');
+
+    //Keyboard
+    Keyboard.dismiss();
+
+    await axios
+      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .then((response) => {
+        const {message, status} = response.data;
+        if (status == '500') {
+          alert(message);
+        } else if (status == '200') {
+          this.setState({modalVisible: true});
+        }
+      })
+      .catch((error) => {
+        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
   };
 
   gobackfunc = () => {
     this.cleanupImages();
     const {navigation, route} = this.props;
+    route.params.statefunction();
     navigation.goBack();
-    // route.params.statefunction();
   };
 
   cleanupImages() {
@@ -1514,79 +1496,74 @@ category = ['전체', '아무말있어요', '게임', '지구별소식', '자료
     if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
       return this.renderVideo(image);
     }
-
     return this.renderImage(image);
   }
 
-  BackAction = () => (
-    <TopNavigationAction
-      icon={BackIcon}
-      onPress={() => {
-        this.props.navigation.goBack();
-      }}
-    />
+  renderSelectItems = () => (
+    <View style = {{marginLeft : 12, marginVertical : 10, alignItems:'center', justifyContent:'center'}}>
+        <TouchableOpacity style={{flexDirection:'row', borderRadius:10, backgroundColor:'#978DC7', padding:15, width:130, justifyContent:'space-between'}} onPress={()=>this.setState({popoverVisible:true})}>    
+          <Text category='h5' style={{color:'white'}}>
+            {this.categoryList[this.state.post_category]}</Text>
+          <Text style={{color:'white'}}>▼</Text>
+        </TouchableOpacity>
+    </View>
   );
-
-  SubmitButtom = () => (
-    <Button style={{width: 100}} onPress={() => this.submitPost()}>
-      글작성
-    </Button>
-  );
-
-  SelectItems = (props) => {
-    return (
-      <Select
-        style={{flex: 1, width: 10}}
-        // value={this.props.post_category.bca_id}
-        //  selectedIndex={this.props.post_category.bca_id}
-        //onSelect={(index)=>{this.setState({post_category:index})}}
-        placeholder="게시판 선택"
-        //selectedIndex={selectedIndex}
-        //onSelect={index => setSelectedIndex(index)}
-      >
-        {/* <SelectItem title={evaProps => <Text {...evaProps}>{this.props.post_category.bca_value}</Text>} />  */}
-        {/* <SelectItem title={evaProps => <Text {...evaProps}>option</Text>} />  */}
-      </Select>
-    );
-  };
 
   componentDidMount() {
-    this.getCategory();
+    StatusBar.setBackgroundColor('#F4F4F4');
+    StatusBar.setBarStyle('dark-content');
+  }
+
+  componentWillUnmount() {
+    StatusBar.setBackgroundColor('#B09BDE');
+    StatusBar.setBarStyle('default');
   }
 
   //end: header
 	render() {
 		const {navigation} = this.props;
-		const {post_title, post_content, post_category} = this.state;
+		const {post_title, post_content, post_category, resultVisible, modalVisible, spinnerVisible, resultText} = this.state;
 		return (
 			<SafeAreaView style={{flex: 1}}>
-			{/* // <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}> */}
-				<TopBarTune
-				text="이타게시판"
-				func={() => {
-					this.submitPost();
-				}}
-				right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-				gbckfunc={() => {
-					navigation.goBack();
-				}}
-				gbckuse={true}
-				/>
-			{/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
-			<TextInput
-				style={{
-					backgroundColor: '#ffffff',
-					borderRadius: 8.5,
-					marginTop: 18,
-					marginHorizontal: 12,
-					marginBottom: 14,
-					fontSize: 18,
-				}}
-				placeholder="제목"
-				onChangeText={(nextValue) => this.setState({post_title: nextValue})}
-				placeholderTextColor="#A897C2"
-				value={post_title}
-			/>
+				<WriteContentToptab
+            text="이타게시판"
+            right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+            func={() => {this.filterSpamKeyword();}}
+            gbckfunc={() => {navigation.goBack();}}
+            gbckuse={true}
+          />
+			<View style = {{flexDirection:'row'}}>
+        <Popover
+          anchor={this.renderSelectItems}
+          visible={this.state.popoverVisible}
+          fullWidth={true}
+          placement='bottom start'
+          onBackdropPress={() => this.setState({popoverVisible:false})}>
+            <View style={{borderRadius:10, backgroundColor:'#B09BDE'}}>
+                {this.categoryList.map((val,index)=>(
+                  <TouchableOpacity key = {index} onPress = {()=>this.setState({post_category:index, popoverVisible:false})}>
+                    <Text category='h5' style={{color:'white', margin : 10}}>{val}</Text>
+                    {index==this.categoryList.length?null:<Divider/>}
+                  </TouchableOpacity>
+                ))}
+            </View>
+        </Popover>
+        <TextInput
+          style={{
+            backgroundColor: '#ffffff',
+            borderRadius: 8.5,
+            marginTop: 18,
+            marginHorizontal: 12,
+            marginBottom: 14,
+            fontSize: 18,
+            flex : 1,
+          }}
+          placeholder="제목"
+          onChangeText={(nextValue) => this.setState({post_title: nextValue})}
+          placeholderTextColor="#A897C2"
+          value={post_title}
+			  />
+      </View>
 			<TextInput
 				value={post_content}
 				style={{
@@ -1606,7 +1583,7 @@ category = ['전체', '아무말있어요', '게임', '지구별소식', '자료
 				placeholderTextColor="#A897C2"
 			/>
 
-        {/* <Modal
+        <Modal
           visible={modalVisible}
           backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
           onBackdropPress={() => this.setState({modalVisible: false})}>
@@ -1618,7 +1595,7 @@ category = ['전체', '아무말있어요', '게임', '지구별소식', '자료
             }
             frstText="예"
             OnFrstPress={() => {
-              this.setState({modalVisible: false, spinnerModalVisible: true});
+              this.setState({modalVisible: false, spinnerVisible: true});
               this.submitPost();
             }}
             scndText="아니오"
@@ -1638,13 +1615,12 @@ category = ['전체', '아무말있어요', '게임', '지구별소식', '자료
               this.gobackfunc();
             }}
           />
-        </Modal> */}
-        {/* <Modal
-          visible={spinnerModalVisible}
+        </Modal>
+        <Modal
+          visible={spinnerVisible}
           backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
           <Spinner size="giant" />
-        </Modal> */}
-        {/* </KeyboardAvoidingView> */}
+        </Modal>
       </SafeAreaView>
     );
   }

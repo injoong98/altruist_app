@@ -34,7 +34,7 @@ class JauScreen extends React.Component {
 
 	ignoredTags = [...IGNORED_TAGS, 'img'];
 
-	category = ['전체', '아무말있어요', '게임', '지구별소식', '자료실'];
+	category = ['전체', '아무말있어요', '게임있어요', '소식있어요', '정보있어요'];
 
 	getPostList = async () => {
 		const{current_category, current_page} = this.state;
@@ -78,6 +78,11 @@ class JauScreen extends React.Component {
 		this.getPostFirst();
 	}
 
+    statefunction=()=>{
+        this.setState({isLoading:true});
+        this.componentDidMount();
+    }
+
 	onRefresh= () =>{
 		this.setState({current_page:1, isNoMoreData : false, refreshing:true}, this.getPostFirst);
     }
@@ -98,7 +103,7 @@ class JauScreen extends React.Component {
 		return (
 		<TouchableOpacity
 			style={styles.itembox}
-			onPress={() => {this.props.navigation.navigate('GominContent', {OnGoback: () => this.onRefresh(),post_id: item.post_id});}}
+			onPress={() => {this.props.navigation.navigate('IlbanContent', {OnGoback: () => this.onRefresh(),post_id: item.post_id});}}
 			>
 			<View style={{flex:1, backgroundColor:'white', width:111, borderBottomRightRadius:15}}>
 				<Text category='p2' style={{padding:5, flex:1}}>{'#'+this.category[item.post_category]}</Text>
@@ -185,7 +190,7 @@ class JauScreen extends React.Component {
 				</View>
 				<TouchableOpacity
 						style={{position: 'absolute', right: 20, bottom: 14}}
-						onPress={() => {this.props.navigation.navigate('IlbanWrite', {statefunction: this.statefunction});}}>
+						onPress={() => {this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})}}>
 						<Writesvg />
 				</TouchableOpacity>
 			</View>

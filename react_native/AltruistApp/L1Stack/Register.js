@@ -24,12 +24,12 @@ import {
   NativeDateService,
 } from '@ui-kitten/components';
 // import moment from '@ui-kitten/moment';
-import moment from 'moment';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import PropTypes from 'prop-types';
 import axios from 'axios';
 // import RegisterSuccessScreen from './RegisterSuccess';
+import Nextsvg from '../assets/icons/next.svg';
 
+const NextIcon = (props) => <Icon {...props} name="arrow-back" />;
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CalendarIcon = (props) => <Icon {...props} name="calendar" />;
 const ApprovedIcon = (props) => <Icon {...props} name="checkmark-outline" />;
@@ -210,7 +210,8 @@ class RegisterScreen extends Component {
       this.state.mem_sex &&
       this.state.mem_email &&
       this.state.mem_password &&
-      this.state.mem_password_re
+      this.state.mem_password_re &&
+      this.state.mustInput
     ) {
       console.log('checkNotNull : Allfilled');
       if (this.state.captionCheck) {
@@ -227,6 +228,12 @@ class RegisterScreen extends Component {
       if (this.state.EmailCaption.includes('없는')) {
         console.log('checkNotNull : emailisnotright');
         this.setState({goNext: true});
+      }
+      if (this.state.mustInput != '이타주의자 사용중에 욕을 하지 않겠습니다.') {
+        this.setState({statement: '위 문장과 동일하게 작성해주세요.'});
+      } else {
+        this.setState({statement: ''});
+        this.setState({nextColor: {color: '#63579D'}});
       }
     }
     // return;
@@ -758,6 +765,8 @@ class RegisterScreen extends Component {
                   )}
                   placeholder="위와 동일하게 작성"
                   onChangeText={(text) => this.setState({mustInput: text})}
+                  caption={this.state.statement}
+                  onEndEditing={() => this.checkNotNull()}
                 />
               </View>
             </View>
@@ -767,7 +776,7 @@ class RegisterScreen extends Component {
                 alignSelf: 'center',
                 flexDirection: 'row',
                 padding: 3,
-                marginBottom: 25,
+                marginBottom: 15,
               }}>
               <TouchableOpacity
                 onPress={() =>
@@ -823,10 +832,18 @@ class RegisterScreen extends Component {
                 alignSelf: 'flex-end',
                 marginRight: 50,
               }}
-              activeOpacity={0.5}
               disabled={this.state.goNext}
               onPress={() => this.checkInputs()}>
-              <Text style={{color: '#63579D', textAlign: 'center'}}>다음</Text>
+              <Text
+                style={[
+                  this.state.nextColor
+                    ? this.state.nextColor
+                    : {color: '#ACACAC'},
+                ]}>
+                다음
+                <Nextsvg />
+                <Nextsvg />
+              </Text>
             </TouchableOpacity>
           </ScrollView>
         </SafeAreaView>
