@@ -1190,12 +1190,7 @@ class AlbaContent extends React.Component {
         }
     }
 
-    Alba_salary_type = [
-        {color : '#EAB0B3', str : '시급'},
-        {color : '#E3898E', str : '일급'},
-        {color : '#CA676C', str : '주급'},
-        {color : '#B12D34', str : '월급'},
-    ]
+    Alba_salary_type = ['시급', '일급', '주급', '월급'];
 
     async componentDidMount(){
         const {post_id} = this.props.route.params;
@@ -1383,31 +1378,35 @@ class AlbaContent extends React.Component {
                 <Layout style={{flex:1}}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
                         <Card disabled={true} style={styles.item}>
-                            <View style={{flexDirection : 'row', justifyContent:'flex-end'}}>
-                                <View style={{marginHorizontal:10, justifyContent:'center', alignItems:'center'}}>
-                                    <Viewsvg width={24} height={24}/>
-                                    <Text category='p1'>{post.post_hit}</Text>
+                            <Layout style={{flex:1, flexDirection:'row'}}>
+                                <View style={{flex:1}}>
                                 </View>
-                                <View style={{marginHorizontal:10, justifyContent:'center', alignItems:'center'}}>
-                                    <Timesvg width={24} height={24}/>
-                                    <PostTime category='p1' datetime = {post.post_datetime}/>
+                                <View style={{flex:1, flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
+                                    {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:this.state.thumb_image.origin_image_url}}/>
+                                    :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
+                                    <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
                                 </View>
-                            </View>
-                            <Layout style={{flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
-                                {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:this.state.thumb_image.origin_image_url}}/>
-                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
-                                <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
+                                <View style={{flex: 1, flexDirection : 'row', justifyContent:'flex-end'}}>
+                                    <View style={{marginHorizontal:10, alignItems:'center'}}>
+                                        <Viewsvg width={24} height={24}/>
+                                        <Text category='p1'>{post.post_hit}</Text>
+                                    </View>
+                                    <View style={{marginHorizontal:10, alignItems:'center'}}>
+                                        <Timesvg width={24} height={24}/>
+                                        <PostTime category='p1' datetime = {post.post_datetime}/>
+                                    </View>
+                                </View>
                             </Layout>
                             <View style={styles.title}>
                                 <Text category= 'h1' style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
                             </View>
                             <Layout style={styles.icons}>
                                 <Text style={{color:'#FF6262'}} category='h5'>
-                                    {this.Alba_salary_type[post.alba_salary_type].str}
+                                    {this.Alba_salary_type[post.alba_salary_type]}
                                 </Text>
                                 <Text category='h5'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
                                 <Text style={{color:'#7370DD'}} category='h5'>
-                                    {post.alba_type == 0?'단기':'장기'}
+                                    {post.alba_type?'장기':'단기'}
                                 </Text>
                                 <Text> / </Text>
                                 <Text style={{color:'#393939'}} category='h5'>
@@ -1429,7 +1428,7 @@ class AlbaContent extends React.Component {
                                 </View>
                                 <View style={{flex : 5, flexDirection : 'row'}}>
                                     <Text style={[styles.gather, {color:'#FF6262'}]}>
-                                        {this.Alba_salary_type[post.alba_salary_type].str+' '}
+                                        {this.Alba_salary_type[post.alba_salary_type]+' '}
                                     </Text>
                                     <Text style={styles.gather}>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                                 </View>
@@ -1439,7 +1438,7 @@ class AlbaContent extends React.Component {
                                     <Text style={styles.gathertext}>근무기간</Text>
                                 </View>
                                 <View style={{flex : 5}}>
-                                    <Text style={styles.gather}>{!post.alba_type?'단기 (1일 ~ 3개월)':'장기 (3개월 ~)'}</Text>
+                                    <Text style={styles.gather}>{post.alba_type?'장기 (3개월 ~)':'단기 (1일 ~ 3개월)'}</Text>
                                 </View>
                             </Layout>
                         </Card>
