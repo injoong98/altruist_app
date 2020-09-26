@@ -834,7 +834,15 @@ class AltQuestionWrite extends React.Component
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() => {this.props.navigation.goBack()}}/>
     )
-
+    actSelect = (act) =>{
+        const {actSelected}=this.state;
+        if(actSelected.includes(act)){
+            actSelected.splice(actSelected.indexOf(act),1)
+            this.setState({actSelected})
+        }else{
+            this.setState({actSelected:actSelected.concat(act)})
+        }
+    }
     getAreaCategory= async()=>{
         await axios.get('http://dev.unyict.org/api/altruists/area_category')
         .then(res=>{
@@ -958,7 +966,7 @@ class AltQuestionWrite extends React.Component
             >
                 <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
                     <View style={{alignItems:'center',justifyContent:'center'}}>
-                        <Text category='h2' style={{fontSize:13,marginVertical:11,color:'#63579D'}}>필터 적용하기</Text>
+                        <Text category='h2' style={{fontSize:13,marginVertical:11,color:'#63579D'}}>질문 분야</Text>
                         <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginBottom:15}}></View>
                     </View>
                     <ScrollView ScrollViewstyle = {{}}>
@@ -967,12 +975,7 @@ class AltQuestionWrite extends React.Component
                                 <Tag 
                                     key = {act.act_content}
                                     onPress ={()=>{
-                                        if(actSelected.includes(act)){
-                                            actSelected.splice(actSelected.indexOf(act),1)
-                                            this.setState({actSelected})
-                                        }else{
-                                            this.setState({actSelected:actSelected.concat(act)})
-                                        }
+                                        this.actSelect(act);
                                     }}
                                     style={[{padding:4},actSelected.includes(act) ? styles.tagSelected:{}]}
                                 >
