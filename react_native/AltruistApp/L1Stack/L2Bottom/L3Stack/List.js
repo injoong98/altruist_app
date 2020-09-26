@@ -11,60 +11,64 @@ import Searchsvg from '../../../assets/icons/search-outline.svg';
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
-export const renderAltList= ({item,index}) => (
-    <TouchableOpacity
-        style={{flexDirection:'row',height:100,marginBottom:15,marginHorizontal:18,backgroundColor:'#F4F4F4',alignItems:'center',borderTopRightRadius:7,borderBottomRightRadius:7}}
-        onPress = {()=>{this.props.navigation.navigate('AltProfile', item.alt_profile.alt_id)}}
-    >
-        <View>
-            <Image 
-                source = {{uri : 'http://dev.unyict.org/'+ (item.alt_profile.alt_photo !=null ? item.alt_profile.alt_photo: 'uploads/noimage.gif')}} 
-                style = {{flex : 1, width : 100, height : 100, resizeMode:'contain'}}
-            />
-        </View>
-        
-        <View style={{width:'65%',height:'100%',paddingLeft:10}}>
-            <View style={{flexDirection:'row',height:'90%'}}>
-                <View style={{justifyContent:'space-evenly',marginLeft:0,width:'45%'}}>
-                    <View>
-                        <Text style={{fontSize:18,fontWeight:'700'}}>
-                            {item.mem_basic_info.mem_nickname}
-                        </Text>
-                    </View>
-                    <View>
-                        <Text style={{fontSize:12,fontWeight:'600'}}>
-                            {item.alt_profile.alt_aboutme}
-                        </Text>
-                    </View>
-                </View>
-                <View style={{marginLeft:'5%',width:'45%',paddingVertical:10,alignItems:'flex-start',justifyContent:'center'}}>
-                    {item.get_alt_cv.map((i)=>
-                        <Text 
-                            category ='p1'
-                            style = {{color:'#63579D',fontSize:10,marginBottom:4}} 
-                            key={i.acv_id}
-                            numberOfLines={1} 
-                            ellipsizeMode="tail"    
-                        >
-                            {i.acv_year.trim()+') '}{i.acv_content.trim()}
-                        </Text>
-                    )}                
-                </View>
-            </View>
-            <View style={{flexDirection:'row',left:10,bottom:0,position:'absolute'}}>
-                {
-                    item.alt_area.map(({act_content})=>(
-                        <Text key={act_content} style={{fontSize:8,paddingVertical:4,fontWeight:'700'}}>{act_content}</Text>
-                    ))
-                }
-            </View>
-        </View>
 
-        <View style={{right:0,position:'absolute'}}>
-            <Rightsvg width={22} height={22}/>
-        </View>
-    </TouchableOpacity>
-)
+export const RenderAltList= ({arg,navigation}) => {
+    return(
+        <TouchableOpacity
+            style={{flexDirection:'row',height:100,marginBottom:15,marginHorizontal:18,backgroundColor:'#F4F4F4',alignItems:'center',borderTopRightRadius:7,borderBottomRightRadius:7}}
+            onPress = {()=>{navigation.navigate('AltProfile', arg.item.alt_profile.alt_id)}}
+        >
+            <View>
+                <Image 
+                    source = {{uri : 'http://dev.unyict.org/'+ (arg.item.alt_profile.alt_photo !=null ? arg.item.alt_profile.alt_photo: 'uploads/noimage.gif')}} 
+                    style = {{flex : 1, width : 100, height : 100, resizeMode:'contain'}}
+                />
+            </View>
+            
+            <View style={{width:'65%',height:'100%',paddingLeft:10}}>
+                <View style={{flexDirection:'row',height:'90%'}}>
+                    <View style={{justifyContent:'space-evenly',marginLeft:0,width:'45%'}}>
+                        <View>
+                            <Text style={{fontSize:18,fontWeight:'700'}}>
+                                {arg.item.mem_basic_info.mem_nickname}
+                            </Text>
+                        </View>
+                        <View>
+                            <Text style={{fontSize:12,fontWeight:'600'}}>
+                                {arg.item.alt_profile.alt_aboutme}
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={{marginLeft:'5%',width:'45%',paddingVertical:10,alignItems:'flex-start',justifyContent:'center'}}>
+                        {arg.item.get_alt_cv.map((i)=>
+                            <Text 
+                                category ='p1'
+                                style = {{color:'#63579D',fontSize:10,marginBottom:4}} 
+                                key={i.acv_id}
+                                numberOfLines={1} 
+                                ellipsizeMode="tail"    
+                            >
+                                {i.acv_year.trim()+') '}{i.acv_content.trim()}
+                            </Text>
+                        )}                
+                    </View>
+                </View>
+                <View style={{flexDirection:'row',left:10,bottom:0,position:'absolute'}}>
+                    {
+                        arg.item.alt_area.map(({act_content})=>(
+                            <Text key={act_content} style={{fontSize:8,paddingVertical:4,fontWeight:'700'}}>{act_content}</Text>
+                        ))
+                    }
+                </View>
+            </View>
+
+            <View style={{right:0,position:'absolute'}}>
+                <Rightsvg width={22} height={22}/>
+            </View>
+        </TouchableOpacity>
+    )
+}
+
 class AltListScreen extends React.Component{
 
     constructor (props) {
@@ -226,17 +230,17 @@ class AltListScreen extends React.Component{
                         <List
                         contentContainerStyle={styles.contentContainer}
                         data={this.state.lists}
-                        renderItem={renderAltList}
+                        renderItem={(arg)=>{return(<RenderAltList {...this.props} arg={arg} />)}}
                         style={{backgroundColor:'#ffffff'}}
                         />
                     </View> 
                 }
                 <Modal
-                visible={filterModalVisible}
-                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({filterModalVisible:false})}
-                style={{justifyContent:'center'}}
-            >
+                    visible={filterModalVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                    onBackdropPress={() => this.setState({filterModalVisible:false})}
+                    style={{justifyContent:'center'}}
+                >
                 <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
                     <View style={{alignItems:'center',justifyContent:'center'}}>
                         <Text category='h2' style={{fontSize:13,marginVertical:11,color:'#63579D'}}>필터 적용하기</Text>

@@ -446,7 +446,7 @@ class MarketWrite extends React.Component {
     navigation.goBack();
   };
 
-  //등록버튼 클릭했을 때
+  //사진버튼 클릭했을 때
   onClickAddImage() {
     const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
     ActionSheet.show(
@@ -509,20 +509,21 @@ class MarketWrite extends React.Component {
   }
 
   deleteImage(index) {
+    console.log(index);
     const {images, Image_index} = this.state;
     index==this.state.post_main_thumb
     ?this.setState({post_main_thumb:0})
     :null;
     images.splice(index,1);
     images.map(i => i.index>index
-      ?i.index=index
+      ?i.index--
       :null
     );
     this.setState({images: images, Image_index:Image_index-1});
   }
   
   renderImage(image) {
-    //console.log(image);
+    // console.log(image);
     // console.log(index);
     return (
       <View key={image.id}>
@@ -745,7 +746,7 @@ class MarketWrite extends React.Component {
                     justifyContent: 'space-between',
                     marginVertical: 10,
                   }}>
-                  <Text category="h4"> 사진</Text>
+                  <Text category="h4" style={{color:'#63579D'}}> 사진</Text>
                   <TouchableOpacity onPress={() => this.onClickAddImage()}>
                     <Camsvg />
                   </TouchableOpacity>
@@ -1299,7 +1300,14 @@ class IlbanWrite extends React.Component {
       brd_key: 'ilban',
       post_title: mode == 'edit'?post.post_title:'',
       post_content: mode == 'edit'?post.post_content:'',
-      images: [],
+      Image_index:
+        this.props.route.params.mode == 'edit'
+          ? this.props.route.params.image.length
+          : 0,
+      images:
+        this.props.route.params.mode == 'edit'
+          ? this.props.route.params.image
+          : [],
       post_category: mode == 'edit'?post.post_category-1:0,
       popoverVisible : false,
       confirmVisible : false,
@@ -1313,7 +1321,7 @@ class IlbanWrite extends React.Component {
 
   submitPost = async () => {
     
-    const {post_title, post_content, post_category} = this.state;
+    const {post_title, post_content, post_category, images} = this.state;
     const url =
       this.props.route.params.mode == 'edit'
         ? 'http://dev.unyict.org/api/board_write/modify'
@@ -1324,6 +1332,13 @@ class IlbanWrite extends React.Component {
     formdata.append('post_title', post_title);
     formdata.append('post_category', post_category+1);
     formdata.append('post_content', post_content);
+    images.map((item) => {
+      formdata.append('post_file[]', {
+        uri: item.path,
+        type: item.mime,
+        name: 'image.jpg',
+      });
+    });
     
     this.props.route.params.mode == 'edit'
       ? formdata.append('post_id', this.props.route.params.post.post_id)
@@ -1389,10 +1404,12 @@ class IlbanWrite extends React.Component {
         console.log(e);
       });
   }
+
+  //사진버튼 클릭했을 때
   onClickAddImage() {
-    const buttons = ['사진 촬영', '갤러리에서 사진 가져오기', '취소'];
+    const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
     ActionSheet.show(
-      {options: buttons, cancelButtonIndex: 2, title: '사진 선택'},
+      {options: buttons, cancelButtonIndex: 2, title: 'Select a photo'},
       (buttonIndex) => {
         switch (buttonIndex) {
           case 0:
@@ -1408,6 +1425,7 @@ class IlbanWrite extends React.Component {
     );
   }
 
+  //카메라로 사진 찍기
   takePhotoFromCamera() {
     ImagePicker.openCamera({
       width: 300,
@@ -1415,20 +1433,22 @@ class IlbanWrite extends React.Component {
       cropping: true,
     }).then((image) => {
       this.onSelectedImage(image);
-      console.log(image);
+      //  console.log(image);
     });
   }
 
+  //갤러리에서 사진 가져오기
   choosePhotoFromGallery() {
     ImagePicker.openPicker({
       multiple: true,
       includeExif: false,
     }).then((image) => {
       image.map((item) => this.onSelectedImage(item));
-      console.log(image);
+      //console.log(image);
     });
   }
 
+  //불러온 사진의 정보를 this.state에 저장
   onSelectedImage(image) {
     console.log(image);
     let newImages = this.state.images;
@@ -1436,17 +1456,49 @@ class IlbanWrite extends React.Component {
     let item = {
       id: Date.now(),
       url: source,
+      mime: image.mime,
+      path: image.path,
       content: image.data,
+      index: this.state.Image_index,
     };
+    console.log(item);
+    this.setState({Image_index: this.state.Image_index + 1});
     newImages.push(item);
     this.setState({images: newImages});
   }
+  
+  deleteImage(index) {
+    const {images, Image_index} = this.state;
+    index==this.state.post_main_thumb
+    ?this.setState({post_main_thumb:0})
+    :null;
+    images.splice(index,1);
+    images.map(i => i.index>index
+      ?i.index--
+      :null
+    );
+    this.setState({images: images, Image_index:Image_index-1});
+  }
+  
 
   renderImage(image) {
-    console.log(image);
+    //console.log(image);
+    // console.log(index);
     return (
-      <View key={image.uri}>
-        <Image style={styles.market_RenderImage} source={image.url} />
+      <View key={image.id}>
+        <Image
+          style={styles.market_RenderImage}
+          source={
+            image.edit
+              ? {uri: image.url}
+              : image.url
+          }
+        />
+        <View style={{position:'absolute', right:0, zIndex:2, width:20, height:20}}>
+          <TouchableWithoutFeedback onPress={()=>this.deleteImage(image.index)}>
+            <Icon style={{width:20, height:20}} fill='#63579D' name='close-outline'/>
+          </TouchableWithoutFeedback>
+        </View>
       </View>
     );
   }
@@ -1455,8 +1507,10 @@ class IlbanWrite extends React.Component {
     if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
       return this.renderVideo(image);
     }
+
     return this.renderImage(image);
   }
+
 
   renderSelectItems = () => (
     <View style = {{marginLeft : 12, marginVertical : 10, alignItems:'center', justifyContent:'center'}}>
@@ -1483,104 +1537,124 @@ class IlbanWrite extends React.Component {
 		const {navigation} = this.props;
 		const {post_title, post_content, post_category, resultVisible, modalVisible, spinnerVisible, resultText} = this.state;
 		return (
-			<SafeAreaView style={{flex: 1}}>
-				<WriteContentToptab
-            text="이타게시판"
-            right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-            func={() => {this.filterSpamKeyword();}}
-            gbckfunc={() => {navigation.goBack();}}
-            gbckuse={true}
+      <Root>
+        <SafeAreaView style={{}}>
+          <WriteContentToptab
+              text="이타게시판"
+              right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+              func={() => {this.filterSpamKeyword();}}
+              gbckfunc={() => {navigation.goBack();}}
+              gbckuse={true}
+            />
+          <View style = {{flexDirection:'row'}}>
+            <Popover
+              anchor={this.renderSelectItems}
+              visible={this.state.popoverVisible}
+              fullWidth={true}
+              placement='bottom start'
+              onBackdropPress={() => this.setState({popoverVisible:false})}>
+                <View style={{borderRadius:10, backgroundColor:'#B09BDE'}}>
+                    {this.categoryList.map((val,index)=>(
+                      <TouchableOpacity key = {index} onPress = {()=>this.setState({post_category:index, popoverVisible:false})}>
+                        <Text category='h5' style={{color:'white', margin : 10}}>{val}</Text>
+                        {index==this.categoryList.length?null:<Divider/>}
+                      </TouchableOpacity>
+                    ))}
+                </View>
+            </Popover>
+            <TextInput
+              style={{
+                backgroundColor: '#ffffff',
+                borderRadius: 8.5,
+                marginTop: 18,
+                marginHorizontal: 12,
+                marginBottom: 14,
+                fontSize: 18,
+                flex : 1,
+              }}
+              placeholder="제목"
+              onChangeText={(nextValue) => this.setState({post_title: nextValue})}
+              placeholderTextColor="#A897C2"
+              value={post_title}
+            />
+          </View>
+          <TextInput
+            value={post_content}
+            style={{
+              height: '80%',
+              maxHeight: '50%',
+              backgroundColor: '#ffffff',
+              borderRadius: 8.5,
+              marginHorizontal: 12,
+              marginBottom: 14,
+              fontSize: 18,
+            }}
+            placeholder="내용"
+            onChangeText={(nextValue) => this.setState({post_content: nextValue})}
+            multiline={true}
+            textAlignVertical="top"
+            textStyle={{minHeight: 100}}
+            placeholderTextColor="#A897C2"
           />
-			<View style = {{flexDirection:'row'}}>
-        <Popover
-          anchor={this.renderSelectItems}
-          visible={this.state.popoverVisible}
-          fullWidth={true}
-          placement='bottom start'
-          onBackdropPress={() => this.setState({popoverVisible:false})}>
-            <View style={{borderRadius:10, backgroundColor:'#B09BDE'}}>
-                {this.categoryList.map((val,index)=>(
-                  <TouchableOpacity key = {index} onPress = {()=>this.setState({post_category:index, popoverVisible:false})}>
-                    <Text category='h5' style={{color:'white', margin : 10}}>{val}</Text>
-                    {index==this.categoryList.length?null:<Divider/>}
-                  </TouchableOpacity>
-                ))}
+          <Layout style={{...styles.picture, flex:1}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginVertical: 10,
+              }}>
+              <Text category="h4" style={{color:'#63579D'}}> 사진</Text>
+              <TouchableOpacity onPress={() => this.onClickAddImage()}>
+                <Camsvg />
+              </TouchableOpacity>
             </View>
-        </Popover>
-        <TextInput
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: 8.5,
-            marginTop: 18,
-            marginHorizontal: 12,
-            marginBottom: 14,
-            fontSize: 18,
-            flex : 1,
-          }}
-          placeholder="제목"
-          onChangeText={(nextValue) => this.setState({post_title: nextValue})}
-          placeholderTextColor="#A897C2"
-          value={post_title}
-			  />
-      </View>
-			<TextInput
-				value={post_content}
-				style={{
-					height: '80%',
-					maxHeight: '50%',
-					backgroundColor: '#ffffff',
-					borderRadius: 8.5,
-					marginHorizontal: 12,
-					marginBottom: 14,
-					fontSize: 18,
-				}}
-				placeholder="내용"
-				onChangeText={(nextValue) => this.setState({post_content: nextValue})}
-				multiline={true}
-				textAlignVertical="top"
-				textStyle={{minHeight: 100}}
-				placeholderTextColor="#A897C2"
-			/>
-
-        <Modal
-          visible={modalVisible}
-          backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
-          onBackdropPress={() => this.setState({modalVisible: false})}>
-          <Confirm
-            confirmText={
-              this.props.route.params.mode == 'edit'
-                ? '게시글을 수정하시겠습니까?'
-                : '게시글을 작성하시겠습니까?'
-            }
-            frstText="예"
-            OnFrstPress={() => {
-              this.setState({modalVisible: false, spinnerVisible: true});
-              this.submitPost();
-            }}
-            scndText="아니오"
-            OnScndPress={() => this.setState({modalVisible: false})}
-          />
-        </Modal>
-        <Modal
-          visible={resultVisible}
-          backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
-          onBackdropPress={() => this.setState({resultVisible: false})}>
-          <Confirm
-            type="result"
-            confirmText={this.state.resultText}
-            frstText="닫기"
-            OnFrstPress={() => {
-              this.setState({resultVisible: false});
-              this.gobackfunc();
-            }}
-          />
-        </Modal>
-        <Modal
-          visible={spinnerVisible}
-          backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
-          <Spinner size="giant" />
-        </Modal>
-      </SafeAreaView>
+            <ScrollView horizontal style={{height: 150}}>
+              {this.state.images
+                ? this.state.images.map((item) => this.renderAsset(item))
+                : null}
+            </ScrollView>
+          </Layout>
+          <Modal
+            visible={modalVisible}
+            backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+            onBackdropPress={() => this.setState({modalVisible: false})}>
+            <Confirm
+              confirmText={
+                this.props.route.params.mode == 'edit'
+                  ? '게시글을 수정하시겠습니까?'
+                  : '게시글을 작성하시겠습니까?'
+              }
+              frstText="예"
+              OnFrstPress={() => {
+                this.setState({modalVisible: false, spinnerVisible: true});
+                this.submitPost();
+              }}
+              scndText="아니오"
+              OnScndPress={() => this.setState({modalVisible: false})}
+            />
+          </Modal>
+          <Modal
+            visible={resultVisible}
+            backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+            onBackdropPress={() => this.setState({resultVisible: false})}>
+            <Confirm
+              type="result"
+              confirmText={this.state.resultText}
+              frstText="닫기"
+              OnFrstPress={() => {
+                this.setState({resultVisible: false});
+                this.gobackfunc();
+              }}
+            />
+          </Modal>
+          <Modal
+            visible={spinnerVisible}
+            backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
+            <Spinner size="giant" />
+          </Modal>
+        </SafeAreaView>
+      </Root>
     );
   }
 }
@@ -1661,7 +1735,7 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingHorizontal: 10,
     marginVertical: 10,
-  },
+    },
 });
 
 export {defaultWrite, MarketWrite, AlbaWrite, GominWrite, IlbanWrite};

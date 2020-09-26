@@ -65,6 +65,28 @@ class Altruists_model extends CB_Model
 		$result = $this->db->get();
 		return $result->result_array();
 	}
+
+
+
+	//경력 카테 고리로 사용자 사용자를 찾는다. 
+	public function cb_mem_id_by_area($act_id = '')
+	{
+		$this->db->from('cb_alt_area');
+		$this->db->where_in('act_id', $act_id);
+		$result = $this->db->get();
+		return $result->result_array();
+	}
+	
+	public function get_by_are_ids($alt_id = '', $select = '')
+	{
+		if (empty($alt_id)) {
+			return false;
+		}
+		$this->db->where('alt_status', 'Y');
+		$this->db->where_in('alt_id', $alt_id);
+		return $this->get('', $select, $where);
+	}
+	
 	public function get_by_memid($memid = 0, $select = '')
 	{
 		$memid = (int) $memid;
@@ -84,6 +106,8 @@ class Altruists_model extends CB_Model
 		$where = array('mem_id' => $userid);
 		return $this->get_one('', $select, $where);
 	}
+
+	
 
 
 	public function get_by_email($email = '', $select = '')
@@ -124,8 +148,10 @@ class Altruists_model extends CB_Model
 	}
 
 
+
 	public function get_admin_list($limit = '', $offset = '', $where = '', $like = '', $findex = '', $forder = '', $sfield = '', $skeyword = '', $sop = 'OR')
 	{
+		
 		/* $join = array();
 		
 		if (isset($where['mgr_id'])) {
