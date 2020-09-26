@@ -20,6 +20,7 @@ import Callsvg from '../assets/icons/call.svg'
 import Callmessagesvg from '../assets/icons/call-message.svg'
 import Emailsvg from '../assets/icons/Email.svg'
 import Viewsvg from '../assets/icons/view.svg'
+import Timesvg from '../assets/icons/Time.svg'
 
 
 const BackIcon =  (props) =>(
@@ -1180,7 +1181,6 @@ class AlbaContent extends React.Component {
             post : {} ,
             thumb_image : [],
             file_images : [],
-            phoneNumber : '010 9999 9999',
             isLoading : true,
             image_height : 0,
             popoverVisibel: false,
@@ -1365,7 +1365,6 @@ class AlbaContent extends React.Component {
 
     render(){
         const {post, blameModalVisible, deleteModalVisible, spinnerModalVisible} = this.state;
-        console.log('post_id=>'+JSON.stringify(post))
         // const defaultRenderer ={
         //     renderers:{
         //         img : (htmlAttribs, children, convertedCSSStyles, passProps) => this.img_return(htmlAttribs, passProps)
@@ -1384,10 +1383,15 @@ class AlbaContent extends React.Component {
                 <Layout style={{flex:1}}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
                         <Card disabled={true} style={styles.item}>
-                            <View style={{flexDirection : 'row-reverse'}}>
-                                <Text category='c2'>
-                                    {JSON.stringify(post.post_datetime).substr(1,post.post_datetime.length-3)}
-                                </Text>
+                            <View style={{flexDirection : 'row', justifyContent:'flex-end'}}>
+                                <View style={{marginHorizontal:10, justifyContent:'center', alignItems:'center'}}>
+                                    <Viewsvg width={24} height={24}/>
+                                    <Text category='p1'>{post.post_hit}</Text>
+                                </View>
+                                <View style={{marginHorizontal:10, justifyContent:'center', alignItems:'center'}}>
+                                    <Timesvg width={24} height={24}/>
+                                    <PostTime category='p1' datetime = {post.post_datetime}/>
+                                </View>
                             </View>
                             <Layout style={{flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
                                 {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:this.state.thumb_image.origin_image_url}}/>
@@ -1398,15 +1402,15 @@ class AlbaContent extends React.Component {
                                 <Text category= 'h1' style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
                             </View>
                             <Layout style={styles.icons}>
-                                <Text style={[styles.tagstyle,{backgroundColor:this.Alba_salary_type[post.alba_salary_type].color}]} category='c2'>
+                                <Text style={{color:'#FF6262'}} category='h5'>
                                     {this.Alba_salary_type[post.alba_salary_type].str}
                                 </Text>
                                 <Text category='h5'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
-                                <Text style={[styles.tagstyle,{backgroundColor:post.alba_type == 0?'#978DC7':'#63579D'}]} category='c2'>
+                                <Text style={{color:'#7370DD'}} category='h5'>
                                     {post.alba_type == 0?'단기':'장기'}
                                 </Text>
-                                <Text category='h5'> {post.alba_type == 0?'일일~3개월':'3개월이상'} / </Text>
-                                <Text style={[styles.tagstyle,{backgroundColor:'blue'}]} category='c2'>
+                                <Text> / </Text>
+                                <Text style={{color:'#393939'}} category='h5'>
                                     연락처
                                 </Text>
                                 <Text category='h5'> {post.post_hp.replace(/[^0-9]/g, "").replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/,"$1-$2-$3").replace("--", "-")}</Text>
@@ -1424,8 +1428,8 @@ class AlbaContent extends React.Component {
                                     <Text style={styles.gathertext}>급여</Text>
                                 </View>
                                 <View style={{flex : 5, flexDirection : 'row'}}>
-                                    <Text style={[styles.tagstyle,{backgroundColor:this.Alba_salary_type[post.alba_salary_type].color}]} category='c2'>
-                                        {this.Alba_salary_type[post.alba_salary_type].str}
+                                    <Text style={[styles.gather, {color:'#FF6262'}]}>
+                                        {this.Alba_salary_type[post.alba_salary_type].str+' '}
                                     </Text>
                                     <Text style={styles.gather}>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                                 </View>
