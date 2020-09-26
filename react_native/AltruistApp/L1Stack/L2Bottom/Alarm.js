@@ -2,7 +2,7 @@ import React from 'react';
 import {View,SafeAreaView,Text,FlatList,StyleSheet,TouchableOpacity} from 'react-native';
 import axios from 'axios';
 import { Content } from 'native-base';
-
+import {WriteContentToptab} from '../../components/WriteContentTopBar'
 export class AlarmScreen extends React.Component{
 
     constructor(props){
@@ -94,6 +94,9 @@ export class AlarmScreen extends React.Component{
         const {isLoading} = this.state
         return(
             <SafeAreaView style={styles.container}>
+                <WriteContentToptab
+                text='알림리스트'
+                />
                 {
                  isLoading?
                  null
@@ -112,7 +115,8 @@ export class AlarmScreen extends React.Component{
 }
 const styles = StyleSheet.create({
     container:{
-        backgroundColor:'#ffffff'
+        backgroundColor:'#ffffff',
+        flex:1
     },
     notiContainer:{
         paddingHorizontal:20,
