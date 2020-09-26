@@ -1505,14 +1505,9 @@ class IlbanContent extends Component {
             resultText : '',
             confirmModalVisible:false,
             spinnerModalVisible:false,
-<<<<<<< HEAD
             popoverVisibel:false,
             imageModalVisible:false,
             imageIndex: 0,
-            resultText : '',
-=======
-            popoverVisible:false,
->>>>>>> 3108f0159ba11eb935bcda0984f8fe4756c035af
             modalType : 0,
         }
     }
@@ -1886,7 +1881,7 @@ class IlbanContent extends Component {
         </View>
     )
      render(){
-         
+
         const {navigation,route} =this.props
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image} = this.state
 
