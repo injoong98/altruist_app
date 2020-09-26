@@ -7,6 +7,8 @@ import {TopBarTune} from '../../../components/TopBarTune'
 
 import LogoSvg from '../../../assets/icons/logo.svg'
 import Searchsvg from '../../../assets/icons/search-outline.svg'
+import Plussvg from '../../../assets/icons/plus-btn-round.svg'
+import Minussvg from '../../../assets/icons/minus-btn-round.svg'
 import {RenderAltList} from './List'
 const {width,height} = Dimensions.get('window')
 
@@ -120,10 +122,12 @@ class AltMainScreen extends React.Component{
                     </View>
                 </View>
                 <View style={{marginTop:150,flexDirection:'row',width:'100%',paddingHorizontal:12}}>                        
-                    <TouchableHighlight style={[styles.btn,{borderRadius:15}]} onPress={btnContainerCompressed?this.maximizing:this.minimizing}>
-                        <Text category="h2" style={{color:'#ffffff'}}>
-                        {btnContainerCompressed? '+' :'-'}
-                        </Text>
+                    <TouchableHighlight style={[styles.btn,{borderRadius:15,width:30}]} onPress={btnContainerCompressed?this.maximizing:this.minimizing}>
+                        {btnContainerCompressed? 
+                            <Plussvg height={30} width={30}/>
+                            :
+                            <Minussvg height={30} width={30}/>
+                        }    
                     </TouchableHighlight>
                     <Animated.View style={{flexDirection:'row',justifyContent:'space-evenly',overflow:'hidden',width:btnContainerWidthInterpolate}}>
                         <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltApply')}>
