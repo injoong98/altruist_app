@@ -15,6 +15,7 @@ import Communitysvg from '../../assets/icons/community.svg'
 import Altsvg from '../../assets/icons/altruist.svg'
 import Bellsvg from '../../assets/icons/bell.svg'
 import Mysvg from '../../assets/icons/mypage.svg'
+import { Signing } from '../Context';
 
 const HomeIcon = (props) => (
     <Icon {...props} name= 'home' pack='alticons'/>
@@ -85,12 +86,23 @@ const BottomTabBar = ({ navigation, state }) => (
   );
 
 
-export const ComBottomNav = () =>(
-    <Navigator tabBar={props => <BottomTabBar {...props} />}>
-        {/* <Screen name = "Home" component={FontScreen}/> */}
-        <Screen name = "Alt" component={AltStackNav}/>
-        <Screen name = "Commu" component={ComToptabNav}/>
-        <Screen name = "Alarm" component={AlarmScreen}/>
-        <Screen name = "Prof" component={MyStackNav}/>
-    </Navigator>
-)
+export class ComBottomNav extends React.Component{
+    constructor(props){
+        super(props)
+    }
+    static contextType = Signing
+
+    render(){
+        return(
+            <Navigator 
+                initialRouteName={this.context.isPushNoti() ?"Alarm": "Alt"}
+                tabBar={props => <BottomTabBar {...props} 
+            />}>
+                {/* <Screen name = "Home" component={FontScreen}/> */}
+                <Screen name = "Alt" component={AltStackNav}/>
+                <Screen name = "Commu" component={ComToptabNav}/>
+                <Screen name = "Alarm" component={AlarmScreen}/>
+                <Screen name = "Prof" component={MyStackNav}/>
+            </Navigator>
+        )}
+}
