@@ -889,7 +889,7 @@ class AltQuestionWrite extends React.Component
     }
     render(){
         const {title,content,filterModalVisible,actSelected} = this.state;
-        const {act,answer_mem_id,brd_key,item,} = this.props.route.params;
+        const {act,answer_mem_id,brd_key,item,altruist} = this.props.route.params;
         const {width,height} =Dimensions.get('window')
         return(
         <SafeAreaView style={{flex:1}}>
@@ -911,15 +911,15 @@ class AltQuestionWrite extends React.Component
                 <View style={{ flex:1,backgroundColor:"#f4f4f4",padding:10}}>
                     <View style={{display:'flex',flexDirection:'row',paddingHorizontal:10}}>
                     {
-                        this.props.route.params.answer_mem_id ? 
+                        answer_mem_id ? 
                         <View>
                             <Text style={{fontSize:13, fontWeight:'700',color:'#63579D',marginLeft:16}} >
-                            개인 질문을 보냅니다.
+                            { `[${altruist.mem_basic_info.mem_username}] 님께 질문을 보냅니다.`}
                             </Text>
                         </View>
                         :
                         <TouchableOpacity 
-                            style = {{height:21,width:23,backgroundColor:'#B09BDE',borderRadius:7,justifyContent:'center'}} 
+                            style = {{height:21,width:23,backgroundColor:'#63579D',borderRadius:7,justifyContent:'center'}} 
                             onPress={()=>this.setState({filterModalVisible:true})}
                         >
                             <Text style={{color:'#ffffff',fontSize:24,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
@@ -949,7 +949,7 @@ class AltQuestionWrite extends React.Component
                                 ))}
                         </ScrollView >
                         :
-                        this.props.route.params.answer_mem_id ? 
+                        answer_mem_id ? 
                         null:
                         <View>
                             <Text style={{fontSize:13, fontWeight:'700',color:'#63579D',marginLeft:16}} >질문 분야를 선택할 수 있습니다.</Text>
