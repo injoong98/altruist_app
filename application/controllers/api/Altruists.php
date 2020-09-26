@@ -1244,7 +1244,7 @@ class Altruists extends CB_Controller
 			$alt_profile['list']  = $this->Altruists_model->get_by_are_ids($alt_ids);
 		
 		}else {
-
+			$where_alt = 'alt_status="Y"';
 			$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
 		}
 

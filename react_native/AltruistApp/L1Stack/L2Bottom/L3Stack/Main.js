@@ -7,6 +7,9 @@ import {TopBarTune} from '../../../components/TopBarTune'
 
 import LogoSvg from '../../../assets/icons/logo.svg'
 import Searchsvg from '../../../assets/icons/search-outline.svg'
+import Plussvg from '../../../assets/icons/plus-btn-round.svg'
+import Minussvg from '../../../assets/icons/minus-btn-round.svg'
+import Reloadsvg from '../../../assets/icons/reload.svg'
 import {RenderAltList} from './List'
 const {width,height} = Dimensions.get('window')
 
@@ -54,9 +57,11 @@ class AltMainScreen extends React.Component{
         
     }
     getAltruistsList = async() => {
-        await axios.get('http://dev.unyict.org/api/altruists/lists')
+        this.setState({isLoading:true})
+        await axios.get('http://dev.unyict.org/api/altruists/lists?rand=Y')
         .then((response) => {
             this.setState({lists:response.data.view.data.list,alt_list_showing:response.data.view.data.list})
+            this.setState({isLoading:false})
         })
         .catch((error)=>{
             alert(error);
@@ -120,10 +125,12 @@ class AltMainScreen extends React.Component{
                     </View>
                 </View>
                 <View style={{marginTop:150,flexDirection:'row',width:'100%',paddingHorizontal:12}}>                        
-                    <TouchableHighlight style={[styles.btn,{borderRadius:15}]} onPress={btnContainerCompressed?this.maximizing:this.minimizing}>
-                        <Text category="h2" style={{color:'#ffffff'}}>
-                        {btnContainerCompressed? '+' :'-'}
-                        </Text>
+                    <TouchableHighlight style={[styles.btn,{borderRadius:15,width:30}]} onPress={btnContainerCompressed?this.maximizing:this.minimizing}>
+                        {btnContainerCompressed? 
+                            <Plussvg height={30} width={30}/>
+                            :
+                            <Minussvg height={30} width={30}/>
+                        }    
                     </TouchableHighlight>
                     <Animated.View style={{flexDirection:'row',justifyContent:'space-evenly',overflow:'hidden',width:btnContainerWidthInterpolate}}>
                         <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltApply')}>
@@ -148,8 +155,13 @@ class AltMainScreen extends React.Component{
                         </TouchableHighlight>
                     </Animated.View>
                 </View>
-                <View style={{marginVertical:40,alignItems:'center',justifyContent:'center'}}>    
-                    <Text category='h2' style={{color:'#63579D'}}>멘토리스트</Text>
+                <View style={{marginVertical:40,width:'90%',alignItems:'center'}}>    
+                    <View style={{flexDirection:'row'}}>
+                        <Text category='h2' style={{color:'#63579D'}}>멘토리스트</Text>
+                    </View>
+                    <TouchableOpacity onPress={()=>{console.log('gd');this.getAltruistsList()}} style={{position:'absolute',right:0}}>
+                        <Reloadsvg height={25} width={25} fill="#A9C"/>
+                    </TouchableOpacity>
                 </View>
             </View>
         </>
@@ -171,11 +183,11 @@ class AltMainScreen extends React.Component{
                     gbckuse={false}
                 /> */}
                 <List
-                contentContainerStyle={styles.contentContainer}
-                ListHeaderComponent={this.renderHeadSection}
-                data={this.state.lists}
-                renderItem={isLoading ? Loading: (arg)=>{return(<RenderAltList {...this.props} arg={arg} />)} }
-                style={{backgroundColor:'#ffffff'}}
+                    contentContainerStyle={styles.contentContainer}
+                    ListHeaderComponent={this.renderHeadSection}
+                    data={this.state.lists}
+                    renderItem={isLoading ? Loading: (arg)=>{return(<RenderAltList {...this.props} arg={arg} />)} }
+                    style={{backgroundColor:'#ffffff'}}
                 />    
             </SafeAreaView>
         )
