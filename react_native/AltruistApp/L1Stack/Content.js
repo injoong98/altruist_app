@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, StatusBar, Dimensions, Linking, VirtualizedList,TextInput} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal, OverflowMenu, MenuItem,Popover} from '@ui-kitten/components'
 import Axios from 'axios';
+import ImageViewer from 'react-native-image-zoom-viewer';
 import HTML from 'react-native-render-html';
 import {ActionSheet, Root, Container, Row} from 'native-base';
 import Slider from '../components/MarketSlider.component'
@@ -1539,6 +1540,8 @@ class IlbanContent extends Component {
             confirmModalVisible:false,
             spinnerModalVisible:false,
             popoverVisibel:false,
+            imageModalVisible:false,
+            imageIndex: 0,
             resultText : '',
             modalType : 0,
         }
@@ -1786,11 +1789,13 @@ class IlbanContent extends Component {
             if (response.data.view.file_image){
                 this.setState({image: response.data.view.file_image.map(function(item, index){
                     var image_info = {};
-                    image_info['id'] = item.pfi_id;
-                    image_info['title'] = item.pfi_originname;
+                    image_info['props'] = {};
                     image_info['url'] = item.origin_image_url;
-                    image_info['index'] = index;
-                    image_info['edit'] = true;
+                    image_info['props']['id'] = item.pfi_id;
+                    image_info['props']['title'] = item.pfi_originname;
+                    image_info['props']['index'] = index;
+                    image_info['props']['edit'] = true;
+                    console.log(image_info);
                     return image_info;
                 })});
             }
@@ -1838,7 +1843,7 @@ class IlbanContent extends Component {
         },
     ]
 
-    renderPostBody = (post)=>{
+    renderPostBody = (post, image)=>{
         
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
@@ -1868,6 +1873,19 @@ class IlbanContent extends Component {
                     <Text style={{fontSize:12,fontWeight:'800'}}>
                     {post_remove_tags}
                     </Text>
+                </View>
+                <View style={{alignItems:'center', width:'100%', paddingHorizontal:20}}>
+                    {image
+                    ?image.map((i, index)=>
+                        <TouchableOpacity style={{width:'100%', height:(Dimensions.get("window").width-70), marginTop:10}} onPress={()=>this.setState({imageIndex:index, imageModalVisible:true})}>
+                            <Image 
+                                key={i.props.id}
+                                source={{uri : i.url}}
+                                style={{width:'100%', height:'100%'}}
+                            />
+                        </TouchableOpacity>
+					)
+                    :null}
                 </View>
                 <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
@@ -1944,7 +1962,8 @@ class IlbanContent extends Component {
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType} = this.state
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,imageModalVisible,confirmModalVisible,spinnerModalVisible, imageIndex, modalType, image} = this.state
+
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -1956,15 +1975,15 @@ class IlbanContent extends Component {
             <TopNavigation title="" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.MoreAction} style={styles.topbar}/> 
             <TouchableWithoutFeedback onPress={()=>{ this.commentWrite; Keyboard.dismiss()}}>
                 <Layout style={{flex:1}}>
-                        <List
+                    <List
                         ref={"pstcmtlist"} 
                         data={comment}
-                        ListHeaderComponent={this.renderPostBody(post)}
+                        ListHeaderComponent={this.renderPostBody(post, image)}
                         renderItem={this.renderCommentsList}
                         onRefresh={this.onRefresh}
                         refreshing={this.state.refreshing}
                         style={{backgroundColor:'#ffffff'}}
-                        />
+                    />
                 </Layout>
             </TouchableWithoutFeedback>
             
@@ -2040,7 +2059,27 @@ class IlbanContent extends Component {
             >
                 <Spinner size='giant'/>
             </Modal>
-            
+            <Modal
+                visible={imageModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,1)'}}
+                onBackdropPress={() => this.setState({imageModalVisible:false})}
+                style={{width:'100%', height:Dimensions.get("window").height}}
+                transparent={true}
+            >
+                <ImageViewer
+                    imageUrls={image}
+                    index={imageIndex}
+                    onSwipeDown={()=>this.setState({imageModalVisible:false})}
+                    enableSwipeDown={true}
+                    renderHeader={()=>
+                        <View style={{alignItems:'flex-end', paddingTop:20, paddingRight:10}}>
+                            <TouchableWithoutFeedback onPress={()=>this.setState({imageModalVisible:false})}>
+                                <Icon style={{width:30, height:30}} fill='#FFFFFF' name='close-outline'/>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    }
+                />
+            </Modal>
         </SafeAreaView>
          )
      }
