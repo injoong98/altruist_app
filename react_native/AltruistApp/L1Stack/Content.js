@@ -93,7 +93,7 @@ class GominContent extends React.Component{
         })
     }
     commentWrite= ()=>{
-        this.setState({replying:false, cmt_id:''});
+        this.setState({replying:false, cmt_id:'', cmt_content:''});
         this.refs.commentInput.blur();
         console.log(this.refs);
     }
@@ -120,15 +120,13 @@ class GominContent extends React.Component{
         formdata.append("cmt_content",cmt_content);
         cmt_id==''? null : formdata.append("cmt_id",cmt_id);
         
-        // this.commentWrite()
-        
         Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
         .then(response=>{
             const {status, message}=response.data;
             if(status=='200'){
                 Keyboard.dismiss();
                 this.getCommentData(post.post_id);
-                this.setState({resultModalVisible:true, cmt_id:'', cmt_content:'', replying:false, resultText:message});
+                this.setState({cmt_id:'', cmt_content:'', replying:false});
 
                 this.refs.pstcmtlist.scrollToEnd();
             }else if(status=='500'){
@@ -149,7 +147,7 @@ class GominContent extends React.Component{
         .then(response=>{
             const {status,message} = response.data;
             if(status=='500'){
-                alert(message);
+                this.setState({resultModalVisible:true,resultText:message});
             }else if(status=="200"){
                 console.log("valid check");
                 this.commentUpload();
@@ -268,7 +266,7 @@ class GominContent extends React.Component{
             this.setState({comment:response.data.view.data.list})
         })
         .catch((error)=>{
-            alert('error')
+            alert(error);
         })
     }
     getPostData = async (post_id)=>{
@@ -407,7 +405,7 @@ class GominContent extends React.Component{
             <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                 {item.cmt_reply ==""?
                 <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
-                    <ReplySsvg />
+                    <Text>답글</Text>
                 </TouchableOpacity>
                 :null
                 }
@@ -533,12 +531,12 @@ class GominContent extends React.Component{
             <Modal
                 visible={resultModalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({resultModalVisible:false, cmt_id:''})}>
+                onBackdropPress={() => this.setState({resultModalVisible:false})}>
                 <Confirm 
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false, cmt_id:''})}
+                    OnFrstPress={() => this.setState({resultModalVisible:false})}
                 />
             </Modal>
             <Modal
@@ -1572,7 +1570,7 @@ class IlbanContent extends Component {
         })
     }
     commentWrite= ()=>{
-        this.setState({replying:false, cmt_id:''});
+        this.setState({replying:false, cmt_id:'', cmt_content:''});
         this.refs.commentInput.blur();
         console.log(this.refs);
     }
@@ -1607,7 +1605,7 @@ class IlbanContent extends Component {
             if(status=='200'){
                 Keyboard.dismiss();
                 this.getCommentData(post.post_id);
-                this.setState({resultModalVisible:true, cmt_id:'', cmt_content:'', replying:false, resultText:message});
+                this.setState({cmt_id:'', cmt_content:'', replying:false});
 
                 this.refs.pstcmtlist.scrollToEnd();
             }else if(status=='500'){
@@ -1628,7 +1626,7 @@ class IlbanContent extends Component {
         .then(response=>{
             const {status,message} = response.data;
             if(status=='500'){
-                alert(message);
+                this.setState({resultModalVisible:true, resultText : message})
             }else if(status=="200"){
                 console.log("valid check");
                 this.commentUpload();
@@ -1732,7 +1730,7 @@ class IlbanContent extends Component {
         Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
         .then(response=>{
             if(response.data.status ==500){
-                alert(`${JSON.stringify(response.data.message)}`)
+                this.setState({resultModalVisible:true, resultText : response.data.message});
             }else{
             this.getCommentData(this.state.post.post_id)}
         })
@@ -1774,7 +1772,7 @@ class IlbanContent extends Component {
         })
     }
     
-     onRefresh=()=>{
+    onRefresh=()=>{
         const {post_id} = this.props.route.params
         this.getCommentData(post_id);
     } 
@@ -1899,7 +1897,7 @@ class IlbanContent extends Component {
             <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                 {item.cmt_reply ==""?
                 <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
-                    <ReplySsvg />
+                    <Text>답글</Text>
                 </TouchableOpacity>
                 :null
                 }
@@ -2025,13 +2023,13 @@ class IlbanContent extends Component {
             <Modal
                 visible={resultModalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({resultModalVisible:false, cmt_id:''})}
+                onBackdropPress={() => this.setState({resultModalVisible:false})}
                 >
                 <Confirm 
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false, cmt_id:''})}
+                    OnFrstPress={() => this.setState({resultModalVisible:false})}
                 />
             </Modal>
             <Modal
@@ -2049,8 +2047,7 @@ class IlbanContent extends Component {
             </Modal>
             <Modal
                 visible={spinnerModalVisible}
-                backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
-            >
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}>
                 <Spinner size='giant'/>
             </Modal>
         </SafeAreaView>
