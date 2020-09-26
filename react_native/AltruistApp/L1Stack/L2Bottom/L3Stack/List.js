@@ -23,7 +23,7 @@ export const RenderAltList= ({arg,navigation}) => {
         >
             <View style={{flex:9,}}>
                 <Image 
-                    source = {{uri : 'http://dev.unyict.org/'+ (arg.item.alt_profile.alt_photo !=null ? arg.item.alt_profile.alt_photo: 'uploads/noimage.gif')}} 
+                    source = {{uri : 'http://dev.unyict.org/'+ (arg.item.alt_profile.alt_photo !=null ? arg.item.alt_profile.alt_photo: 'uploads/altwink-rect.png')}} 
                     style = {{flex : 1, width : '100%', height : '100%', resizeMode:'contain',borderWidth:1}}
                 />
             </View>
