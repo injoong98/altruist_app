@@ -29,7 +29,7 @@ const TopTabBar = ({ navigation, state }) => (
 );
 
 const TabNavigator = () => (
-  <Navigator tabBar={props => <TopTabBar {...props} />}>
+  <Navigator swipeEnabled={false} tabBar={props => <TopTabBar {...props} />}>
     {/* <Screen name='Main' component={CommunityScreen}/> */}
     <Screen name='Jau' component={JauScreen}/>
     <Screen name='Gomin' component={GominScreen}/>

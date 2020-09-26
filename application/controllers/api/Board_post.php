@@ -1299,6 +1299,12 @@ class Board_post extends CB_Controller
 					}
 					$result['list'][$key]['file_count'] = count($file);
 				}
+				if(element('brd_id', $val)==11){
+					
+					$this->db->join('cb_alt_cate','cb_alt_cate.act_id=cb_post_alt_area.act_id');
+					$area = $this->db->get_where('cb_post_alt_area',array('post_id'=>element('post_id', $val)))->result_array();
+					$result['list'][$key]['area'] = $area;
+				}
 
 			}
 		}

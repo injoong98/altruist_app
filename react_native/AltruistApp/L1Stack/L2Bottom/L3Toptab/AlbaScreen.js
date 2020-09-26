@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, Image, Layout, ActivityIndicator, YellowBox, TouchableOpacity} from 'react-native';
+import { StyleSheet, View, Image, Layout, ActivityIndicator, YellowBox, TouchableOpacity, LogBox} from 'react-native';
 import { Card, List, Text, Divider, Button, Spinner} from '@ui-kitten/components';
 import axios from 'axios';
 import {PostTime} from '../../../components/PostTime';
 import Writesvg from '../../../assets/icons/write.svg'
-
-YellowBox.ignoreWarnings([
+import Viewsvg from '../../../assets/icons/view.svg';
+LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
 ]);
 
@@ -107,39 +107,44 @@ class AlbaScreen extends React.Component {
   }
 
   renderItem = ({item, index}) => (
-      <Card
-      onPress={() => {this.props.navigation.navigate('AlbaContent', {post_id:item.post_id})}}
-      style={styles.carditem}>
-        <View style = {styles.Text}>
-          <PostTime datetime = {item.post_datetime}/>
+      <TouchableOpacity 
+        onPress={() => {this.props.navigation.navigate('AlbaContent', {post_id:item.post_id})}}
+        style={styles.carditem}>
           <View style={{flexDirection : 'row'}}>
-              <View style={styles.Text}>
-                  <Text category = 'c2' style={{marginVertical : 3, fontSize : 20}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
-                  <Text style={{fontSize : 16}} numberOfLines={1} ellipsizeMode='tail'>{item.post_content}</Text>
-                  <View style = {{marginTop : 10, flexDirection : 'row'}}>
-                    <View style={{marginVertical : 5, flex : 1, flexDirection : 'row', alignItems : 'center'}}>
-                      <Text style={[styles.tagstyle,{backgroundColor:item.alba_type == 0?'#978DC7':'#63579D'}]} category='c2'>
-                        {item.alba_type == 0?'단기':'장기'}
-                      </Text>
-                      <Text category='c2' style={{flex:1.2}} numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
-                    </View>
-                    <View style={{flex : 1, flexDirection : 'row', alignItems : 'center'}}>
-                        <Text style={[styles.tagstyle,{backgroundColor:this.Alba_salary_type[item.alba_salary_type].color}]} category='c2'>
-                        {this.Alba_salary_type[item.alba_salary_type].str}
+              <View style={{flex : 6.5, justifyContent:'space-between'}}>
+                <View style={{margin : 10, padding : 5}}>
+                  <Text style={{color:'#7370DD', marginHorizontal : 10, marginVertical:5}} category='p1'>{item.alba_type == 0?'단기':'장기'}</Text>
+                  <Text category = 'h5' style={{paddingHorizontal:10, paddingVertical:5 ,fontSize : 20, backgroundColor:'white', borderRadius : 20}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
+                  <Text style={{fontSize : 16, marginTop : 5, marginLeft : 10}} numberOfLines={1} ellipsizeMode='tail'>{item.post_content}</Text>
+                </View>
+                <View style = {{flexDirection : 'row', backgroundColor:'white', borderTopRightRadius:15, paddingTop:5, paddingHorizontal:5, flex:1}}>
+                    <View style={{flexDirection : 'row', alignItems : 'center', flex:1}}>
+                        <Text style={{color:'#FF6262'}} category='p1'>
+                          {this.Alba_salary_type[item.alba_salary_type].str+' '}
                         </Text>
-                        <Text category='c2'> {(item.alba_salary != '추후협의'?item.alba_salary+'원':item.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                        <Text category='p1' numberOfLines={1} ellipsizeMode='tail'> 
+                          {(item.alba_salary != '추후협의'?item.alba_salary+'원':item.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}
+                        </Text>
                     </View>
+                    <Text style={{flex:1.2}} category='p1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
                   </View>
               </View>
-              <View style={styles.image}>
-                {(item.post_thumb_use == 0)?
-                  <Image source={require('../../../assets/images/noimage.png')} style={{flex : 1, marginLeft: 10, width : '100%', height : 90, resizeMode:'contain'}}/>
-                  :<Image source={{uri:item.thumb_url}} style={{flex : 1, marginLeft: 10, width : '100%', resizeMode:'contain'}}/>
-                }
+              <View style={{alignItems:'flex-end'}}>
+                <View style={styles.NameView}>
+                  <Text>{item.post_nickname}</Text>
+                  <PostTime datetime = {item.post_datetime}/>
+                </View>
+                <View style={{flexDirection:'row', alignItems:'center',marginHorizontal:5,}}>
+                    <Viewsvg width = {32} height={32}/>
+                    <Text style = {{marginHorizontal:5}} category="p1">{item.post_hit}</Text>
+                </View>
               </View>
+              {(item.post_thumb_use == 0)?
+                <Image source={require('../../../assets/images/noimage.png')} style={styles.image}/>
+                :<Image source={{uri:item.thumb_url}} style={styles.image}/>
+              }
           </View>
-        </View>
-      </Card>
+      </TouchableOpacity>
   );
   
 
@@ -179,31 +184,32 @@ const styles = StyleSheet.create({
   container: {
   },
   contentContainer: {
-    paddingHorizontal: 2,
-    paddingVertical: 2,
-    marginHorizontal : 4,
     backgroundColor : 'white'
   },
   carditem: {
-    marginVertical: 4,
-    borderRadius : 25,
+    margin : 20,
+    marginVertical : 8,
+    borderRadius : 15,
     backgroundColor : '#F4F4F4',
+    flex : 1,
   },
   loader : {
     marginTop : 10,
     alignItems : 'center',
   },
   Text : {
-    flex : 2,
-    },
-  image :{
-    flex : 1,
-    alignItems : 'center',
+    
   },
-  bottomView: {
+  image :{
+    width : 110, 
+    height:110, 
+    borderRadius : 15, 
+    margin : 7
+  },
+  NameView: {
     flex : 1,
-    justifyContent : 'center',
-    alignItems : 'center',
+    alignItems:'flex-end',
+    padding:10,
   },
   bottomButton: {
     position:'absolute',

@@ -63,6 +63,7 @@ export class StackNav extends React.Component{
             isSignedIn:false,
             isSignedOut:false,
             session_mem_id:'',
+            isPushNoti:false,
             context:{
                 signIn:(mem_userid,mem_password,autologin)=>{
                     var formdata= new FormData();
@@ -100,7 +101,10 @@ export class StackNav extends React.Component{
                     .catch(error =>{
                     })
                 },
-                session_mem_id:''
+                session_mem_id:'',
+                isPushNoti:()=>{
+                    return this.state.isPushNoti
+                }
             }
         }
         
@@ -164,6 +168,9 @@ export class StackNav extends React.Component{
             .getInitialNotification()
             .then(async remoteMessage=>{
             console.log('getInitialNotification stack'+remoteMessage)
+                if(remoteMessage!=null){
+                    this.setState({isPushNoti:true})
+                }
             }) 
             
     }

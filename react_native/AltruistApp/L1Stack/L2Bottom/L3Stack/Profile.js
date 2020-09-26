@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {SafeAreaView, StyleSheet, View, Image, ScrollView} from 'react-native';
+import {SafeAreaView, StyleSheet, View, Image, ScrollView,TouchableOpacity} from 'react-native';
 import {
   Layout,
   Text,
@@ -13,6 +13,7 @@ import {
 } from '@ui-kitten/components';
 import Tag from '../../../components/tag.component';
 import Axios from 'axios';
+import {WriteContentToptab} from '../../../components/WriteContentTopBar'
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
@@ -29,7 +30,6 @@ class AltProfileScreen extends React.Component {
     console.log(this.props.route.params);
     await this.getAltProfile(this.props.route.params);
   }
-
   getAltProfile = async (alt_id) => {
     let formdata = new FormData();
     formdata.append('alt_id', alt_id);
@@ -64,12 +64,16 @@ class AltProfileScreen extends React.Component {
       </View>
     ) : (
       <SafeAreaView style={{flex: 1}}>
-        <TopNavigation
-          title="이타주의자"
-          alignment="center"
-          accessoryLeft={this.BackAction}
-          style={{backgroundColor: '#B09BDE'}}
-        />
+        <WriteContentToptab
+                text="이타주의자"
+                func={() => {
+                    this.filterSpamKeyword();
+                }}
+                gbckfunc={() => {
+                    this.props.navigation.goBack();
+                }}
+                gbckuse={true}
+            />
         <ScrollView>
           <View
             style={{
@@ -78,17 +82,14 @@ class AltProfileScreen extends React.Component {
               padding: 10,
               margin: 5,
             }}>
-            <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-              <Tag>{altruist.alt_profile.alt_title}</Tag>
-            </View>
             <View
               style={{
                 flexDirection: 'row',
-                alignItems: 'flex-end',
+                alignItems: 'center',
                 justifyContent: 'flex-start',
               }}>
               <Image
-                source={{uri: 'http://dev.unyict.org/uploads/noimage.gif'}}
+                source={{uri : 'http://dev.unyict.org/'+ (altruist.alt_profile.alt_photo !=null ? altruist.alt_profile.alt_photo: 'uploads/altwink-rect.png')}}
                 style={{
                   width: 150,
                   height: 150,
@@ -104,36 +105,16 @@ class AltProfileScreen extends React.Component {
                 <Text category="h6" numberOfLines={2}>
                   {altruist.alt_profile.alt_aboutme}
                 </Text>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Icon
-                    style={{width: 30, height: 30}}
-                    fill="yellow"
-                    name="star"
-                  />
-                  <Icon
-                    style={{width: 30, height: 30}}
-                    fill="yellow"
-                    name="star"
-                  />
-                  <Icon
-                    style={{width: 30, height: 30}}
-                    fill="yellow"
-                    name="star"
-                  />
-                  <Icon
-                    style={{width: 30, height: 30}}
-                    fill="yellow"
-                    name="star"
-                  />
-                  <Icon
-                    style={{width: 30, height: 30}}
-                    fill="yellow"
-                    name="star"
-                  />
-                  <Text> 답변율 99.9%</Text>
-                </View>
               </View>
             </View>
+            
+        <TouchableOpacity 
+          style={{position:'absolute',right:10,bottom:10,borderRadius:7, backgroundColor:'#63579D',paddingVertical:8,paddingHorizontal:16}} 
+          onPress={() =>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:altruist.alt_profile.mem_id,altruist})}>
+          <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>
+            질문하기
+          </Text>
+        </TouchableOpacity>
           </View>
 
           <View
@@ -143,7 +124,7 @@ class AltProfileScreen extends React.Component {
               padding: 10,
               margin: 5,
             }}>
-            <Text category="h5">활동 분야</Text>
+            <Text category="h5">전문 분야</Text>
             <View
               style={{
                 flexDirection: 'row',
@@ -151,7 +132,7 @@ class AltProfileScreen extends React.Component {
                 marginVertical: 5,
               }}>
               {altruist.alt_area.map((i) => (
-                <Tag key={i.act_id}>{i.act_content}</Tag>
+                <Tag style={{color:'#63579D',fontWeight:'bold'}} key={i.act_id}>{i.act_content}</Tag>
               ))}
             </View>
           </View>
@@ -164,6 +145,16 @@ class AltProfileScreen extends React.Component {
               margin: 5,
             }}>
             <Text category="h5">멘토 소개</Text>
+            <Text category="p2">{altruist.alt_profile.alt_aboutme}</Text>
+          </View>
+          <View
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 20,
+              padding: 10,
+              margin: 5,
+            }}>
+            <Text category="h5">인사말</Text>
             <Text category="p2">{altruist.alt_profile.alt_content}</Text>
           </View>
 
@@ -183,65 +174,7 @@ class AltProfileScreen extends React.Component {
             ))}
           </View>
 
-          <View
-            style={{
-              backgroundColor: 'white',
-              borderRadius: 20,
-              padding: 10,
-              margin: 5,
-            }}>
-            <Text category="h5">기타 사항</Text>
-            <Text category="p2">
-              아무거나 물어보셔도 상관없습니다. 감사합니다 ^^
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: 'white',
-              borderRadius: 20,
-              padding: 10,
-              margin: 5,
-            }}>
-            <Text category="h5">후기</Text>
-            <ScrollView>
-              <View
-                style={{
-                  backgroundColor: '#F4F4F4',
-                  borderRadius: 20,
-                  padding: 10,
-                  margin: 5,
-                }}>
-                <Text category="h5">김쫀떡</Text>
-                <Text category="p2">쫀떡이 까까 줘라</Text>
-              </View>
-              <View
-                style={{
-                  backgroundColor: '#F4F4F4',
-                  borderRadius: 20,
-                  padding: 10,
-                  margin: 5,
-                }}>
-                <Text category="h5">이무기</Text>
-                <Text category="p2">용의 꼬리가 되느니 뱀의 머리가 되겠다</Text>
-              </View>
-              <View
-                style={{
-                  backgroundColor: '#F4F4F4',
-                  borderRadius: 20,
-                  padding: 10,
-                  margin: 5,
-                }}>
-                <Text category="h5">기타 사항</Text>
-                <Text category="p2">
-                  아무거나 물어보셔도 상관없습니다. 감사합니다 ^^
-                </Text>
-              </View>
-            </ScrollView>
-          </View>
         </ScrollView>
-        <Button style={styles.bottomButton} onPress={() => alert('question')}>
-          질문하기
-        </Button>
       </SafeAreaView>
     );
   }
