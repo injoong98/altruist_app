@@ -21,7 +21,7 @@ export class WriteContentToptab extends React.Component {
                         <Backsvg width={25} height={25}/>
                     </TouchableOpacity>
                 </View>
-                <View style={{flex:3, justifyContent:'center', alignItems:'center'}}>
+                <View style={{flex:5, justifyContent:'center', alignItems:'center'}}>
                     <Text category='h2' style={styles.toptext}>{text}</Text>
                 </View>
                 <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
@@ -30,7 +30,7 @@ export class WriteContentToptab extends React.Component {
                     null
                     :
                     right =='upload'||right =='edit' ?
-                    <TouchableOpacity onPress={func} style={{paddingHorizontal:13,paddingVertical:8,backgroundColor:'#63579D',borderRadius:8.5}}>
+                    <TouchableOpacity onPress={func} style={{paddingHorizontal:13,paddingVertical:8,marginRight:8,backgroundColor:'#63579D',borderRadius:8.5}}>
                             <Text style={{fontSize:18,fontWeight:'700',color:'#ffffff'}}>
                             {right =='upload' ? '완료' :'수정'}
                             </Text>

@@ -376,10 +376,10 @@ class MarketWrite extends React.Component {
     StatusBar.setBarStyle('dark-content');
   }
 
-  componentWillUnmount() {
-    StatusBar.setBackgroundColor('#B09BDE');
-    StatusBar.setBarStyle('default');
-  }
+  // componentWillUnmount() {
+  //   StatusBar.setBackgroundColor('#B09BDE');
+  //   StatusBar.setBarStyle('default');
+  // }
 
   submitPost = async () => {
     console.log(this.state);
@@ -436,6 +436,7 @@ class MarketWrite extends React.Component {
         }
       })
       .catch((error) => {
+        this.setState({spinnerModalVisible: false});
         console.log(error);
         alert(JSON.stringify(error));
       });
@@ -630,6 +631,8 @@ class MarketWrite extends React.Component {
               this.filterSpamKeyword();
             }}
             gbckfunc={() => {
+              StatusBar.setBackgroundColor('#B09BDE');
+              StatusBar.setBarStyle('default');
               navigation.goBack();
             }}
             gbckuse={true}
