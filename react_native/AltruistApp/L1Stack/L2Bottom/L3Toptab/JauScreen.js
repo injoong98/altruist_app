@@ -182,6 +182,7 @@ class JauScreen extends React.Component {
 					:imageData.length>2
 					?imageData.slice(0,3).map(i=>
 						<Contrast 
+							key={i.id}
 							style={{width:'32%',height:(Dimensions.get("window").width-96)/3}}
 							amount={imageData.length>3 && i.index==2?0.3:1}
 						>

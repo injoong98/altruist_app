@@ -826,21 +826,29 @@ class MarketContent extends React.Component {
         this.getCommentData(post_id);
     }
 
-    // postDealStatus = async () => {
-    //     var formdata = new FormData();
-    //     formdata.append('deal_status', 0);
-    //     console.log(formdata);
-    //     await Axios.post('http://dev.unyict.org/api/board_write/write/b-a-2',formdata)
-    //     .then(res=>{
-    //         this.setState({spinnerModalVisible:false})
-    //         this.props.navigation.goBack();
-    //         this.props.route.params.OnGoback();
-    //         alert(JSON.stringify(res.data))
-    //     })
-    //     .catch(err=>{
-    //         alert(JSON.stringify(err))
-    //     })
-    // }
+    postDealStatus = async () => {
+        var formdata = new FormData();
+        formdata.append('post_id', this.state.post.post_id);
+        console.log(formdata);
+        await Axios.post('http://dev.unyict.org/api/board_write/finish_deal',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+            }else{
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                this.props.navigation.goBack();
+                this.props.route.params.OnGoback();
+            }
+        })
+        //     this.setState({spinnerModalVisible:false})
+        //     this.props.navigation.goBack();
+        //     this.props.route.params.OnGoback();
+        //     alert(JSON.stringify(res.data))
+        // })
+        .catch(err=>{
+            alert(JSON.stringify(err))
+        })
+    }
     
     modalList = [
         {
@@ -858,6 +866,10 @@ class MarketContent extends React.Component {
         {
             text : '이 댓글을 삭제하시겠습니까?',
             func : this.cmtDelete,
+        },
+        {
+            text : '상품을 판매완료 설정하시겠습니까?',
+            func : this.postDealStatus,
         },
     ]
 
@@ -1043,6 +1055,11 @@ class MarketContent extends React.Component {
                     backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                     onBackdropPress={() => this.setState({popoverVisible:false})}>
                     <View style={{borderRadius:15, backgroundColor:'white'}}>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 4})}}
+                            style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>판매완료</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity 
                             onPress={()=>{this.postscrap();this.setState({popoverVisible:false})}}
                             style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
@@ -1797,7 +1814,11 @@ class IlbanContent extends Component {
                 <View style={{alignItems:'center', width:'100%', paddingHorizontal:20}}>
                     {image
                     ?image.map((i, index)=>
-                        <TouchableOpacity style={{width:'100%', height:(Dimensions.get("window").width-70), marginTop:10}} onPress={()=>this.setState({imageIndex:index, imageModalVisible:true})}>
+                        <TouchableOpacity 
+                            key={i.props.id}
+                            style={{width:'100%', height:(Dimensions.get("window").width-70), marginTop:10}} 
+                            onPress={()=>this.setState({imageIndex:index, imageModalVisible:true})}
+                        >
                             <Image 
                                 key={i.props.id}
                                 source={{uri : i.url}}
