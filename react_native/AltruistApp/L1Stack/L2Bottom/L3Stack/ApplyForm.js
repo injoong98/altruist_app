@@ -30,19 +30,22 @@ import {
   Select,
   SelectItem,
   RadioGroup,
-  Modal
+  Modal,
+  Popover,
+  Spinner
 } from '@ui-kitten/components';
 import {WriteContentToptab} from '../../../components/WriteContentTopBar';
 import {Signing} from '../../Context';
 import axios from 'axios';
 import Tag from '../../../components/tag.component'
 import Camsvg from '../../../assets/icons/Icon_Cam.svg';
+import Clipsvg from '../../../assets/icons/clip.svg';
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CommonTextInput = (props) =>
 (
   <TextInput 
     {...props}
-    style={[styles.contentInput,props.styles]}
+    style={[styles.contentInput,props.style]}
     multiline={true}
     placeholderTextColor='#A897C2'
   />
@@ -69,9 +72,12 @@ class AltApplyFormScreen extends React.Component {
       arrayForLoop:[],
       selectedIndex:'',
       filterModalVisible:false,
+      spinnerModalVisible:false,
       actSelected:[],
       category:[],
-      alt_photo:{}
+      alt_photo:{},
+      userinfo:{},
+      isLoading:true
     };
   }
   static contextType = Signing;
@@ -113,58 +119,77 @@ class AltApplyFormScreen extends React.Component {
     const {i} = props
     const {acv_open,acv_type,acv_year,acv_content,acv_final} = this.state;
     return(
-          <View style={{flexDirection:'row',justifyContent:'space-evenly'}}>
-                      <View>
-                            <CheckBox
-                              checked={acv_open[i]}
-                              onChange={nextChk => {acv_open[i]=nextChk;this.setState({acv_open});console.log(acv_open)}}
-                            />
-                      </View>
-                      <View style={{width:100}}>
-                      <Select
-                          value={ ()=>
-                            <Text>
-                              {!acv_type[i]? '선택': acv_type[i] == 'H'? '학력':acv_type[i] == 'J'? '직장' : '기타'}
-                            </Text>
-                          }
-                          selectedIndex={selectedIndex}
-                          onSelect={index =>{
-                            setSelectedIndex(index);
-                            acv_type[i]=index.row==0? 'H':index.row==1? 'J':'E';
-                            this.setState({selectedIndex,acv_type});
-                          }}
-                          >
-                          <SelectItem title='학력'/>
-                          <SelectItem title='직장'/>
-                          <SelectItem title='기타'/>
-                        </Select>
-                      </View>
-                      <View>
-                          <TextInput
-                            value= {acv_year[i]}
-                            onChangeText={(text)=>{acv_year[i]=text;this.setState({acv_year});}}
-                            placeholder='ex)2010~'
-                            style={{backgroundColor:'#ffffff'}}
-                            keyboardType='default'
-                          />
-                      </View>
-                      <View>
-                          <TextInput
-                            value= {acv_content[i]}
-                            onChangeText={(text)=>{acv_content[i]=text;this.setState({acv_content})}}
-                            placeholder='경력내용'
-                            style={{backgroundColor:'#ffffff'}}
-                          />
-                      </View>
-                      <View>
-                      <CheckBox
-                              checked={acv_final[i]}
-                              onChange={nextChk => {acv_final[i]=nextChk;this.setState({acv_final})}}
-                            />
-                      </View>
-                      <TouchableHighlight onPress={()=>this.cancleCareer(i)}>
-                        <Text>x</Text>
-                      </TouchableHighlight>
+          <View style={{flexDirection:'row',justifyContent:'space-evenly',alignItems:'center'}}>
+              <View style={{flex:2,alignItems:'center'}}>
+                    <CheckBox
+                      checked={acv_open[i]}
+                      onChange={nextChk => {acv_open[i]=nextChk;this.setState({acv_open});console.log(acv_open)}}
+                    />
+              </View>
+              <View style={{flex:3.5}}>
+                <Select
+                    value={ ()=>
+                      <Text style={{fontSize:12}}>
+                        {!acv_type[i]? '선택': acv_type[i] == 'H'? '학력':acv_type[i] == 'J'? '직장' : '기타'}
+                      </Text>
+                    }
+                    selectedIndex={selectedIndex}
+                    onSelect={index =>{
+                      setSelectedIndex(index);
+                      acv_type[i]=index.row==0? 'H':index.row==1? 'J':'E';
+                      this.setState({selectedIndex,acv_type});
+                    }}
+                    style={{}}
+                    >
+                    <SelectItem 
+                      title={()=>
+                        <Text style={{fontSize:12}}>
+                          학력
+                        </Text>
+                      }
+                    />
+                    <SelectItem 
+                      title={()=>
+                        <Text style={{fontSize:12}}>
+                          직장
+                        </Text>
+                      }
+                    />
+                    <SelectItem 
+                      title={()=>
+                        <Text style={{fontSize:12}}>
+                          기타
+                        </Text>
+                      }
+                    />
+                </Select>
+              </View>
+              <View style={{flex:5,paddingHorizontal:3}}>
+                  <TextInput
+                    value= {acv_year[i]}
+                    onChangeText={(text)=>{acv_year[i]=text;this.setState({acv_year});}}
+                    placeholder='ex)2010~'
+                    style={{backgroundColor:'#ffffff',fontSize:10,padding:0}}
+                    keyboardType='default'
+                  />
+              </View>
+              <View style={{flex:14,paddingHorizontal:3}}>
+                  <TextInput
+                    value= {acv_content[i]}
+                    onChangeText={(text)=>{acv_content[i]=text;this.setState({acv_content})}}
+                    placeholder='경력내용'
+                    style={{backgroundColor:'#ffffff',fontSize:10,padding:0}}
+                  />
+              </View>
+              <View style={{flex:4,alignItems:'center',justifyContent:'space-evenly',flexDirection:'row'}}>
+                <CheckBox
+                  checked={acv_final[i]}
+                  onChange={nextChk => {acv_final[i]=nextChk;this.setState({acv_final})}}
+                />
+              <TouchableHighlight style={{width:15,height:15,justifyContent:'center',backgroundColor:'#c4c4c4'}} onPress={()=>this.cancleCareer(i)}>
+                <View style={{borderWidth:1}} />
+              </TouchableHighlight>
+              </View>
             </View>
     )
   }
@@ -233,7 +258,17 @@ class AltApplyFormScreen extends React.Component {
       // show errors
     }
   }
-
+  actSelect = (act) =>{
+    const {actSelected} = this.state
+    if(actSelected.includes(act)){
+      actSelected.splice(actSelected.indexOf(act),1)
+      this.setState({actSelected})
+    }else{
+      if(actSelected.length<5){
+        this.setState({actSelected:actSelected.concat(act)})
+      }
+    }
+  }
   BackAction = () => (
     <TopNavigationAction
       icon={BackIcon}
@@ -244,6 +279,7 @@ class AltApplyFormScreen extends React.Component {
   );
 
   setAltruist = async () => {
+    this.setState({spinnerModalVisible:true})
     const {
         mem_id,
         alt_photo,
@@ -266,7 +302,7 @@ class AltApplyFormScreen extends React.Component {
     formdata.append("mem_id", mem_id);
     formdata.append("alt_aboutme", alt_aboutme);
     formdata.append("alt_content", alt_content);
-    formdata.append("alt_answertype", alt_answertype);
+    formdata.append("alt_answertype", 3);
     formdata.append("alt_status", 'R');
     formdata.append("alt_honor", 0);
     formdata.append("alt_photo", {
@@ -300,29 +336,20 @@ class AltApplyFormScreen extends React.Component {
     await axios
       .post('http://dev.unyict.org/api/altruists/apply', formdata)
       .then((response) => {
-        console.log(response);
-        console.log(response.data.status);
+        this.setState({spinnerModalVisible:false})
         if (response.data.status == '500') {
-          Alert.alert('Error1', `${response.data.message}`, [{text: 'OK'}], {
-            cancelable: false,
-          });
+          this.props.navigation.navigate('ApplyFail',{message:response.data.message});
+          
         } else {
-          Alert.alert(
-            '이타주의자',
-            `'지원 완료 \n'${response.data.message}`,
-            [
-              {
-                text: 'OK',
-              },
-            ],
-            {cancelable: true},
-          );
+          this.props.navigation.navigate('ApplyComplete');
         }
       })
 
       .catch((error) => {
+        this.setState({spinnerModalVisible:false})
         console.log('error2'+JSON.stringify(error));
-        alert('error2'+error);
+        this.props.navigation.navigate('ApplyFail',{message:error});
+
       });
   };
 
@@ -332,19 +359,31 @@ class AltApplyFormScreen extends React.Component {
       .then((res) => {
         //console.log(res)
         this.setState({category: res.data.data});
-        console.log(this.state.category);
       })
       .catch((err) => {
         alert(err);
       });
   };
-
+  getUserInfo = async() =>{
+    await axios
+      .get('http://dev.unyict.org/api/mypage')
+      .then((res) => {
+        //console.log(res)
+        this.setState({userinfo:res.data.myinfo});
+        console.log('userinfo = '+JSON.stringify(res.data.myinfo));
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  }
   componentDidMount() {
     StatusBar.setBackgroundColor('#F4F4F4');
     StatusBar.setBarStyle('dark-content');
     this.getAreaCat();
-    this.setState({mem_id:this.context.session_mem_id});
+    this.getUserInfo();
+    this.setState({mem_id:this.context.session_mem_id,isLoading:false});
     this.arrayForLoop();
+
   }
   componentWillUnmount(){
     StatusBar.setBackgroundColor('#B09BDE');
@@ -353,7 +392,7 @@ class AltApplyFormScreen extends React.Component {
 
   render() {
     const {width,height} =Dimensions.get('window')
-    const {filterModalVisible,actSelected,alt_content,alt_aboutme,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,alt_photo} = this.state;
+    const {isLoading,userinfo,spinnerModalVisible,filterModalVisible,actSelected,alt_content,alt_aboutme,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,alt_photo} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <WriteContentToptab
@@ -370,125 +409,58 @@ class AltApplyFormScreen extends React.Component {
                 <View >
                   <Image 
                     style={{width:100,height:100}}
-                    source={{uri:!alt_photo.uri? 'http://dev.unyict.org/uploads/noimage.gif':alt_photo.uri}}/>
+                    source={{uri:!alt_photo.uri? 'http://dev.unyict.org/uploads/altwink.png':alt_photo.uri}}/>
                   <Camsvg style={{position:'absolute',bottom:0,right:0}}/>
                 </View>
               </TouchableHighlight>
             <View style={{width:(width-100)*0.9}}>
-              <CommonTextInput
+              <Text style={[styles.nameText]}>
+                {isLoading ? null : userinfo.mem_username !='' ? userinfo.mem_username : userinfo.mem_nickname}
+              </Text>
+              <TextInput
                 value={alt_aboutme}
                 onChangeText={(text) => this.setState({alt_aboutme:text})}
                 placeholder='자기PR (50자 이내)'
+                style={[styles.contentInput,{}]}
+                multiline={true}
+                placeholderTextColor='#A897C2'
+                textAlignVertical="top"
                 />
             </View>
           </View>
           <View style={{marginTop:25}}>
-            <CommonTextInput
+            <TextInput
               value={alt_content}
               onChangeText={(text) => this.setState({alt_content: text})}
               placeholder='자기소개'
-              style={{height:100}}
+              style={[styles.contentInput,{minHeight:75}]}
+              multiline={true}
+              textAlignVertical='top'
+              placeholderTextColor='#A897C2'
             />
           </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text>답변허용</Text>
-            
-            <RadioGroup
-            style={{flexDirection:'row'}}
-              selectedIndex={selectedIndex}
-              onChange={(index) => {
-                console.log(index)
-                this.setState({selectedIndex:index,alt_answertype:index});
-              }}>
-              <Radio>
-                <Text style={{color: '#63579D'}} category="p1">
-                  답변 x
-                </Text>
-              </Radio>
-              <Radio>
-                <Text style={{color: '#63579D'}} category="p1">
-                  1대1 질문만
-                </Text>
-              </Radio>
-              <Radio>
-                <Text style={{color: '#63579D'}} category="p1">
-                  1대다,1대1둘다
-                </Text>
-              </Radio>
-            </RadioGroup>
+          <View style={{marginLeft:10,marginTop:40}}>
+            <Text style={styles.fieldTitle}>전문 분야</Text>
           </View>
-          {/* 경력구분 */}
-          <Text>경력 사항</Text>
-          <View>
-            <View style={{flexDirection:'row',justifyContent:'space-evenly'}}>
-                <View>
-                  <Text style={{fontSize:12,lineHeight:16}}>
-                  공개
-                  </Text>
-                </View>
-                <View>
-                  <Text style={{fontSize:12,lineHeight:16}}>
-                  구분
-                  </Text>
-                </View>
-                <View>
-                  <Text style={{fontSize:12,lineHeight:16}}>
-                  년도
-                  </Text>
-                </View>
-                <View>
-                  <Text style={{fontSize:12,lineHeight:16}}>
-                  내용
-                  </Text>
-                </View>
-                <View>
-                  <Text style={{fontSize:12,lineHeight:16}}>
-                  최종 경력
-                  </Text>
-                </View>
-            </View>
-            {
-              arrayForLoop.map((item,index)=>(
-                <this.RenderCareerInput i={index} key={index}/>
-              ))
-            }
-            <View style={{flexDirection:'row'}}>
-              <Button onPress={()=>{this.arrayForLoop();}}>+</Button>
-            </View>
-          </View>
-          <Text>경력 증빙 자료</Text>
-          <View>
-          {
-            arrayForLoop.map((item,index)=>(
-             <TouchableHighlight onPress={()=>this.attatchFile(index)} key={index} >
-              <View style={{flexDirection:'row'}} >
-                <Text>첨부파일 {index+1} 추가</Text>
-                <Text>{!acv_file1[index]? null:acv_file1[index].name}</Text>
-                <TouchableHighlight onPress={()=>{acv_file1.splice(index,1);this.setState({acv_file1})}}><Text>x</Text></TouchableHighlight>
-              </View>
-             </TouchableHighlight>
-            ))
-          }
-          </View>
-          <View style={{display:'flex',flexDirection:'row'}}>
+          <View style={{display:'flex',flexDirection:'row',marginTop:19,marginLeft:10}}>
                     {
                         <TouchableOpacity 
-                            style = {{height:35,width:35,backgroundColor:'#B09BDE',borderRadius:10,justifyContent:'center'}} 
+                            style = {{height:21,width:23,backgroundColor:'#63579D',borderRadius:7,justifyContent:'center',marginRight:10}} 
                             onPress={()=>this.setState({filterModalVisible:true})}
                         >
-                            <Text category='h2' style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
+                            <Text style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
                         </TouchableOpacity>
                     }
                     {
                         actSelected.length >0 ?
-                        <ScrollView horizontal={true} style={{}} >
+                        <ScrollView horizontal={true} style={styles.areaContainer} >
                           {actSelected.map((act,index) => (
                             <TouchableHighlight
                                 onPress ={()=>{actSelected.splice(index,1);this.setState({actSelected})}}
                                 key = {act.act_content}
                             >
                                 <View 
-                                    style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',padding:5}} 
+                                    style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',marginRight:3}} 
                                 >
                                     <Tag style={[styles.tagSelected,{marginRight:3}]}
                                         key = {act.act_content}
@@ -503,23 +475,104 @@ class AltApplyFormScreen extends React.Component {
                           ))}
                       </ScrollView >
                         :
-                        <View>
-                            <Text style={{marginVertical:9,fontSize:15}} category = 'c2'>전문 분야를 선택하세요</Text>
+                        <View style={styles.areaContainer}>
+                            <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}}> 전문 분야를 선택하세요</Text>
                         </View>
-
                     }
-                    </View>
-          <View>
-            <Button onPress={()=>console.log(
-              '\nacv_file1 : '+JSON.stringify(acv_file1),'\nacv_open : '+JSON.stringify(acv_open),'\nacv_type : '+JSON.stringify(acv_type),'\nacv_year : '+JSON.stringify(acv_year),'\nacv_content : '+JSON.stringify(acv_content),'\nacv_final : '+JSON.stringify( acv_final)
-            )}>
-              states chk
-            </Button>
-            <Button style={{margin: 10}}>취소</Button>
-            {/* <Button style={{margin:10}} onPress={()=>navigation.navigate('AltApplyComplete')}>완료</Button> */}
-            <Button style={{margin: 10}} onPress={() => this.setAltruist()}>
-              완료
-            </Button>
+          </View>
+          {/* 경력구분 */}
+          <View style={{marginTop:40,paddingLeft:10,flexDirection:'row',alignItems:'center'}}>
+            <Text style={styles.fieldTitle}>경력 사항</Text>
+            <Text style={[styles.fieldTitle,{fontSize:12}]}>[ 학력 | 직장 | 기타]</Text>
+          </View>
+          <View style={{marginTop:20}}>
+            <View style={{flexDirection:'row',justifyContent:'space-evenly'}}>
+                <View style={{flex:2,alignItems:'center'}}>
+                  <Text style={styles.careerHead}>
+                  공개
+                  </Text>
+                </View>
+                <View style={{flex:3.5,alignItems:'center'}}>
+                  <Text style={styles.careerHead}>
+                  구분
+                  </Text>
+                </View>
+                <View style={{flex:5,alignItems:'center'}}>
+                  <Text style={styles.careerHead}>
+                  년도
+                  </Text>
+                </View>
+                <View style={{flex:14,alignItems:'center'}}>
+                  <Text style={styles.careerHead}>
+                  내용
+                  </Text>
+                </View>
+                <View style={{flex:4,alignItems:'center'}}>
+                  <Text style={styles.careerHead}>
+                  최종경력
+                  </Text>
+                </View>
+            </View>
+            {
+              arrayForLoop.map((item,index)=>(
+                <this.RenderCareerInput i={index} key={index}/>
+              ))
+            }
+            <TouchableOpacity 
+                style = {{marginTop:10,height:21,width:23,backgroundColor:'#63579D',borderRadius:7,justifyContent:'center',marginRight:10}} 
+                onPress={()=>this.arrayForLoop()}
+            >
+                <Text style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
+            </TouchableOpacity>
+          </View>
+
+          <View style={{marginTop:40,paddingLeft:10,}}>
+            <Text style={styles.fieldTitle}>경력 사항 첨부파일</Text>
+            <View style={{flexDirection:'row',alignItems:'flex-end',marginTop:16}}>
+              <Text>-</Text>
+              <Text style={{fontWeight:'bold'}}>관리자 확인</Text>
+              <Text>에만 사용되며</Text> 
+              <Text style={{fontWeight:'bold'}}>동의없이 공개</Text>
+              <Text>하지 않습니다</Text>
+            </View>
+            <View style={{flexDirection:'row',alignItems:'flex-end',marginTop:9}}>
+              <Text>- </Text>
+              <Text style={{fontWeight:'bold'}}>경력사항 공개</Text>
+              <Text>를 원하시면 첨부파일로 인증 부탁드립니다.</Text>
+            </View>
+
+          </View>
+          <View style={{marginTop:20}}>
+          {
+            arrayForLoop.map((item,index)=>(
+             <TouchableHighlight onPress={()=>this.attatchFile(index)} key={index} >
+              <View style={{flexDirection:'row',alignItems:'center'}} >
+                <Clipsvg width={35} height={35}/>
+                <Text style={{marginLeft:15}}>
+                  {!acv_file1[index]? `첨부파일 ${index+1} 추가`:acv_file1[index].name}
+                </Text>
+                {
+                  !acv_file1[index]?
+                  null
+                  :
+                <TouchableHighlight 
+                    style={{marginLeft:5, width:15,height:15,justifyContent:'center',backgroundColor:'#c4c4c4'}} 
+                    onPress={()=>{acv_file1.splice(index,1);this.setState({acv_file1})}}>
+                  <View style={{borderWidth:1}} />
+                </TouchableHighlight>
+                }
+              </View>
+             </TouchableHighlight>
+            ))
+          }
+          </View>
+          
+          <View style={{alignItems:'center',justifyContent:'center',marginTop:30}}>  
+          <TouchableHighlight 
+            style={{alignItems:'center',justifyContent:'center',borderRadius:7.5,height:33,width:60,backgroundColor:'#63579D'}}
+            onPress={() => this.setAltruist()}>
+            <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>신청</Text>
+          </TouchableHighlight>
           </View>
         </ScrollView>
             <Modal
@@ -529,9 +582,11 @@ class AltApplyFormScreen extends React.Component {
                 style={{justifyContent:'center'}}
             >
                 <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
-                    <View style={{alignItems:'center',justifyContent:'center'}}>
-                        <Text category='h2' style={{fontSize:13,marginVertical:11,color:'#63579D'}}>필터 적용하기</Text>
-                        <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginBottom:15}}></View>
+                    <View style={{alignItems:'center',justifyContent:'center',marginTop:23}}>
+                        <Text category='h2' style={{fontSize:18,color:'#000000'}}>전문 분야 선택</Text>
+                        <Text style={{fontSize:10,color:'#878787',marginTop:10}}>최대 5가지 선택할 수 있습니다.</Text>
+                        <Text style={{fontSize:10,color:'#878787'}}>가장 자신있는 분야를 선택해주세요.abs</Text>
+                        <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginVertical:15}}></View>
                     </View>
                     <ScrollView ScrollViewstyle = {{}}>
                         <View style = {{justifyContent:'space-between',flexDirection : 'row', flexWrap: 'wrap',paddingHorizontal:'5%'}}>
@@ -539,12 +594,7 @@ class AltApplyFormScreen extends React.Component {
                                 <Tag 
                                     key = {act.act_content}
                                     onPress ={()=>{
-                                        if(actSelected.includes(act)){
-                                            actSelected.splice(actSelected.indexOf(act),1)
-                                            this.setState({actSelected})
-                                        }else{
-                                            this.setState({actSelected:actSelected.concat(act)})
-                                        }
+                                      this.actSelect(act);  
                                     }}
                                     style={[{padding:4},actSelected.includes(act) ? styles.tagSelected:{}]}
                                 >
@@ -562,6 +612,12 @@ class AltApplyFormScreen extends React.Component {
                         </TouchableHighlight>
                     </View>
                 </View>
+            </Modal>
+            <Modal
+                visible={spinnerModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
+            >
+                <Spinner size='giant'/>
             </Modal>
       </SafeAreaView>
     );
@@ -597,14 +653,45 @@ const styles = StyleSheet.create({
   contentInput: {
     backgroundColor: '#ffffff',
     borderRadius: 14,
+    paddingLeft:14,
     marginHorizontal: 10,
-    marginBottom: 20,
-    minHeight:100
-    // 휴대폰 width - titleInput
+    color:'#63579D',
   },
   tagSelected:{
     color:'#63579D'
-},
+  },
+  nameText:{
+    color:'#63579D',
+    fontWeight:'bold',
+    height:33,
+    fontSize:18,
+    backgroundColor:'#ffffff',
+    paddingLeft:14,
+    marginHorizontal: 10,
+    marginBottom:10,
+    borderRadius:14,
+    textAlignVertical:'center'
+  },
+  areaContainer:{
+    marginRight:10,
+    backgroundColor:'#ffffff',
+    borderRadius:5,
+    paddingHorizontal:3,
+    paddingVertical:2
+  },
+  fieldTitle:{
+    color:'#63579D',
+    fontSize:15,
+    fontWeight:'bold'
+  },
+  careerHead:{
+    fontSize:12,
+    lineHeight:16,
+    color:'#63579D'
+  },
+  desc:{
+    color:'#000000'
+  }
 });
 
 export default AltApplyFormScreen;
