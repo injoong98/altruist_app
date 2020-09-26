@@ -56,7 +56,7 @@ class AltMainScreen extends React.Component{
         
     }
     getAltruistsList = async() => {
-        await axios.get('http://dev.unyict.org/api/altruists/lists')
+        await axios.get('http://dev.unyict.org/api/altruists/lists?rand=Y')
         .then((response) => {
             this.setState({lists:response.data.view.data.list,alt_list_showing:response.data.view.data.list})
         })
