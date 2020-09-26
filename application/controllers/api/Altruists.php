@@ -1229,11 +1229,25 @@ class Altruists extends CB_Controller
 
 		$view = array();
 		$result = array();
-		$where_alt['alt_status'] = 'Y';
+		$alt_area[] =array();
+		$alt_ids = array();
+		if($this->input->post('alt_area')) {
 
-		// 이타주의자들 프로필에 등록이 된 인원
+			$alt_area = $this->input->post('alt_area');
+			//전문 영역을 가지는 이타주의자
+			$alt_area  = $this->Altruists_model->cb_mem_id_by_area($alt_area);
+			foreach ($alt_area as $key => $val) {
+				$alt_ids[] = $val['alt_id'];
+			}
 
-		$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
+			// 전문영역에 속하는 
+			$alt_profile['list']  = $this->Altruists_model->get_by_are_ids($alt_ids);
+		
+		}else {
+
+			$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
+		}
+
 		//shuffle($alt_profile); 
 		if ($alt_profile) {
 			foreach ($alt_profile['list'] as $key_alt => $val_alt) {
