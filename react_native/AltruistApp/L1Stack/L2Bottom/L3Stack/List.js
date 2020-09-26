@@ -107,7 +107,7 @@ class AltListScreen extends React.Component{
         console.log('You called stupid filter function!! :[')
     }
     getAltruistsList = async() => {
-        await axios.get('http://dev.unyict.org/api/altruists/lists')
+        await axios.get('http://dev.unyict.org/api/altruists/lists?rand=Y')
         .then((response) => {
             this.setState({lists:response.data.view.data.list,alt_list_showing:response.data.view.data.list})
         })
@@ -129,7 +129,7 @@ class AltListScreen extends React.Component{
         })
     }
     componentDidMount(){
-        this.setState(this.getAltruistsList());
+        this.getAltruistsList();
         this.getAreaCategory();
     }
 
