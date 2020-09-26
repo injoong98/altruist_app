@@ -12,8 +12,8 @@ export class WriteContentToptab extends React.Component {
     }
 
     render(){
-        const {right,gbckfunc,text,func} = this.props
-        const bckclr = right =='upload'||right =='edit'? '#f4f4f4': '#ffffff'
+        const {right,gbckfunc,text,func, backgroundColor} = this.props
+        const bckclr = !backgroundColor?(right =='upload'||right =='edit'? '#f4f4f4': '#ffffff'):backgroundColor
         return(
             <View style={[{backgroundColor:bckclr,height:49, flexDirection:'row'},this.props.style]} >
                 <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
@@ -35,7 +35,6 @@ export class WriteContentToptab extends React.Component {
                             {right =='upload' ? '완료' :'수정'}
                             </Text>
                     </TouchableOpacity>
-                    
                     :
                     right
                 }

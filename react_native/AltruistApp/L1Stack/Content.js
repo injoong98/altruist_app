@@ -8,6 +8,7 @@ import Slider from '../components/MarketSlider.component'
 import { Alert } from 'react-native';
 import {PostTime} from '../components/PostTime'
 import Confirm from '../components/confirm.component'
+import { WriteContentToptab } from '../components/WriteContentTopBar'
 import ReplyLsvg from '../assets/icons/arrow-bended-large.svg'
 import ReplySsvg from '../assets/icons/arrow-bended-small.svg'
 import MoreLsvg from '../assets/icons/dotdotdot-large.svg'
@@ -165,8 +166,8 @@ class GominContent extends React.Component{
         </TouchableOpacity>
     )
 
-    MoreAction=()=>(
-        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisible:true})}>
+    MoreAction=(props)=>(
+        <TouchableOpacity {...props} style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisible:true})}>
             <MoreLsvg height={24} width={24}/>
         </TouchableOpacity>
     )
@@ -282,11 +283,13 @@ class GominContent extends React.Component{
             alert(JSON.stringify(error))
         })
     }
-     onRefresh=()=>{
+    onRefresh=()=>{
         const {post_id} = this.props.route.params
         this.getCommentData(post_id);
     } 
     async componentDidMount(){
+        StatusBar.setBackgroundColor('#FFFFFF');
+        StatusBar.setBarStyle('dark-content');
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
@@ -427,7 +430,13 @@ class GominContent extends React.Component{
         </View>
         :
         <SafeAreaView style={{flex:1}}>
-            <TopNavigation title="" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.MoreAction} style={styles.topbar}/> 
+            <WriteContentToptab
+                gbckfunc={() => {
+                    this.props.navigation.goBack();
+                    StatusBar.setBackgroundColor('#B09BDE');
+                    StatusBar.setBarStyle('default');}}
+                gbckuse={true}
+                right={<this.MoreAction/>}/>
             <TouchableWithoutFeedback onPress={()=>{ this.commentWrite; Keyboard.dismiss()}}>
                 <Layout style={{flex:1}}>
                         <List
@@ -1193,6 +1202,8 @@ class AlbaContent extends React.Component {
     Alba_salary_type = ['시급', '일급', '주급', '월급'];
 
     async componentDidMount(){
+        StatusBar.setBackgroundColor('#F4F4F4');
+        StatusBar.setBarStyle('dark-content');
         const {post_id} = this.props.route.params;
         await this.getPostData(post_id)
         .then(()=>{this.setState({isLoading:false})})
@@ -1241,8 +1252,8 @@ class AlbaContent extends React.Component {
     setVisible(bool){
         this.setState({visible : bool});
     }
-    MoreAction = () =>(
-        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisible:true})}>
+    MoreAction = (props) =>(
+        <TouchableOpacity {...props} style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisible:true})}>
             <MoreLsvg height={24} width={24}/>
         </TouchableOpacity>
     )
@@ -1327,9 +1338,17 @@ class AlbaContent extends React.Component {
             :
             <Root>
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation category = 'c2'title="채용정보" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.MoreAction} style={styles.topbar}/> 
+                <WriteContentToptab
+                text='알바천일국'
+                backgroundColor='#F4F4F4'
+                gbckfunc={() => {
+                    this.props.navigation.goBack();
+                    StatusBar.setBackgroundColor('#B09BDE');
+                    StatusBar.setBarStyle('default');}}
+                gbckuse={true}
+                right={<this.MoreAction/>}/>
                 <Layout style={{flex:1}}>
-                    <ScrollView style={{backgroundColor : 'lightgrey'}}>
+                    <ScrollView style={{backgroundColor : '#F4F4F4'}}>
                         <Card disabled={true} style={styles.item}>
                             <Layout style={{flex:1, flexDirection:'row'}}>
                                 <View style={{flex:1}}>
@@ -1626,8 +1645,8 @@ class IlbanContent extends Component {
         </TouchableOpacity>
     )
 
-    MoreAction=()=>(
-        <TouchableOpacity style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisible:true})}>
+    MoreAction=(props)=>(
+        <TouchableOpacity {...props} style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisible:true})}>
             <MoreLsvg height={24} width={24}/>
         </TouchableOpacity>
     )
@@ -1768,11 +1787,6 @@ class IlbanContent extends Component {
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
     }
-
-    componentWillUnmount() {
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
-    }
     
     modalList = [
         {
@@ -1908,7 +1922,13 @@ class IlbanContent extends Component {
         </View>
         :
         <SafeAreaView style={{flex:1}}>
-            <TopNavigation title="" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.MoreAction} style={styles.topbar}/> 
+            <WriteContentToptab
+                gbckfunc={() => {
+                    this.props.navigation.goBack();
+                    StatusBar.setBackgroundColor('#B09BDE');
+                    StatusBar.setBarStyle('default');}}
+                gbckuse={true}
+                right={<this.MoreAction/>}/>
             <TouchableWithoutFeedback onPress={()=>{ this.commentWrite; Keyboard.dismiss()}}>
                 <Layout style={{flex:1}}>
                         <List
@@ -1922,7 +1942,6 @@ class IlbanContent extends Component {
                         />
                 </Layout>
             </TouchableWithoutFeedback>
-            
             <View style={{backgroundColor:'#ffffff',padding:8}}>
                 {this.state.replying ?
                 <TouchableOpacity onPress={this.commentWrite}>
@@ -2034,7 +2053,6 @@ class IlbanContent extends Component {
             >
                 <Spinner size='giant'/>
             </Modal>
-            
         </SafeAreaView>
          )
      }
