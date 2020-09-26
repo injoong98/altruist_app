@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {StyleSheet, SafeAreaView, Image, View, ScrollView, TouchableOpacity,TextInput,TouchableHighlight,Dimensions} from 'react-native'
+import {StyleSheet, SafeAreaView, Image, View, ScrollView, TouchableOpacity,TextInput,TouchableHighlight,Dimensions,LogBox} from 'react-native'
 import {Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal, Spinner} from '@ui-kitten/components'
 import axios from 'axios';
 import Tag from '../../../components/tag.component';
@@ -103,16 +103,55 @@ class AltListScreen extends React.Component{
         }
     }
     applyFilter=()=>{
-        const {alt_list,actSelected,alt_list_showing} = this.state
-        console.log('You called stupid filter function!! :[')
+    }
+    actUnSelect = (index) =>{
+        const{actSelected} =this.state
+        actSelected.splice(index,1);this.setState({actSelected});
+    }
+    actSelect = (act) =>{
+        const {actSelected} =this.state
+        if(actSelected.includes(act)){
+            actSelected.splice(actSelected.indexOf(act),1)
+            this.setState({actSelected})
+        }else{
+            this.setState({actSelected:actSelected.concat(act)})
+        }
+    }
+    getAltruistsFilteredList =async() => {
+        this.setState({isLoading:true})
+
+        const {actSelected} = this.state
+        var formdata = new FormData()
+        if(actSelected.length>0){
+            actSelected.map((item,index)=>{
+                formdata.append("alt_area[]", item.act_id);
+            })
+            console.log(formdata)
+              await axios.post('http://dev.unyict.org/api/altruists/lists',formdata)
+              .then((response) => {
+                  this.setState({alt_list_showing:response.data.view.data.list})
+                  this.setState({isLoading:false})
+              })
+              .catch((error)=>{
+                  alert(error);
+                  console.log(error);
+                  this.setState({isLoading:false})
+              })
+        }else{
+            this.getAltruistsList()
+        }
+
     }
     getAltruistsList = async() => {
+        this.setState({isLoading:true})
         await axios.get('http://dev.unyict.org/api/altruists/lists?rand=Y')
         .then((response) => {
             this.setState({lists:response.data.view.data.list,alt_list_showing:response.data.view.data.list})
+            this.setState({isLoading:false})
         })
         .catch((error)=>{
             alert(error);
+            this.setState({isLoading:false})
             console.log(error);
         })
     }
@@ -136,8 +175,89 @@ class AltListScreen extends React.Component{
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() => {this.props.navigation.goBack()}}/>
     )
+    SelectedArea = () => {
+        const {actSelected}= this.state
 
-
+        return(
+            <View style={{display:'flex',flexDirection:'row',paddingHorizontal:20,marginTop:5}}>
+                    {
+                        actSelected.length >0 ?
+                        <ScrollView horizontal={true} style={{}} >
+                                {actSelected.map((act,index) => (
+                                    <TouchableHighlight
+                                        onPress ={()=>{this.actUnSelect(index); this.getAltruistsFilteredList()}}
+                                        key = {act.act_content}
+                                    >
+                                        <View 
+                                            style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',padding:5}} 
+                                        >
+                                            <Tag style={[styles.tagSelected,{marginRight:3}]}
+                                                key = {act.act_content}
+                                            >
+                                                {act.act_content}
+                                            </Tag>
+                                            <View style={{backgroundColor:'#000000',opacity:0.3,borderRadius:5}}>
+                                                <Text> x </Text>
+                                            </View>
+                                        </View>
+                                    </TouchableHighlight>
+                                ))}
+                        </ScrollView >
+                        :
+                        <View style={{width:'100%',padding:5,justifyContent:'center',alignItems:'flex-start'}}>
+                            <Text style={{fontSize:13,color:'#A897C2'}}>필터를 클릭하고 전문분야를 선택하세요!</Text>
+                        </View>
+                    }
+                </View>
+        )
+    }
+    Filter =  () => {
+        const {width,height} =Dimensions.get('window')
+        const {filterModalVisible,act_array,actSelected}= this.state
+        return(
+            <Modal
+                    visible={filterModalVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                    onBackdropPress={() => {this.setState({filterModalVisible:false});this.getAltruistsFilteredList()}}
+                    style={{justifyContent:'center'}}
+                >
+                <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
+                    <View style={{alignItems:'center',justifyContent:'center'}}>
+                        <Text category='h2' style={{fontSize:13,marginVertical:11,color:'#63579D'}}>필터 적용하기</Text>
+                        <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginBottom:15}}></View>
+                    </View>
+                    <ScrollView ScrollViewstyle = {{}}>
+                        <View style = {{justifyContent:'space-between',flexDirection : 'row', flexWrap: 'wrap',paddingHorizontal:'5%'}}>
+                            {act_array.map(act => (
+                                <Tag 
+                                    key = {act.act_content}
+                                    onPress ={()=>{
+                                        this.actSelect(act)
+                                        // if(actSelected.includes(act)){
+                                        //     actSelected.splice(actSelected.indexOf(act),1)
+                                        //     this.setState({actSelected})
+                                        // }else{
+                                        //     this.setState({actSelected:actSelected.concat(act)})
+                                        // }
+                                    }}
+                                    style={[{padding:4},actSelected.includes(act) ? styles.tagSelected:{}]}
+                                >
+                                    {act.act_content}
+                                </Tag>
+                            ))}
+                        </View>
+                    </ScrollView>
+                    <View style={{alignItems:'center',justifyContent:'center',marginVertical:20}}>
+                        <TouchableHighlight 
+                            onPress={()=>{this.setState({filterModalVisible:false});this.getAltruistsFilteredList()}} 
+                            style={{backgroundColor:'#63579D', paddingVertical:4,paddingHorizontal:20,borderRadius:8.5}}>
+                            <Text style={{fontSize:18,fontWeight:'700',color:'#ffffff'}}>적용</Text>
+                        </TouchableHighlight>
+                    </View>
+                </View>
+            </Modal>
+        )
+    }
     
     renderItem = ({item, index}) => (
         <Card style = {styles.card} onPress = {()=>{this.props.navigation.navigate('AltProfile', item.alt_profile.alt_id)}}>
@@ -167,7 +287,7 @@ class AltListScreen extends React.Component{
                 </View>
                 <Button 
                     style = {{height : 20}}
-                    onPress={()=>{console.log(this.state.filterTag);this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:item.alt_profile.mem_id,title:this.props.route.params.title})}}>
+                    onPress={()=>{this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:item.alt_profile.mem_id,title:this.props.route.params.title})}}>
                     질문하기
                 </Button>
             </View>
@@ -175,15 +295,14 @@ class AltListScreen extends React.Component{
     );
     
     render(){
-        const {name,filterModalVisible,act_array,actSelected,isLoading}= this.state
-        const title =this.props.route.params ? this.props.route.params.title:null
-        const {width,height} =Dimensions.get('window')
+        const {name,isLoading}= this.state
+        // const title =this.props.route.params ? this.props.route.params.title:null
         return (
 
             <SafeAreaView style={{flex:1,backgroundColor:'#ffffff'}}>
                 <TopBarTune 
                     text="이타주의자들" 
-                    func={()=>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:title})} 
+                    func={()=>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:''})} 
                     right='opq'
                     gbckuse={true}
                     gbckfunc={()=>{this.props.navigation.goBack()}}                
@@ -193,8 +312,8 @@ class AltListScreen extends React.Component{
                         <TextInput 
                             style={styles.titleInput} 
                             value={name} 
-                            onChangeText={text =>this.setState({name:text})}
-                            placeholder="이타주의자들에게 이름을 입력해보세요"
+                            onChangeText={(text) =>{this.setState({name:text})}}
+                            placeholder="이타주의자들의 이름을 입력해보세요"
                             placeholderTextColor='#A897C2'
                         />
                         <TouchableOpacity style={{position:"absolute",right:5,top:6}}>
@@ -207,36 +326,7 @@ class AltListScreen extends React.Component{
                         <Text category='h2' style={{fontSize:13,color:"#ffffff"}}>필터</Text>
                     </TouchableHighlight>
                 </View>
-                <View style={{display:'flex',flexDirection:'row',paddingHorizontal:20,marginTop:5}}>
-                    {
-                        actSelected.length >0 ?
-                        <ScrollView horizontal={true} style={{}} >
-                                {actSelected.map((act,index) => (
-                                    <TouchableHighlight
-                                        onPress ={()=>{actSelected.splice(index,1);this.setState({actSelected})}}
-                                        key = {act.act_content}
-                                    >
-                                        <View 
-                                            style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',padding:5}} 
-                                        >
-                                            <Tag style={[styles.tagSelected,{marginRight:3}]}
-                                                key = {act.act_content}
-                                            >
-                                                {act.act_content}
-                                            </Tag>
-                                            <View style={{backgroundColor:'#000000',opacity:0.3,borderRadius:5}}>
-                                                <Text> x </Text>
-                                            </View>
-                                        </View>
-                                    </TouchableHighlight>
-                                ))}
-                        </ScrollView >
-                        :
-                        <View style={{width:'100%',padding:5,justifyContent:'center',alignItems:'flex-start'}}>
-                            <Text style={{fontSize:13,color:'#A897C2'}}>필터를 클릭하고 전문분야를 선택하세요!</Text>
-                        </View>
-                    }
-                </View>
+                <this.SelectedArea />
                 {
                     isLoading ? 
                     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
@@ -246,53 +336,13 @@ class AltListScreen extends React.Component{
                     <View style={{flex: 25,marginTop:15}}>
                         <List
                         contentContainerStyle={styles.contentContainer}
-                        data={this.state.lists}
-                        renderItem={(arg)=>{return(<RenderAltList {...this.props} arg={arg} />)}}
+                        data={this.state.alt_list_showing}
+                        renderItem={(arg)=>(<RenderAltList {...this.props} arg={arg} />)}
                         style={{backgroundColor:'#ffffff'}}
                         />
                     </View> 
                 }
-                <Modal
-                    visible={filterModalVisible}
-                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                    onBackdropPress={() => this.setState({filterModalVisible:false})}
-                    style={{justifyContent:'center'}}
-                >
-                <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
-                    <View style={{alignItems:'center',justifyContent:'center'}}>
-                        <Text category='h2' style={{fontSize:13,marginVertical:11,color:'#63579D'}}>필터 적용하기</Text>
-                        <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginBottom:15}}></View>
-                    </View>
-                    <ScrollView ScrollViewstyle = {{}}>
-                        <View style = {{justifyContent:'space-between',flexDirection : 'row', flexWrap: 'wrap',paddingHorizontal:'5%'}}>
-                            {act_array.map(act => (
-                                <Tag 
-                                    key = {act.act_content}
-                                    onPress ={()=>{
-                                        if(actSelected.includes(act)){
-                                            actSelected.splice(actSelected.indexOf(act),1)
-                                            this.setState({actSelected})
-                                        }else{
-                                            this.setState({actSelected:actSelected.concat(act)})
-                                            this.applyFilter();
-                                        }
-                                    }}
-                                    style={[{padding:4},actSelected.includes(act) ? styles.tagSelected:{}]}
-                                >
-                                    {act.act_content}
-                                </Tag>
-                            ))}
-                        </View>
-                    </ScrollView>
-                    <View style={{alignItems:'center',justifyContent:'center',marginVertical:20}}>
-                        <TouchableHighlight 
-                            onPress={()=>{this.setState({filterModalVisible:false})}} 
-                            style={{backgroundColor:'#63579D', paddingVertical:4,paddingHorizontal:20,borderRadius:8.5}}>
-                            <Text style={{fontSize:18,fontWeight:'700',color:'#ffffff'}}>적용</Text>
-                        </TouchableHighlight>
-                    </View>
-                </View>
-            </Modal>
+                <this.Filter />
             </SafeAreaView>
         );
     }

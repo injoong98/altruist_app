@@ -609,12 +609,15 @@ class AltQueList extends React.Component{
             <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('AltQueContent',{post_id:item.post_id})}}>
             <View style={{flexDirection:'row',marginTop:10}}>
                     { 
+                    item.area ? 
                     item.area.length > 0?
                         item.area.map( (area)=>(
                         <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} key={area.act_id}>{`#${area.act_content} `}</Text>)
                         )
                         :
                         <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`#전체`}</Text>
+                        :
+                        null
                     }
             </View>
             <View>
