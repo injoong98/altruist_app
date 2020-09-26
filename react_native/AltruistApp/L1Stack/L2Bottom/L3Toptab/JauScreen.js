@@ -10,6 +10,7 @@ import {IGNORED_TAGS} from 'react-native-render-html/src/HTMLUtils';
 import {PostTime} from '../../../components/PostTime';
 import {WebView} from 'react-native-webview';
 import {Tag} from '../../../components/tag.component';
+import {Contrast, Grayscale} from 'react-native-color-matrix-image-filters';
 //icon
 import Heartsvg from '../../../assets/icons/heart.svg';
 import Viewsvg from '../../../assets/icons/view.svg';
@@ -136,7 +137,8 @@ class JauScreen extends React.Component {
 			?item.file.filter(i=>i.pfi_type=='jpg'||i.pfi_type=='png').map(function(image,index){
 				var image_info = {};
 				image_info['id'] = image.pfi_id;
-				image_info['url'] = image.pfi_filename;
+				image_info['url'] = image.origin_image_url;
+				image_info['index'] = index;
 				return image_info;
 			})
 			:null;
@@ -164,23 +166,38 @@ class JauScreen extends React.Component {
 					?imageData.length==1
 					?imageData.map(i=>
 						<Image 
-							source={{uri : 'http://dev.unyict.org/uploads/post/'+i.url}}
+							key={i.id}
+							source={{uri : i.url}}
 							style={{width:'100%', height:(Dimensions.get("window").width-96), borderRadius:10}}
 						/>
 					)
 					:imageData.length==2
 					?imageData.map(i=>
 						<Image 
-							source={{uri : 'http://dev.unyict.org/uploads/post/'+i.url}}
+							key={i.id}
+							source={{uri : i.url}}
 							style={{width:'49%', height:(Dimensions.get("window").width-96)/2, borderRadius:10}}
 						/>
 					)
 					:imageData.length>2
 					?imageData.slice(0,3).map(i=>
-						<Image 
-							source={{uri : 'http://dev.unyict.org/uploads/post/'+i.url}}
-							style={{width:'32%', height:(Dimensions.get("window").width-96)/3, borderRadius:10}}
-						/>
+						<Contrast 
+							style={{width:'32%',height:(Dimensions.get("window").width-96)/3}}
+							amount={imageData.length>3 && i.index==2?0.3:1}
+						>
+							<View style={{width:'100%', height:'100%'}}>
+								<Image 
+									key={i.id}
+									source={{uri : i.url}}
+									style={{width:'100%', height:'100%', borderRadius:10}}
+								/>
+								{imageData.length>3 && i.index==2
+								?<View style={{position:'absolute', zIndex:1, width:'100%', height:'100%', justifyContent:'center', alignItems:'center'}}>
+									<Text style={{color:'white', fontSize:30}} category='h3'>+{imageData.length-3}</Text>
+								</View>
+								:null}
+							</View>
+						</Contrast>
 					)
 					:null
 					:null
