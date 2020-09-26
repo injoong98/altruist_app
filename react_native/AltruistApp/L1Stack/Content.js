@@ -71,7 +71,7 @@ class GominContent extends React.Component{
             resultModalVisible:false,
             confirmModalVisible:false,
             spinnerModalVisible:false,
-            popoverVisibel:false,
+            popoverVisible:false,
             resultText : '',
             modalType : 0,
         }
@@ -165,53 +165,15 @@ class GominContent extends React.Component{
         </TouchableOpacity>
     )
 
-    renderPostMore=()=>(
-        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisibel:true})}>
+    MoreAction=()=>(
+        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisible:true})}>
             <MoreLsvg height={24} width={24}/>
         </TouchableOpacity>
     )
     BackAction = () =>(
         <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
     )
-    MoreAction = () =>(
-        // <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{this.setState({modalVisible:true})}}/>
-        <Popover
-        anchor={this.renderPostMore}
-        visible={this.state.popoverVisibel}
-        placement='bottom start'
-        onBackdropPress={() => this.setState({popoverVisibel:false})}>
-            <View>
-                <TouchableOpacity 
-                    onPress={()=>{this.postscrap();this.setState({popoverVisibel:false})}} 
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>스크랩</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    onPress={()=>{this.setState({popoverVisibel:false, confirmModalVisible:true, modalType : 0})}}
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>신고</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    onPress={()=>{
-                        this.setState({popoverVisibel:false});
-                        this.props.navigation.navigate('GominWrite',
-                            {
-                                statefunction:this.statefunction,
-                                mode:'edit',
-                                post:this.state.post,
-                                content:this.state.content,
-                            })}}
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>수정</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    onPress={()=>{this.setState({popoverVisibel:false,confirmModalVisible:true, modalType : 1})}}
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>삭제</Text>
-                </TouchableOpacity>
-            </View>
-        </Popover>
-    )
+    
     statefunction=(str)=>{
         this.setState({isLoading:true});
         this.componentDidMount()    
@@ -456,7 +418,7 @@ class GominContent extends React.Component{
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType} = this.state
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible} = this.state
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -504,28 +466,65 @@ class GominContent extends React.Component{
                 
             </View>
             <Modal
+                visible={popoverVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({popoverVisible:false})}>
+                <View style={{borderRadius:15, backgroundColor:'white'}}>
+                    <TouchableOpacity 
+                        onPress={()=>{this.postscrap();this.setState({popoverVisible:false})}}
+                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>스크랩</Text>
+                    </TouchableOpacity>
+                    <Divider style={{marginHorizontal : 10, color:'#E4E4E4'}}/>
+                    <TouchableOpacity 
+                        onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 0})}}
+                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>신고</Text>
+                    </TouchableOpacity>
+                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                    <TouchableOpacity 
+                        onPress={()=>{
+                            this.setState({popoverVisible:false});
+                            this.props.navigation.navigate('GominWrite',
+                                {
+                                    statefunction:this.statefunction,
+                                    mode:'edit',
+                                    post:this.state.post,
+                                    content:this.state.content,
+                                })}}
+                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>수정</Text>
+                    </TouchableOpacity>
+                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                    <TouchableOpacity 
+                        onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 1})}}
+                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>삭제</Text>
+                    </TouchableOpacity>
+                </View>   
+            </Modal>
+            <Modal
                 visible={modalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}
-            >
+                onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})} >
                 <View>
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
-                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
-                        <Text category='h3'>댓글 신고</Text>
+                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 신고</Text>
                     </TouchableOpacity>
+                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
-                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
-                        <Text category='h3'>댓글 삭제</Text>
+                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
                     </TouchableOpacity>
                 </View>   
             </Modal>
             <Modal
                 visible={resultModalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({resultModalVisible:false, cmt_id:''})}
-                >
+                onBackdropPress={() => this.setState({resultModalVisible:false, cmt_id:''})}>
                 <Confirm 
                     type = 'result'
                     confirmText={this.state.resultText}
@@ -536,8 +535,7 @@ class GominContent extends React.Component{
             <Modal
                 visible={confirmModalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({confirmModalVisible:false})}
-            >
+                onBackdropPress={() => this.setState({confirmModalVisible:false})}>
                 <Confirm 
                     confirmText={this.modalList[modalType].text}
                     frstText="예"
@@ -1183,23 +1181,19 @@ class AlbaContent extends React.Component {
             file_images : [],
             isLoading : true,
             image_height : 0,
-            popoverVisibel: false,
-            blameModalVisible : false,
-            deleteModalVisible : false,
+            popoverVisible: false,
+            resultModalVisible : false,
+            resultText:'',
+            confirmModalVisible : false,
+            modalType : 0,
             spinnerModalVisible : false,
         }
     }
 
-    Alba_salary_type = [
-        {color : '#EAB0B3', str : '시급'},
-        {color : '#E3898E', str : '일급'},
-        {color : '#CA676C', str : '주급'},
-        {color : '#B12D34', str : '월급'},
-    ]
+    Alba_salary_type = ['시급', '일급', '주급', '월급'];
 
     async componentDidMount(){
         const {post_id} = this.props.route.params;
-        console.log(post_id);
         await this.getPostData(post_id)
         .then(()=>{this.setState({isLoading:false})})
     }
@@ -1213,7 +1207,7 @@ class AlbaContent extends React.Component {
                     this.setState({thumb_image: response.data.view.file_image[0]});
                 this.setState({
                     file_images : response.data.view.file_image.map((i, index) => {
-                        console.log('received image', i);
+                        // console.log('received image', i);
                         return {
                             id : i.pfi_id,
                             edit : true,
@@ -1247,84 +1241,46 @@ class AlbaContent extends React.Component {
     setVisible(bool){
         this.setState({visible : bool});
     }
-    renderPostMore=()=>(
-        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisibel:true})}>
+    MoreAction = () =>(
+        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisible:true})}>
             <MoreLsvg height={24} width={24}/>
         </TouchableOpacity>
     )
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
     )
-    UD_Action = () =>(
-        // <TopNavigationAction icon={HeartIcon} onPress={() =>{this.onClick_UD_Action()}}/>
-        <Popover
-        anchor={this.renderPostMore}
-        visible={this.state.popoverVisibel}
-        placement='bottom start'
-        onBackdropPress={() => this.setState({popoverVisibel:false})}>
-            <View>
-                <TouchableOpacity 
-                    onPress={()=>{this.postscrap(); this.setState({popoverVisibel:false, ScrapModalVisible:true})}} 
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>스크랩</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    onPress={()=>{this.setState({popoverVisibel:false, blameModalVisible:true})}}
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>신고</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    onPress={()=>{
-                        this.setState({popoverVisibel:false});
-                        this.props.navigation.navigate('AlbaWrite',
-                            {
-                                statefunction:this.statefunction,
-                                mode:'edit',
-                                post:this.state.post,
-                                file_images:this.state.file_images,
-                            })}}
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>수정</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    onPress={()=>{this.setState({popoverVisibel:false,deleteModalVisible:true})}}
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>삭제</Text>
-                </TouchableOpacity>
-            </View>
-        </Popover>
-    )
-
     
     postscrap = async()=>{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         
-        Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        await Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
         .then(response=>{
-            alert(`${JSON.stringify(response.data)}`)
+            if(response.data.success)
+                this.setState({resultModalVisible:true, resultText:response.data.success});
+            else if (response.data.error)
+                this.setState({resultModalVisible:true, resultText:response.data.error});
         })
         .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
+            this.setState({resultModalVisible:true, resultText:error.message});
         })
     }
 
-    postBlame = ()=>{
+    postBlame = async () =>{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
-        
-        Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+
+        await Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
         .then(response=>{
-            this.setState({spinnerModalVisible:false});
-            if(response.data.status ==500){
-                alert(`${JSON.stringify(response.data.message)}`)
+            if(response.data.status == 500){
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
             }else{
-                this.getPostData(this.state.post.post_id)
-                alert(`${JSON.stringify(response.data.message)}`)
+                this.getPostData(this.state.post.post_id);
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
             }
         })
         .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
         })
     }
     
@@ -1333,43 +1289,35 @@ class AlbaContent extends React.Component {
         this.componentDidMount()    
     }
 
-    postAlbaDelete = async(id) => {
-        alert('delete');
-        var formdata =new FormData();
-        formdata.append("post_id", this.state.post.post_id);
+    postDelete = async () => {
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+
         await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
-        .then(response => {
-            this.setState({spinnerModalVisible:false})
+        .then((res)=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
             this.props.navigation.goBack();
             this.props.route.params.OnGoback();
-            alert(JSON.stringify(res.data))
         })
-        .catch(error=>{
-            alert(JSON.stringify(err))
+        .catch((error)=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
         })
     }
 
-
-    // getImageSize (uri, passProps) {
-    //     const img_url = "http://dev.unyict.org"+uri;
-    //     const imagesMaxWidth = Dimensions.get('window').width;
-    //     Image.getSize(img_url,(originalWidth, originalHeight) => {
-    //             const optimalWidth = imagesMaxWidth <= originalWidth ? imagesMaxWidth : originalWidth;
-    //             const optimalHeight = (optimalWidth * originalHeight) / originalWidth;
-    //             this.setState({image_height:optimalHeight});
-    //             console.log(this.state.image_height, optimalHeight);
-    //         }
-    //     );
-    //     return <Image key={passProps.key} style={{width : '100%', height : this.state.image_height, resizeMode: 'contain'}} source={{ uri:img_url }}/>;
-    // }
+    modalList = [
+        {
+            text : '이 게시글을 신고하시겠습니까?',
+            func : this.postBlame,
+        },
+        {
+            text : '이 게시글을 삭제하시겠습니까?',
+            func : this.postDelete,
+        },
+    ]
 
     render(){
-        const {post, blameModalVisible, deleteModalVisible, spinnerModalVisible} = this.state;
-        // const defaultRenderer ={
-        //     renderers:{
-        //         img : (htmlAttribs, children, convertedCSSStyles, passProps) => this.img_return(htmlAttribs, passProps)
-        //     }
-        // }
+        const {post, confirmModalVisible, resultModalVisible, spinnerModalVisible, modalType, popoverVisible} = this.state;
+        
         return(
             this.state.isLoading?
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -1379,35 +1327,39 @@ class AlbaContent extends React.Component {
             :
             <Root>
             <SafeAreaView style={{flex:1}}>
-                <TopNavigation category = 'c2'title="채용정보" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.UD_Action} style={styles.topbar}/> 
+                <TopNavigation category = 'c2'title="채용정보" alignment="center" accessoryLeft={this.BackAction} accessoryRight={this.MoreAction} style={styles.topbar}/> 
                 <Layout style={{flex:1}}>
                     <ScrollView style={{backgroundColor : 'lightgrey'}}>
                         <Card disabled={true} style={styles.item}>
-                            <View style={{flexDirection : 'row', justifyContent:'flex-end'}}>
-                                <View style={{marginHorizontal:10, justifyContent:'center', alignItems:'center'}}>
-                                    <Viewsvg width={24} height={24}/>
-                                    <Text category='p1'>{post.post_hit}</Text>
+                            <Layout style={{flex:1, flexDirection:'row'}}>
+                                <View style={{flex:1}}>
                                 </View>
-                                <View style={{marginHorizontal:10, justifyContent:'center', alignItems:'center'}}>
-                                    <Timesvg width={24} height={24}/>
-                                    <PostTime category='p1' datetime = {post.post_datetime}/>
+                                <View style={{flex:1, flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
+                                    {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:this.state.thumb_image.origin_image_url}}/>
+                                    :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
+                                    <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
                                 </View>
-                            </View>
-                            <Layout style={{flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
-                                {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:this.state.thumb_image.origin_image_url}}/>
-                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
-                                <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
+                                <View style={{flex: 1, flexDirection : 'row', justifyContent:'flex-end'}}>
+                                    <View style={{marginHorizontal:10, alignItems:'center'}}>
+                                        <Viewsvg width={24} height={24}/>
+                                        <Text category='p1'>{post.post_hit}</Text>
+                                    </View>
+                                    <View style={{marginHorizontal:10, alignItems:'center'}}>
+                                        <Timesvg width={24} height={24}/>
+                                        <PostTime category='p1' datetime = {post.post_datetime}/>
+                                    </View>
+                                </View>
                             </Layout>
                             <View style={styles.title}>
                                 <Text category= 'h1' style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
                             </View>
                             <Layout style={styles.icons}>
                                 <Text style={{color:'#FF6262'}} category='h5'>
-                                    {this.Alba_salary_type[post.alba_salary_type].str}
+                                    {this.Alba_salary_type[post.alba_salary_type]}
                                 </Text>
                                 <Text category='h5'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
                                 <Text style={{color:'#7370DD'}} category='h5'>
-                                    {post.alba_type == 0?'단기':'장기'}
+                                    {post.alba_type?'장기':'단기'}
                                 </Text>
                                 <Text> / </Text>
                                 <Text style={{color:'#393939'}} category='h5'>
@@ -1429,7 +1381,7 @@ class AlbaContent extends React.Component {
                                 </View>
                                 <View style={{flex : 5, flexDirection : 'row'}}>
                                     <Text style={[styles.gather, {color:'#FF6262'}]}>
-                                        {this.Alba_salary_type[post.alba_salary_type].str+' '}
+                                        {this.Alba_salary_type[post.alba_salary_type]+' '}
                                     </Text>
                                     <Text style={styles.gather}>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                                 </View>
@@ -1439,7 +1391,7 @@ class AlbaContent extends React.Component {
                                     <Text style={styles.gathertext}>근무기간</Text>
                                 </View>
                                 <View style={{flex : 5}}>
-                                    <Text style={styles.gather}>{!post.alba_type?'단기 (1일 ~ 3개월)':'장기 (3개월 ~)'}</Text>
+                                    <Text style={styles.gather}>{post.alba_type?'장기 (3개월 ~)':'단기 (1일 ~ 3개월)'}</Text>
                                 </View>
                             </Layout>
                         </Card>
@@ -1491,27 +1443,65 @@ class AlbaContent extends React.Component {
                             </Card>
                     </Modal>
                     <Modal
-                        visible={blameModalVisible}
+                        visible={popoverVisible}
                         backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                        onBackdropPress={() => this.setState({blameModalVisible:false})}>
+                        onBackdropPress={() => this.setState({popoverVisible:false})}>
+                        <View style={{borderRadius:15, backgroundColor:'white'}}>
+                            <TouchableOpacity 
+                                onPress={()=>{this.postscrap();this.setState({popoverVisible:false})}}
+                                style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                                <Text style={{fontSize:20, color:'#63579D'}} category='h3'>스크랩</Text>
+                            </TouchableOpacity>
+                            <Divider style={{marginHorizontal : 10, color:'#E4E4E4'}}/>
+                            <TouchableOpacity 
+                                onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 0})}}
+                                style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                                <Text style={{fontSize:20, color:'#63579D'}} category='h3'>신고</Text>
+                            </TouchableOpacity>
+                            <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                            <TouchableOpacity 
+                                onPress={()=>{
+                                    this.setState({popoverVisible:false});
+                                    this.props.navigation.navigate('AlbaWrite',
+                                        {
+                                            statefunction:this.statefunction,
+                                            mode:'edit',
+                                            post:this.state.post,
+                                            file_images:this.state.file_images,
+                                        })}}
+                                style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                                <Text style={{fontSize:20, color:'#63579D'}} category='h3'>수정</Text>
+                            </TouchableOpacity>
+                            <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                            <TouchableOpacity 
+                                onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 1})}}
+                                style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                                <Text style={{fontSize:20, color:'#63579D'}} category='h3'>삭제</Text>
+                            </TouchableOpacity>
+                        </View>   
+                    </Modal>
+                    <Modal
+                        visible={resultModalVisible}
+                        backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                        onBackdropPress={() => this.setState({resultModalVisible:false})}
+                        >
                         <Confirm 
-                            confirmText="게시글을 신고하시겠습니까?"
-                            frstText="예"
-                            OnFrstPress={() =>{this.setState({blameModalVisible:false,spinnerModalVisible:true});this.postBlame()}}
-                            scndText="아니오"
-                            OnScndPress={() => this.setState({blameModalVisible:false})}
+                            type = 'result'
+                            confirmText={this.state.resultText}
+                            frstText="닫기"
+                            OnFrstPress={() => this.setState({resultModalVisible:false})}
                         />
                     </Modal>
                     <Modal
-                        visible={deleteModalVisible}
+                        visible={confirmModalVisible}
                         backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                        onBackdropPress={() => this.setState({deleteModalVisible:false})}>
+                        onBackdropPress={() => this.setState({confirmModalVisible:false})}>
                         <Confirm 
-                            confirmText="게시글을 삭제하시겠습니까?"
+                            confirmText={this.modalList[modalType].text}
                             frstText="예"
-                            OnFrstPress={() =>{this.setState({deleteModalVisible:false,spinnerModalVisible:true});this.postAlbaDelete()}}
+                            OnFrstPress={() =>{this.setState({confirmModalVisible:false,spinnerModalVisible:true});this.modalList[modalType].func();}}
                             scndText="아니오"
-                            OnScndPress={() => this.setState({deleteModalVisible:false})}
+                            OnScndPress={() => this.setState({confirmModalVisible:false})}
                         />
                     </Modal>
                     <Modal
@@ -1540,10 +1530,10 @@ class IlbanContent extends Component {
             refreshing:false,
             modalVisible:false,
             resultModalVisible:false,
+            resultText : '',
             confirmModalVisible:false,
             spinnerModalVisible:false,
-            popoverVisibel:false,
-            resultText : '',
+            popoverVisible:false,
             modalType : 0,
         }
     }
@@ -1636,54 +1626,15 @@ class IlbanContent extends Component {
         </TouchableOpacity>
     )
 
-    renderPostMore=()=>(
-        <TouchableOpacity  style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisibel:true})}>
+    MoreAction=()=>(
+        <TouchableOpacity style = {{paddingRight:10}} onPress={()=>this.setState({popoverVisible:true})}>
             <MoreLsvg height={24} width={24}/>
         </TouchableOpacity>
     )
     BackAction = () =>(
         <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
     )
-    MoreAction = () =>(
-        // <TopNavigationAction icon={()=><MoreIcon style={{width:35,height:35}}/>} onPress={() =>{this.setState({modalVisible:true})}}/>
-        <Popover
-        anchor={this.renderPostMore}
-        visible={this.state.popoverVisibel}
-        placement='bottom start'
-        onBackdropPress={() => this.setState({popoverVisibel:false})}>
-            <View>
-                <TouchableOpacity 
-                    onPress={()=>{this.postscrap();this.setState({popoverVisibel:false})}} 
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>스크랩</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    onPress={()=>{this.setState({popoverVisibel:false, confirmModalVisible:true, modalType : 0})}}
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>신고</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    onPress={()=>{
-                        this.setState({popoverVisibel:false});
-                        this.props.navigation.navigate('IlbanWrite',
-                            {
-                                statefunction:this.statefunction,
-                                mode:'edit',
-                                post:this.state.post,
-                                image:this.state.image,
-                                content:this.state.content,
-                            })}}
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>수정</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    onPress={()=>{this.setState({popoverVisibel:false,confirmModalVisible:true, modalType : 1})}}
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>삭제</Text>
-                </TouchableOpacity>
-            </View>
-        </Popover>
-    )
+    
     statefunction=(str)=>{
         this.setState({isLoading:true});
         this.componentDidMount()    
@@ -1948,7 +1899,7 @@ class IlbanContent extends Component {
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType} = this.state
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible} = this.state
          return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -1996,20 +1947,59 @@ class IlbanContent extends Component {
                 
             </View>
             <Modal
+                visible={popoverVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({popoverVisible:false})}>
+                <View style={{borderRadius:15, backgroundColor:'white'}}>
+                    <TouchableOpacity 
+                        onPress={()=>{this.postscrap();this.setState({popoverVisible:false})}}
+                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>스크랩</Text>
+                    </TouchableOpacity>
+                    <Divider style={{marginHorizontal : 10, color:'#E4E4E4'}}/>
+                    <TouchableOpacity 
+                        onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 0})}}
+                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>신고</Text>
+                    </TouchableOpacity>
+                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                    <TouchableOpacity 
+                        onPress={()=>{
+                            this.setState({popoverVisible:false});
+                            this.props.navigation.navigate('IlbanWrite',
+                                {
+                                    statefunction:this.statefunction,
+                                    mode:'edit',
+                                    post:this.state.post,
+                                    image:this.state.image,
+                                    content:this.state.content,
+                                })}}
+                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>수정</Text>
+                    </TouchableOpacity>
+                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                    <TouchableOpacity 
+                        onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 1})}}
+                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>삭제</Text>
+                    </TouchableOpacity>
+                </View>   
+            </Modal>
+            <Modal
                 visible={modalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}
-            >
-                <View>
+                onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}>
+                <View style={{borderRadius:15, backgroundColor:'white'}}>
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
-                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
-                        <Text category='h3'>댓글 신고</Text>
+                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 신고</Text>
                     </TouchableOpacity>
+                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
-                        style={{padding:20,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4',backgroundColor:'#ffffff'}}>
-                        <Text category='h3'>댓글 삭제</Text>
+                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
                     </TouchableOpacity>
                 </View>   
             </Modal>
@@ -2077,6 +2067,7 @@ const styles = StyleSheet.create({
     },
     icons : { 
         alignItems: 'center',
+        justifyContent: 'center',
         flexDirection:'row',
         marginVertical:10,
     },
