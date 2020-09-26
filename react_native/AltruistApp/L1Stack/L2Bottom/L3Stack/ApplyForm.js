@@ -584,8 +584,8 @@ class AltApplyFormScreen extends React.Component {
                 <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
                     <View style={{alignItems:'center',justifyContent:'center',marginTop:23}}>
                         <Text category='h2' style={{fontSize:18,color:'#000000'}}>전문 분야 선택</Text>
-                        <Text style={{fontSize:10,color:'#878787',marginTop:10}}>최대 5가지 선택할 수 있습니다.</Text>
-                        <Text style={{fontSize:10,color:'#878787'}}>가장 자신있는 분야를 선택해주세요.abs</Text>
+                        <Text style={{fontSize:10,color:actSelected.length==5?'#DB2434':'#878787',marginTop:10}}>최대 5가지 선택할 수 있습니다.</Text>
+                        <Text style={{fontSize:10,color:'#878787'}}>가장 자신있는 분야를 선택해주세요.</Text>
                         <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginVertical:15}}></View>
                     </View>
                     <ScrollView ScrollViewstyle = {{}}>
