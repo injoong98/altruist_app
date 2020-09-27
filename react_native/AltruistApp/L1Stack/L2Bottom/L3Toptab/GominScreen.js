@@ -60,7 +60,7 @@ class GominScreen extends React.Component {
           </View>:null
         )
     }
-      getPostList = async() =>{
+    getPostList = async() =>{
         await axios.get(`http://dev.unyict.org/api/board_post/lists/b-a-1?page=${this.state.current_page}`)
         .then((response)=>{
           if(response.data.view.list.data.list.length > 0){
@@ -80,19 +80,19 @@ class GominScreen extends React.Component {
         })
       }
     
-      getPostFirst = async() => {
+    getPostFirst = async() => {
         await axios.get('http://dev.unyict.org/api/board_post/lists/b-a-1')
         .then((response)=>{
             this.setState({
-              lists:response.data.view.list.data.list,
-              isLoading:false,
-              isListLoading:false,
+                lists:response.data.view.list.data.list,
+                isLoading:false,
+                isListLoading:false,
             })
         })
         .catch((error)=>{
             alert('error'+error);
         })
-      }
+    }
     componentDidMount(){
         this.setState({current_page:1, isNoMoreData : false,}, this.getPostFirst);
     }

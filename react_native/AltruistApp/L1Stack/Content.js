@@ -432,9 +432,10 @@ class GominContent extends React.Component{
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {
-                    this.props.navigation.goBack();
-                    StatusBar.setBackgroundColor('#B09BDE');
-                    StatusBar.setBarStyle('default');}}
+                    StatusBar.setBackgroundColor('#B09BDE')
+                    StatusBar.setBarStyle('default')
+                    this.props.navigation.goBack()
+                    this.props.route.params.OnGoback()}}
                 gbckuse={true}
                 right={<this.MoreAction/>}/>
             <TouchableWithoutFeedback onPress={()=>{ this.commentWrite; Keyboard.dismiss()}}>
@@ -987,7 +988,7 @@ class MarketContent extends React.Component {
                             <Text style={styles.marketText} category='s1'>거래방법</Text>
                         </Layout>
                         <Layout style={{marginLeft:20}}>
-                            <Text style={styles.marketText} category='s1'>{post.post_hp.replace(/[^0-9]/g, "").replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/,"$1-$2-$3").replace("--", "-")}</Text>
+                            <Text style={styles.marketText} category='s1'>{post.post_hp}</Text>
                             <Text style={styles.marketText} category='s1'>{post.post_location}</Text>
                             <Text style={styles.marketText} category='s1'>{post.deal_type==0? '배송':post.deal_type==1? '직거래':'배송 & 직거래'}</Text>
                         </Layout>
@@ -1015,6 +1016,7 @@ class MarketContent extends React.Component {
                     backgroundColor='#F4F4F4'
                     gbckfunc={() => {
                         this.props.navigation.goBack();
+                        this.props.route.params.OnGoback();
                         StatusBar.setBackgroundColor('#B09BDE');
                         StatusBar.setBarStyle('default');}}
                     gbckuse={true}
@@ -1315,6 +1317,7 @@ class AlbaContent extends React.Component {
                 backgroundColor='#F4F4F4'
                 gbckfunc={() => {
                     this.props.navigation.goBack();
+                    this.props.route.params.OnGoback();
                     StatusBar.setBackgroundColor('#B09BDE');
                     StatusBar.setBarStyle('default');}}
                 gbckuse={true}
