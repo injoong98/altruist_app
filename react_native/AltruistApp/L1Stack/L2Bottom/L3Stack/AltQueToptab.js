@@ -53,60 +53,29 @@ function MyTabBar({ state, descriptors, navigation, position }) {
           });
         };
 
-        const inputRange = state.routes.map((_, i) => i);
-        const opacity = Animated.interpolate(position, {
-          inputRange,
-          outputRange: inputRange.map(i => (i === index ? 1 : 0)),
-        });
-
         return (
           <TouchableOpacity
+            key={index}
             accessibilityRole="button"
             accessibilityStates={isFocused ? ['selected'] : []}
             accessibilityLabel={options.tabBarAccessibilityLabel}
             testID={options.tabBarTestID}
             onPress={onPress}
             onLongPress={onLongPress}
-            style={{ flex: 1, alignItems:'center',justifyContent:'center'}}
+            style={{ flex: 1, alignItems:'center',justifyContent:'center',backgroundColor:isFocused ? '#ffffff' : '#DEDEDE', borderTopLeftRadius:21,borderTopRightRadius:21,paddingVertical:8}}
           >
-            <Animated.Text style={{ opacity }}>
+            <Text  category='h1' style={{fontSize:14,color :isFocused ? '#63579D' : '#6A6A6A',}}>
               {label}
-            </Animated.Text>
+            </Text>
           </TouchableOpacity>
         );
       })}
     </View>
   );
 }
-class TopText extends React.Component{
-  constructor(props){
-    super(props)
-  }
-  render(){
-    const{selected,index} =this.props
-    return(
-      <View {...this.props}>
-        <Text style={[styles.tabtext,{backgroundColor: selected==index ?'#ffffff':'#c4c4c4',borderWidth:1}]}>
-          {this.props.text}
-        </Text>
-      </View>
-    )
-  }
-}
-const TopTabBar = ({ navigation, state }) => (
-    <TabBar
-      selectedIndex={state.index}
-      onSelect={index => {navigation.navigate(state.routeNames[index]);console.log(state.index)}}
-      style={{borderWidth:1}}
-      indicatorStyle={styles.indicatorStyle}
-    >
-    <Tab title={evaProps => <TopText {...evaProps} style={{borderWidth:1}} text='보낸 질문' selected={state.index} index ={0}/>}/>
-    <Tab title={evaProps => <TopText {...evaProps} style={{borderWidth:1}} text='받은 질문' selected={state.index} index ={1}/>}/>
-  </TabBar>
-);
+
 
 const TabNavigator = () => (
-  // <Navigator tabBar={props => <TopTabBar {...props} />}>
   <Navigator tabBar={props => <MyTabBar {...props} />}>
     <Screen name='Send' component={AltQueListSend} options={ {title:'보낸 질문'}}/>
     <Screen name='Recieve' component={AltQueListRecieve}  options={{title:'받은 질문'}}/>
@@ -122,6 +91,7 @@ export const AltQueToptab= ({navigation}) => (
               this.props.navigation.goBack();
           }}
           gbckuse={true}
+          style={{backgroundColor:'#f4f4f4'}}
       />
       <TabNavigator/>
   </SafeAreaView>
