@@ -921,7 +921,8 @@ class Board_write extends CB_Controller
 
 			//썸네일 사용여부
 			$updatedata['post_thumb_use'] = $this->input->post('post_thumb_use', null, '');
-
+			//썸네일 대표 이미지 지정
+			$updatedata['post_main_thumb'] = $this->input->post('post_main_thumb', null, '');
 
 			
 			// 글작성 
@@ -2593,7 +2594,8 @@ EOT;
 			
 			//썸네일 사용여부
 			$updatedata['post_thumb_use'] = $this->input->post('post_thumb_use', null, '');
-
+			// 썸네일 대표 이미지 지정
+			$updatedata['post_main_thumb'] = $this->input->post('post_main_thumb', null, '');
 
 			
 			// 이벤트가 존재하면 실행합니다
