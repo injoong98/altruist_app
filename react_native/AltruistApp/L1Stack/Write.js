@@ -419,6 +419,8 @@ class MarketWrite extends React.Component {
       });
     });
     
+    console.log(formdata);
+    
     this.props.route.params.mode == 'edit'
       ? formdata.append('post_id', this.props.route.params.post.post_id)
       : null;
@@ -659,7 +661,7 @@ class MarketWrite extends React.Component {
                   <TextInput
                     style={styles.input}
                     keyboardType="numeric"
-                    onChangeText={(text) => this.setState({deal_price: text})}
+                    onChangeText={(text) => this.setState({deal_price: parseInt(text)})}
                     value={deal_price}
                     placeholder="판매가격"
                   />
@@ -668,6 +670,7 @@ class MarketWrite extends React.Component {
                   {/* <Text>연락처</Text> */}
                   <TextInput
                     style={styles.input}
+                    keyboardType="numeric"
                     onChangeText={(text) => this.setState({post_hp: text})}
                     value={post_hp}
                     placeholder="연락처"
