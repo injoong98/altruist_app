@@ -213,19 +213,14 @@ class GominWrite extends React.Component {
     } = this.state;
     return (
       <SafeAreaView style={{flex: 1}}>
-        {/* // <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}> */}
-        <TopBarTune
-          text="고민 작성"
-          func={() => {
-            this.filterSpamKeyword();
-          }}
+        <WriteContentToptab text="고민 작성"
           right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+          func={() => {this.filterSpamKeyword();}}
           gbckfunc={() => {
-            navigation.goBack();
-          }}
-          gbckuse={true}
-        />
-        {/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+            navigation.goBack();}}
+          gbckuse={true}/>
         <TextInput
           style={{
             backgroundColor: '#ffffff',
@@ -1387,6 +1382,7 @@ class IlbanWrite extends React.Component {
         }
       })
       .catch((error) => {
+        this.setState({spinnerVisible: false});
         alert(JSON.stringify(error));
       });
   };
