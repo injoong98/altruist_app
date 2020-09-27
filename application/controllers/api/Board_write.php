@@ -103,7 +103,7 @@ class Board_write extends CB_Controller
 		if(!$this->member->is_member()) response_result($r,'Err','로그인 후 이용하세요.');
 
 		$post = $this->Post_model->get_one($post_id);
-		$deal_status = $this->Post_model->get_one($deal_status);
+		$deal_status = $this->input->post('deal_status');
 
 		if(!$post) response_result($r,'Err',$post_id.'로 post 자료를 조회하지 못했습니다..');
 
@@ -921,7 +921,8 @@ class Board_write extends CB_Controller
 
 			//썸네일 사용여부
 			$updatedata['post_thumb_use'] = $this->input->post('post_thumb_use', null, '');
-
+			//썸네일 대표 이미지 지정
+			$updatedata['post_main_thumb'] = $this->input->post('post_main_thumb', null, '');
 
 			
 			// 글작성 
@@ -2593,7 +2594,8 @@ EOT;
 			
 			//썸네일 사용여부
 			$updatedata['post_thumb_use'] = $this->input->post('post_thumb_use', null, '');
-
+			// 썸네일 대표 이미지 지정
+			$updatedata['post_main_thumb'] = $this->input->post('post_main_thumb', null, '');
 
 			
 			// 이벤트가 존재하면 실행합니다
