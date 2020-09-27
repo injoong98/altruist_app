@@ -51,7 +51,7 @@
     "react-native-status-bar-height": "2.5.0",
     "react-native-svg": "12.1.0",
     "react-native-tab-view": "^2.15.1",
-    "react-native-webview": "10.8.3"
+    "react-native-webview": "^10.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

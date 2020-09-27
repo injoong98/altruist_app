@@ -1,8 +1,14 @@
 import React from 'react';
-import {View,SafeAreaView,Text,FlatList,StyleSheet,TouchableOpacity} from 'react-native';
+import {View,SafeAreaView,Text,FlatList,StyleSheet,TouchableOpacity,StatusBar} from 'react-native';
 import axios from 'axios';
-import { Content } from 'native-base';
-import {WriteContentToptab} from '../../components/WriteContentTopBar'
+import {Spinner} from '@ui-kitten/components'
+import {MyTabBar} from '../../components/TopTab'
+import {PostTime} from '../../components/PostTime'
+
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+const { Navigator, Screen } = createMaterialTopTabNavigator();
+
 export class AlarmScreen extends React.Component{
 
     constructor(props){
@@ -39,28 +45,30 @@ export class AlarmScreen extends React.Component{
                 var screen='Jau'
                 break;
             case '10':
-                var content='AltQueContent'
+                var content='StckQueContent'
                 var list ="Alt"
-                var list ="AltQueToptab"
+                var screen ="AltQueToptab"
                 break;
             case '11':
-                var content='AltQueContent'
+                var content='StckQueContent'
                 var list ="Alt"
-                var list ="AltOpqQueList"
+                var screen ="AltOpqQueList"
                 break;
          }
         console.log(`list : ${list} + content : ${content}`)
-        navigate(list,{screen})
+        // navigate(list,{screen})
         navigate(content,{post_id})
     }
 
     readNoti = (item) =>{
-        axios.get(`http://dev.unyict.org/api/notification/read/${item.not_id}`)
+        axios.get(`http://dev.unyict.org/api/notification/read?not_id=${item.not_id}`)
         .then(res=>{
+            console.log(item.not_type=='comment')
             if(item.not_type=='comment'){
                 console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
                 this.navigateToPost(item.post_id,item.brd_id)
             }
+            this.getNotiList()
         })
         .catch(err=>{
         })
@@ -68,9 +76,18 @@ export class AlarmScreen extends React.Component{
 
     renderNotis =({item,index}) => {
         return(
-            <TouchableOpacity key={index} style={styles.notiContainer} onPress={()=>{this.readNoti(item)}}>
-                <View>
-                    <Text>{item.not_message}</Text>
+            <TouchableOpacity 
+                key={index} 
+                onPress={()=>{this.readNoti(item);}}
+                style={[styles.notiContainer,{backgroundColor: item.not_read_datetime == null ? '#f4f4f4' : '#c4c4c4'}]} 
+            >
+                <View style={{flexDirection:"row",justifyContent:'space-evenly'}}>
+                    <View style={{flex:7}}>
+                        <Text>{item.not_message}</Text>
+                    </View>
+                    <View style={{flex:1}}>
+                        <PostTime category="p1" style={{fontSize:9, color:'#63579D'}} datetime = {item.not_datetime}/>
+                    </View>
                 </View>
             </TouchableOpacity>
         )
@@ -87,41 +104,70 @@ export class AlarmScreen extends React.Component{
     }
     componentDidMount(){
         this.getNotiList();
-        
     }
 
     render(){
         const {isLoading} = this.state
         return(
-            <SafeAreaView style={styles.container}>
-                <WriteContentToptab
-                text='알림리스트'
-                />
+            <View  style={styles.container} style={{flex:1}}>
                 {
                  isLoading?
-                 null
-                 :
-                    <View>
-                        <FlatList 
-                            data={this.state.noti}
-                            renderItem={this.renderNotis}
-                            keyExtractor={(item,index)=>index.toString()}
-                        />
-                    </View>
+                     <Spinner />
+                     :
+                     <View>
+                     <FlatList 
+                     data={this.state.noti}
+                     renderItem={this.renderNotis}
+                     keyExtractor={(item,index)=>index.toString()}
+                     style={{backgroundColor:'#ffffff'}}
+                     />
+                     </View>
                 }
-            </SafeAreaView>
+            </View>
         )
     }
 }
+    
+  const TabNavigator = () => (
+    <Navigator tabBar={props => <MyTabBar {...props} />}>
+      <Screen name='AlarmPrivate' component={AlarmScreen} options={ {title:'알람'}}/>
+      <Screen name='AlarmOfficail' component={AlarmScreen}  options={{title:'공지사항'}}/>
+    </Navigator>
+  );
+  
+export class AlarmToptab extends React.Component{
+    
+    render(){
+        return (
+            <SafeAreaView style={{flex:1,}}>
+                <TabNavigator/>
+            </SafeAreaView>
+        );
+        } 
+}
+
 const styles = StyleSheet.create({
     container:{
         backgroundColor:'#ffffff',
-        flex:1
+        flex:1,
+        alignItems:'center',
+        justifyContent:'center'
     },
     notiContainer:{
-        paddingHorizontal:20,
         paddingVertical:25,
-        borderBottomWidth:1
+        borderRadius : 13,
+        marginVertical:4.5,
+        marginHorizontal:19,
+        paddingHorizontal:21
+    },
+    indicatorStyle:{
+         height:0
+    },
+    tabtext:{
+        fontSize:15
+    },
+    notiocontainer:{
 
-    }
+
+    },
 })

@@ -18,6 +18,7 @@ import RegisterSuccessScreen from './RegisterSuccess'
 import QuestionScreen from './Question'
 import FinishScreen from './Finish'
 import {Signing} from './Context'
+import {AltQueContent} from './L2Bottom/L3Stack/Question'
 import LogoSvg from '../assets/icons/logo.svg'
 
 const {width} = Dimensions.get('window')
@@ -208,6 +209,7 @@ export class StackNav extends React.Component{
                             <Screen name = "GominWrite" component={GominWrite}/>
                             <Screen name = "ApplyComplete" component={ApplyCompleteScreen}/>
                             <Screen name = "ApplyFail" component={ApplyFailScreen}/>
+                            <Screen name = "StckQueContent" component={AltQueContent}/>
                         </>
                     }
 
