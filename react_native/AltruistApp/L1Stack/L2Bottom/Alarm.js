@@ -102,9 +102,8 @@ export class AlarmScreen extends React.Component{
     }
     componentDidMount(){
         this.getNotiList();
-        
     }
-
+    
     render(){
         const {isLoading} = this.state
         return(
@@ -136,15 +135,6 @@ export class AlarmScreen extends React.Component{
   
 export class AlarmToptab extends React.Component{
     
-    componentDidMount(){
-        StatusBar.setBackgroundColor('#F4F4F4');
-        StatusBar.setBarStyle('dark-content');
-    }
-
-    componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
-    }
     render(){
         return (
             <SafeAreaView style={{flex:1,}}>
