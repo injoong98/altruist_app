@@ -829,6 +829,7 @@ class MarketContent extends React.Component {
     postDealStatus = async () => {
         var formdata = new FormData();
         formdata.append('post_id', this.state.post.post_id);
+        formdata.append('deal_status', 0)
         console.log(formdata);
         await Axios.post('http://dev.unyict.org/api/board_write/finish_deal',formdata)
         .then(response=>{
@@ -966,7 +967,7 @@ class MarketContent extends React.Component {
                                 <Text style={{color:'#878787', fontSize:10}} category='s2'>{post.post_hit}</Text>
                             </Layout>
                             <Layout style={{justifyContent:'center', alignItems:'center', marginHorizontal:10}}>
-                                <Viewsvg/>
+                                <Timesvg/>
                                 <PostTime style={{color:'#878787', fontSize:10}} datetime={post.post_datetime}/>
                             </Layout>
                         </Layout>
@@ -1785,14 +1786,14 @@ class IlbanContent extends Component {
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
         return (
-            <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10}} >
+            <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:20, paddingTop:10}} >
                 <View style={{marginLeft:15,marginTop:10,marginBottom:13}}>
                     <View style={{display:"flex",flexDirection:'row'}}>
                         <StarIcon />
                         <View>
-                            <Text>{post.display_name}</Text>
+                            <Text category="s2" style={{fontSize:12}}>{post.display_name}</Text>
                             <View style={{display:"flex",flexDirection:'row'}}>
-                                <PostTime datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
+                                <PostTime style={{color:'#878787', fontSize:8}} datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
                                 {
                                     post.post_datetime ==post.post_updated_datetime?
                                     null
@@ -1804,19 +1805,19 @@ class IlbanContent extends Component {
                     </View>
                 </View>
                 <View style={{marginLeft:15,paddingBottom:5}}>
-                    <Text style={{fontSize:14,fontWeight:'bold'}}>{post.post_title}</Text>
+                    <Text style={{fontSize:16,fontWeight:'bold'}} category='h3'>{post.post_title}</Text>
                 </View>
-                <View style={{marginLeft:15,marginBottom:16}}>
-                    <Text style={{fontSize:12,fontWeight:'800'}}>
-                    {post_remove_tags}
+                <View style={{marginLeft:15,marginVertical:5}}>
+                    <Text style={{fontSize:13, fontWeight:'100'}} category='s1'>
+                        {post_remove_tags}
                     </Text>
                 </View>
-                <View style={{alignItems:'center', width:'100%', paddingHorizontal:20}}>
+                <View style={{alignItems:'center', width:'100%', paddingHorizontal:15}}>
                     {image
                     ?image.map((i, index)=>
                         <TouchableOpacity 
                             key={i.props.id}
-                            style={{width:'100%', height:(Dimensions.get("window").width-70), marginTop:10}} 
+                            style={{width:'100%', height:(Dimensions.get("window").width-60), marginTop:10}} 
                             onPress={()=>this.setState({imageIndex:index, imageModalVisible:true})}
                         >
                             <Image 
@@ -1831,9 +1832,9 @@ class IlbanContent extends Component {
                 <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
                         <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
-                            <Thumbsvg/>
+                            <Thumbsvg width='18' height='18'/>
                         </TouchableOpacity>
-                        <Text>{post.post_like}</Text>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:15}}>{post.post_like}</Text>
                         {/* <TouchableOpacity onPress={()=>alert("저장!")}>
                             <PlusIcon />
                             <Text>{post.scrap_count}</Text>
@@ -1849,9 +1850,12 @@ class IlbanContent extends Component {
     }
 
     renderCommentsList=({item,index})=>(
-        <View style={{marginVertical:3}}>
+        <View style={{marginVertical:0}}>
             {item.cmt_reply==""?
+            index==0?
             null
+            :
+            <Divider style={{marginVertical:10, marginHorizontal:20}}/>
             :
             <View style={{position:'absolute',left:0,paddingLeft:25}}>
                 <ReplyLsvg />
@@ -1870,8 +1874,8 @@ class IlbanContent extends Component {
                     <View style={{flexDirection:"row"}}>
                         <StarIcon />
                         <View>
-                            <Text category="s2">{item.cmt_nickname}</Text>
-                            <PostTime datetime={item.cmt_datetime}/>
+                            <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
+                            <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
                         </View>
                     </View>
                     <View style={{display:'flex',flexDirection:'row'}}>
@@ -1884,19 +1888,19 @@ class IlbanContent extends Component {
                     </View>
                 </View>
                 <View style={{padding:5}}>
-                    <Text category="s1">{item.cmt_content}</Text>
+                    <Text category='s1' style={{marginTop:5, fontSize:12}}>{item.cmt_content}</Text>
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                     {item.cmt_reply ==""?
                     <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
-                        <Text>답글</Text>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>답글</Text>
                     </TouchableOpacity>
                     :null
                     }
                     <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg />
+                        <Thumbsvg width='12' height='12'/>
                     </TouchableOpacity>
-                        <Text>{item.cmt_like}</Text>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
             </View>
         </View>

@@ -66,14 +66,13 @@ class MarketScreen extends React.Component {
     <TouchableOpacity style={styles.item} onPress={() => {this.props.navigation.navigate('MarketContent',{OnGoback:() =>this.onRefresh(), post_id:item.post_id})}}>
         <View style={styles.textArea}>
           <View style={{flexDirection:'row'}}>
-            {item.deal_status==0?
-            <View style={{flex:1}}>
+            {item.deal_status==0
+            ?<View style={{flex:1}}>
               <Text style={{marginLeft:-4, color : '#D4787D', fontSize:11}} category='c2'>
                 •판매완료
               </Text>
             </View>
-            :
-            <View style={{flex:1}}>
+            :<View style={{flex:1}}>
               <Text style={{marginLeft:-4, color : '#439DB1', fontSize:11}} category='c2'>
                 {item.deal_type==0? '•판매중 / 배송':item.deal_type==1? '•판매중 / 직거래':'•판매중 / 배송 & 직거래'}
               </Text>
