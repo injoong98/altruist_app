@@ -45,12 +45,12 @@ export class AlarmScreen extends React.Component{
                 var screen='Jau'
                 break;
             case '10':
-                var content='AltQueContent'
+                var content='StckQueContent'
                 var list ="Alt"
                 var screen ="AltQueToptab"
                 break;
             case '11':
-                var content='AltQueContent'
+                var content='StckQueContent'
                 var list ="Alt"
                 var screen ="AltOpqQueList"
                 break;
@@ -63,10 +63,12 @@ export class AlarmScreen extends React.Component{
     readNoti = (item) =>{
         axios.get(`http://dev.unyict.org/api/notification/read?not_id=${item.not_id}`)
         .then(res=>{
+            console.log(item.not_type=='comment')
             if(item.not_type=='comment'){
                 console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
                 this.navigateToPost(item.post_id,item.brd_id)
             }
+            this.getNotiList()
         })
         .catch(err=>{
         })
@@ -76,7 +78,7 @@ export class AlarmScreen extends React.Component{
         return(
             <TouchableOpacity 
                 key={index} 
-                onPress={()=>{this.readNoti(item);this.getNotiList()}}
+                onPress={()=>{this.readNoti(item);}}
                 style={[styles.notiContainer,{backgroundColor: item.not_read_datetime == null ? '#f4f4f4' : '#c4c4c4'}]} 
             >
                 <View style={{flexDirection:"row",justifyContent:'space-evenly'}}>
@@ -103,7 +105,7 @@ export class AlarmScreen extends React.Component{
     componentDidMount(){
         this.getNotiList();
     }
-    
+
     render(){
         const {isLoading} = this.state
         return(
