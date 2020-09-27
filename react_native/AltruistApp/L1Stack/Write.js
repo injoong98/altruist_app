@@ -107,7 +107,7 @@ class GominWrite extends React.Component {
           : true,
       modalVisible: false,
       resultVisible: false,
-      spinnerModalVisible: false,
+      spinnerVisible: false,
       resultText : '',
     };
   }
@@ -138,9 +138,9 @@ class GominWrite extends React.Component {
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
-          this.setState({spinnerModalVisible: false, resultVisible: true, resultText : message});
+          this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
-          this.setState({spinnerModalVisible: false, resultVisible: true, 
+          this.setState({spinnerVisible: false, resultVisible: true, 
             resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
         }
       })
@@ -208,7 +208,7 @@ class GominWrite extends React.Component {
       checked,
       content,
       modalVisible,
-      spinnerModalVisible,
+      spinnerVisible,
       resultVisible,
     } = this.state;
     return (
@@ -283,7 +283,7 @@ class GominWrite extends React.Component {
             }
             frstText="예"
             OnFrstPress={() => {
-              this.setState({modalVisible: false, spinnerModalVisible: true});
+              this.setState({modalVisible: false, spinnerVisible: true});
               this.submitPost();
             }}
             scndText="아니오"
@@ -305,7 +305,7 @@ class GominWrite extends React.Component {
           />
         </Modal>
         <Modal
-          visible={spinnerModalVisible}
+          visible={spinnerVisible}
           backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
           <Spinner size="giant" />
         </Modal>
@@ -366,7 +366,7 @@ class MarketWrite extends React.Component {
       thumbModalVisible: false,
       modalVisible: false,
       resultVisible: false,
-      spinnerModalVisible: false,
+      spinnerVisible: false,
       resultText : '',
     };
   }
@@ -429,14 +429,14 @@ class MarketWrite extends React.Component {
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
-          this.setState({spinnerModalVisible: false, resultVisible: true, resultText : message});
+          this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
-          this.setState({spinnerModalVisible: false, resultVisible: true, 
+          this.setState({spinnerVisible: false, resultVisible: true, 
             resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
         }
       })
       .catch((error) => {
-        this.setState({spinnerModalVisible: false});
+        this.setState({spinnerVisible: false});
         console.log(error);
         alert(JSON.stringify(error));
       });
@@ -617,7 +617,7 @@ class MarketWrite extends React.Component {
       post_thumb_use,
 			post_main_thumb,
 			modalVisible,
-			spinnerModalVisible,
+			spinnerVisible,
 			resultVisible,
     } = this.state;
 
@@ -821,7 +821,7 @@ class MarketWrite extends React.Component {
 							}
 							frstText="예"
 							OnFrstPress={() => {
-								this.setState({modalVisible: false, spinnerModalVisible: true});
+								this.setState({modalVisible: false, spinnerVisible: true});
 								this.submitPost();
 							}}
 							scndText="아니오"
@@ -843,7 +843,7 @@ class MarketWrite extends React.Component {
 						/>
 					</Modal>
 					<Modal
-						visible={spinnerModalVisible}
+						visible={spinnerVisible}
 						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
 						<Spinner size="giant" />
 					</Modal>
@@ -906,6 +906,9 @@ class AlbaWrite extends React.Component {
 					: false,
       salary_storage: 0,
       popoverVisible : false,
+      modalVisible : false,
+      resultVisible : false,
+      spinnerVisible : false,
     };
   }
 
@@ -923,11 +926,6 @@ class AlbaWrite extends React.Component {
   componentDidMount() {
     StatusBar.setBackgroundColor('#F4F4F4');
     StatusBar.setBarStyle('dark-content');
-  }
-
-  componentWillUnmount() {
-    StatusBar.setBackgroundColor('#B09BDE');
-    StatusBar.setBarStyle('default');
   }
   
 
@@ -949,18 +947,7 @@ class AlbaWrite extends React.Component {
         ? 'http://dev.unyict.org/api/board_write/modify'
         : 'http://dev.unyict.org/api/board_write/write/b-a-3';
 
-    const {
-      post_title,
-      post_content,
-      post_location,
-      post_hp,
-      alba_type,
-      alba_salary_type,
-      alba_salary,
-      images,
-			post_thumb_use,
-			isFollowUp,
-    } = this.state;
+    const { post_title, post_content, post_location, post_hp, alba_type, alba_salary_type,  alba_salary, images,post_thumb_use,	isFollowUp,} = this.state;
     let formdata = new FormData();
     formdata.append('brd_key', 'b-a-3');
     formdata.append('post_title', post_title);
@@ -968,7 +955,7 @@ class AlbaWrite extends React.Component {
     formdata.append('post_location', post_location);
     formdata.append('post_hp', post_hp);
     formdata.append('alba_type', alba_type);
-    formdata.append('alba_salary_type', alba_salary_type.row);
+    formdata.append('alba_salary_type', alba_salary_type);
     formdata.append('alba_salary', alba_salary);
     console.log(post_thumb_use ? 0 : 1);
     formdata.append('post_thumb_use', post_thumb_use ? 0 : 1);
@@ -984,52 +971,55 @@ class AlbaWrite extends React.Component {
       ? formdata.append('post_id', this.props.route.params.post.post_id)
       : null;
 
-    console.log(formdata);
     await axios
       .post(url, formdata)
       .then((response) => {
-        console.log(response);
-        Alert.alert(
-          '알바천일국',
-          this.props.route.params.mode == 'edit'
-            ? `"게시글 수정 완료"\n${JSON.stringify(response.data)}`
-            : `"게시글 작성 완료"\n${JSON.stringify(response.data)}`,
-          [
-            {
-              text: '닫기',
-              onPress: () => this.gobackfunc(),
-            },
-          ],
-          {cancelable: false},
-        );
+        const {message, status} = response.data;
+        if (status == '500') {
+          this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
+        } else if (status == '200') {
+          this.setState({spinnerVisible: false, resultVisible: true, 
+            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+        }
       })
       .catch((error) => {
+        this.setState({spinnerVisible: false});
+        console.log(error);
         alert(error);
       });
   };
 
-  submit_alba_Alert = () => {
-    Alert.alert(
-      '알바천일국',
-      this.props.route.params.mode == 'edit'
-        ? '게시글을 수정하시겠습니까?'
-        : '게시글을 작성하시겠습니까?',
-      [
-        {
-          text: '작성',
-          onPress: () => this.submit_alba_post(),
-        },
-        {
-          text: '취소',
-          onPress: () => alert('취소했습니다.'),
-        },
-      ],
-      {cancelable: false},
-    );
+  filterSpamKeyword = async () => {
+    const {post_title, post_content} = this.state;
+
+    var formdata = new FormData();
+    formdata.append('title', post_title);
+    formdata.append('content', post_content);
+    formdata.append('csrf_test_name', '');
+
+    //Keyboard
+    Keyboard.dismiss();
+
+    await axios
+      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .then((response) => {
+        const {message, status} = response.data;
+        if (status == '500') {
+          alert(message);
+        } else if (status == '200') {
+          this.setState({modalVisible: true});
+        }
+      })
+      .catch((error) => {
+        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+      });
   };
+  
 
   gobackfunc = () => {
     this.cleanupImages();
+    StatusBar.setBackgroundColor('#B09BDE');
+    StatusBar.setBarStyle('default');
     const {navigation, route} = this.props;
     navigation.goBack();
     route.params.statefunction();
@@ -1130,23 +1120,18 @@ class AlbaWrite extends React.Component {
   );
 
   render() {
-    const {
-      post_title,
-      post_content,
-      post_location,
-      post_hp,
-      alba_salary,
-      alba_salary_type,
-			alba_type,
-			isFollowUp,
-    } = this.state;
+    const { post_title, post_content, post_location, post_hp, alba_salary, alba_salary_type,
+			alba_type, isFollowUp, modalVisible, resultVisible, spinnerVisible, } = this.state;
     const {navigation} = this.props;
     return (
       <SafeAreaView style={{flex: 1}}>
         <WriteContentToptab text="채용공고"
           right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-          func={() => {this.submit_alba_post();}}
-          gbckfunc={() => {navigation.goBack();}}
+          func={() => {this.filterSpamKeyword();}}
+          gbckfunc={() => {
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+            navigation.goBack();}}
           gbckuse={true}
         />
         <Divider />
@@ -1230,7 +1215,7 @@ class AlbaWrite extends React.Component {
             <TextInput
               value={post_location}
               style={[styles.input, {fontSize: 20}]}
-              placeholder="장소"
+              placeholder="근무지"
               onChangeText={(nextText) => {
                 this.setState({post_location: nextText});
               }}
@@ -1285,6 +1270,44 @@ class AlbaWrite extends React.Component {
             </Layout>
           </ScrollView>
         </Layout>
+        <Modal
+						visible={modalVisible}
+						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+						onBackdropPress={() => this.setState({modalVisible: false})}>
+						<Confirm
+							confirmText={
+								this.props.route.params.mode == 'edit'
+									? '게시글을 수정하시겠습니까?'
+									: '게시글을 작성하시겠습니까?'
+							}
+							frstText="예"
+							OnFrstPress={() => {
+								this.setState({modalVisible: false, spinnerVisible: true});
+								this.submit_alba_post();
+							}}
+							scndText="아니오"
+							OnScndPress={() => this.setState({modalVisible: false})}
+						/>
+					</Modal>
+					<Modal
+						visible={resultVisible}
+						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+						onBackdropPress={() => this.setState({resultVisible: false})}>
+						<Confirm
+							type="result"
+							confirmText={this.state.resultText}
+							frstText="닫기"
+							OnFrstPress={() => {
+								this.setState({resultVisible: false});
+								this.gobackfunc();
+							}}
+						/>
+					</Modal>
+					<Modal
+						visible={spinnerVisible}
+						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
+						<Spinner size="giant" />
+					</Modal>
       </SafeAreaView>
     );
   }
