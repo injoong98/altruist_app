@@ -581,6 +581,7 @@ class AltQueList extends React.Component{
             list_showing:[],
         }
     }
+    static contextType = Signing;
 
     getQuestions = ()=>{
         const {type,scndType} = this.props
@@ -607,18 +608,35 @@ class AltQueList extends React.Component{
         const post_remove_tags = item.post_content.replace(regex, '');
         return(
             <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('AltQueContent',{post_id:item.post_id})}}>
-            <View style={{flexDirection:'row',marginTop:10}}>
-                    { 
-                    item.area ? 
-                    item.area.length > 0?
-                        item.area.map( (area)=>(
-                        <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} key={area.act_id}>{`#${area.act_content} `}</Text>)
-                        )
-                        :
-                        <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`#전체`}</Text>
-                        :
-                        null
-                    }
+            <View style={{flexDirection:'row',marginTop:10,justifyContent:'space-between'}}>
+                <View style={{flexDirection:'row'}}>
+                        { 
+                        item.area ? 
+                            item.area.length > 0?
+                                item.area.map( (area)=>(
+                                <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} key={area.act_id}>{`#${area.act_content} `}</Text>)
+                                )
+                                :
+                                <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`#전체`}</Text>
+                            :
+                            item.answer_mem_id == this.context.session_mem_id?
+                                <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`From . ${item.display_name} `}</Text>
+                                :
+                                <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`To . ${item.answer_mem_id} `}</Text>
+                        }
+                </View>
+                
+                        {
+                            item.brd_id == 10 ?
+                            <View style={{paddingRight:21}}>
+                                <Text style={{fontSize:12,fontWeight:'bold',color: item.post_comment_count > 0 ? '#63579D' : '#FF6262'}} >
+                                    {item.post_comment_count > 0 ? '답변 완료':'답변 대기 '}
+                                    
+                                </Text>
+                            </View>
+                            :
+                            null
+                        }
             </View>
             <View>
                 <Text style ={styles.headtext}category="h4" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
@@ -626,23 +644,34 @@ class AltQueList extends React.Component{
             </View>
             <View style={styles.subtitle}>
                 <View style={{display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4}}> 
+                    {
+                        
+                    item.brd_id == 11 ?
                     <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{item.display_name}</Text>
+                    :
+                    null
+                    }
                     <PostTime datetime = {item.post_datetime}/>
                 </View>
-                <View style={styles.infocontainer}>
-                    <View style={{alignItems:'center',}}>
-                        <Heartsvg />
-                        <Text style={styles.infotext} category="s1">{item.post_like}</Text>
+                {
+                    item.brd_id == 11 ?
+                    <View style={styles.infocontainer}>
+                        <View style={{alignItems:'center',}}>
+                            <Heartsvg />
+                            <Text style={styles.infotext} category="s1">{item.post_like}</Text>
+                        </View>
+                        <View style={{alignItems:'center',}}>
+                            <Commentsvg />
+                            <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
+                        </View>
+                        <View style={{alignItems:'center',}}>
+                            <Viewsvg />
+                            <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
+                        </View>
                     </View>
-                    <View style={{alignItems:'center',}}>
-                        <Commentsvg />
-                        <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
-                    </View>
-                    <View style={{alignItems:'center',}}>
-                        <Viewsvg />
-                        <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
-                    </View>
-                </View>
+                    :
+                    <View />
+                }
             </View>
         </TouchableOpacity>
         )
@@ -1092,7 +1121,6 @@ const styles = StyleSheet.create({
         fontSize:9
     },
     headtext:{
-        marginTop:11,
         paddingTop:10,
         fontWeight:'bold'
     },
