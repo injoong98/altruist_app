@@ -89,7 +89,7 @@ class MarketScreen extends React.Component {
                 </View>
             </View>
           </View>
-          <View style={{flex:1, backgroundColor:'white', paddingHorizontal:5, paddingVertical:3, borderRadius:10, marginTop:5, justifyContent:'space-between', marginRight:40}}>
+          <View style={{flex:1, backgroundColor:'white', paddingHorizontal:5, paddingVertical:3, borderRadius:5, marginTop:5, justifyContent:'space-between', marginRight:40}}>
             <View style={styles.textTop}>
               <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail" category='h4'>
                   {item.title}
@@ -97,12 +97,12 @@ class MarketScreen extends React.Component {
             </View>
             <View style={styles.textBottom}>
               <View style={{flex:1, justifyContent:'center'}}>
-                  <Text style={{...styles.text, color:'#878787', fontSize:11}} numberOfLines={1} ellipsizeMode="tail" category='s1'>
+                  <Text style={{...styles.text, color:'#878787', fontSize:12}} numberOfLines={1} ellipsizeMode="tail" category='h4'>
                     {item.post_location}
                   </Text>
               </View>
               <View style={{flex:1, alignItems:'flex-end'}}>
-                  <Text style={{...styles.text, color:'#878787', fontSize:11}} category='s1'>
+                  <Text style={{...styles.text, color:'#878787', fontSize:12}} category='h4'>
                     {(item.deal_price+'원').replace(/\d(?=(\d{3})+\원)/g, '$&,')}
                   </Text>
               </View>
