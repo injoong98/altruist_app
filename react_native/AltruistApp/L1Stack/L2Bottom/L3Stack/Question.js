@@ -21,6 +21,7 @@ import {WriteContentToptab} from '../../../components/WriteContentTopBar'
 import Heartsvg from '../../../assets/icons/heart.svg'
 import Viewsvg from '../../../assets/icons/view.svg'
 import Commentsvg from '../../../assets/icons/comment.svg'
+import Writesvg from '../../../assets/icons/write.svg'
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -548,6 +549,7 @@ class AltOpqQueList extends React.Component{
     }
 
     render(){
+        const title =this.props.route.params ? this.props.route.params.title:null
         return(
             <SafeAreaView style={{flex:1,backgroundColor:'#ffffff'}}>
                 <WriteContentToptab
@@ -558,6 +560,12 @@ class AltOpqQueList extends React.Component{
                 gbckuse={true}
             />
                <AltQueList {...this.props} type='opq'/>
+               <TouchableOpacity 
+                    style={{position:'absolute', right:20,bottom:14}} 
+                    onPress={()=>{this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:title})}} 
+                >
+                    <Writesvg />
+                </TouchableOpacity>
             </SafeAreaView>
             )
     }
@@ -576,7 +584,6 @@ class AltQueList extends React.Component{
 
     getQuestions = ()=>{
         const {type,scndType} = this.props
-        console.log(scndType)
         axios.get(`http://dev.unyict.org/api/board_post/lists/${type}?type=${scndType}`)
         .then(res=>{
             this.setState({list:res.data.view.list.data.list,list_showing:res.data.view.list.data.list});
@@ -589,15 +596,30 @@ class AltQueList extends React.Component{
             this.setState({isLoading:false})
         })
     }
-
+    
     componentDidMount(){
         this.getQuestions();    
     }
     renderQueList = ({item}) =>{
+        
+        console.log(item.area)
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = item.post_content.replace(regex, '');
         return(
             <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('AltQueContent',{post_id:item.post_id})}}>
+            <View style={{flexDirection:'row',marginTop:10}}>
+                    { 
+                    item.area ? 
+                    item.area.length > 0?
+                        item.area.map( (area)=>(
+                        <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} key={area.act_id}>{`#${area.act_content} `}</Text>)
+                        )
+                        :
+                        <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`#전체`}</Text>
+                        :
+                        null
+                    }
+            </View>
             <View>
                 <Text style ={styles.headtext}category="h4" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
                 <Text style={styles.subtext}category="s2" numberOfLines={1}>{post_remove_tags}</Text>
@@ -834,7 +856,15 @@ class AltQuestionWrite extends React.Component
     BackAction = () =>(
         <TopNavigationAction icon={BackIcon} onPress={() => {this.props.navigation.goBack()}}/>
     )
-
+    actSelect = (act) =>{
+        const {actSelected}=this.state;
+        if(actSelected.includes(act)){
+            actSelected.splice(actSelected.indexOf(act),1)
+            this.setState({actSelected})
+        }else{
+            this.setState({actSelected:actSelected.concat(act)})
+        }
+    }
     getAreaCategory= async()=>{
         await axios.get('http://dev.unyict.org/api/altruists/area_category')
         .then(res=>{
@@ -859,7 +889,7 @@ class AltQuestionWrite extends React.Component
     }
     render(){
         const {title,content,filterModalVisible,actSelected} = this.state;
-        const {act,answer_mem_id,brd_key,item,} = this.props.route.params;
+        const {act,answer_mem_id,brd_key,item,altruist} = this.props.route.params;
         const {width,height} =Dimensions.get('window')
         return(
         <SafeAreaView style={{flex:1}}>
@@ -881,15 +911,15 @@ class AltQuestionWrite extends React.Component
                 <View style={{ flex:1,backgroundColor:"#f4f4f4",padding:10}}>
                     <View style={{display:'flex',flexDirection:'row',paddingHorizontal:10}}>
                     {
-                        this.props.route.params.answer_mem_id ? 
+                        answer_mem_id ? 
                         <View>
                             <Text style={{fontSize:13, fontWeight:'700',color:'#63579D',marginLeft:16}} >
-                            개인 질문을 보냅니다.
+                            { `[${altruist.mem_basic_info.mem_username}] 님께 질문을 보냅니다.`}
                             </Text>
                         </View>
                         :
                         <TouchableOpacity 
-                            style = {{height:21,width:23,backgroundColor:'#B09BDE',borderRadius:7,justifyContent:'center'}} 
+                            style = {{height:21,width:23,backgroundColor:'#63579D',borderRadius:7,justifyContent:'center'}} 
                             onPress={()=>this.setState({filterModalVisible:true})}
                         >
                             <Text style={{color:'#ffffff',fontSize:24,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
@@ -919,7 +949,7 @@ class AltQuestionWrite extends React.Component
                                 ))}
                         </ScrollView >
                         :
-                        this.props.route.params.answer_mem_id ? 
+                        answer_mem_id ? 
                         null:
                         <View>
                             <Text style={{fontSize:13, fontWeight:'700',color:'#63579D',marginLeft:16}} >질문 분야를 선택할 수 있습니다.</Text>
@@ -958,7 +988,7 @@ class AltQuestionWrite extends React.Component
             >
                 <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
                     <View style={{alignItems:'center',justifyContent:'center'}}>
-                        <Text category='h2' style={{fontSize:13,marginVertical:11,color:'#63579D'}}>필터 적용하기</Text>
+                        <Text category='h2' style={{fontSize:13,marginVertical:11,color:'#63579D'}}>질문 분야</Text>
                         <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginBottom:15}}></View>
                     </View>
                     <ScrollView ScrollViewstyle = {{}}>
@@ -967,12 +997,7 @@ class AltQuestionWrite extends React.Component
                                 <Tag 
                                     key = {act.act_content}
                                     onPress ={()=>{
-                                        if(actSelected.includes(act)){
-                                            actSelected.splice(actSelected.indexOf(act),1)
-                                            this.setState({actSelected})
-                                        }else{
-                                            this.setState({actSelected:actSelected.concat(act)})
-                                        }
+                                        this.actSelect(act);
                                     }}
                                     style={[{padding:4},actSelected.includes(act) ? styles.tagSelected:{}]}
                                 >

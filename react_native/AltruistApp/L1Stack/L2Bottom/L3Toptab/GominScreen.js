@@ -120,25 +120,25 @@ class GominScreen extends React.Component {
         return(
         <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}}>
             <View>
-                <Text style ={styles.headtext}category="h4" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
-                <Text style={styles.subtext}category="s2" numberOfLines={1}>{post_remove_tags}</Text>
+                <Text style ={styles.headtext} category="h3" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
+                <Text style={styles.subtext} category="p1" numberOfLines={3}  ellipsizeMode="tail">{post_remove_tags}</Text>
             </View>
             <View style={styles.subtitle}>
-                <View style={{display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4}}> 
-                    <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{item.display_name}</Text>
-                    <PostTime datetime = {item.post_datetime}/>
+                <View style={{flex:4,display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4, paddingBottom:5}}> 
+                    <Text category="s2" style={{fontSize:12, color:'#63579D', marginRight:5}}>{item.display_name}</Text>
+                    <PostTime category="p1" style={{fontSize:10, color:'#63579D'}} datetime = {item.post_datetime}/>
                 </View>
                 <View style={styles.infocontainer}>
-                    <View style={{alignItems:'center',}}>
-                        <Heartsvg />
-                        <Text style={styles.infotext} category="s1">{item.post_like}</Text>
+                    <View style={{alignItems:'center',justifyContent:'center'}}>
+                        <Heartsvg width='15' height='15'/>
+                        <Text style={{...styles.infotext, marginTop:3}} category="s1">{item.post_like}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
-                        <Commentsvg />
+                        <Commentsvg width='20' height='20'/>
                         <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
-                        <Viewsvg />
+                        <Viewsvg width='20' height='20'/>
                         <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                     </View>
                 </View>
@@ -209,33 +209,38 @@ const styles = StyleSheet.create({
         // height: 15
     },
     subtitle:{
-        marginTop:10, display:"flex",flexDirection:"row", justifyContent:"space-between",
+        marginTop:10, 
+        display:"flex",
+        flexDirection:"row", 
+        justifyContent:"space-between",
     },
     infocontainer:{
-        display:"flex",flexDirection:"row",justifyContent:'space-evenly',
+        display:"flex",flexDirection:"row",justifyContent:'space-around',
         borderTopLeftRadius:23,
-        width:116,
+        width:150,
         backgroundColor:"#ffffff",
         position:"relative",bottom:0,right:0,
         paddingTop:5,
         paddingLeft:20,
-        paddingRight:10
+        paddingRight:10,
+        flex:2
     },
     loader:{
         marginTop : 10,
         alignItems : 'center',
     },
     infotext:{
-        color:'#141552',
+        color:'#63579D',
         fontSize:9
     },
     headtext:{
         marginTop:11,
-        paddingTop:10,
+        paddingTop:5,
         fontWeight:'bold'
     },
     subtext:{
-        marginTop:5,
-        maxWidth:200
+        marginTop:10,
+        maxWidth:200,
+        fontSize:13
     }
 })

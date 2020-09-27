@@ -7,7 +7,8 @@ import messaging from '@react-native-firebase/messaging'
 import {ComBottomNav} from './L2Bottom/ComBottomNav'
 import {defaultContent, IlbanContent, GominContent, MarketContent, AlbaContent} from './Content'
 import {defaultWrite, MarketWrite, AlbaWrite,GominWrite, IlbanWrite} from './Write'
-
+import ApplyCompleteScreen from './L2Bottom/L3Stack/ApplyComplete'
+import ApplyFailScreen from './L2Bottom/L3Stack/ApplyFail'
 import axios from 'axios' 
 import LoginScreen from './Login'
 import RegisterScreen from './Register'
@@ -62,6 +63,7 @@ export class StackNav extends React.Component{
             isSignedIn:false,
             isSignedOut:false,
             session_mem_id:'',
+            isPushNoti:false,
             context:{
                 signIn:(mem_userid,mem_password,autologin)=>{
                     var formdata= new FormData();
@@ -99,7 +101,10 @@ export class StackNav extends React.Component{
                     .catch(error =>{
                     })
                 },
-                session_mem_id:''
+                session_mem_id:'',
+                isPushNoti:()=>{
+                    return this.state.isPushNoti
+                }
             }
         }
         
@@ -163,6 +168,9 @@ export class StackNav extends React.Component{
             .getInitialNotification()
             .then(async remoteMessage=>{
             console.log('getInitialNotification stack'+remoteMessage)
+                if(remoteMessage!=null){
+                    this.setState({isPushNoti:true})
+                }
             }) 
             
     }
@@ -198,6 +206,8 @@ export class StackNav extends React.Component{
                             <Screen name = "MarketWrite" component={MarketWrite}/>
                             <Screen name = "AlbaWrite" component={AlbaWrite}/>
                             <Screen name = "GominWrite" component={GominWrite}/>
+                            <Screen name = "ApplyComplete" component={ApplyCompleteScreen}/>
+                            <Screen name = "ApplyFail" component={ApplyFailScreen}/>
                         </>
                     }
 
