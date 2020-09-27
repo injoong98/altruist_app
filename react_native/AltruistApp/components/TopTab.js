@@ -1,5 +1,6 @@
 import React from 'react';
-import {View,StyleSheet} from 'react-native';
+import {View,StyleSheet,TouchableOpacity} from 'react-native';
+
 import {Text} from '@ui-kitten/components';
 
 export class TopTab extends React.Component{
@@ -17,7 +18,59 @@ export class TopTab extends React.Component{
         )
     }
 }
-
+export function MyTabBar({ state, descriptors, navigation, position }) {
+    return (
+      <View style={{ flexDirection: 'row' }}>
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key];
+          const label =
+            options.tabBarLabel !== undefined
+              ? options.tabBarLabel
+              : options.title !== undefined
+              ? options.title
+              : route.name;
+  
+          const isFocused = state.index === index;
+  
+          const onPress = () => {
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
+            });
+  
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
+  
+          const onLongPress = () => {
+            navigation.emit({
+              type: 'tabLongPress',
+              target: route.key,
+            });
+          };
+  
+          return (
+            <TouchableOpacity
+              key={index}
+              accessibilityRole="button"
+              accessibilityStates={isFocused ? ['selected'] : []}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              style={{ flex: 1, alignItems:'center',justifyContent:'center',backgroundColor:isFocused ? '#ffffff' : '#DEDEDE', borderTopLeftRadius:21,borderTopRightRadius:21,paddingVertical:8}}
+            >
+              <Text  category='h1' style={{fontSize:14,color :isFocused ? '#63579D' : '#6A6A6A',}}>
+                {label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  }
 const styles = StyleSheet.create({
     tabcontainer:{
         paddingBottom:18,
@@ -40,5 +93,11 @@ const styles = StyleSheet.create({
         // borderWidth:1,
         // borderStyle:'solid',
         // borderColor:'blue',
+    },
+    indicatorStyle:{
+         height:0
+    },
+    tabtext:{
+        fontSize:15
     }
 }) 
