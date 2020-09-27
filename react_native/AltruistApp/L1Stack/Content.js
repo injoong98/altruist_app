@@ -296,11 +296,6 @@ class GominContent extends React.Component{
         .then(()=>{this.setState({isLoading:false})})
     }
     
-    componentWillUnmount=()=>{
-        StatusBar.setBackgroundColor('#B09BDE')
-        StatusBar.setBarStyle('default')
-    }
-    
     modalList = [
         {
             text : '이 게시글을 신고하시겠습니까?',
@@ -437,6 +432,8 @@ class GominContent extends React.Component{
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {
+                    StatusBar.setBackgroundColor('#B09BDE')
+                    StatusBar.setBarStyle('default')
                     this.props.navigation.goBack()
                     this.props.route.params.OnGoback()}}
                 gbckuse={true}

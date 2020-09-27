@@ -109,8 +109,10 @@ class GominWrite extends React.Component {
       resultVisible: false,
       spinnerVisible: false,
       resultText : '',
+      modalType : 0,
     };
   }
+
   submitPost = async () => {
     const url =
       this.props.route.params.mode == 'edit'
@@ -148,6 +150,7 @@ class GominWrite extends React.Component {
         alert(JSON.stringify(error));
       });
   };
+
   filterSpamKeyword = async () => {
     const {post_title, post_content} = this.state;
 
@@ -166,60 +169,48 @@ class GominWrite extends React.Component {
         if (status == '500') {
           alert(message);
         } else if (status == '200') {
-          this.setState({modalVisible: true});
+          this.setState({modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
         alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
   };
+
   gobackfunc = () => {
+    StatusBar.setBackgroundColor('#B09BDE');
+    StatusBar.setBarStyle('default');
     const {navigation, route} = this.props;
     navigation.goBack();
     route.params.statefunction();
   };
-  SubmitButton = () => (
-    <TopNavigationAction
-      icon={UpIcon}
-      onPress={() => {
-        this.filterSpamKeyword();
-      }}
-    />
-  );
 
-  CloseAction = () => (
-    <TopNavigationAction
-      icon={CloseIcon}
-      onPress={() => {
-        this.props.navigation.goBack();
-      }}
-    />
-  );
   componentDidMount = () => {
-    console.log(this.props.route.params);
+    StatusBar.setBackgroundColor('#F4F4F4');
+    StatusBar.setBarStyle('dark-content');
   }
+
+  modalList =[
+    {
+      text : this.props.route.params.mode == 'edit'? '게시글을 수정하시겠습니까?': '게시글을 작성하시겠습니까?',
+      func : this.submitPost
+    },
+    {
+      text : '게시글 작성을 그만하시겠습니까?',
+      func : this.gobackfunc
+    }
+  ]
+  
   render() {
     const {navigation} = this.props;
-    const {
-      post_title,
-      post_category,
-      post_anoymous_yn,
-      post_content,
-      checked,
-      content,
-      modalVisible,
-      spinnerVisible,
-      resultVisible,
-    } = this.state;
+    const {post_title, post_category, post_anoymous_yn, post_content, checked, content, modalVisible,
+      spinnerVisible, resultVisible, } = this.state;
     return (
       <SafeAreaView style={{flex: 1}}>
         <WriteContentToptab text="고민 작성"
           right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-          func={() => {this.filterSpamKeyword();}}
-          gbckfunc={() => {
-            StatusBar.setBackgroundColor('#B09BDE');
-            StatusBar.setBarStyle('default');
-            navigation.goBack();}}
+          func={this.filterSpamKeyword}
+          gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
           gbckuse={true}/>
         <TextInput
           style={{
@@ -271,15 +262,10 @@ class GominWrite extends React.Component {
           backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
           onBackdropPress={() => this.setState({modalVisible: false})}>
           <Confirm
-            confirmText={
-              this.props.route.params.mode == 'edit'
-                ? '게시글을 수정하시겠습니까?'
-                : '게시글을 작성하시겠습니까?'
-            }
+            confirmText={this.modalList[this.state.modalType].text}
             frstText="예"
             OnFrstPress={() => {
-              this.setState({modalVisible: false, spinnerVisible: true});
-              this.submitPost();
+              this.setState({modalVisible: false}, this.modalList[this.state.modalType].func);
             }}
             scndText="아니오"
             OnScndPress={() => this.setState({modalVisible: false})}
