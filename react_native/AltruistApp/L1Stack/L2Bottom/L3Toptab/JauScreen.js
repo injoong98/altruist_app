@@ -10,12 +10,14 @@ import {IGNORED_TAGS} from 'react-native-render-html/src/HTMLUtils';
 import {PostTime} from '../../../components/PostTime';
 import {WebView} from 'react-native-webview';
 import {Tag} from '../../../components/tag.component';
+import {Contrast, Grayscale} from 'react-native-color-matrix-image-filters';
 //icon
 import Heartsvg from '../../../assets/icons/heart.svg';
 import Viewsvg from '../../../assets/icons/view.svg';
 import Commentsvg from '../../../assets/icons/comment.svg';
 import Writesvg from '../../../assets/icons/write.svg';
 import Sharesvg from '../../../assets/icons/share.svg';
+import Thumbsvg from '../../../assets/icons/thumb-up.svg';
 
 class JauScreen extends React.Component {
 	constructor(props) {
@@ -136,7 +138,8 @@ class JauScreen extends React.Component {
 			?item.file.filter(i=>i.pfi_type=='jpg'||i.pfi_type=='png').map(function(image,index){
 				var image_info = {};
 				image_info['id'] = image.pfi_id;
-				image_info['url'] = image.pfi_filename;
+				image_info['url'] = image.origin_image_url;
+				image_info['index'] = index;
 				return image_info;
 			})
 			:null;
@@ -146,13 +149,14 @@ class JauScreen extends React.Component {
 			onPress={() => {this.props.navigation.navigate('IlbanContent', {OnGoback: () => this.onRefresh(),post_id: item.post_id});}}
 			>
 			<View style={{flex:1, backgroundColor:'white', width:111, borderBottomRightRadius:15}}>
-				<Text category='p2' style={{padding:5, flex:1}}>{'#'+this.category[item.post_category]}</Text>
+				<Text category='s2' style={{fontSize:14,color:'#63579D', padding:5, flex:1}}>{'#'+this.category[item.post_category]}</Text>
 			</View>
-			<View style={{marginHorizontal:20}}>
-				<View style={{paddingVertical:4}}>
-					<Text category = 'h2' numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
+			<View style={{marginHorizontal:20, marginTop:5}}>
+				<View style={{paddingVertical:4, paddingLeft:5}}>
+					<Text category = 'h3' numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
 					<Text
-						category = 'h6'
+						category = 's1'
+						style={{marginVertical:8}}
 						numberOfLines={3}
 						ellipsizeMode="tail"
 						AccessibilityRole="button">
@@ -164,47 +168,63 @@ class JauScreen extends React.Component {
 					?imageData.length==1
 					?imageData.map(i=>
 						<Image 
-							source={{uri : 'http://dev.unyict.org/uploads/post/'+i.url}}
+							key={i.id}
+							source={{uri : i.url}}
 							style={{width:'100%', height:(Dimensions.get("window").width-96), borderRadius:10}}
 						/>
 					)
 					:imageData.length==2
 					?imageData.map(i=>
 						<Image 
-							source={{uri : 'http://dev.unyict.org/uploads/post/'+i.url}}
+							key={i.id}
+							source={{uri : i.url}}
 							style={{width:'49%', height:(Dimensions.get("window").width-96)/2, borderRadius:10}}
 						/>
 					)
 					:imageData.length>2
 					?imageData.slice(0,3).map(i=>
-						<Image 
-							source={{uri : 'http://dev.unyict.org/uploads/post/'+i.url}}
-							style={{width:'32%', height:(Dimensions.get("window").width-96)/3, borderRadius:10}}
-						/>
+						<Contrast 
+							key={i.id}
+							style={{width:'32%',height:(Dimensions.get("window").width-96)/3}}
+							amount={imageData.length>3 && i.index==2?0.3:1}
+						>
+							<View style={{width:'100%', height:'100%'}}>
+								<Image 
+									key={i.id}
+									source={{uri : i.url}}
+									style={{width:'100%', height:'100%', borderRadius:10}}
+								/>
+								{imageData.length>3 && i.index==2
+								?<View style={{position:'absolute', zIndex:1, width:'100%', height:'100%', justifyContent:'center', alignItems:'center'}}>
+									<Text style={{color:'white', fontSize:30}} category='h3'>+{imageData.length-3}</Text>
+								</View>
+								:null}
+							</View>
+						</Contrast>
 					)
 					:null
 					:null
 					}
 				</View>
-				<View style={{flexDirection:'row', flex:1}}>
+				<View style={{flexDirection:'row', flex:1, marginTop:30}}>
 					<View style={{flex:2, flexDirection:'row'}}> 
 						<View style={{flexDirection:'row', flex:1, alignItems:'flex-end', paddingBottom:8}}>
-							<Text category="c2">{item.display_name} </Text>
-							<PostTime category="c2" datetime = {item.post_datetime}/>
+							<Text category="s2" style={{fontSize:12, color:'#63579D', marginRight:5}}>{item.display_name} </Text>
+							<PostTime category="p1" style={{fontSize:12, color:'#63579D'}} datetime = {item.post_datetime}/>
 						</View>
 					</View>
 					<View style={styles.subtitle}>
 						<View style={{alignItems:'center', marginHorizontal:10}}>
-							<Heartsvg width = {20} height={20}/>
-							<Text style={styles.infotext} category="s1">{item.post_like}</Text>
+							<Thumbsvg width = {20} height={20}/>
+							<Text style={styles.infotext} category="s2">{item.post_like}</Text>
 						</View>
 						<View style={{alignItems:'center', marginHorizontal:10}}>
-							<Commentsvg width = {24} height={24}/>
-							<Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
+							<Commentsvg width = {20} height={20}/>
+							<Text style={styles.infotext} category="s2">{item.post_comment_count}</Text>
 						</View>
 						<View style={{alignItems:'center', marginHorizontal:10}}>
-							<Viewsvg width = {24} height={24}/>
-							<Text style={styles.infotext} category="s1">{item.post_hit}</Text>
+							<Viewsvg width = {20} height={20}/>
+							<Text style={styles.infotext} category="s2">{item.post_hit}</Text>
 						</View>
 					</View>
 				</View>
@@ -240,7 +260,7 @@ class JauScreen extends React.Component {
 						key={index}
 						style={{alignItems:'center', justifyContent:'center', marginHorizontal:5}}
 						onPress={async()=>{this.setState({current_category:index, current_page:1},this.getPostFirst)}}>
-						<Text category='h3' key={index} style={{color:(current_category==index?'white':'black')}}> {'#'+str} </Text>
+						<Text category='h3' key={index} style={{color:(current_category==index?'white':'#543D78')}}> {'#'+str} </Text>
 					</TouchableOpacity>))}
 				</ScrollView>
 				<View style={{flex:20}}>
@@ -291,7 +311,11 @@ const styles = StyleSheet.create({
         paddingLeft:21
     },
 	subtitle:{
-		flex:1, flexDirection:"row", alignItems:'center', justifyContent:'center',
+		flex:1, 
+		flexDirection:"row", 
+		alignItems:'center', 
+		justifyContent:'center',
+		marginTop:-20,
 	},
 	infocontainer:{
         flexDirection:"row",justifyContent:'space-evenly',
@@ -307,10 +331,11 @@ const styles = StyleSheet.create({
 	itembox: {
 		flex: 1,
 		backgroundColor: '#F4F4F4',
-		borderRadius : 20,
+		borderRadius : 10,
 		marginLeft: 20,
 		marginRight: 20,
-		marginVertical: 4,
+		marginVertical: 8,
+		paddingBottom : 5
 	},
 	itemContent: {
 		marginTop: 10,
@@ -320,6 +345,10 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		paddingBottom: 10,
 	},
+	infotext : {
+		color : '#63579D',
+		fontSize : 10
+	}
 });
 
 export {JauScreen};

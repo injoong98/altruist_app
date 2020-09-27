@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, StatusBar, Dimensions, Linking, VirtualizedList,TextInput} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal, OverflowMenu, MenuItem,Popover} from '@ui-kitten/components'
 import Axios from 'axios';
+import ImageViewer from 'react-native-image-zoom-viewer';
 import HTML from 'react-native-render-html';
 import {ActionSheet, Root, Container, Row} from 'native-base';
 import Slider from '../components/MarketSlider.component'
@@ -22,6 +23,7 @@ import Callmessagesvg from '../assets/icons/call-message.svg'
 import Emailsvg from '../assets/icons/Email.svg'
 import Viewsvg from '../assets/icons/view.svg'
 import Timesvg from '../assets/icons/Time.svg'
+import Heartsvg from '../assets/icons/heart.svg'
 
 
 const BackIcon =  (props) =>(
@@ -318,46 +320,46 @@ class GominContent extends React.Component{
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
         return (
-            <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10}} >
-                <View style={{marginLeft:15,marginTop:10,marginBottom:13}}>
-                    <View style={{display:"flex",flexDirection:'row'}}>
+            <View style={{backgroundColor:'#F4F4F4',paddingTop:15, marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10, paddingLeft:25}} >
+                <View style={{paddingBottom:5,marginTop:10, marginBottom:10}}>
+                    <Text style={{fontSize:18}} category='h3'>{post.post_title}</Text>
+                </View>
+                <View style={{marginBottom:16}}>
+                    <Text style={{fontSize:12,fontWeight:'800'}} category='s1'>
+                    {post_remove_tags}
+                    </Text>
+                </View>
+                <View style={{display:"flex",flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
+                    <View style={{flexDirection:'row'}}>
                         <StarIcon />
                         <View>
-                            <Text>{post.display_name}</Text>
-                            <View style={{display:"flex",flexDirection:'row'}}>
-                                <PostTime datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
+                            <Text category="h4" style={{fontSize:11, color:'#393939'}}>{post.display_name}</Text>
+                            <View style={{flexDirection:'row', justifyContent:'center'}}>
+                                <PostTime category="p1" style={{fontSize:9, color:'#878787'}} datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
                                 {
                                     post.post_datetime ==post.post_updated_datetime?
                                     null
                                     :
-                                    <Text category="s2"> 수정됨</Text>
+                                    <Text category="p1" style={{fontSize:9, color:'#878787'}}> 수정</Text>
                                 }
                             </View>
                         </View>
                     </View>
-                </View>
-                <View style={{marginLeft:15,paddingBottom:5}}>
-                    <Text style={{fontSize:14,fontWeight:'bold'}}>{post.post_title}</Text>
-                </View>
-                <View style={{marginLeft:15,marginBottom:16}}>
-                    <Text style={{fontSize:12,fontWeight:'800'}}>
-                    {post_remove_tags}
-                    </Text>
-                </View>
-                <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
-                    <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
-                        <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
-                            <Thumbsvg/>
-                        </TouchableOpacity>
-                        <Text>{post.post_like}</Text>
-                        {/* <TouchableOpacity onPress={()=>alert("저장!")}>
-                            <PlusIcon />
-                            <Text>{post.scrap_count}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>this.postBlameConfirm()}>
-                            <BlameIcon />
-                            <Text>{post.post_blame}</Text>
-                        </TouchableOpacity> */}
+                    <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
+                        <View style={{flexDirection:'row', justifyContent:'space-evenly', alignItems:'center'}}>
+                            <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
+                                <Heartsvg width='16' height='16'/>
+                            </TouchableOpacity>
+                            <Text category="s1" style={{color:'#63579D', fontSize:13, marginBottom:-2}}>{post.post_like}</Text>
+                            {/* <TouchableOpacity onPress={()=>alert("저장!")}>
+                                <PlusIcon />
+                                <Text>{post.scrap_count}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={()=>this.postBlameConfirm()}>
+                                <BlameIcon />
+                                <Text>{post.post_blame}</Text>
+                            </TouchableOpacity> */}
+                        </View>
                     </View>
                 </View>
             </View>
@@ -825,21 +827,30 @@ class MarketContent extends React.Component {
         this.getCommentData(post_id);
     }
 
-    // postDealStatus = async () => {
-    //     var formdata = new FormData();
-    //     formdata.append('deal_status', 0);
-    //     console.log(formdata);
-    //     await Axios.post('http://dev.unyict.org/api/board_write/write/b-a-2',formdata)
-    //     .then(res=>{
-    //         this.setState({spinnerModalVisible:false})
-    //         this.props.navigation.goBack();
-    //         this.props.route.params.OnGoback();
-    //         alert(JSON.stringify(res.data))
-    //     })
-    //     .catch(err=>{
-    //         alert(JSON.stringify(err))
-    //     })
-    // }
+    postDealStatus = async () => {
+        var formdata = new FormData();
+        formdata.append('post_id', this.state.post.post_id);
+        formdata.append('deal_status', 0)
+        console.log(formdata);
+        await Axios.post('http://dev.unyict.org/api/board_write/finish_deal',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+            }else{
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                this.props.navigation.goBack();
+                this.props.route.params.OnGoback();
+            }
+        })
+        //     this.setState({spinnerModalVisible:false})
+        //     this.props.navigation.goBack();
+        //     this.props.route.params.OnGoback();
+        //     alert(JSON.stringify(res.data))
+        // })
+        .catch(err=>{
+            alert(JSON.stringify(err))
+        })
+    }
     
     modalList = [
         {
@@ -857,6 +868,10 @@ class MarketContent extends React.Component {
         {
             text : '이 댓글을 삭제하시겠습니까?',
             func : this.cmtDelete,
+        },
+        {
+            text : '상품을 판매완료 설정하시겠습니까?',
+            func : this.postDealStatus,
         },
     ]
 
@@ -936,7 +951,7 @@ class MarketContent extends React.Component {
                         </Layout>
                         <Layout style={{marginVertical : 10, marginBottom:15, flexDirection:'row'}}>
                             <Text category='h5' style={{color:'#989898'}}>가격</Text>
-                            <Text category='h5' style={{marginLeft:20}}>{post.deal_price} 원</Text>
+                            <Text category='h5' style={{marginLeft:10}}>{(post.deal_price+'원').replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                         </Layout>
                     </Layout>
                     <Divider/>
@@ -949,11 +964,11 @@ class MarketContent extends React.Component {
                         </Layout>
                         <Layout style={{flexDirection:'row'}}>
                             <Layout style={{justifyContent:'center', alignItems:'center'}}>
-                                <Viewsvg/>
+                                <Viewsvg width='15' height='15'/>
                                 <Text style={{color:'#878787', fontSize:10}} category='s2'>{post.post_hit}</Text>
                             </Layout>
                             <Layout style={{justifyContent:'center', alignItems:'center', marginHorizontal:10}}>
-                                <Viewsvg/>
+                                <Timesvg width='15' height='15'/>
                                 <PostTime style={{color:'#878787', fontSize:10}} datetime={post.post_datetime}/>
                             </Layout>
                         </Layout>
@@ -972,7 +987,7 @@ class MarketContent extends React.Component {
                             <Text style={styles.marketText} category='s1'>거래방법</Text>
                         </Layout>
                         <Layout style={{marginLeft:20}}>
-                            <Text style={styles.marketText} category='s1'>{post.post_hp}</Text>
+                            <Text style={styles.marketText} category='s1'>{post.post_hp.replace(/[^0-9]/g, "").replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/,"$1-$2-$3").replace("--", "-")}</Text>
                             <Text style={styles.marketText} category='s1'>{post.post_location}</Text>
                             <Text style={styles.marketText} category='s1'>{post.deal_type==0? '배송':post.deal_type==1? '직거래':'배송 & 직거래'}</Text>
                         </Layout>
@@ -1042,6 +1057,11 @@ class MarketContent extends React.Component {
                     backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                     onBackdropPress={() => this.setState({popoverVisible:false})}>
                     <View style={{borderRadius:15, backgroundColor:'white'}}>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 4})}}
+                            style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>판매완료</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity 
                             onPress={()=>{this.postscrap();this.setState({popoverVisible:false})}}
                             style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
@@ -1504,7 +1524,9 @@ class IlbanContent extends Component {
             resultText : '',
             confirmModalVisible:false,
             spinnerModalVisible:false,
-            popoverVisible:false,
+            popoverVisibel:false,
+            imageModalVisible:false,
+            imageIndex: 0,
             modalType : 0,
         }
     }
@@ -1711,11 +1733,13 @@ class IlbanContent extends Component {
             if (response.data.view.file_image){
                 this.setState({image: response.data.view.file_image.map(function(item, index){
                     var image_info = {};
-                    image_info['id'] = item.pfi_id;
-                    image_info['title'] = item.pfi_originname;
+                    image_info['props'] = {};
                     image_info['url'] = item.origin_image_url;
-                    image_info['index'] = index;
-                    image_info['edit'] = true;
+                    image_info['props']['id'] = item.pfi_id;
+                    image_info['props']['title'] = item.pfi_originname;
+                    image_info['props']['index'] = index;
+                    image_info['props']['edit'] = true;
+                    console.log(image_info);
                     return image_info;
                 })});
             }
@@ -1758,43 +1782,60 @@ class IlbanContent extends Component {
         },
     ]
 
-    renderPostBody = (post)=>{
+    renderPostBody = (post, image)=>{
         
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
         return (
-            <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10}} >
+            <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:20, paddingTop:10}} >
                 <View style={{marginLeft:15,marginTop:10,marginBottom:13}}>
                     <View style={{display:"flex",flexDirection:'row'}}>
                         <StarIcon />
                         <View>
-                            <Text>{post.display_name}</Text>
+                            <Text category="s2" style={{fontSize:12}}>{post.display_name}</Text>
                             <View style={{display:"flex",flexDirection:'row'}}>
-                                <PostTime datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
+                                <PostTime style={{color:'#878787', fontSize:8}} datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
                                 {
                                     post.post_datetime ==post.post_updated_datetime?
                                     null
                                     :
-                                    <Text category="s2"> 수정됨</Text>
+                                    <Text style={{color:'#878787', fontSize:8}} category="s2"> 수정됨</Text>
                                 }
                             </View>
                         </View>
                     </View>
                 </View>
                 <View style={{marginLeft:15,paddingBottom:5}}>
-                    <Text style={{fontSize:14,fontWeight:'bold'}}>{post.post_title}</Text>
+                    <Text style={{fontSize:16,fontWeight:'bold'}} category='h3'>{post.post_title}</Text>
                 </View>
-                <View style={{marginLeft:15,marginBottom:16}}>
-                    <Text style={{fontSize:12,fontWeight:'800'}}>
-                    {post_remove_tags}
+                <View style={{marginLeft:15,marginVertical:10}}>
+                    <Text style={{fontSize:13, fontWeight:'100'}} category='p1'>
+                        {post_remove_tags}
                     </Text>
+                </View>
+                <View style={{alignItems:'center', width:'100%', paddingHorizontal:15}}>
+                    {image
+                    ?image.map((i, index)=>
+                        <TouchableOpacity 
+                            key={i.props.id}
+                            style={{width:'100%', height:(Dimensions.get("window").width-60), marginTop:10}} 
+                            onPress={()=>this.setState({imageIndex:index, imageModalVisible:true})}
+                        >
+                            <Image 
+                                key={i.props.id}
+                                source={{uri : i.url}}
+                                style={{width:'100%', height:'100%'}}
+                            />
+                        </TouchableOpacity>
+					)
+                    :null}
                 </View>
                 <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
                         <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
-                            <Thumbsvg/>
+                            <Thumbsvg width='18' height='18'/>
                         </TouchableOpacity>
-                        <Text>{post.post_like}</Text>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:15}}>{post.post_like}</Text>
                         {/* <TouchableOpacity onPress={()=>alert("저장!")}>
                             <PlusIcon />
                             <Text>{post.scrap_count}</Text>
@@ -1810,9 +1851,12 @@ class IlbanContent extends Component {
     }
 
     renderCommentsList=({item,index})=>(
-        <View style={{marginVertical:3}}>
+        <View style={{marginVertical:0}}>
             {item.cmt_reply==""?
+            index==0?
             null
+            :
+            <Divider style={{marginVertical:10, marginHorizontal:20}}/>
             :
             <View style={{position:'absolute',left:0,paddingLeft:25}}>
                 <ReplyLsvg />
@@ -1831,8 +1875,8 @@ class IlbanContent extends Component {
                     <View style={{flexDirection:"row"}}>
                         <StarIcon />
                         <View>
-                            <Text category="s2">{item.cmt_nickname}</Text>
-                            <PostTime datetime={item.cmt_datetime}/>
+                            <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
+                            <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
                         </View>
                     </View>
                     <View style={{display:'flex',flexDirection:'row'}}>
@@ -1845,27 +1889,29 @@ class IlbanContent extends Component {
                     </View>
                 </View>
                 <View style={{padding:5}}>
-                    <Text category="s1">{item.cmt_content}</Text>
+                    <Text category='s1' style={{marginTop:5, fontSize:12}}>{item.cmt_content}</Text>
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                     {item.cmt_reply ==""?
                     <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
-                        <Text>답글</Text>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>답글</Text>
                     </TouchableOpacity>
                     :null
                     }
                     <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg />
+                        <Thumbsvg width='12' height='12'/>
                     </TouchableOpacity>
-                        <Text>{item.cmt_like}</Text>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
             </View>
         </View>
     )
      render(){
+
         const {navigation,route} =this.props
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible} = this.state
-         return(
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image} = this.state
+
+        return(
         this.state.isLoading ?
         <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
             <Text>is Loading now...</Text>
@@ -1882,15 +1928,15 @@ class IlbanContent extends Component {
                 right={<this.MoreAction/>}/>
             <TouchableWithoutFeedback onPress={()=>{ this.commentWrite; Keyboard.dismiss()}}>
                 <Layout style={{flex:1}}>
-                        <List
+                    <List
                         ref={"pstcmtlist"} 
                         data={comment}
-                        ListHeaderComponent={this.renderPostBody(post)}
+                        ListHeaderComponent={this.renderPostBody(post, image)}
                         renderItem={this.renderCommentsList}
                         onRefresh={this.onRefresh}
                         refreshing={this.state.refreshing}
                         style={{backgroundColor:'#ffffff'}}
-                        />
+                    />
                 </Layout>
             </TouchableWithoutFeedback>
             <View style={{backgroundColor:'#ffffff',padding:8}}>
@@ -1999,6 +2045,27 @@ class IlbanContent extends Component {
                 visible={spinnerModalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}>
                 <Spinner size='giant'/>
+            </Modal>
+            <Modal
+                visible={imageModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,1)'}}
+                onBackdropPress={() => this.setState({imageModalVisible:false})}
+                style={{width:'100%', height:Dimensions.get("window").height}}
+                transparent={true}
+            >
+                <ImageViewer
+                    imageUrls={image}
+                    index={imageIndex}
+                    onSwipeDown={()=>this.setState({imageModalVisible:false})}
+                    enableSwipeDown={true}
+                    renderHeader={()=>
+                        <View style={{alignItems:'flex-end', paddingTop:20, paddingRight:10}}>
+                            <TouchableWithoutFeedback onPress={()=>this.setState({imageModalVisible:false})}>
+                                <Icon style={{width:30, height:30}} fill='#FFFFFF' name='close-outline'/>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    }
+                />
             </Modal>
         </SafeAreaView>
          )
