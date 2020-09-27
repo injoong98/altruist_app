@@ -99,7 +99,7 @@ class Notification_model extends CB_Model
 	{
 		$where = array(
 			'not_id' => $not_id,
-			'mem_id' => $mem_id,
+			//'mem_id' => $mem_id,
 		);
 		$updatedata = array(
 			'not_read_datetime' => cdate('Y-m-d H:i:s'),

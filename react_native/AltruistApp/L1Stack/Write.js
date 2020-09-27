@@ -109,8 +109,10 @@ class GominWrite extends React.Component {
       resultVisible: false,
       spinnerVisible: false,
       resultText : '',
+      modalType : 0,
     };
   }
+
   submitPost = async () => {
     const url =
       this.props.route.params.mode == 'edit'
@@ -148,6 +150,7 @@ class GominWrite extends React.Component {
         alert(JSON.stringify(error));
       });
   };
+
   filterSpamKeyword = async () => {
     const {post_title, post_content} = this.state;
 
@@ -166,66 +169,49 @@ class GominWrite extends React.Component {
         if (status == '500') {
           alert(message);
         } else if (status == '200') {
-          this.setState({modalVisible: true});
+          this.setState({modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
         alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
   };
+
   gobackfunc = () => {
+    StatusBar.setBackgroundColor('#B09BDE');
+    StatusBar.setBarStyle('default');
     const {navigation, route} = this.props;
     navigation.goBack();
     route.params.statefunction();
   };
-  SubmitButton = () => (
-    <TopNavigationAction
-      icon={UpIcon}
-      onPress={() => {
-        this.filterSpamKeyword();
-      }}
-    />
-  );
 
-  CloseAction = () => (
-    <TopNavigationAction
-      icon={CloseIcon}
-      onPress={() => {
-        this.props.navigation.goBack();
-      }}
-    />
-  );
   componentDidMount = () => {
-    console.log(this.props.route.params);
+    StatusBar.setBackgroundColor('#F4F4F4');
+    StatusBar.setBarStyle('dark-content');
   }
+
+  modalList =[
+    {
+      text : this.props.route.params.mode == 'edit'? '게시글을 수정하시겠습니까?': '게시글을 작성하시겠습니까?',
+      func : this.submitPost
+    },
+    {
+      text : '게시글 작성을 그만하시겠습니까?',
+      func : this.gobackfunc
+    }
+  ]
+  
   render() {
     const {navigation} = this.props;
-    const {
-      post_title,
-      post_category,
-      post_anoymous_yn,
-      post_content,
-      checked,
-      content,
-      modalVisible,
-      spinnerVisible,
-      resultVisible,
-    } = this.state;
+    const {post_title, post_category, post_anoymous_yn, post_content, checked, content, modalVisible,
+      spinnerVisible, resultVisible, } = this.state;
     return (
       <SafeAreaView style={{flex: 1}}>
-        {/* // <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS == "ios" ? "padding" : "height"}> */}
-        <TopBarTune
-          text="고민 작성"
-          func={() => {
-            this.filterSpamKeyword();
-          }}
+        <WriteContentToptab text="고민 작성"
           right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-          gbckfunc={() => {
-            navigation.goBack();
-          }}
-          gbckuse={true}
-        />
-        {/* <TopNavigation title="글작성" alignment="center" accessoryLeft={this.CloseAction} accessoryRight={this.SubmitButton} style={styles.topbar}/>  */}
+          func={this.filterSpamKeyword}
+          gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
+          gbckuse={true}/>
         <TextInput
           style={{
             backgroundColor: '#ffffff',
@@ -276,15 +262,10 @@ class GominWrite extends React.Component {
           backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
           onBackdropPress={() => this.setState({modalVisible: false})}>
           <Confirm
-            confirmText={
-              this.props.route.params.mode == 'edit'
-                ? '게시글을 수정하시겠습니까?'
-                : '게시글을 작성하시겠습니까?'
-            }
+            confirmText={this.modalList[this.state.modalType].text}
             frstText="예"
             OnFrstPress={() => {
-              this.setState({modalVisible: false, spinnerVisible: true});
-              this.submitPost();
+              this.setState({modalVisible: false}, this.modalList[this.state.modalType].func);
             }}
             scndText="아니오"
             OnScndPress={() => this.setState({modalVisible: false})}
@@ -368,6 +349,7 @@ class MarketWrite extends React.Component {
       resultVisible: false,
       spinnerVisible: false,
       resultText : '',
+      modalType : 0,
     };
   }
 
@@ -375,11 +357,6 @@ class MarketWrite extends React.Component {
     StatusBar.setBackgroundColor('#F4F4F4');
     StatusBar.setBarStyle('dark-content');
   }
-
-  // componentWillUnmount() {
-  //   StatusBar.setBackgroundColor('#B09BDE');
-  //   StatusBar.setBarStyle('default');
-  // }
 
   submitPost = async () => {
     console.log(this.state);
@@ -445,8 +422,11 @@ class MarketWrite extends React.Component {
   };
 
   gobackfunc = () => {
+    StatusBar.setBackgroundColor('#B09BDE');
+    StatusBar.setBarStyle('default');
     const {navigation, route} = this.props;
     navigation.goBack();
+    route.params.statefunction();
   };
 
   //사진버튼 클릭했을 때
@@ -598,13 +578,24 @@ class MarketWrite extends React.Component {
         if (status == '500') {
           alert(message);
         } else if (status == '200') {
-          this.setState({modalVisible: true});
+          this.setState({modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
         alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
   };
+
+  modalList =[
+    {
+      text : this.props.route.params.mode == 'edit'? '게시글을 수정하시겠습니까?': '게시글을 작성하시겠습니까?',
+      func : this.submitPost
+    },
+    {
+      text : '게시글 작성을 그만하시겠습니까?',
+      func : this.gobackfunc
+    }
+  ]
 
   render() {
     const {navigation} = this.props;
@@ -620,7 +611,7 @@ class MarketWrite extends React.Component {
 			post_main_thumb,
 			modalVisible,
 			spinnerVisible,
-			resultVisible,
+      resultVisible,
     } = this.state;
 
     return (
@@ -632,11 +623,7 @@ class MarketWrite extends React.Component {
             func={() => {
               this.filterSpamKeyword();
             }}
-            gbckfunc={() => {
-              StatusBar.setBackgroundColor('#B09BDE');
-              StatusBar.setBarStyle('default');
-              navigation.goBack();
-            }}
+            gbckfunc={() => {this.setState({modalType:1, modalVisible : true})}}
             gbckuse={true}
           />
 
@@ -817,15 +804,10 @@ class MarketWrite extends React.Component {
 						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
 						onBackdropPress={() => this.setState({modalVisible: false})}>
 						<Confirm
-							confirmText={
-								this.props.route.params.mode == 'edit'
-									? '게시글을 수정하시겠습니까?'
-									: '게시글을 작성하시겠습니까?'
-							}
+							confirmText={this.modalList[this.state.modalType].text}
 							frstText="예"
 							OnFrstPress={() => {
-								this.setState({modalVisible: false, spinnerVisible: true});
-								this.submitPost();
+								this.setState({modalVisible: false}, this.modalList[this.state.modalType].func);
 							}}
 							scndText="아니오"
 							OnScndPress={() => this.setState({modalVisible: false})}
@@ -912,26 +894,17 @@ class AlbaWrite extends React.Component {
       modalVisible : false,
       resultVisible : false,
       spinnerVisible : false,
+      modalType : 0,
     };
   }
 
   Salary_Type = ['시급', '일급', '주급', '월급'];
-
-  // BackAction = () =>(
-  //     <TopNavigationAction icon={BackIcon} onPress={() =>{this.props.navigation.goBack()}}/>
-  // )
-  // SubmitButton = () =>(
-
-  //     <TopNavigationAction icon={UpIcon} onPress={() =>{this.submit_alba_Alert()}}/>
-  // )
-
   
   componentDidMount() {
     StatusBar.setBackgroundColor('#F4F4F4');
     StatusBar.setBarStyle('dark-content');
   }
   
-
   setTipVisible = (bool) => {
     this.setState({isTipVisible: bool});
   };
@@ -944,7 +917,7 @@ class AlbaWrite extends React.Component {
   setSumnailCheck = (nextChecked) => {
     this.setState({post_thumb_use: nextChecked});
   };
-  submit_alba_post = async () => {
+  submitPost = async () => {
     const url =
       this.props.route.params.mode == 'edit'
         ? 'http://dev.unyict.org/api/board_write/modify'
@@ -1010,7 +983,7 @@ class AlbaWrite extends React.Component {
         if (status == '500') {
           alert(message);
         } else if (status == '200') {
-          this.setState({modalVisible: true});
+          this.setState({modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
@@ -1082,6 +1055,19 @@ class AlbaWrite extends React.Component {
   /*  renderImage(image) {
         return <Image style={{width: 150, height: 150, resizeMode: 'contain', borderWidth: 0.5, margin : 5}} source={image}/>
     } */
+
+
+  modalList =[
+    {
+      text : this.props.route.params.mode == 'edit'? '게시글을 수정하시겠습니까?': '게시글을 작성하시겠습니까?',
+      func : this.submitPost
+    },
+    {
+      text : '게시글 작성을 그만하시겠습니까?',
+      func : this.gobackfunc
+    }
+  ]
+
   renderImage(image) {
     //console.log(image);
     return (
@@ -1130,11 +1116,8 @@ class AlbaWrite extends React.Component {
       <SafeAreaView style={{flex: 1}}>
         <WriteContentToptab text="채용공고"
           right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-          func={() => {this.filterSpamKeyword();}}
-          gbckfunc={() => {
-            StatusBar.setBackgroundColor('#B09BDE');
-            StatusBar.setBarStyle('default');
-            navigation.goBack();}}
+          func={this.filterSpamKeyword}
+          gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
           gbckuse={true}
         />
         <Divider />
@@ -1278,15 +1261,10 @@ class AlbaWrite extends React.Component {
 						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
 						onBackdropPress={() => this.setState({modalVisible: false})}>
 						<Confirm
-							confirmText={
-								this.props.route.params.mode == 'edit'
-									? '게시글을 수정하시겠습니까?'
-									: '게시글을 작성하시겠습니까?'
-							}
+							confirmText={this.modalList[this.state.modalType].text}
 							frstText="예"
 							OnFrstPress={() => {
-								this.setState({modalVisible: false, spinnerVisible: true});
-								this.submit_alba_post();
+								this.setState({modalVisible: false}, this.modalList[this.state.modalType].func);
 							}}
 							scndText="아니오"
 							OnScndPress={() => this.setState({modalVisible: false})}
@@ -1339,10 +1317,11 @@ class IlbanWrite extends React.Component {
           : [],
       post_category: mode == 'edit'?post.post_category-1:0,
       popoverVisible : false,
-      confirmVisible : false,
+      modalVisible : false,
       resultVisible : false,
       resultText : '',
       spinnerVisible : false,
+      modalType : 0,
     };
   }
 
@@ -1387,6 +1366,7 @@ class IlbanWrite extends React.Component {
         }
       })
       .catch((error) => {
+        this.setState({spinnerVisible: false});
         alert(JSON.stringify(error));
       });
   };
@@ -1409,7 +1389,7 @@ class IlbanWrite extends React.Component {
         if (status == '500') {
           alert(message);
         } else if (status == '200') {
-          this.setState({modalVisible: true});
+          this.setState({modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
@@ -1419,9 +1399,11 @@ class IlbanWrite extends React.Component {
 
   gobackfunc = () => {
     this.cleanupImages();
+    StatusBar.setBackgroundColor('#B09BDE');
+    StatusBar.setBarStyle('default');
     const {navigation, route} = this.props;
-    route.params.statefunction();
     navigation.goBack();
+    route.params.statefunction();
   };
 
   cleanupImages() {
@@ -1556,10 +1538,16 @@ class IlbanWrite extends React.Component {
     StatusBar.setBarStyle('dark-content');
   }
 
-  componentWillUnmount() {
-    StatusBar.setBackgroundColor('#B09BDE');
-    StatusBar.setBarStyle('default');
-  }
+  modalList =[
+    {
+      text : this.props.route.params.mode == 'edit'? '게시글을 수정하시겠습니까?': '게시글을 작성하시겠습니까?',
+      func : this.submitPost
+    },
+    {
+      text : '게시글 작성을 그만하시겠습니까?',
+      func : this.gobackfunc
+    }
+  ]
 
   //end: header
 	render() {
@@ -1567,12 +1555,12 @@ class IlbanWrite extends React.Component {
 		const {post_title, post_content, post_category, resultVisible, modalVisible, spinnerVisible, resultText} = this.state;
 		return (
       <Root>
-        <SafeAreaView style={{}}>
+        <SafeAreaView>
           <WriteContentToptab
               text="이타게시판"
               right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-              func={() => {this.filterSpamKeyword();}}
-              gbckfunc={() => {navigation.goBack();}}
+              func={this.filterSpamKeyword}
+              gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
               gbckuse={true}
             />
           <View style = {{flexDirection:'row'}}>
@@ -1651,15 +1639,10 @@ class IlbanWrite extends React.Component {
             backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
             onBackdropPress={() => this.setState({modalVisible: false})}>
             <Confirm
-              confirmText={
-                this.props.route.params.mode == 'edit'
-                  ? '게시글을 수정하시겠습니까?'
-                  : '게시글을 작성하시겠습니까?'
-              }
+              confirmText={this.modalList[this.state.modalType].text}
               frstText="예"
               OnFrstPress={() => {
-                this.setState({modalVisible: false, spinnerVisible: true});
-                this.submitPost();
+                this.setState({modalVisible: false}, this.modalList[this.state.modalType].func);
               }}
               scndText="아니오"
               OnScndPress={() => this.setState({modalVisible: false})}

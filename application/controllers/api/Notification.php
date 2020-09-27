@@ -184,7 +184,7 @@ class Notification extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
 
-		$not_id = $this->input->post('not_id');
+		$not_id = $this->input->get('not_id');
 		if (empty($not_id) OR $not_id < 1) {
 			response_result($view,'Err','not_id 값이 없거나 비어 있습니다.');
 			//show_404();
@@ -197,10 +197,10 @@ class Notification extends CB_Controller
 			//show_404();
 		}
 
-		if ((int) element('mem_id', $notification) !== $mem_id) {
+	/* 	if ((int) element('mem_id', $notification) !== $mem_id) {
 			response_result($view,'Err','mem_id 값이 없거나 비어 있습니다.');
 			//show_404();
-		}
+		} */
 		
 		$result = $this->Notification_model->mark_read($not_id, $mem_id);
 		if($result) {

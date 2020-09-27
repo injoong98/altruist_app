@@ -113,27 +113,27 @@ class AlbaScreen extends React.Component {
           <View style={{flexDirection : 'row'}}>
               <View style={{flex : 6.5}}>
                 <View style={{margin : 10, padding : 5, flex : 1.5}}>
-                  <Text category = 'h5' style={{paddingHorizontal:10, paddingVertical:5 ,fontSize : 16, backgroundColor:'white', borderRadius : 20}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
+                  <Text category = 'h1' style={{paddingHorizontal:10, paddingVertical:5 ,fontSize : 16, backgroundColor:'white', borderRadius : 20}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
                   <Text style={{fontSize : 14, marginTop : 5, marginLeft : 10}} numberOfLines={2} ellipsizeMode='tail'>{item.post_content}</Text>
                 </View>
                 <View style = {{flexDirection : 'row', backgroundColor:'white', borderTopRightRadius:10, flex:1, paddingVertical:2}}>
                   <View style={{flexDirection : 'row', alignItems : 'center', flex:0.6}}>
-                    <Text style={{color:'#FF6262'}} category='p1'>
+                    <Text style={{color:'#FF6262', fontSize:13}} category='h1'>
                       {this.Alba_salary_type[item.alba_salary_type].str+' '}
                     </Text>
-                    <Text category='p1' numberOfLines={1} ellipsizeMode='tail'> 
+                    <Text style={{fontSize:13}} category='h1' numberOfLines={1} ellipsizeMode='tail'> 
                       {(item.alba_salary).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     </Text>
                   </View>
                   <View style={{flexDirection : 'row', alignItems : 'center', flex:1}}>
-                    <Text style={{color:'#7370DD'}} category='p1'>{item.alba_type == 0?'단기':'장기'}</Text>
-                    <Text category='p1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
+                    <Text style={{color:'#7370DD', fontSize:13}} category='h1'>{item.alba_type == 0?'단기':'장기'}</Text>
+                    <Text style={{fontSize:13}} category='h1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
                   </View>
                 </View>
               </View>
               <View style={{alignItems:'flex-end'}}>
                 <View style={styles.NameView}>
-                  <Text>{item.post_nickname}</Text>
+                  <Text style={{fontSize:12}} category='h1'>{item.post_nickname}</Text>
                   <PostTime datetime = {item.post_datetime}/>
                 </View>
                 <View style={{alignItems:'center',paddingHorizontal:10,}}>
