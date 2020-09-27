@@ -951,7 +951,7 @@ class MarketContent extends React.Component {
                         </Layout>
                         <Layout style={{marginVertical : 10, marginBottom:15, flexDirection:'row'}}>
                             <Text category='h5' style={{color:'#989898'}}>가격</Text>
-                            <Text category='h5' style={{marginLeft:20}}>{(post.deal_price+'원').replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                            <Text category='h5' style={{marginLeft:10}}>{(post.deal_price+'원').replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                         </Layout>
                     </Layout>
                     <Divider/>
@@ -964,11 +964,11 @@ class MarketContent extends React.Component {
                         </Layout>
                         <Layout style={{flexDirection:'row'}}>
                             <Layout style={{justifyContent:'center', alignItems:'center'}}>
-                                <Viewsvg/>
+                                <Viewsvg width='15' height='15'/>
                                 <Text style={{color:'#878787', fontSize:10}} category='s2'>{post.post_hit}</Text>
                             </Layout>
                             <Layout style={{justifyContent:'center', alignItems:'center', marginHorizontal:10}}>
-                                <Timesvg/>
+                                <Timesvg width='15' height='15'/>
                                 <PostTime style={{color:'#878787', fontSize:10}} datetime={post.post_datetime}/>
                             </Layout>
                         </Layout>
