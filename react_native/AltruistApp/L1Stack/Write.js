@@ -661,8 +661,8 @@ class MarketWrite extends React.Component {
                   <TextInput
                     style={styles.input}
                     keyboardType="numeric"
-                    onChangeText={(text) => this.setState({deal_price: parseInt(text)})}
-                    value={deal_price}
+                    onChangeText={(text) => this.setState({deal_price: text})}
+                    value={deal_price.toString()}
                     placeholder="판매가격"
                   />
                 </View>
