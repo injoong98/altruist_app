@@ -9,7 +9,7 @@ import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, C
 import ToggleTune from '../../components/ToggleTune';
 import {MyStackNav} from './L3MyStack/MyStackNav'
 
-import {AlarmScreen} from './Alarm'
+import {AlarmToptab} from './Alarm'
 import Homesvg from '../../assets/icons/home.svg'
 import Communitysvg from '../../assets/icons/community.svg'
 import Altsvg from '../../assets/icons/altruist.svg'
@@ -101,7 +101,7 @@ export class ComBottomNav extends React.Component{
                 {/* <Screen name = "Home" component={FontScreen}/> */}
                 <Screen name = "Alt" component={AltStackNav}/>
                 <Screen name = "Commu" component={ComToptabNav}/>
-                <Screen name = "Alarm" component={AlarmScreen}/>
+                <Screen name = "Alarm" component={AlarmToptab}/>
                 <Screen name = "Prof" component={MyStackNav}/>
             </Navigator>
         )}
