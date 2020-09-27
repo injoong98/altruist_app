@@ -1721,10 +1721,12 @@ class Register extends CB_Controller
 			response_result($result, 'Err', $result['reason']);
 		}
 
-		if ($this->_mem_password_check($password) === false) {
+		$result_pw = $this->_mem_password_check($password);
+		if ($result_pw['false'] === false) {
 			$result = array(
 				'result' => 'no',
-				'reason' => '패스워드는 최소 1개 이상의 숫자를 포함해야 합니다',
+				// 'reason' => '패스워드는 최소 1개 이상의 숫자를 포함해야 합니다',
+				'reason' => $result_pw['reason'],
 			);
 			response_result($result, 'Err', $result['reason']);
 		}
@@ -1912,18 +1914,21 @@ class Register extends CB_Controller
 	 */
 	public function _mem_password_check($str)
 	{
+		$password_length = $this->cbconfig->item('password_length');
+
 		$uppercase = $this->cbconfig->item('password_uppercase_length');
 		$number = $this->cbconfig->item('password_numbers_length');
 		$specialchar = $this->cbconfig->item('password_specialchars_length');
 
 		$this->load->helper('chkstring');
+		$str_leng = strlen($str);
 		$str_uc = count_uppercase($str);
 		$str_num = count_numbers($str);
 		$str_spc = count_specialchars($str);
 
-		if ($str_uc < $uppercase or $str_num < $number or $str_spc < $specialchar) {
+		if ($str_uc < $uppercase or $str_num < $number or $str_spc < $specialchar or  $str_leng < $password_length) {
 
-			$description = '비밀번호는 ';
+			$description = '비밀번호는 ' . $password_length . '자리 이상이어야 ';
 			if ($str_uc < $uppercase) {
 				$description .= ' ' . $uppercase . '개 이상의 대문자';
 			}
@@ -1939,7 +1944,10 @@ class Register extends CB_Controller
 				'_mem_password_check',
 				$description
 			);
-			return false;
+			$result['false'] = false;
+			$result['reason'] = $description;
+			return $result;
+			// return false;
 		}
 
 		return true;

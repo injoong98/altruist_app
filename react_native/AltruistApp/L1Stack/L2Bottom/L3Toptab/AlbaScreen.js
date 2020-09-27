@@ -108,34 +108,36 @@ class AlbaScreen extends React.Component {
 
   renderItem = ({item, index}) => (
       <TouchableOpacity 
-        onPress={() => {this.props.navigation.navigate('AlbaContent', {post_id:item.post_id})}}
+        onPress={() => {this.props.navigation.navigate('AlbaContent', {post_id:item.post_id, OnGoback: () => this.onRefresh()})}}
         style={styles.carditem}>
           <View style={{flexDirection : 'row'}}>
-              <View style={{flex : 6.5, justifyContent:'space-between'}}>
-                <View style={{margin : 10, padding : 5}}>
-                  <Text style={{color:'#7370DD', marginHorizontal : 10, marginVertical:5}} category='p1'>{item.alba_type == 0?'단기':'장기'}</Text>
-                  <Text category = 'h5' style={{paddingHorizontal:10, paddingVertical:5 ,fontSize : 20, backgroundColor:'white', borderRadius : 20}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
-                  <Text style={{fontSize : 16, marginTop : 5, marginLeft : 10}} numberOfLines={1} ellipsizeMode='tail'>{item.post_content}</Text>
+              <View style={{flex : 6.5}}>
+                <View style={{margin : 10, padding : 5, flex : 1.5}}>
+                  <Text category = 'h5' style={{paddingHorizontal:10, paddingVertical:5 ,fontSize : 16, backgroundColor:'white', borderRadius : 20}} numberOfLines={1} ellipsizeMode='tail'>{item.title}</Text>
+                  <Text style={{fontSize : 14, marginTop : 5, marginLeft : 10}} numberOfLines={2} ellipsizeMode='tail'>{item.post_content}</Text>
                 </View>
-                <View style = {{flexDirection : 'row', backgroundColor:'white', borderTopRightRadius:15, paddingTop:5, paddingHorizontal:5, flex:1}}>
-                    <View style={{flexDirection : 'row', alignItems : 'center', flex:1}}>
-                        <Text style={{color:'#FF6262'}} category='p1'>
-                          {this.Alba_salary_type[item.alba_salary_type].str+' '}
-                        </Text>
-                        <Text category='p1' numberOfLines={1} ellipsizeMode='tail'> 
-                          {(item.alba_salary != '추후협의'?item.alba_salary+'원':item.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}
-                        </Text>
-                    </View>
-                    <Text style={{flex:1.2}} category='p1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
+                <View style = {{flexDirection : 'row', backgroundColor:'white', borderTopRightRadius:10, flex:1, paddingVertical:2}}>
+                  <View style={{flexDirection : 'row', alignItems : 'center', flex:0.6}}>
+                    <Text style={{color:'#FF6262'}} category='p1'>
+                      {this.Alba_salary_type[item.alba_salary_type].str+' '}
+                    </Text>
+                    <Text category='p1' numberOfLines={1} ellipsizeMode='tail'> 
+                      {(item.alba_salary).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </Text>
                   </View>
+                  <View style={{flexDirection : 'row', alignItems : 'center', flex:1}}>
+                    <Text style={{color:'#7370DD'}} category='p1'>{item.alba_type == 0?'단기':'장기'}</Text>
+                    <Text category='p1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
+                  </View>
+                </View>
               </View>
               <View style={{alignItems:'flex-end'}}>
                 <View style={styles.NameView}>
                   <Text>{item.post_nickname}</Text>
                   <PostTime datetime = {item.post_datetime}/>
                 </View>
-                <View style={{flexDirection:'row', alignItems:'center',marginHorizontal:5,}}>
-                    <Viewsvg width = {32} height={32}/>
+                <View style={{alignItems:'center',paddingHorizontal:10,}}>
+                    <Viewsvg width = {24} height={24}/>
                     <Text style = {{marginHorizontal:5}} category="p1">{item.post_hit}</Text>
                 </View>
               </View>
