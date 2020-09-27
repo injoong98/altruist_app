@@ -950,7 +950,7 @@ class MarketContent extends React.Component {
                         </Layout>
                         <Layout style={{marginVertical : 10, marginBottom:15, flexDirection:'row'}}>
                             <Text category='h5' style={{color:'#989898'}}>가격</Text>
-                            <Text category='h5' style={{marginLeft:20}}>{post.deal_price} 원</Text>
+                            <Text category='h5' style={{marginLeft:20}}>{(post.deal_price+'원').replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                         </Layout>
                     </Layout>
                     <Divider/>
@@ -986,7 +986,7 @@ class MarketContent extends React.Component {
                             <Text style={styles.marketText} category='s1'>거래방법</Text>
                         </Layout>
                         <Layout style={{marginLeft:20}}>
-                            <Text style={styles.marketText} category='s1'>{post.post_hp}</Text>
+                            <Text style={styles.marketText} category='s1'>{post.post_hp.replace(/[^0-9]/g, "").replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/,"$1-$2-$3").replace("--", "-")}</Text>
                             <Text style={styles.marketText} category='s1'>{post.post_location}</Text>
                             <Text style={styles.marketText} category='s1'>{post.deal_type==0? '배송':post.deal_type==1? '직거래':'배송 & 직거래'}</Text>
                         </Layout>

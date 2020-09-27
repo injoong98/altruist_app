@@ -209,7 +209,7 @@ class JauScreen extends React.Component {
 				<View style={{flexDirection:'row', flex:1, marginTop:30}}>
 					<View style={{flex:2, flexDirection:'row'}}> 
 						<View style={{flexDirection:'row', flex:1, alignItems:'flex-end', paddingBottom:8}}>
-							<Text category="s2" style={{fontSize:12, color:'#63579D'}}>{item.display_name} </Text>
+							<Text category="s2" style={{fontSize:12, color:'#63579D', marginRight:5}}>{item.display_name} </Text>
 							<PostTime category="p1" style={{fontSize:12, color:'#63579D'}} datetime = {item.post_datetime}/>
 						</View>
 					</View>

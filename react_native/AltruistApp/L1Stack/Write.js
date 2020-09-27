@@ -419,6 +419,8 @@ class MarketWrite extends React.Component {
       });
     });
     
+    console.log(formdata);
+    
     this.props.route.params.mode == 'edit'
       ? formdata.append('post_id', this.props.route.params.post.post_id)
       : null;
@@ -659,7 +661,7 @@ class MarketWrite extends React.Component {
                   <TextInput
                     style={styles.input}
                     keyboardType="numeric"
-                    onChangeText={(text) => this.setState({deal_price: text})}
+                    onChangeText={(text) => this.setState({deal_price: parseInt(text)})}
                     value={deal_price}
                     placeholder="판매가격"
                   />
@@ -668,6 +670,7 @@ class MarketWrite extends React.Component {
                   {/* <Text>연락처</Text> */}
                   <TextInput
                     style={styles.input}
+                    keyboardType="numeric"
                     onChangeText={(text) => this.setState({post_hp: text})}
                     value={post_hp}
                     placeholder="연락처"
@@ -1597,6 +1600,7 @@ class IlbanWrite extends React.Component {
                 marginBottom: 14,
                 fontSize: 18,
                 flex : 1,
+                paddingHorizontal : 10
               }}
               placeholder="제목"
               onChangeText={(nextValue) => this.setState({post_title: nextValue})}
@@ -1614,6 +1618,7 @@ class IlbanWrite extends React.Component {
               marginHorizontal: 12,
               marginBottom: 14,
               fontSize: 18,
+              paddingHorizontal : 10
             }}
             placeholder="내용"
             onChangeText={(nextValue) => this.setState({post_content: nextValue})}
@@ -1630,7 +1635,7 @@ class IlbanWrite extends React.Component {
                 justifyContent: 'space-between',
                 marginVertical: 10,
               }}>
-              <Text category="h4" style={{color:'#63579D'}}> 사진</Text>
+              <Text category="h4" style={{color:'#63579D', fontSize:18}}> 사진</Text>
               <TouchableOpacity onPress={() => this.onClickAddImage()}>
                 <Camsvg />
               </TouchableOpacity>

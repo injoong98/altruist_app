@@ -67,14 +67,16 @@ class MarketScreen extends React.Component {
         <View style={styles.textArea}>
           <View style={{flexDirection:'row'}}>
             {item.deal_status==0
-            ?<View style={{flex:1}}>
-              <Text style={{marginLeft:-4, color : '#D4787D', fontSize:11}} category='c2'>
-                •판매완료
+            ?<View style={{flex:1, flexDirection:'row', alignItems:'center', paddingLeft:5}}>
+              <Text style={{color:'#D4787D', fontSize:8, marginRight:10}}>●</Text>
+              <Text style={{marginLeft:-4, color : '#D4787D', fontSize:13}} category='h1'>
+                판매완료
               </Text>
             </View>
-            :<View style={{flex:1}}>
-              <Text style={{marginLeft:-4, color : '#439DB1', fontSize:11}} category='c2'>
-                {item.deal_type==0? '•판매중 / 배송':item.deal_type==1? '•판매중 / 직거래':'•판매중 / 배송 & 직거래'}
+            :<View style={{flex:1, flexDirection:'row', alignItems:'center', paddingLeft:5}}>
+              <Text style={{color:'#439DB1', fontSize:8, marginRight:10}}>●</Text>
+              <Text style={{marginLeft:-4, color : '#439DB1', fontSize:13}} category='h1'>
+                {item.deal_type==0? '판매중  /  배송':item.deal_type==1? '판매중  /  직거래':'판매중  /  배송 & 직거래'}
               </Text>
             </View>
             }
@@ -83,25 +85,25 @@ class MarketScreen extends React.Component {
                     {item.post_nickname}
                 </Text>
                 <View style={{position:'absolute', top:16}}>
-                  <PostTime style={{color:'#878787'}} datetime={item.post_datetime}/>
+                  <PostTime style={{color:'#878787', fontSize:8}} category='p1' datetime={item.post_datetime}/>
                 </View>
             </View>
           </View>
-          <View style={{flex:1, backgroundColor:'white', paddingHorizontal:5, paddingVertical:3, borderRadius:10, marginTop:5, justifyContent:'space-between', marginRight:40}}>
+          <View style={{flex:1, backgroundColor:'white', paddingHorizontal:5, paddingVertical:3, borderRadius:5, marginTop:5, justifyContent:'space-between', marginRight:40}}>
             <View style={styles.textTop}>
-              <Text style={styles.text} category='h4'>
+              <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail" category='h4'>
                   {item.title}
               </Text>
             </View>
             <View style={styles.textBottom}>
               <View style={{flex:1, justifyContent:'center'}}>
-                  <Text style={{...styles.text, color:'#878787', fontSize:11}} category='s1'>
+                  <Text style={{...styles.text, color:'#878787', fontSize:12}} numberOfLines={1} ellipsizeMode="tail" category='h4'>
                     {item.post_location}
                   </Text>
               </View>
               <View style={{flex:1, alignItems:'flex-end'}}>
-                  <Text style={{...styles.text, color:'#878787', fontSize:11}} category='s1'>
-                    {item.deal_price.replace(/(<([^>]+)>)/ig,"")} 원
+                  <Text style={{...styles.text, color:'#878787', fontSize:12}} category='h4'>
+                    {(item.deal_price+'원').replace(/\d(?=(\d{3})+\원)/g, '$&,')}
                   </Text>
               </View>
             </View>

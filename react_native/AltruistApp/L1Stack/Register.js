@@ -219,9 +219,10 @@ class RegisterScreen extends Component {
         this.setState({checkNull: true});
       } else {
         console.log('checkNotNull : passwordmatched');
-        this.setState({goNext: false});
         this.setState({
+          pwmessage: '',
           pwreStyle: '',
+          goNext: false,
         });
       }
       //이메일 체크
@@ -232,8 +233,7 @@ class RegisterScreen extends Component {
       if (this.state.mustInput != '이타주의자 사용중에 욕을 하지 않겠습니다.') {
         this.setState({statement: '위 문장과 동일하게 작성해주세요.'});
       } else {
-        this.setState({statement: ''});
-        this.setState({nextColor: {color: '#63579D'}});
+        this.setState({statement: '', nextColor: {color: '#63579D'}});
       }
     }
     // return;
@@ -305,12 +305,27 @@ class RegisterScreen extends Component {
       });
   };
 
+  handleInputChange = (text) => {
+    if (/^\d+$/.test(text)) {
+      this.setState({
+        text: text,
+      });
+    }
+  };
+
+  NoString = (str) => {
+    var nostring = str.replace(/\D/g, '');
+    this.setState({mem_phone: nostring});
+  };
+  NoString2 = (str) => {
+    var nostring2 = str.replace(/\D/g, '');
+    this.setState({mem_birthday: nostring2});
+  };
+
   //   TODO : 휴대폰 번호
   PhoneHyphen = (phonenum) => {
-    console.log(phonenum);
     var number = phonenum.replace(/[^0-9]/g, '');
     var phone = '';
-    console.log(number);
 
     if (number.length < 4) {
       return number;
@@ -424,6 +439,22 @@ class RegisterScreen extends Component {
           this.setState({EmailCaption: res.data.message});
           this.setState({EmailIcon: true});
         }
+      });
+  };
+
+  //   TODO : 비밀번호 확인
+  checkPassword = async () => {
+    const {mem_password} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('password', mem_password);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/password_check`, formdata)
+      .then((res) => {
+        console.log(res.data);
+        const pwmessage = res.data.message;
+        this.setState({pwmessage: pwmessage});
       });
   };
 
@@ -582,20 +613,35 @@ class RegisterScreen extends Component {
   };
 
   //   TODO : 패스워드 확인
-  CheckPassword = (a, b = '') => {
+  EqualPW = (a, b = '') => {
     console.log(this.state);
-    let checkPassword = '';
+    let eqaulPW = '';
     if (a == b) {
-      checkPassword = '';
-      this.setState({goNext: false});
+      eqaulPW = '';
+      this.setState({goNext: false, pwmessage: ''});
     } else {
-      checkPassword = '비밀번호가 일치하지 않습니다.';
+      eqaulPW = '비밀번호가 일치하지 않습니다.';
       this.setState({goNext: true});
     }
-    this.setState({captionCheck: checkPassword});
+    this.setState({captionCheck: eqaulPW});
   };
 
   render() {
+    const {
+      mem_userid,
+      mem_email,
+      mem_password,
+      mem_password_re,
+      mem_username,
+      mem_nickname,
+      mem_homepage,
+      mem_phone,
+      mem_birthday,
+      mem_sex,
+      mem_address,
+      mem_profile_content,
+      mem_recommend,
+    } = this.state;
     console.log(this.state);
     return (
       <>
@@ -614,7 +660,7 @@ class RegisterScreen extends Component {
                 paddingLeft: 60,
               }}>
               {/* 필수 */}
-              <View style={{marginBottom: 10}}>
+              <View style={{flex: 1}}>
                 <Input
                   style={
                     this.state.usernameStyle
@@ -645,7 +691,10 @@ class RegisterScreen extends Component {
                   }}
                   caption={this.state.nicknameCaption}
                 />
+
                 <this.RadioSexSelection />
+              </View>
+              <View style={{flex: 1}}>
                 {/* validation : 사용자가 input창에서 딱 벗어났을 때 
             1. null 값 체크 
             2. mem_email 마지막으로 입력된 값*/}
@@ -679,14 +728,13 @@ class RegisterScreen extends Component {
                   placeholder="* 비밀번호"
                   onChangeText={(mem_password) => {
                     this.setState({mem_password: mem_password});
-                    this.CheckPassword(
-                      mem_password,
-                      this.state.mem_password_re,
-                    );
+                    this.EqualPW(mem_password, this.state.mem_password_re);
                   }}
                   onEndEditing={() => {
+                    this.checkPassword();
                     this.checkNotNull();
                   }}
+                  caption={this.state.pwmessage}
                 />
                 <Input
                   style={
@@ -696,17 +744,15 @@ class RegisterScreen extends Component {
                   placeholder="* 비밀번호 확인"
                   onChangeText={(mem_password_re) => {
                     this.setState({mem_password_re: mem_password_re});
-                    this.CheckPassword(
-                      this.state.mem_password,
-                      mem_password_re,
-                    );
+                    this.EqualPW(this.state.mem_password, mem_password_re);
                   }}
                   onEndEditing={() => {
                     this.checkNotNull();
                   }}
+                  caption={this.state.captionCheck}
                 />
               </View>
-              <View style={{marginBottom: 10}}>
+              <View style={{flex: 1}}>
                 <Input
                   style={styles.inputs}
                   maxLength={13}
@@ -715,9 +761,12 @@ class RegisterScreen extends Component {
                   placeholder="휴대전화"
                   onChangeText={(mem_phone) => {
                     this.setState({mem_phone: mem_phone});
+                    this.NoString(mem_phone);
                     this.PhoneHyphen(mem_phone);
                   }}
-                  onEndEditing={() => this.phoneSubstr(this.state.mem_phone)}
+                  onEndEditing={() => {
+                    this.phoneSubstr(this.state.mem_phone);
+                  }}
                   caption={this.state.phoneCaption}
                   value={this.state.mem_phone}
                 />
@@ -730,6 +779,7 @@ class RegisterScreen extends Component {
                   placeholder="생년월일 ( ex. 2000-01-01 ) "
                   onChangeText={(mem_birthday) => {
                     this.setState({mem_birthday: mem_birthday});
+                    this.NoString2(mem_birthday);
                     this.BdayHyphen(mem_birthday);
                   }}
                   onEndEditing={() => this.bdaySubstr(this.state.mem_birthday)}
@@ -751,7 +801,7 @@ class RegisterScreen extends Component {
                 />
               </View>
 
-              <View style={{marginBottom: 20, textDecorationColor: '#63579D'}}>
+              <View style={{flex: 1, textDecorationColor: '#63579D'}}>
                 <Text style={styles.statementfont}>서명문</Text>
 
                 <Input
@@ -773,6 +823,7 @@ class RegisterScreen extends Component {
             {/* 동의 및 다음 버튼 */}
             <View
               style={{
+                flex: 1,
                 alignSelf: 'center',
                 flexDirection: 'row',
                 padding: 3,
@@ -828,6 +879,7 @@ class RegisterScreen extends Component {
             </View>
             <TouchableOpacity
               style={{
+                flex: 1,
                 alignContent: 'flex-end',
                 alignSelf: 'flex-end',
                 marginRight: 50,
