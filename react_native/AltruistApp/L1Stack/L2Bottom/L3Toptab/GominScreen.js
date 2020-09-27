@@ -125,13 +125,13 @@ class GominScreen extends React.Component {
             </View>
             <View style={styles.subtitle}>
                 <View style={{flex:4,display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4, paddingBottom:5}}> 
-                    <Text category="s2" style={{fontSize:12, color:'#63579D', marginRight:5}}>{item.display_name}</Text>
-                    <PostTime category="p1" style={{fontSize:10, color:'#63579D'}} datetime = {item.post_datetime}/>
+                    <Text category="s2" style={{fontSize:10, color:'#63579D', marginRight:5}}>{item.display_name}</Text>
+                    <PostTime category="p1" style={{fontSize:9, color:'#63579D'}} datetime = {item.post_datetime}/>
                 </View>
                 <View style={styles.infocontainer}>
-                    <View style={{alignItems:'center',justifyContent:'center'}}>
+                    <View style={{alignItems:'center',justifyContent:'center', marginTop:2}}>
                         <Heartsvg width='15' height='15'/>
-                        <Text style={{...styles.infotext, marginTop:3}} category="s1">{item.post_like}</Text>
+                        <Text style={{...styles.infotext, marginTop:2}} category="s1">{item.post_like}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
                         <Commentsvg width='20' height='20'/>
@@ -190,7 +190,7 @@ export {GominScreen}
 const styles = StyleSheet.create({
     container:{
         backgroundColor:"#F4F4F4",
-        borderRadius : 20,
+        borderRadius : 13,
         marginVertical:4.5,
         marginHorizontal:19,
         padding:0,
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
         backgroundColor:"#ffffff",
         position:"relative",bottom:0,right:0,
         paddingTop:5,
-        paddingLeft:20,
+        paddingLeft:25,
         paddingRight:10,
         flex:2
     },
@@ -234,13 +234,13 @@ const styles = StyleSheet.create({
         fontSize:9
     },
     headtext:{
-        marginTop:11,
+        marginTop:8,
         paddingTop:5,
-        fontWeight:'bold'
+        fontSize:17
     },
     subtext:{
         marginTop:10,
         maxWidth:200,
-        fontSize:13
+        fontSize:12
     }
 })

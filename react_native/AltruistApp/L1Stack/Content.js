@@ -23,6 +23,7 @@ import Callmessagesvg from '../assets/icons/call-message.svg'
 import Emailsvg from '../assets/icons/Email.svg'
 import Viewsvg from '../assets/icons/view.svg'
 import Timesvg from '../assets/icons/Time.svg'
+import Heartsvg from '../assets/icons/heart.svg'
 
 
 const BackIcon =  (props) =>(
@@ -324,46 +325,46 @@ class GominContent extends React.Component{
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
         return (
-            <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10}} >
-                <View style={{marginLeft:15,marginTop:10,marginBottom:13}}>
-                    <View style={{display:"flex",flexDirection:'row'}}>
+            <View style={{backgroundColor:'#F4F4F4',paddingTop:15, marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10, paddingLeft:25}} >
+                <View style={{paddingBottom:5,marginTop:10, marginBottom:10}}>
+                    <Text style={{fontSize:18}} category='h3'>{post.post_title}</Text>
+                </View>
+                <View style={{marginBottom:16}}>
+                    <Text style={{fontSize:12,fontWeight:'800'}} category='s1'>
+                    {post_remove_tags}
+                    </Text>
+                </View>
+                <View style={{display:"flex",flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
+                    <View style={{flexDirection:'row'}}>
                         <StarIcon />
                         <View>
-                            <Text>{post.display_name}</Text>
-                            <View style={{display:"flex",flexDirection:'row'}}>
-                                <PostTime datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
+                            <Text category="h4" style={{fontSize:11, color:'#393939'}}>{post.display_name}</Text>
+                            <View style={{flexDirection:'row', justifyContent:'center'}}>
+                                <PostTime category="p1" style={{fontSize:9, color:'#878787'}} datetime={ post.post_datetime ==post.post_updated_datetime? post.post_datetime : post.post_updated_datetime}/>
                                 {
                                     post.post_datetime ==post.post_updated_datetime?
                                     null
                                     :
-                                    <Text category="s2"> 수정됨</Text>
+                                    <Text category="p1" style={{fontSize:9, color:'#878787'}}> 수정</Text>
                                 }
                             </View>
                         </View>
                     </View>
-                </View>
-                <View style={{marginLeft:15,paddingBottom:5}}>
-                    <Text style={{fontSize:14,fontWeight:'bold'}}>{post.post_title}</Text>
-                </View>
-                <View style={{marginLeft:15,marginBottom:16}}>
-                    <Text style={{fontSize:12,fontWeight:'800'}}>
-                    {post_remove_tags}
-                    </Text>
-                </View>
-                <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
-                    <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
-                        <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
-                            <Thumbsvg/>
-                        </TouchableOpacity>
-                        <Text>{post.post_like}</Text>
-                        {/* <TouchableOpacity onPress={()=>alert("저장!")}>
-                            <PlusIcon />
-                            <Text>{post.scrap_count}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>this.postBlameConfirm()}>
-                            <BlameIcon />
-                            <Text>{post.post_blame}</Text>
-                        </TouchableOpacity> */}
+                    <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
+                        <View style={{flexDirection:'row', justifyContent:'space-evenly', alignItems:'center'}}>
+                            <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
+                                <Heartsvg width='16' height='16'/>
+                            </TouchableOpacity>
+                            <Text category="s1" style={{color:'#63579D', fontSize:13, marginBottom:-2}}>{post.post_like}</Text>
+                            {/* <TouchableOpacity onPress={()=>alert("저장!")}>
+                                <PlusIcon />
+                                <Text>{post.scrap_count}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={()=>this.postBlameConfirm()}>
+                                <BlameIcon />
+                                <Text>{post.post_blame}</Text>
+                            </TouchableOpacity> */}
+                        </View>
                     </View>
                 </View>
             </View>
@@ -954,7 +955,7 @@ class MarketContent extends React.Component {
                         </Layout>
                         <Layout style={{marginVertical : 10, marginBottom:15, flexDirection:'row'}}>
                             <Text category='h5' style={{color:'#989898'}}>가격</Text>
-                            <Text category='h5' style={{marginLeft:20}}>{post.deal_price} 원</Text>
+                            <Text category='h5' style={{marginLeft:10}}>{(post.deal_price+'원').replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                         </Layout>
                     </Layout>
                     <Divider/>
@@ -967,11 +968,11 @@ class MarketContent extends React.Component {
                         </Layout>
                         <Layout style={{flexDirection:'row'}}>
                             <Layout style={{justifyContent:'center', alignItems:'center'}}>
-                                <Viewsvg/>
+                                <Viewsvg width='15' height='15'/>
                                 <Text style={{color:'#878787', fontSize:10}} category='s2'>{post.post_hit}</Text>
                             </Layout>
                             <Layout style={{justifyContent:'center', alignItems:'center', marginHorizontal:10}}>
-                                <Timesvg/>
+                                <Timesvg width='15' height='15'/>
                                 <PostTime style={{color:'#878787', fontSize:10}} datetime={post.post_datetime}/>
                             </Layout>
                         </Layout>
@@ -1804,7 +1805,7 @@ class IlbanContent extends Component {
                                     post.post_datetime ==post.post_updated_datetime?
                                     null
                                     :
-                                    <Text category="s2"> 수정됨</Text>
+                                    <Text style={{color:'#878787', fontSize:8}} category="s2"> 수정됨</Text>
                                 }
                             </View>
                         </View>
@@ -1813,8 +1814,8 @@ class IlbanContent extends Component {
                 <View style={{marginLeft:15,paddingBottom:5}}>
                     <Text style={{fontSize:16,fontWeight:'bold'}} category='h3'>{post.post_title}</Text>
                 </View>
-                <View style={{marginLeft:15,marginVertical:5}}>
-                    <Text style={{fontSize:13, fontWeight:'100'}} category='s1'>
+                <View style={{marginLeft:15,marginVertical:10}}>
+                    <Text style={{fontSize:13, fontWeight:'100'}} category='p1'>
                         {post_remove_tags}
                     </Text>
                 </View>

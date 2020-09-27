@@ -103,13 +103,14 @@ class Board_write extends CB_Controller
 		if(!$this->member->is_member()) response_result($r,'Err','로그인 후 이용하세요.');
 
 		$post = $this->Post_model->get_one($post_id);
+		$deal_status = $this->Post_model->get_one($deal_status);
 
 		if(!$post) response_result($r,'Err',$post_id.'로 post 자료를 조회하지 못했습니다..');
 
 		if ( ! $this->session->userdata('mem_id') == element('mem_id',$post)) response_result($r,'Err','글 작성자가 아닙니다.');
 
 		$updatedata = array(
-			'deal_status' => 1,
+			'deal_status' => $deal_status,
 		);
 		log_message('error',date("Y-m-d H:i:s"));
 		$result = $this->Post_model->update($post_id, $updatedata);

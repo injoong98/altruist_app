@@ -151,7 +151,7 @@ class JauScreen extends React.Component {
 			<View style={{flex:1, backgroundColor:'white', width:111, borderBottomRightRadius:15}}>
 				<Text category='s2' style={{fontSize:14,color:'#63579D', padding:5, flex:1}}>{'#'+this.category[item.post_category]}</Text>
 			</View>
-			<View style={{marginHorizontal:20}}>
+			<View style={{marginHorizontal:20, marginTop:5}}>
 				<View style={{paddingVertical:4, paddingLeft:5}}>
 					<Text category = 'h3' numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
 					<Text
