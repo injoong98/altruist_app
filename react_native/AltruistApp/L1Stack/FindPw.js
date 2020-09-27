@@ -11,7 +11,6 @@ import {
 import axios from 'axios';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
-const CalendarIcon = (props) => <Icon {...props} name="calendar" />;
 
 class FindPwScreen extends Component {
   constructor(props) {
@@ -39,12 +38,12 @@ class FindPwScreen extends Component {
     await axios
       .post(`http://dev.unyict.org/api/findaccount/findpw`, formdata)
       .then((res) => {
-        if (res.data.status == 500) {
+        if (res.data.status === 500) {
           //실패 모달
           console.log('status500', res);
           console.log('status', res.status);
           console.log('실패');
-        } else if (res.data.status == 200) {
+        } else if (res.data.status === 200) {
           console.log('status200', res);
           console.log('status', res.status);
           this.props.navigation.navigate('RegisterSuccessScreen');

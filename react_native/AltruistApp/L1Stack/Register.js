@@ -135,7 +135,6 @@ class RegisterScreen extends Component {
           usernameStyle: {
             backgroundColor: '#F8F8F8',
             borderRadius: 15,
-            borderColor: '#FFFFFF',
             borderColor: 'red',
           },
         });
@@ -147,7 +146,6 @@ class RegisterScreen extends Component {
           nicknameStyle: {
             backgroundColor: '#F8F8F8',
             borderRadius: 15,
-            borderColor: '#FFFFFF',
             borderColor: 'red',
           },
         });
@@ -159,7 +157,6 @@ class RegisterScreen extends Component {
           sexStyle: {
             backgroundColor: '#F8F8F8',
             borderRadius: 15,
-            borderColor: '#FFFFFF',
             borderColor: 'red',
           },
         });
@@ -171,7 +168,6 @@ class RegisterScreen extends Component {
           emailStyle: {
             backgroundColor: '#F8F8F8',
             borderRadius: 15,
-            borderColor: '#FFFFFF',
             borderColor: 'red',
           },
         });
@@ -183,7 +179,6 @@ class RegisterScreen extends Component {
           pwStyle: {
             backgroundColor: '#F8F8F8',
             borderRadius: 15,
-            borderColor: '#FFFFFF',
             borderColor: 'red',
           },
         });
@@ -195,7 +190,6 @@ class RegisterScreen extends Component {
           pwreStyle: {
             backgroundColor: '#F8F8F8',
             borderRadius: 15,
-            borderColor: '#FFFFFF',
             borderColor: 'red',
           },
         });
@@ -273,12 +267,12 @@ class RegisterScreen extends Component {
         console.log('response', res);
         console.log('status', res.data.status);
         console.log('data', res.data);
-        if (res.data.status == 500) {
+        if (res.data.status === 500) {
           console.log('status', res.data.status);
           console.log(res.data.message);
-          console.log(실패);
+          console.log('실패');
           //실패 모달
-        } else if (res.data.status == 200) {
+        } else if (res.data.status === 200) {
           console.log('status', res.data.status);
           console.log(res.data.message);
           this.props.navigation.navigate('RegisterSuccessScreen');
