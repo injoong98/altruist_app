@@ -1574,6 +1574,7 @@ class IlbanWrite extends React.Component {
                 marginBottom: 14,
                 fontSize: 18,
                 flex : 1,
+                paddingHorizontal : 10
               }}
               placeholder="제목"
               onChangeText={(nextValue) => this.setState({post_title: nextValue})}
@@ -1591,6 +1592,7 @@ class IlbanWrite extends React.Component {
               marginHorizontal: 12,
               marginBottom: 14,
               fontSize: 18,
+              paddingHorizontal : 10
             }}
             placeholder="내용"
             onChangeText={(nextValue) => this.setState({post_content: nextValue})}
@@ -1607,7 +1609,7 @@ class IlbanWrite extends React.Component {
                 justifyContent: 'space-between',
                 marginVertical: 10,
               }}>
-              <Text category="h4" style={{color:'#63579D'}}> 사진</Text>
+              <Text category="h4" style={{color:'#63579D', fontSize:18}}> 사진</Text>
               <TouchableOpacity onPress={() => this.onClickAddImage()}>
                 <Camsvg />
               </TouchableOpacity>
