@@ -663,7 +663,7 @@ class RegisterScreen extends Component {
                   caption={this.state.captionCheck}
                 />
               </View>
-              <View style={{flex: 1}}>
+              <View style={{flex: 1, paddingTop: 15}}>
                 <Input
                   style={styles.inputs}
                   maxLength={13}
@@ -715,6 +715,8 @@ class RegisterScreen extends Component {
               <View
                 style={{
                   flex: 1,
+                  paddingTop: 30,
+                  paddingBottom: 20,
                   padding: 3,
                   alignSelf: 'center',
                   textDecorationColor: '#63579D',
@@ -722,8 +724,9 @@ class RegisterScreen extends Component {
                 }}>
                 <this.CheckboxKitten />
                 <Text category="s1" style={{color: '#63579D'}}>
-                  {` `} 하늘 부모님 성회 아래
-                  {`\n`} {` `}이타주의자 활동을 양심적으로 하겠습니다
+                  {` `} * 하늘 부모님 성회 아래
+                  {`\n`} {` `}
+                  {` `} 이타주의자 활동을 양심적으로 하겠습니다
                 </Text>
               </View>
             </View>
@@ -783,9 +786,15 @@ class RegisterScreen extends Component {
                 }}>
                 에 동의합니다
               </Text>
+            </View>
+            <View>
               {!this.state.checked ? (
                 // <Text style={{textAlign: 'right'}}>필수값 확인 ! </Text>
-                <Text style={{textAlign: 'right'}}></Text>
+                <Text
+                  category="s2"
+                  style={{color: '#A3A3A3', textAlign: 'right'}}>
+                  필수값 확인해주세요.
+                </Text>
               ) : (
                 <this.nextStep />
               )}
