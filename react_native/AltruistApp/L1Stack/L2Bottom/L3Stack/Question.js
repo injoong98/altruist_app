@@ -782,9 +782,9 @@ class AltQueList extends React.Component{
                                 <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`#전체`}</Text>
                                 :
                             item.answer_mem_id == this.context.session_mem_id?
-                                <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`From . ${item.display_name} `}</Text>
+                                <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`From . [ ${item.display_name} ] 님 `}</Text>
                                 :
-                                <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`To . ${item.answer_mem_id} `}</Text>
+                                <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`To . [ ${item.answer_username} ] 님 `}</Text>
                         }
                 </View>
                 
