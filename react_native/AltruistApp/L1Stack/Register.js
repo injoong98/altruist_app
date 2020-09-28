@@ -11,17 +11,12 @@ import {
 import {
   Text,
   Input,
-  Button,
-  CheckBox,
   TopNavigation,
   TopNavigationAction,
   Icon,
-  TextInput,
+  CheckBox,
   Radio,
   RadioGroup,
-  Datepicker,
-  Calendar,
-  NativeDateService,
 } from '@ui-kitten/components';
 // import moment from '@ui-kitten/moment';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
@@ -503,82 +498,17 @@ class RegisterScreen extends Component {
     return type;
   };
 
-  //   TODO : 생년월일
-  // DatepickerBday = () => {
-  //   const [date, setDate] = useState(new Date());
-  //   const i18n = {
-  //     dayNames: {
-  //       short: ['월', '화', '수', '목', '금', '토', '일'],
-  //       long: [
-  //         '월요일',
-  //         '화요일',
-  //         '수요일',
-  //         '목요일',
-  //         '금요일',
-  //         '토요일',
-  //         '일요일',
-  //       ],
-  //     },
-  //     monthNames: {
-  //       short: [
-  //         '1월',
-  //         '2월',
-  //         '3월',
-  //         '4월',
-  //         '5월',
-  //         '6월',
-  //         '7월',
-  //         '8월',
-  //         '9월',
-  //         '10월',
-  //         '11월',
-  //         '12월',
-  //       ],
-  //       long: [
-  //         '1월',
-  //         '2월',
-  //         '3월',
-  //         '4월',
-  //         '5월',
-  //         '6월',
-  //         '7월',
-  //         '8월',
-  //         '9월',
-  //         '10월',
-  //         '11월',
-  //         '12월',
-  //       ],
-  //     },
-  //   };
+  CheckboxKitten = () => {
+    const [checked, setChecked] = React.useState(false);
 
-  //   const localeDateService = new NativeDateService('ko', {
-  //     i18n,
-  //     startDayOfWeek: 6,
-  //     format: 'YYYY-MM-DD',
-  //   });
-
-  //   return (
-  //     <View
-  //       style={{
-  //         backgroundColor: '#F8F8F8',
-  //         borderColor: '#FFFFFF',
-  //         borderRadius: 15,
-  //       }}>
-  //       <Datepicker
-  //         size="small"
-  //         style={{
-  //           margin: 10,
-  //         }}
-  //         min={new Date(1900, 1, 1)}
-  //         date={new NativeDateService(date, {format: 'YYYY-MM-DD'})}
-  //         dateService={localeDateService}
-  //         onSelect={(nextDate) => {
-  //           setDate(nextDate);
-  //         }}
-  //       />
-  //     </View>
-  //   );
-  // };
+    return (
+      <CheckBox
+        checked={checked}
+        onChange={(nextChecked) => setChecked(nextChecked)}>
+        {/* {`Checked: ${checked}`} */}
+      </CheckBox>
+    );
+  };
 
   //   TODO : 성별
   RadioSexSelection = () => {
@@ -795,23 +725,19 @@ class RegisterScreen extends Component {
                 />
               </View>
 
-              <View style={{flex: 1, textDecorationColor: '#63579D'}}>
-                <Text style={styles.statementfont}>서명문</Text>
-
-                <Input
-                  style={styles.inputs}
-                  label={() => (
-                    <Text
-                      category="s1"
-                      style={{color: '#63579D', paddingLeft: 20}}>
-                      이타주의자 사용중에 욕을 하지 않겠습니다.
-                    </Text>
-                  )}
-                  placeholder="위와 동일하게 작성"
-                  onChangeText={(text) => this.setState({mustInput: text})}
-                  caption={this.state.statement}
-                  onEndEditing={() => this.checkNotNull()}
-                />
+              <View
+                style={{
+                  flex: 1,
+                  padding: 3,
+                  alignSelf: 'center',
+                  textDecorationColor: '#63579D',
+                  flexDirection: 'row',
+                }}>
+                <this.CheckboxKitten />
+                <Text category="s1" style={{color: '#63579D'}}>
+                  {` `} 하늘 부모님 성회 아래
+                  {`\n`} {` `}이타주의자 활동을 양심적으로 하겠습니다
+                </Text>
               </View>
             </View>
             {/* 동의 및 다음 버튼 */}
