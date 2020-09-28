@@ -20,9 +20,10 @@ import FinishScreen from './Finish'
 import {Signing} from './Context'
 import {AltQueContent} from './L2Bottom/L3Stack/Question'
 import LogoSvg from '../assets/icons/logo.svg'
+import MainSvg from '../assets/icons/main_logo.svg'
 
 const {width} = Dimensions.get('window')
-const wdithLogo = (width*0.47);
+const wdithLogo = (width*0.7);
 const heightLogo = (wdithLogo*0.57);
 
 const {Navigator,Screen} = createStackNavigator();
@@ -51,7 +52,7 @@ class LoadingScreen extends React.Component{
             <SafeAreaView style={{flex:1}}>
                 <Animated.View 
                     style={{flex:1,justifyContent:"center", alignItems:"center",backgroundColor:"#ffffff",opacity:this.state.opacity}}>
-                    <LogoSvg width={wdithLogo} heightLogo={heightLogo}/>
+                    <MainSvg fill="#fff" width={wdithLogo} height={heightLogo}/>
                 </Animated.View>   
             </SafeAreaView>
     )}
