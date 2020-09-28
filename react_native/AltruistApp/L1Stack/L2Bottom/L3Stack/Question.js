@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity,KeyboardAvoidingView,Alert, ScrollView, Dimensions,TouchableHighlight,StatusBar} from 'react-native'
+import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity,KeyboardAvoidingView,Alert, ScrollView, Dimensions,TouchableHighlight,StatusBar,Keyboard} from 'react-native'
 import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,Divider,Modal,Popover} from '@ui-kitten/components'
 import axios from 'axios'
 
@@ -38,9 +38,45 @@ class AltReplying extends React.Component{
             comment:this.props.route.params.comment ?this.props.route.params.comment.cmt_content : '',
             refreshing:false,
             confirmModalVisible:false,
-            goBackOk:false
+            resultModalVisible:false,
+            spinnerModalVisible:false,
+            goBackOk:false,
+            resultText:'',
+            modalType:0
         }
     }
+    modalList = [
+        {
+            text : '답변을 등록 하시겠습니까?',
+            func : ()=> this.commentValid(),
+        },
+        {
+            text : '답변 완료',
+            func : ()=>{ 
+                        console.log('답변 완료');
+                        this.state.goBackOk =true;
+                        this.setState({goBackOk:true})           
+                        this.props.navigation.goBack();
+                        this.props.route.params.onGoBack();
+                    },
+        },
+        {
+            text : '답변 실패',
+            func : ()=>{console.log('실패')},
+        },
+        {
+            text : '답변을 중단하시겠습니까?\n 작성중인 내용을 잃을 수 있습니다.',
+            func : ()=>{
+                this.state.goBackOk =true;
+                this.setState({goBackOk:true});  
+                this.props.navigation.goBack()
+            },
+        },
+        {
+            text : '이 답변을 삭제하시겠습니까?',
+            func :()=>{this.setState({goBackOk:true});},
+        },
+    ]
     goBack = () => {
         this.props.navigation.goBack();
     }
@@ -56,12 +92,9 @@ class AltReplying extends React.Component{
         .then(response=>{
             const {status,message}=response.data;
             if(status=='200'){
-                alert(`성공 : ${message}`);
-                this.setState({comment:'',relpying:false,cmt_id:''});
-                this.props.navigation.goBack();
-                this.props.route.params.onGoBack();
+                this.setState({spinnerModalVisible:false,resultModalVisible:true,modalType:1,resultText:'답변을 성공적으로 등록하였습니다.\n감사합니다!'});
             }else if(status=="500"){
-                alert(`실패 : ${message}`)
+                this.setState({spinnerModalVisible:false,resultModalVisible:true,modalType:2,resultText:`답변 등록에 실패하였습니다.\n${message}`});
             }
         })
     }
@@ -75,7 +108,7 @@ class AltReplying extends React.Component{
         .then(response=>{
             const {status,message} = response.data;
             if(status=='500'){
-                alert(message);
+                this.setState({spinnerModalVisible:false,resultModalVisible:true,modalType:2,resultText:`답변을 등록하지 못했습니다.\n${message}`});
             }else if(status=="200"){
                 this.commentUpload();
             }
@@ -85,7 +118,7 @@ class AltReplying extends React.Component{
         })
     }
     confirmModal= ()=>{
-        this.setState({confirmModalVisible:true});
+        this.setState({confirmModalVisible:true,modalType:3});
     }
     componentDidMount(){
         StatusBar.setBackgroundColor('#F4F4F4');
@@ -110,14 +143,15 @@ class AltReplying extends React.Component{
         StatusBar.setBarStyle('default');
     }
     render(){
-        const {post,title,comment,confirmModalVisible} = this.state
+        const {post,title,comment,confirmModalVisible,resultModalVisible,spinnerModalVisible,modalType} = this.state
         return(
             <SafeAreaView style={{flex:1}}>
                 <WriteContentToptab
                     text='답변하기'
                     right='upload'
                     func={() => {
-                        this.commentValid();
+                        this.setState({confirmModalVisible:true,modalType:0});
+                        Keyboard.dismiss();
                     }}
                     gbckfunc={() => {
                         this.props.navigation.goBack();
@@ -153,19 +187,39 @@ class AltReplying extends React.Component{
                     </View>
                 </View>
             </KeyboardAvoidingView>
-            <Button onPress={()=>console.log(this.state.goBackOk)}>하</Button>
             <Modal
                 visible={confirmModalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                 onBackdropPress={() => this.setState({confirmModalVisible:false})}
             >
                 <Confirm 
-                    confirmText={'답변을 종료하시겠습니까?'}
+                    confirmText={this.modalList[modalType].text}
                     frstText="예"
-                    OnFrstPress={() =>{this.state.goBackOk=true;this.setState({confirmModalVisible:false,goBackOk:true});this.goBack();}}
+                    OnFrstPress={() =>{this.setState({confirmModalVisible:false,spinnerModalVisible:true});this.modalList[modalType].func();}}
                     scndText="아니오"
-                    OnScndPress={() => this.setState({confirmModalVisible:false,goBackOk:false})}
+                    OnScndPress={() => this.setState({confirmModalVisible:false,cmt_id:''})}
                 />
+            </Modal>
+            <Modal
+                visible={resultModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({resultModalVisible:false, cmt_id:''})}
+                >
+                <Confirm 
+                    type = 'result'
+                    confirmText={this.state.resultText}
+                    frstText="닫기"
+                    OnFrstPress={() => {
+                        this.setState({resultModalVisible:false, cmt_id:''})                    
+                        this.modalList[modalType].func();
+                    }}
+                />
+            </Modal>
+            <Modal
+                visible={spinnerModalVisible}
+                backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
+            >
+                <Spinner size='giant'/>
             </Modal>
         </SafeAreaView>
         )
@@ -308,7 +362,7 @@ class AltQueContent extends React.Component{
             this.context.session_mem_id !=post.mem_id? 
             <View>
                 <Button 
-                    onPress = {()=>{this.props.navigation.navigate('AltReplying',{post:post,brd_key:brd_key,onGoBack:this.onRefresh})}}
+                    onPress = {()=>{this.props.navigation.navigate('AltReplying',{post:post,brd_key:brd_key,onGoBack:()=>this.onRefresh()})}}
                     style={{marginHorizontal:15,}}
                 >
                     
@@ -511,7 +565,10 @@ class AltQueContent extends React.Component{
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false, cmt_id:''})}
+                    OnFrstPress={
+                        () =>{ 
+                            this.setState({resultModalVisible:false, });
+                        }}
                 />
             </Modal>
             <Modal
