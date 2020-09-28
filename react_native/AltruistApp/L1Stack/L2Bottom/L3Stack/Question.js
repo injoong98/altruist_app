@@ -431,16 +431,25 @@ class AltQueContent extends React.Component{
         const {post,brd_key,cmt_id} =this.state
         return(
         item==false?
-            this.context.session_mem_id !=post.mem_id? 
-            <View>
-                <Button 
-                    onPress = {()=>{this.props.navigation.navigate('AltReplying',{post:post,brd_key:brd_key,onGoBack:()=>this.onRefresh()})}}
-                    style={{marginHorizontal:15,}}
-                >
-                    
-                    답변하기
-                </Button>
-            </View>
+            this.context.session_mem_id !=post.mem_id?
+                this.context.is_altruist =='Y'?
+                <View>
+                    <Button 
+                        onPress = {()=>{this.props.navigation.navigate('AltReplying',{post:post,brd_key:brd_key,onGoBack:()=>this.onRefresh()})}}
+                        style={{marginHorizontal:15,}}
+                    >
+                        답변하기
+                    </Button>
+                </View>
+                :
+                <View style={{ alignItems:'center'}}>
+                    <Text style={{color:'#63579D',fontSize:15,padding:10}}>
+                       답변은 질문 작성자와 답변 작성자에게만 공개 됩니다. 
+                    </Text>
+                    <Text style={{color:'#63579D',fontSize:15}}>
+                       이타주의자가 되어 답변해주세요! 
+                    </Text>
+                </View>
             :
             <View style={{ flexDirection:'row',justifyContent:'center'}}>
                 <Text style={{color:'#63579D',fontSize:15}}>
@@ -600,6 +609,7 @@ class AltQueContent extends React.Component{
 
     async componentDidMount(){
         const {post_id} = this.props.route.params
+        this.context.session_chk() 
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})

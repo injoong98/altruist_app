@@ -102,10 +102,14 @@ export class StackNav extends React.Component{
                     .catch(error =>{
                     })
                 },
-                session_mem_id:'',
                 isPushNoti:()=>{
                     return this.state.isPushNoti
-                }
+                },
+                session_chk:()=>{
+                    this.session_chk()
+                },
+                session_mem_id:'',
+                is_altruist:false
             }
         }
         
@@ -131,9 +135,10 @@ export class StackNav extends React.Component{
         .then(async res=>{
             console.log('session_checking')
             if(res.data.status == 200){
-                const {mem_id} =res.data.session
+                const {mem_id,is_altruist} =res.data.session
                 this.setState({isSignedIn:true});
                 this.state.context.session_mem_id = mem_id;
+                this.state.context.is_altruist = is_altruist;
                 messaging().getToken()
                 .then(token=>{
                     this.syncPushToken(token,mem_id)
