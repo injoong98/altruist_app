@@ -1305,6 +1305,12 @@ class Board_post extends CB_Controller
 					$area = $this->db->get_where('cb_post_alt_area',array('post_id'=>element('post_id', $val)))->result_array();
 					$result['list'][$key]['area'] = $area;
 				}
+				if(element('brd_id', $val)==10){
+					$this->db->select('cb_member.mem_username');
+					$this->db->join('cb_member','cb_member.mem_id=cb_post.answer_mem_id');
+					$answer_username = $this->db->get_where('cb_post',array('post_id'=>element('post_id', $val)))->row_array();
+					$result['list'][$key]['answer_username'] = $answer_username['mem_username'];
+				}
 
 			}
 		}

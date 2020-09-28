@@ -134,9 +134,9 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
-        // vectorDrawables.useSupportLibrary = true
+        vectorDrawables.useSupportLibrary = true
         versionCode 1
-        versionName "0.1.1"
+        versionName "0.1"
     }
     splits {
         abi {
@@ -153,15 +153,16 @@ android {
         //     keyAlias 'androiddebugkey'
         //     keyPassword 'android'
         // }
-         release {
+        release {
               if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
                 storeFile file(MYAPP_UPLOAD_STORE_FILE)
                 storePassword MYAPP_UPLOAD_STORE_PASSWORD
                 keyAlias MYAPP_UPLOAD_KEY_ALIAS
                 keyPassword MYAPP_UPLOAD_KEY_PASSWORD
             }
-         }
+        }
     }
+    
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
