@@ -829,8 +829,9 @@ class MarketContent extends React.Component {
     }
 
     postDealStatus = async () => {
+        const {post}=this.state;
         var formdata = new FormData();
-        formdata.append('post_id', this.state.post.post_id);
+        formdata.append('post_id', post.post_id);
         formdata.append('deal_status', 0)
         console.log(formdata);
         await Axios.post('http://dev.unyict.org/api/board_write/finish_deal',formdata)
