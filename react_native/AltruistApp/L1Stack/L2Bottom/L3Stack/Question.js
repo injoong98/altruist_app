@@ -264,6 +264,104 @@ class AltQueContent extends React.Component{
             func :()=>this.cmtDelete(),
         },
     ]
+    
+    cmtBlame = () =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',this.state.cmt_id);
+
+        Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+            }else{
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                this.getCommentData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+        })
+    }
+    postDelete = async () => {
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+
+        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        .then((res)=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
+            this.props.navigation.goBack();
+            this.props.route.params.OnGoback();
+        })
+        .catch((error)=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
+        })
+    }
+    postBlame = async () =>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+
+        await Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+        .then(response=>{
+            if(response.data.status == 500){
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+            }else{
+                this.getPostData(this.state.post.post_id)
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+            }
+        })
+        .catch(error=>{
+            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+        })
+    }
+    postscrap = async()=>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        
+        await Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        .then(response=>{
+            if(response.data.success)
+                this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
+            else if (response.data.error)
+                this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
+        })
+        .catch(error=>{
+            this.setState({resultModalVisible:true, replying:false, resultText:error.message});
+        })
+    }
+    cmtLike = (cmt_id) =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',cmt_id)
+        formdata.append('like_type',1)
+        axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+            this.getCommentData(this.state.post.post_id)}
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
+    cmtDelete = () =>{
+        this.setState({spinnerModalVisible:true});
+        var formdata = new FormData();
+        formdata.append('cmt_id',this.state.cmt_id)
+        
+        axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+            }else{
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                this.onRefresh()
+            }
+            this.setState({cmt_id:''})
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
+        })
+    }
     renderPostMore=(props)=>(
         <TouchableOpacity {...props} style = {{paddingRight:10}} onPress={()=>{this.setState({popoverVisibel:true}),console.log('gd')}}>
             <MoreLsvg height={24} width={24}/>
@@ -321,40 +419,6 @@ class AltQueContent extends React.Component{
             </View>
         </Popover>
     )
-    cmtLike = (cmt_id) =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',cmt_id)
-        formdata.append('like_type',1)
-        axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                alert(`${JSON.stringify(response.data.message)}`)
-            }else{
-            this.getCommentData(this.state.post.post_id)}
-        })
-        .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
-        })
-    }
-    cmtDelete = () =>{
-        this.setState({spinnerModalVisible:true});
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id)
-        
-        axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.onRefresh()
-            }
-            this.setState({cmt_id:''})
-        })
-        .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
-        })
-    }
     renderCommentsList=({item,index})=>{
         const {post,brd_key,cmt_id} =this.state
         return(
@@ -392,7 +456,10 @@ class AltQueContent extends React.Component{
                     paddingVertical:10,
                     paddingLeft: 15,
                     marginLeft:item.cmt_reply==""?15:50,
-                    backgroundColor:item.cmt_id==cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
+                    backgroundColor:item.cmt_id==cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4',
+                    borderColor : '#FFEAB2',
+                    borderWidth: item.cmt_like ==0 ? 0 :2
+                }}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
                         <View>
@@ -418,20 +485,39 @@ class AltQueContent extends React.Component{
                     <Text category="s1">{item.cmt_content}</Text>
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
+                {
+                    this.context.session_mem_id ==post.mem_id? 
+                    
                     <TouchableOpacity 
                         style= {{paddingHorizontal:6,paddingVertical:4,borderRadius:4,backgroundColor:'#63579D',marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'center', alignItems:'center'}}
-                        onPress={()=>this.cmtLike(item.cmt_id)}>
-                       <Text style={{color:'#ffffff'}}>답변선택</Text> 
+                        onPress={()=> item.cmt_like ==0 ? this.cmtLike(item.cmt_id) : null}>
+                       <Text style={{color:'#ffffff'}}>
+                        {
+                            item.cmt_like >0?
+                            '선택한 답변입니다.'
+                            :
+                            '답변선택'
+                        }   
+
+                        </Text> 
                     </TouchableOpacity>
-                    {/* <TouchableOpacity 
-                        onPress={()=>this.cmtLike(item.cmt_id)}
-                        style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}
+                    :
+                    item.cmt_like >0?
+
+                    <TouchableOpacity 
+                        style= {{paddingHorizontal:6,paddingVertical:4,borderRadius:4,backgroundColor:'#63579D',marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'center', alignItems:'center'}}
                     >
-                        <Thumbsvg />
+                       <Text style={{color:'#ffffff'}}>작성자님이 감동하셨습니다.</Text> 
                     </TouchableOpacity>
-                        <Text>{item.cmt_like}</Text> */}
+                    :
+                    null
+                }
                 </View>
-                <View style={{marginTop:4,borderTopWidth:0.5,borderColor:'#c4c4c4'}}/>
+                {
+                    item.cmt_like ==0 ?
+                    <View style={{marginTop:4,borderTopWidth:0.5,borderColor:'#c4c4c4'}}/>
+                    :null
+                }
             </View>
         </View>
     )}
