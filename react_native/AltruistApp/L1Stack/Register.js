@@ -18,25 +18,11 @@ import {
   Radio,
   RadioGroup,
 } from '@ui-kitten/components';
-// import moment from '@ui-kitten/moment';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import axios from 'axios';
-// import RegisterSuccessScreen from './RegisterSuccess';
-import Nextsvg from '../assets/icons/next.svg';
+import Nextsvg from '../assets/icons/double-next.svg';
 
-const NextIcon = (props) => <Icon {...props} name="arrow-back" />;
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
-const CalendarIcon = (props) => <Icon {...props} name="calendar" />;
-const ApprovedIcon = (props) => <Icon {...props} name="checkmark-outline" />;
-const OneCheckIcon = (props) => <Icon {...props} name="checkmark-outline" />;
-const DoubleCheckcon = (props) => <Icon {...props} name="done-all-outline" />;
-const DangerIcon = (props) => <Icon {...props} name="alert-circle-outline" />;
-
-const LoadingIndicator = (props) => (
-  <View style={[props.style, styles.indicator]}>
-    <Spinner size="small" />
-  </View>
-);
 
 class RegisterScreen extends Component {
   constructor(props) {
@@ -108,6 +94,9 @@ class RegisterScreen extends Component {
       this.state.mem_password_re == null
     ) {
       this.setState({pwreStyle: styles.inputDeny});
+      return;
+    }
+    if (!this.state.checked) {
       return;
     }
     console.log('no');
@@ -199,8 +188,7 @@ class RegisterScreen extends Component {
       this.state.mem_sex &&
       this.state.mem_email &&
       this.state.mem_password &&
-      this.state.mem_password_re &&
-      this.state.mustInput
+      this.state.mem_password_re
     ) {
       console.log('checkNotNull : Allfilled');
       if (this.state.captionCheck) {
@@ -219,10 +207,7 @@ class RegisterScreen extends Component {
         console.log('checkNotNull : emailisnotright');
         this.setState({goNext: true});
       }
-      if (this.state.mustInput != '이타주의자 사용중에 욕을 하지 않겠습니다.') {
-        this.setState({statement: '위 문장과 동일하게 작성해주세요.'});
-      } else {
-        this.setState({statement: '', nextColor: {color: '#63579D'}});
+      if (!this.state.checked) {
       }
     }
     // return;
@@ -262,31 +247,17 @@ class RegisterScreen extends Component {
         console.log('response', res);
         console.log('status', res.data.status);
         console.log('data', res.data);
-        if (res.data.status === 500) {
+        if (res.data.status == 500) {
           console.log('status', res.data.status);
           console.log(res.data.message);
           console.log('실패');
           //실패 모달
-        } else if (res.data.status === 200) {
+        } else if (res.data.status == 200) {
           console.log('status', res.data.status);
           console.log(res.data.message);
           this.props.navigation.navigate('RegisterSuccessScreen');
         } else {
         }
-        // console.log('this.state', this.state);
-        // Alert.alert(
-        //   '가입 테스트',
-        //   '가입 테스트 완료',
-        //   [
-        //     {
-        //       text: 'OK',
-        //       // onPress: () => {
-        //       //   this.gobackfunc();
-        //       // },
-        //     },
-        //   ],
-        //   {cancelable: false},
-        // );
       })
       .catch((error) => {
         console.log('ERROR', error);
@@ -550,6 +521,19 @@ class RegisterScreen extends Component {
     this.setState({captionCheck: eqaulPW});
   };
 
+  nextStep = () => (
+    <TouchableOpacity
+      style={{
+        flex: 1,
+        alignContent: 'flex-end',
+        alignSelf: 'flex-end',
+      }}
+      onPress={() => this.checkInputs()}>
+      <Text style={{color: '#ACACAC'}}>다음</Text>
+      <Nextsvg style={{color: '#ACACAC'}} />
+    </TouchableOpacity>
+  );
+
   render() {
     const {
       mem_userid,
@@ -574,15 +558,18 @@ class RegisterScreen extends Component {
           alignment="center"
           accessoryLeft={this.BackAction}
         />
-        <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+        <SafeAreaView
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingTop: 40,
+            paddingRight: 60,
+            paddingLeft: 60,
+            backgroundColor: '#FFFFFF',
+          }}>
           <ScrollView>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                paddingRight: 60,
-                paddingLeft: 60,
-              }}>
+            <View>
               {/* 필수 */}
               <View style={{flex: 1}}>
                 <Input
@@ -620,8 +607,8 @@ class RegisterScreen extends Component {
               </View>
               <View style={{flex: 1}}>
                 {/* validation : 사용자가 input창에서 딱 벗어났을 때 
-            1. null 값 체크 
-            2. mem_email 마지막으로 입력된 값*/}
+          1. null 값 체크 
+          2. mem_email 마지막으로 입력된 값*/}
                 <Input
                   style={
                     this.state.emailStyle
@@ -796,27 +783,13 @@ class RegisterScreen extends Component {
                 }}>
                 에 동의합니다
               </Text>
+              {!this.state.checked ? (
+                // <Text style={{textAlign: 'right'}}>필수값 확인 ! </Text>
+                <Text style={{textAlign: 'right'}}></Text>
+              ) : (
+                <this.nextStep />
+              )}
             </View>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                alignContent: 'flex-end',
-                alignSelf: 'flex-end',
-                marginRight: 50,
-              }}
-              disabled={this.state.goNext}
-              onPress={() => this.checkInputs()}>
-              <Text
-                style={[
-                  this.state.nextColor
-                    ? this.state.nextColor
-                    : {color: '#ACACAC'},
-                ]}>
-                다음
-                <Nextsvg />
-                <Nextsvg />
-              </Text>
-            </TouchableOpacity>
           </ScrollView>
         </SafeAreaView>
       </>
