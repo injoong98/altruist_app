@@ -780,7 +780,7 @@ class AltQueList extends React.Component{
                                 )
                                 :
                                 <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`#전체`}</Text>
-                            :
+                                :
                             item.answer_mem_id == this.context.session_mem_id?
                                 <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}} >{`From . ${item.display_name} `}</Text>
                                 :
@@ -791,8 +791,15 @@ class AltQueList extends React.Component{
                         {
                             item.brd_id == 10 ?
                             <View style={{paddingRight:21}}>
-                                <Text style={{fontSize:12,fontWeight:'bold',color: item.post_comment_count > 0 ? '#63579D' : '#FF6262'}} >
-                                    {item.post_comment_count > 0 ? '답변 완료':'답변 대기 '}
+                                <Text 
+                                    style={{
+                                        fontSize:12,
+                                        fontWeight:'bold',
+                                        textAlign:'right',
+                                        color: item.post_comment_count > 0 ? '#63579D' : item.question_read_date==null ? '#FF6262': '#A7D8F3'
+                                    }}
+                                >
+                                    {item.post_comment_count > 0 ?  '답변 완료' : item.question_read_date==null ? '답변 대기' : `답변 중\n(${item.question_read_date}읽음)`}
                                     
                                 </Text>
                             </View>
