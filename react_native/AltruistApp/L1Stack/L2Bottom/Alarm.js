@@ -8,7 +8,118 @@ import {PostTime} from '../../components/PostTime'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
-
+const renderNotis =(item,index,navigation,onRefresh) => {
+    return(
+        <TouchableOpacity 
+            key={index} 
+            onPress={()=>{navigation.navigate('GominContent',{OnGoback:() =>onRefresh(),post_id:item.post_id})}}
+            style={[styles.notiContainer,{backgroundColor: '#f4f4f4'}]} 
+        >
+            <View style={{}}>
+                <View style={{flex:3}}>
+                    <Text>{item.title}</Text>
+                </View>
+                <View style={{flex:1}}>
+                    <PostTime category="p1" style={{fontSize:9, color:'#63579D'}} datetime = {item.post_datetime}/>
+                </View>
+            </View>
+        </TouchableOpacity>
+    )
+}
+export class AlarmFaq extends React.Component{
+    constructor(props){
+        super(props)
+        this.state={
+            isLoading:false,
+            noti:[]
+        }
+    }
+    getNotiList=()=>{
+        this.setState({isLoading:true});
+        axios.get('http://dev.unyict.org/api/board_post/lists/faq')
+        .then(res=>{
+            this.setState({noti:res.data.view.list.data.list,isLoading:false})
+        })
+        .catch(err=>{
+            console.log('getNotiList : '+ err)
+        })
+    }
+    onRefresh=()=>{
+        this.getNotiList();   
+    }
+    componentDidMount(){
+        this.getNotiList();
+    }
+    render(){
+        const {noti,isLoading} =this.state
+        return(
+            <View  style={styles.container} style={{flex:1}}>
+                {
+                 isLoading?
+                 <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+                     <Spinner size='giant'/>
+                 </View>
+                     :
+                     <View style={{flex:1,paddingTop:20,backgroundColor:'#ffffff'}}>
+                        <FlatList 
+                        data={noti}
+                        renderItem={({item,index})=>renderNotis(item,index,this.props.navigation,this.onRefresh)}
+                        keyExtractor={(item,index)=>index.toString()}
+                        style={{backgroundColor:'#ffffff'}}
+                        />
+                     </View>
+                }
+            </View>
+        )
+    }
+}
+export class AlarmOfficial extends React.Component{
+    constructor(props){
+        super(props)
+        this.state={
+            isLoading:false,
+            noti:[]
+        }
+    }
+    getNotiList=()=>{
+        this.setState({isLoading:true});
+        axios.get('http://dev.unyict.org/api/board_post/lists/notice')
+        .then(res=>{
+            this.setState({noti:res.data.view.list.data.list,isLoading:false})
+        })
+        .catch(err=>{
+            console.log('getNotiList : '+ err)
+        })
+    }
+    onRefresh=()=>{
+        this.getNotiList();   
+    }
+    componentDidMount(){
+        this.getNotiList();
+    }
+    render(){
+        const {noti,isLoading} =this.state
+        return(
+            <View  style={styles.container} style={{flex:1}}>
+                {
+                 isLoading?
+                 <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+                    <Spinner size='giant'/>
+                </View>
+                     :
+                     <View style={{flex:1,paddingTop:10,backgroundColor:'#ffffff'}}>
+                        <FlatList 
+                        data={noti}
+                        renderItem={({item,index})=>renderNotis(item,index,this.props.navigation,this.onRefresh)}
+                        keyExtractor={(item,index)=>index.toString()}
+                        style={{backgroundColor:'#ffffff'}}
+                        />
+                     </View>
+                }
+            </View>
+        )
+    }
+}
 export class AlarmScreen extends React.Component{
 
     constructor(props){
@@ -75,22 +186,22 @@ export class AlarmScreen extends React.Component{
     }
 
     renderNotis =({item,index}) => {
-        return(
-            <TouchableOpacity 
-                key={index} 
-                onPress={()=>{this.readNoti(item);}}
-                style={[styles.notiContainer,{backgroundColor: item.not_read_datetime == null ? '#f4f4f4' : '#c4c4c4'}]} 
-            >
-                <View style={{flexDirection:"row",justifyContent:'space-evenly'}}>
-                    <View style={{flex:7}}>
-                        <Text>{item.not_message}</Text>
-                    </View>
-                    <View style={{flex:1}}>
-                        <PostTime category="p1" style={{fontSize:9, color:'#63579D'}} datetime = {item.not_datetime}/>
-                    </View>
+    return(
+        <TouchableOpacity 
+            key={index} 
+            onPress={()=>{this.readNoti(item);}}
+            style={[styles.notiContainer,{backgroundColor: item.not_read_datetime == null ? '#f4f4f4' : '#c4c4c4'}]} 
+        >
+            <View style={{flexDirection:"row",justifyContent:'space-evenly'}}>
+                <View style={{flex:7}}>
+                    <Text>{item.not_message}</Text>
                 </View>
-            </TouchableOpacity>
-        )
+                <View style={{flex:1}}>
+                    <PostTime category="p1" style={{fontSize:9, color:'#63579D'}} datetime = {item.not_datetime}/>
+                </View>
+            </View>
+        </TouchableOpacity>
+    )
     }
 
     getNotiList=()=>{
@@ -112,15 +223,17 @@ export class AlarmScreen extends React.Component{
             <View  style={styles.container} style={{flex:1}}>
                 {
                  isLoading?
-                     <Spinner />
+                <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+                    <Spinner size='giant'/>
+                </View>
                      :
-                     <View>
-                     <FlatList 
-                     data={this.state.noti}
-                     renderItem={this.renderNotis}
-                     keyExtractor={(item,index)=>index.toString()}
-                     style={{backgroundColor:'#ffffff'}}
-                     />
+                     <View style={{flex:1,paddingTop:20,backgroundColor:'#ffffff'}}>
+                        <FlatList 
+                        data={this.state.noti}
+                        renderItem={this.renderNotis}
+                        keyExtractor={(item,index)=>index.toString()}
+                        style={{backgroundColor:'#ffffff'}}
+                        />
                      </View>
                 }
             </View>
@@ -131,7 +244,8 @@ export class AlarmScreen extends React.Component{
   const TabNavigator = () => (
     <Navigator tabBar={props => <MyTabBar {...props} />}>
       <Screen name='AlarmPrivate' component={AlarmScreen} options={ {title:'알람'}}/>
-      <Screen name='AlarmOfficail' component={AlarmScreen}  options={{title:'공지사항'}}/>
+      <Screen name='AlarmOfficial' component={AlarmOfficial}  options={{title:'공지사항'}}/>
+      <Screen name='AlarmFaq' component={AlarmFaq}  options={{title:'FAQ'}}/>
     </Navigator>
   );
   
@@ -151,7 +265,8 @@ const styles = StyleSheet.create({
         backgroundColor:'#ffffff',
         flex:1,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
+        paddingTop:20
     },
     notiContainer:{
         paddingVertical:25,
