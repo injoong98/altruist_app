@@ -89,25 +89,31 @@ export class MyProfEdit extends React.Component{
         }
     }
     modify=()=>{
-        const {mem_nickname,mem_profile_content,mem_username,mem_email,mem_phone,new_mem_photo} = this.state
+        const {mem_nickname,mem_profile_content,mem_username,mem_email,mem_phone,new_mem_photo,mem_sex} = this.state
         var formdata = new FormData();
         formdata.append('mem_username',mem_username)
         formdata.append('mem_nickname',mem_nickname)
         formdata.append('mem_email', mem_email);
         formdata.append('mem_phone', mem_phone);
+        formdata.append('mem_sex', mem_sex);
         formdata.append('mem_profile_content',mem_profile_content)
 
-        formdata.append("mem_photo", {
+        new_mem_photo.uri ?
+        formdata.append("mem_photo[]", {
             uri: new_mem_photo.uri,
             type: new_mem_photo.type,
             name: new_mem_photo.name,
-          });
-          
+          })
+        :
+        null
+
         axios.post('http://dev.unyict.org/api/membermodify/modify',formdata)
         .then(res=>{
-            alert(JSON.stringify(res))
+            console.log('res : '+res.data )
+            alert(JSON.stringify(res.data))
         })
         .catch(err=>{
+            console.log('err : '+err )
             alert(JSON.stringify(err))
         })
     }
