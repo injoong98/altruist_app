@@ -242,7 +242,7 @@ class Login extends CB_Controller
 
 			$change_password_date = $this->cbconfig->item('change_password_date');
 			$site_title = $this->cbconfig->item('site_title');
-			if ($change_password_date) {
+			/* if ($change_password_date) {
 
 				$meta_change_pw_datetime = $this->member->item('meta_change_pw_datetime');
 				if ( ctimestamp() - strtotime($meta_change_pw_datetime) > $change_password_date * 86400) {
@@ -257,7 +257,7 @@ class Login extends CB_Controller
 					);
 					redirect('membermodify/password_modify');
 				}
-			}
+			} */
 
 			$url_after_login = $this->cbconfig->item('url_after_login');
 			if ($url_after_login) {
