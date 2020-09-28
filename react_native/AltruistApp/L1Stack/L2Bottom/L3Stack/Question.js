@@ -463,7 +463,7 @@ class AltQueContent extends React.Component{
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
                         <View>
-                            <Text category="s2">{item.cmt_nickname}</Text>
+                            <Text category="s2">{`[${item.cmt_nickname}] 님의 답변`}</Text>
                             <PostTime datetime={item.cmt_datetime}/>
                         </View>
                     </View>
@@ -486,7 +486,7 @@ class AltQueContent extends React.Component{
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                 {
-                    this.context.session_mem_id ==post.mem_id? 
+                    this.context.session_mem_id ==post.mem_id && item.brd_id==11? 
                     
                     <TouchableOpacity 
                         style= {{paddingHorizontal:6,paddingVertical:4,borderRadius:4,backgroundColor:'#63579D',marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'center', alignItems:'center'}}
