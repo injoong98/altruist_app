@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,StyleSheet, SafeAreaView, TouchableOpacity,ScrollView} from 'react-native';
+import {View,StyleSheet, SafeAreaView, TouchableOpacity,ScrollView,Image} from 'react-native';
 import {Input,Button,Text,Modal} from '@ui-kitten/components';
 import axios from 'axios'
 import Confirm from '../../../components/confirm.component'
@@ -11,6 +11,7 @@ import PencilSvg from '../../../assets/icons/pencil-outline.svg'
 import MessageSvg from '../../../assets/icons/message.svg'
 import AltruistSvg from '../../../assets/icons/altruist.svg'
 import NoimageSvg from '../../../assets/icons/noimage.svg'
+import PersonSvg from '../../../assets/icons/person.svg'
 
 
 class Mypage extends React.Component{
@@ -52,14 +53,18 @@ class Mypage extends React.Component{
     render(){
       const {signOut} = this.context
       const {logOutModalVisible} = this.state
-      const {mem_point,mem_nickname,mem_following,mem_followed,mem_profile_content} = this.state.mem_info
+      const {mem_point,mem_nickname,mem_photo,mem_profile_content} = this.state.mem_info
       const {navigate} =this.props.navigation
+      console.log('mem_photo : ',mem_photo)
         return(
           <SafeAreaView style={{flex:1}}>
               <ScrollView style={{flex:1,backgroundColor:'#ffffff'}}>
                   <View style={{flexDirection:'row',margin:35,backgroundColor:'#F0F0F0',borderRadius:10}}>
-                      <View style={{marginVertical:20,marginLeft:30}}>
-                          <NoimageSvg height={125} width={125}/>
+                      <View style={{marginVertical:20,marginLeft:30,borderRadius:62.5,width:125, height : 125,overflow:'hidden'}}>
+                        <Image 
+                            source = {{uri : 'http://dev.unyict.org/'+ (mem_photo ? mem_photo: 'uploads/altwink-rect.png')}} 
+                            style = {{ width : '100%', height : '100%', resizeMode:'contain',borderWidth:1}}
+                        />
                       </View>
                       <View style={{maxWidth:'40%',marginHorizontal:16,marginTop:13,marginBottom:24,justifyContent:'space-between'}}>
                         <View style={{marginTop:15,display:'flex',flexDirection:'row', alignItems:'flex-end'}}>
@@ -106,7 +111,7 @@ class Mypage extends React.Component{
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <View style={{ marginHorizontal:40,marginBottom:20}}>
+                  {/* <View style={{ marginHorizontal:40,marginBottom:20}}>
                     <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
                       <View style={{transform: [{ rotate: "25.69deg" }]}}>
                         <MessageSvg height={28} width={22}/>
@@ -121,11 +126,11 @@ class Mypage extends React.Component{
                         <Text style={styles.menuItem}>보낸 쪽지함</Text>
                       </TouchableOpacity>
                     </View>
-                  </View>
+                  </View> */}
                   <View style={{ marginHorizontal:40,marginBottom:20}}>
                     <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
                       <View>
-                        <MoreSvg height={19} width={22}/>
+                        <AltruistSvg height={19} width={22}/>
                       </View>
                       <Text category='h2' style={styles.menuTitle}>이타주의자</Text>
                     </View>
@@ -138,7 +143,7 @@ class Mypage extends React.Component{
                   <View style={{ marginHorizontal:40,marginBottom:20}}>
                     <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
                       <View>
-                        <MoreSvg height={19} width={22}/>
+                        <PersonSvg height={19} width={22}/>
                       </View>
                       <Text category='h2' style={styles.menuTitle}>계정</Text>
                     </View>
