@@ -878,29 +878,38 @@ class MarketContent extends React.Component {
     ]
 
     renderCommentsList=({item,index})=>(
-        <Layout style={{padding:15, marginHorizontal:10}}>
+        <View 
+            style={{
+                marginHorizontal:10,
+                borderTopLeftRadius: index==0? 10:0,
+                borderTopRightRadius: index==0? 10:0,
+                borderBottomLeftRadius: index==this.state.comment.length-1? 10:0,
+                borderBottomRightRadius: index==this.state.comment.length-1? 10:0,
+                backgroundColor:'#FFFFFF'
+                }}>
             {item.cmt_reply==""?
+            index==0?
             null
+            :
+            <Divider style={{marginTop:10, marginHorizontal:20}}/>
             :
             <View style={{position:'absolute',left:0,paddingLeft:25}}>
                 <ReplyLsvg />
             </View> 
             }
-            <Layout 
+            <View 
                 style ={{
                     borderRadius:8,
-                    paddingRight:15,
-                    marginRight:15,
-                    paddingVertical:10,
-                    paddingLeft: 15,
-                    marginLeft:item.cmt_reply==""?15:50,
+                    marginRight:5,
+                    padding:15,
+                    marginLeft:item.cmt_reply==""?5:50,
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
                         <StarIcon />
                         <View>
-                            <Text category="s2">{item.cmt_nickname}</Text>
-                            <PostTime datetime={item.cmt_datetime}/>
+                            <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
+                            <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
                         </View>
                     </View>
                     <View style={{display:'flex',flexDirection:'row'}}>
@@ -913,25 +922,23 @@ class MarketContent extends React.Component {
                     </View>
                 </View>
                 <View style={{padding:5}}>
-                    <Text category="s1">{item.cmt_content}</Text>
+                    <Text category='s1' style={{marginTop:5, fontSize:12}}>{item.cmt_content}</Text>
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                     {item.cmt_reply ==""?
-                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replyModalVisible:true,cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
-                        <Text>답변</Text>
+                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>답글</Text>
                     </TouchableOpacity>
                     :null
                     }
                     <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg />
+                        <Thumbsvg width='12' height='12'/>
                     </TouchableOpacity>
-                        <Text>{item.cmt_like}</Text>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
-            </Layout>
-            <Divider/>
-        </Layout>
+            </View>
+        </View>
     )
-    
 
     renderPostBody = (post, width) =>{
 
@@ -2092,7 +2099,7 @@ const styles = StyleSheet.create({
     }, 
     contentContainer : {
         borderRadius : 10,
-        backgroundColor:'yellow',
+        backgroundColor:'#F4F4F4',
     },
     topbar : {
         backgroundColor : '#F4F4F4',
