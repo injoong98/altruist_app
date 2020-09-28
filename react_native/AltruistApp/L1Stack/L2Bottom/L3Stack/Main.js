@@ -10,6 +10,7 @@ import Searchsvg from '../../../assets/icons/search-outline.svg'
 import Plussvg from '../../../assets/icons/plus-btn-round.svg'
 import Minussvg from '../../../assets/icons/minus-btn-round.svg'
 import Reloadsvg from '../../../assets/icons/reload.svg'
+import MainSvg from '../../../assets/icons/main_logo.svg'
 import {RenderAltList} from './List'
 const {width,height} = Dimensions.get('window')
 
@@ -81,22 +82,14 @@ class AltMainScreen extends React.Component{
             inputRange:[0,1],
             outputRange:["0%","90%"]
         })
-        const wdithLogo = (width*0.47);
+        const wdithLogo = (width*0.8);
         const heightLogo = (wdithLogo*0.57);
         return(
         <>
             <View style={{flex:1, alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff'}}>
-                <Slider
-                    height={100} 
-                    image={[
-                        {id:0,url:'/uploads/6e3a7e4e1f77abb3b060_20200904100225599.jpg'},
-                        {id:1,url:'/uploads/59901fc0cb0b6526dee1_20200903153758446.jpg'}    
-                    ]}
-                    dotStyle={{position:'absolute'}}
-                />
                 <View style={{ alignItems:'center',justifyContent:'space-evenly'}}>
                     <View style={{marginTop:91}}>
-                        <LogoSvg  width={wdithLogo} height={heightLogo}/>
+                        <MainSvg fill="#000"  width={wdithLogo} height={heightLogo}/>
                     </View>
                     <View style={{marginTop:22}}>
                         <TextInput 
@@ -123,8 +116,9 @@ class AltMainScreen extends React.Component{
                         
                         </TouchableOpacity>
                     </View>
+                    
                 </View>
-                <View style={{marginTop:150,flexDirection:'row',width:'100%',paddingHorizontal:12}}>                        
+                <View style={{marginTop:150,flexDirection:'row',width:'100%',paddingLeft:40,paddingRight:12}}>                        
                     <TouchableHighlight style={[styles.btn,{borderRadius:15,width:30}]} onPress={btnContainerCompressed?this.maximizing:this.minimizing}>
                         {btnContainerCompressed? 
                             <Plussvg height={30} width={30}/>
@@ -155,6 +149,16 @@ class AltMainScreen extends React.Component{
                         </TouchableHighlight>
                     </Animated.View>
                 </View>
+                <View style={{marginBottom:15,marginTop:30}}>
+                        <Slider
+                            height={100} 
+                            image={[
+                                {id:0,url:'/uploads/6e3a7e4e1f77abb3b060_20200904100225599.jpg'},
+                                {id:1,url:'/uploads/59901fc0cb0b6526dee1_20200903153758446.jpg'}    
+                            ]}
+                            dotStyle={{position:'absolute'}}
+                        /> 
+                    </View>
                 <View style={{marginVertical:40,width:'90%',alignItems:'center'}}>    
                     <View style={{flexDirection:'row'}}>
                         <Text category='h2' style={{color:'#63579D'}}>멘토리스트</Text>
