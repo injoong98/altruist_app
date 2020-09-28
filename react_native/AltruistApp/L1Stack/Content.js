@@ -1044,7 +1044,7 @@ class MarketContent extends React.Component {
                         style={{backgroundColor:'#F4F4F4'}}
                     />
                 </Layout>
-                <View style={{backgroundColor:'#ffffff',padding:8}}>
+                <View style={{backgroundColor:'#f4f4f4',padding:8}}>
                     {this.state.replying ?
                     <TouchableOpacity onPress={this.commentWrite}>
                         <Text category="h2" style={{color:'#63579D'}}>X</Text>
@@ -1054,10 +1054,10 @@ class MarketContent extends React.Component {
                     }
                     <TextInput
                         ref="commentInput"
-                        style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                        style={{backgroundColor:'#ffffff',borderRadius:14,fontSize:15}}
                         value={cmt_content}
                         placeholder={ replying?"대댓글" :"댓글"}
-                        placeholderTextColor='#A897C2'
+                        placeholderTextColor='#63579D'
                         multiline={true}
                         onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                     />
