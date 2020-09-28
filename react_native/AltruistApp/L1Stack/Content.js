@@ -367,56 +367,59 @@ class GominContent extends React.Component{
     }
 
     renderCommentsList=({item,index})=>(
-        <View style={{marginVertical:3}}>
-        {item.cmt_reply==""?
-        null
-        :
-        <View style={{position:'absolute',left:0,paddingLeft:25}}>
-            <ReplyLsvg />
-        </View> 
-        }
-        <View 
-            style ={{
-                borderRadius:8,
-                paddingRight:15,
-                marginRight:15,
-                paddingVertical:10,
-                paddingLeft: 15,
-                marginLeft:item.cmt_reply==""?15:50,
-                backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
-            <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
-                <View style={{flexDirection:"row"}}>
-                    <StarIcon />
-                    <View>
-                        <Text category="s2">{item.cmt_nickname}</Text>
-                        <PostTime datetime={item.cmt_datetime}/>
+        <View style={{marginVertical:0}}>
+            {item.cmt_reply==""?
+            index==0?
+            null
+            :
+            <Divider style={{marginVertical:10, marginHorizontal:20}}/>
+            :
+            <View style={{position:'absolute',left:0,paddingLeft:25}}>
+                <ReplyLsvg />
+            </View> 
+            }
+            <View 
+                style ={{
+                    borderRadius:8,
+                    paddingRight:15,
+                    marginRight:15,
+                    paddingVertical:10,
+                    paddingLeft: 15,
+                    marginLeft:item.cmt_reply==""?15:50,
+                    backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
+                <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                    <View style={{flexDirection:"row"}}>
+                        <StarIcon />
+                        <View>
+                            <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
+                            <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
+                        </View>
+                    </View>
+                    <View style={{display:'flex',flexDirection:'row'}}>
+                        {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
+                            <BlameIcon />
+                        </TouchableOpacity> */}
+                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
+                            <MoreSsvg/>
+                        </TouchableOpacity>
                     </View>
                 </View>
-                <View style={{display:'flex',flexDirection:'row'}}>
-                    {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
-                        <BlameIcon />
-                    </TouchableOpacity> */}
-                    <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
-                        <MoreSsvg/>
+                <View style={{padding:5}}>
+                    <Text category='s1' style={{marginTop:5, fontSize:12}}>{item.cmt_content}</Text>
+                </View>
+                <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
+                    {item.cmt_reply ==""?
+                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>답글</Text>
                     </TouchableOpacity>
+                    :null
+                    }
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
+                        <Thumbsvg width='12' height='12'/>
+                    </TouchableOpacity>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
             </View>
-            <View style={{padding:5}}>
-                <Text category="s1">{item.cmt_content}</Text>
-            </View>
-            <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
-                {item.cmt_reply ==""?
-                <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
-                    <Text>답글</Text>
-                </TouchableOpacity>
-                :null
-                }
-                <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                    <Thumbsvg />
-                </TouchableOpacity>
-                    <Text>{item.cmt_like}</Text>
-            </View>
-        </View>
         </View>
     )
      render(){
@@ -878,29 +881,38 @@ class MarketContent extends React.Component {
     ]
 
     renderCommentsList=({item,index})=>(
-        <Layout style={{padding:15, marginHorizontal:10}}>
+        <View 
+            style={{
+                marginHorizontal:10,
+                borderTopLeftRadius: index==0? 10:0,
+                borderTopRightRadius: index==0? 10:0,
+                borderBottomLeftRadius: index==this.state.comment.length-1? 10:0,
+                borderBottomRightRadius: index==this.state.comment.length-1? 10:0,
+                backgroundColor:'#FFFFFF'
+                }}>
             {item.cmt_reply==""?
+            index==0?
             null
+            :
+            <Divider style={{marginTop:10, marginHorizontal:20}}/>
             :
             <View style={{position:'absolute',left:0,paddingLeft:25}}>
                 <ReplyLsvg />
             </View> 
             }
-            <Layout 
+            <View 
                 style ={{
                     borderRadius:8,
-                    paddingRight:15,
-                    marginRight:15,
-                    paddingVertical:10,
-                    paddingLeft: 15,
-                    marginLeft:item.cmt_reply==""?15:50,
+                    marginRight:5,
+                    padding:15,
+                    marginLeft:item.cmt_reply==""?5:50,
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
                         <StarIcon />
                         <View>
-                            <Text category="s2">{item.cmt_nickname}</Text>
-                            <PostTime datetime={item.cmt_datetime}/>
+                            <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
+                            <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
                         </View>
                     </View>
                     <View style={{display:'flex',flexDirection:'row'}}>
@@ -913,25 +925,23 @@ class MarketContent extends React.Component {
                     </View>
                 </View>
                 <View style={{padding:5}}>
-                    <Text category="s1">{item.cmt_content}</Text>
+                    <Text category='s1' style={{marginTop:5, fontSize:12}}>{item.cmt_content}</Text>
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                     {item.cmt_reply ==""?
-                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replyModalVisible:true,cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
-                        <Text>답변</Text>
+                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>답글</Text>
                     </TouchableOpacity>
                     :null
                     }
                     <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg />
+                        <Thumbsvg width='12' height='12'/>
                     </TouchableOpacity>
-                        <Text>{item.cmt_like}</Text>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
-            </Layout>
-            <Divider/>
-        </Layout>
+            </View>
+        </View>
     )
-    
 
     renderPostBody = (post, width) =>{
 
@@ -1034,7 +1044,7 @@ class MarketContent extends React.Component {
                         style={{backgroundColor:'#F4F4F4'}}
                     />
                 </Layout>
-                <View style={{backgroundColor:'#ffffff',padding:8}}>
+                <View style={{backgroundColor:'#f4f4f4',padding:8}}>
                     {this.state.replying ?
                     <TouchableOpacity onPress={this.commentWrite}>
                         <Text category="h2" style={{color:'#63579D'}}>X</Text>
@@ -1044,10 +1054,10 @@ class MarketContent extends React.Component {
                     }
                     <TextInput
                         ref="commentInput"
-                        style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                        style={{backgroundColor:'#ffffff',borderRadius:14,fontSize:15}}
                         value={cmt_content}
                         placeholder={ replying?"대댓글" :"댓글"}
-                        placeholderTextColor='#A897C2'
+                        placeholderTextColor='#63579D'
                         multiline={true}
                         onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                     />
@@ -2092,7 +2102,7 @@ const styles = StyleSheet.create({
     }, 
     contentContainer : {
         borderRadius : 10,
-        backgroundColor:'yellow',
+        backgroundColor:'#F4F4F4',
     },
     topbar : {
         backgroundColor : '#F4F4F4',
