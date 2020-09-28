@@ -248,16 +248,20 @@ class AltQueContent extends React.Component{
     static contextType =Signing; 
     modalList = [
         {
-            text : '이 게시글을 신고하시겠습니까?',
-            func : this.postBlame,
+            text : '이 질문을 신고하시겠습니까?',
+            func : ()=> this.postBlame(),
         },
         {
-            text : '이 게시글을 삭제하시겠습니까?',
-            func : this.postDelete,
+            text : '이 질문을 삭제하시겠습니까?',
+            func : ()=> this.postDelete(),
         },
         {
-            text : '이 댓글을 신고하시겠습니까?',
-            func : this.cmtBlame,
+            text : '이 질문을 스크랩하시겠습니까?',
+            func : ()=> this.postscrap(),
+        },
+        {
+            text : '이 답변을 신고하시겠습니까?',
+            func : ()=>this.cmtBlame(),
         },
         {
             text : '이 답변을 삭제하시겠습니까?',
@@ -269,7 +273,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('cmt_id',this.state.cmt_id);
 
-        Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
+        axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
@@ -286,7 +290,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
 
-        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        await axios.post('http://dev.unyict.org/api/postact/delete',formdata)
         .then((res)=>{
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
             this.props.navigation.goBack();
@@ -300,7 +304,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
 
-        await Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+        await axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
         .then(response=>{
             if(response.data.status == 500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
@@ -317,7 +321,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         
-        await Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        await axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
         .then(response=>{
             if(response.data.success)
                 this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
@@ -375,35 +379,27 @@ class AltQueContent extends React.Component{
             placement='bottom start'
             onBackdropPress={() => this.setState({popoverVisibel:false})}>
             <View>
-                <TouchableOpacity 
-                    onPress={()=>{this.postscrap();this.setState({popoverVisibel:false})}} 
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>스크랩</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    onPress={()=>{this.setState({popoverVisibel:false, confirmModalVisible:true, modalType : 0})}}
-                    style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                    <Text category='h3'>신고</Text>
-                </TouchableOpacity>
+                
                 {
                     this.context.session_mem_id ==this.state.post.mem_id
                     ?
                     <>
                     {
                     this.state.post.post_comment_count == 0 ?
-                        <TouchableOpacity 
-                            onPress={()=>{
-                                this.setState({popoverVisibel:false});
-                                this.props.navigation.navigate('GominWrite',
-                                    {
-                                        statefunction:this.statefunction,
-                                        mode:'edit',
-                                        post:this.state.post,
-                                        content:this.state.content,
-                                    })}}
-                            style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
-                            <Text category='h3'>수정</Text>
-                        </TouchableOpacity>
+                        null
+                        // <TouchableOpacity 
+                        //     onPress={()=>{
+                        //         this.setState({popoverVisibel:false});
+                        //         this.props.navigation.navigate('AltQuestionWrite',
+                        //             {
+                        //                 statefunction:this.statefunction,
+                        //                 mode:'edit',
+                        //                 post:this.state.post,
+                        //                 content:this.state.content,
+                        //             })}}
+                        //     style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                        //     <Text category='h3'>수정</Text>
+                        // </TouchableOpacity>
                         :null
                                 }
                         <TouchableOpacity 
@@ -413,7 +409,19 @@ class AltQueContent extends React.Component{
                         </TouchableOpacity>
                     </>
                     :
-                    null
+                    <>
+                    <TouchableOpacity 
+                        onPress={()=>{this.setState({popoverVisibel:false,confirmModalVisible:true, modalType : 2})}} 
+                        style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}
+                    >
+                        <Text category='h3'>스크랩</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        onPress={()=>{this.setState({popoverVisibel:false, confirmModalVisible:true, modalType : 0})}}
+                        style={{padding:10,margin:3,borderWidth:1,borderStyle:'solid',borderColor:'#f4f4f4'}}>
+                        <Text category='h3'>신고</Text>
+                    </TouchableOpacity>
+                    </>
                 }
 
             </View>
@@ -663,17 +671,28 @@ class AltQueContent extends React.Component{
                 onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}
             >
                 <View style={{width:200,borderRadius:23,backgroundColor:'#ffffff'}}>
-                    <TouchableOpacity 
-                        onPress={()=>{this.props.navigation.navigate('AltReplying',{mode:'cu',comment:comment[0],post:post,onGoBack:this.onRefresh}),this.setState({modalVisible:false,cmt_id:''})}}
-                        style={{padding:10,margin:3}}>
-                        <Text style={{fontSize:13,color:'#63579D'}}>답변 수정</Text>
-                    </TouchableOpacity>
-                        <View style={{borderWidth:0.5,borderColor:'#c4c4c4'}}/>
-                    <TouchableOpacity 
-                        onPress={()=>{this.setState({modalVisible:false,confirmModalVisible:true,modalType:3})}}
-                        style={{padding:10,margin:3}}>
-                        <Text style={{fontSize:13,color:'#63579D'}}>답변 삭제</Text>
-                    </TouchableOpacity>
+                    {
+                        this.context.session_mem_id ==post.mem_id ?  
+                            <TouchableOpacity 
+                                onPress={()=>{this.setState({confirmModalVisible:true,modalType:2,modalVisible:false})}}
+                                style={{padding:10,margin:3}}>
+                                <Text style={{fontSize:13,color:'#63579D'}}>답변 신고</Text>
+                            </TouchableOpacity>
+                        :
+                        <>
+                            <TouchableOpacity 
+                                onPress={()=>{this.props.navigation.navigate('AltReplying',{mode:'cu',comment:comment[0],post:post,onGoBack:this.onRefresh}),this.setState({modalVisible:false,cmt_id:''})}}
+                                style={{padding:10,margin:3}}>
+                                <Text style={{fontSize:13,color:'#63579D'}}>답변 수정</Text>
+                            </TouchableOpacity>
+                                <View style={{borderWidth:0.5,borderColor:'#c4c4c4'}}/>
+                            <TouchableOpacity 
+                                onPress={()=>{this.setState({modalVisible:false,confirmModalVisible:true,modalType:3})}}
+                                style={{padding:10,margin:3}}>
+                                <Text style={{fontSize:13,color:'#63579D'}}>답변 삭제</Text>
+                            </TouchableOpacity>
+                        </>
+                    }
                 </View>   
             </Modal>
             <Modal
@@ -1066,7 +1085,7 @@ class AltQuestionWrite extends React.Component
         return(
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
-                text={ item ? '질문하기': '오픈질문'}
+                text={ answer_mem_id ? '1대1 질문': '오픈질문'}
                 right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
                 func={() => {
                     this.filterSpamKeyword();
