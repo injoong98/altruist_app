@@ -1,26 +1,18 @@
 import React from 'react';
-import {ScrollView,SafeAreaView, TouchableWithoutFeedback,TextInput,StyleSheet,View,TouchableOpacity,Dimensions,TouchableHighlight,Animated} from 'react-native';
-import {TopNavigation,Layout,Text,Button,Icon,Modal,Spinner,List} from '@ui-kitten/components';
+import {SafeAreaView,TextInput,StyleSheet,View,TouchableOpacity,Dimensions,TouchableHighlight,Animated} from 'react-native';
+import {Text,Icon,Spinner,List} from '@ui-kitten/components';
 import axios from 'axios'
-import Slider from '../../../components/slider.component'
-import {TopBarTune} from '../../../components/TopBarTune'
 
-import LogoSvg from '../../../assets/icons/logo.svg'
+import Slider from '../../../components/slider.component'
 import Searchsvg from '../../../assets/icons/search-outline.svg'
 import Plussvg from '../../../assets/icons/plus-btn-round.svg'
 import Minussvg from '../../../assets/icons/minus-btn-round.svg'
 import Reloadsvg from '../../../assets/icons/reload.svg'
 import MainSvg from '../../../assets/icons/main_logo.svg'
 import {RenderAltList} from './List'
+import {Signing} from '../../Context'
 const {width,height} = Dimensions.get('window')
 
-
-const Search = (props) =>(
-    <Icon {...props} name='search-outline'/>
-)
-const BackIcon =  (props) =>(
-    <Icon {...props} name = "arrow-back"/>
-)
 const Loading = () =>(
     <View style={{justifyContent:'center',alignItems:'center'}}>
         <Spinner size="giant"/>
@@ -37,6 +29,8 @@ class AltMainScreen extends React.Component{
             isLoading:true
         }
     }
+    static contextType = Signing;
+
     minimizing = () => {
         console.log('minimizing');
         this.setState({btnContainerCompressed:true})
@@ -127,11 +121,17 @@ class AltMainScreen extends React.Component{
                         }    
                     </TouchableHighlight>
                     <Animated.View style={{flexDirection:'row',justifyContent:'space-evenly',overflow:'hidden',width:btnContainerWidthInterpolate}}>
-                        <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltApply')}>
-                            <Text numberOfLines={1} category="h1" style={styles.btnText}>
-                            지원
-                            </Text>
-                        </TouchableHighlight>
+                        {
+                            this.context.is_altruist =='Y'?
+                            null
+                            :
+                            <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltApply')}>
+                                <Text numberOfLines={1} category="h1" style={styles.btnText}>
+                                지원
+                                </Text>
+                            </TouchableHighlight>
+                        }
+
                         <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltList')}>
                             <Text numberOfLines={1} category="h1" style={styles.btnText}>
                             멘토리스트
