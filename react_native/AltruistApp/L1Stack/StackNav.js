@@ -167,7 +167,8 @@ export class StackNav extends React.Component{
         })
         .catch(err=>{
             console.log('session_chk error:'+JSON.stringify(err))
-            this.setState({isLoading:false,isSignedIn:false});
+            alert(`오류가 있습니다. \n 잠시후 다시 시도해주세요.\n오류 정보 : ${err.message}` )
+            this.setState({isSignedIn:false});
             messaging().getToken()
             .then(token=>{
                 this.syncPushToken(token,0)
