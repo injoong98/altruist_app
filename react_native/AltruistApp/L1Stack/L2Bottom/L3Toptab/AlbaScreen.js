@@ -78,7 +78,7 @@ class AlbaScreen extends React.Component {
   }
 
   componentDidMount(){
-    this.setState({isListLoading:true}, this.getPostList);
+    this.setState({isListLoading:true}, this.getPostFirst);
   }
 
   onRefresh = () => {
@@ -131,7 +131,7 @@ class AlbaScreen extends React.Component {
                   </View>
                   <View style={{flexDirection : 'row', alignItems : 'center', flex:1}}>
                     <Text style={{color:'#7370DD', fontSize:13}} category='h1'>{item.alba_type == 0?'단기':'장기'}</Text>
-                    <Text style={{fontSize:13}} category='h1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
+                    <Text style={{fontSize:13, width:110}} category='h1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
                   </View>
                 </View>
               </View>

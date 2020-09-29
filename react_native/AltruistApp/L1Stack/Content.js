@@ -429,12 +429,6 @@ class GominContent extends React.Component{
         const {navigation,route} =this.props
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible} = this.state
          return(
-        this.state.isLoading ?
-        <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-            <Text>is Loading now...</Text>
-            <Spinner size="giant"/>
-        </View>
-        :
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {
@@ -444,20 +438,23 @@ class GominContent extends React.Component{
                     this.props.route.params.OnGoback()}}
                 gbckuse={true}
                 right={<this.MoreAction/>}/>
-            <TouchableWithoutFeedback onPress={()=>{ this.commentWrite; Keyboard.dismiss()}}>
-                <Layout style={{flex:1}}>
-                        <List
-                        ref={"pstcmtlist"} 
-                        data={comment}
-                        ListHeaderComponent={this.renderPostBody(post)}
-                        renderItem={this.renderCommentsList}
-                        onRefresh={this.onRefresh}
-                        refreshing={this.state.refreshing}
-                        style={{backgroundColor:'#ffffff'}}
-                        />
+            {this.state.isLoading ?
+                <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+                    <Text>is Loading now...</Text>
+                    <Spinner size="giant"/>
+                </View>
+                :<Layout style={{flex:1}}>
+                    <List
+                    ref={"pstcmtlist"} 
+                    data={comment}
+                    ListHeaderComponent={this.renderPostBody(post)}
+                    renderItem={this.renderCommentsList}
+                    onRefresh={this.onRefresh}
+                    refreshing={this.state.refreshing}
+                    style={{backgroundColor:'#ffffff'}}
+                    />
                 </Layout>
-            </TouchableWithoutFeedback>
-            
+            }
             <View style={{backgroundColor:'#ffffff',padding:8}}>
                 {this.state.replying ?
                 <TouchableOpacity onPress={this.commentWrite}>
@@ -479,7 +476,6 @@ class GominContent extends React.Component{
                 <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                     <UploadCirclesvg width={50} height={50}/>
                 </TouchableOpacity>
-                
             </View>
             <Modal
                 visible={popoverVisible}
@@ -1027,12 +1023,6 @@ class MarketContent extends React.Component {
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, popoverVisible, modalType} = this.state;
 
         return(
-            this.state.isLoading ?
-            <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                <Text>is Loading now...</Text>
-                <Spinner size="giant"/>
-            </View>
-            :
             <SafeAreaView style={{flex:1}}>
                 <WriteContentToptab
                     backgroundColor='#F4F4F4'
@@ -1043,18 +1033,24 @@ class MarketContent extends React.Component {
                         StatusBar.setBarStyle('default');}}
                     gbckuse={true}
                     right={<this.MoreAction/>}/>
-                <Layout style={{flex:1}}>
-                    <List
-                        ref={"pstcmtlist"} 
-                        data={this.state.comment}
-                        contentContainerStyle={styles.contentContainer}
-                        ListHeaderComponent={this.renderPostBody(post, width)}
-                        renderItem={this.renderCommentsList}
-                        onRefresh={this.onRefresh}
-                        refreshing={this.state.refreshing}
-                        style={{backgroundColor:'#F4F4F4'}}
-                    />
-                </Layout>
+                {this.state.isLoading ?
+                    <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+                        <Text>is Loading now...</Text>
+                        <Spinner size="giant"/>
+                    </View>
+                    :<Layout style={{flex:1}}>
+                        <List
+                            ref={"pstcmtlist"} 
+                            data={this.state.comment}
+                            contentContainerStyle={styles.contentContainer}
+                            ListHeaderComponent={this.renderPostBody(post, width)}
+                            renderItem={this.renderCommentsList}
+                            onRefresh={this.onRefresh}
+                            refreshing={this.state.refreshing}
+                            style={{backgroundColor:'#F4F4F4'}}
+                        />
+                    </Layout>
+                }
                 <View style={{backgroundColor:'#f4f4f4',padding:8}}>
                     {this.state.replying ?
                     <TouchableOpacity onPress={this.commentWrite}>
@@ -1335,12 +1331,6 @@ class AlbaContent extends React.Component {
         const {post, confirmModalVisible, resultModalVisible, spinnerModalVisible, modalType, popoverVisible} = this.state;
         
         return(
-            this.state.isLoading?
-            <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                <Text>is Loading now...</Text>
-                <Spinner size="giant"/>
-            </View>
-            :
             <Root>
             <SafeAreaView style={{flex:1}}>
                 <WriteContentToptab
@@ -1352,119 +1342,125 @@ class AlbaContent extends React.Component {
                     StatusBar.setBarStyle('default');}}
                 gbckuse={true}
                 right={<this.MoreAction/>}/>
-                <Layout style={{flex:1}}>
-                    <ScrollView style={{backgroundColor : '#F4F4F4'}}>
-                        <Card disabled={true} style={styles.item}>
-                            <Layout style={{flex:1, flexDirection:'row'}}>
-                                <View style={{flex:1}}>
-                                </View>
-                                <View style={{flex:2, flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
-                                    {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:this.state.thumb_image.origin_image_url}}/>
-                                    :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
-                                    <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
-                                </View>
-                                <View style={{flex: 1, flexDirection : 'row', justifyContent:'flex-end'}}>
-                                    <View style={{marginHorizontal:10, alignItems:'center'}}>
-                                        <Viewsvg width={20} height={20}/>
-                                        <Text category='p1'>{post.post_hit}</Text>
-                                    </View>
-                                    <View style={{marginHorizontal:10, alignItems:'center'}}>
-                                        <Timesvg width={20} height={20}/>
-                                        <PostTime category='p1' datetime = {post.post_datetime}/>
-                                    </View>
-                                </View>
-                            </Layout>
-                            <View style={styles.title}>
-                                <Text category= 'h1' style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
+                {this.state.isLoading?
+                <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+                    <Text>is Loading now...</Text>
+                    <Spinner size="giant"/>
+                </View>
+                :<ScrollView style={{backgroundColor : '#F4F4F4'}}>
+                    <Card disabled={true} style={styles.item}>
+                        <Layout style={{flex:1, flexDirection:'row'}}>
+                            <View style={{flex:1}}>
                             </View>
-                            <Layout style={styles.icons}>
-                                <Text style={{color:'#FF6262'}} category='h5'>
-                                    {this.Alba_salary_type[post.alba_salary_type]}
+                            <View style={{flex:2, flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
+                                {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:this.state.thumb_image.origin_image_url}}/>
+                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
+                                <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
+                            </View>
+                            <View style={{flex: 1, flexDirection : 'row', justifyContent:'flex-end'}}>
+                                <View style={{marginHorizontal:10, alignItems:'center'}}>
+                                    <Viewsvg width={20} height={20}/>
+                                    <Text category='p1'>{post.post_hit}</Text>
+                                </View>
+                                <View style={{marginHorizontal:10, alignItems:'center'}}>
+                                    <Timesvg width={20} height={20}/>
+                                    <PostTime category='p1' datetime = {post.post_datetime}/>
+                                </View>
+                            </View>
+                        </Layout>
+                        <View style={styles.title}>
+                            <Text category= 'h1' style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
+                        </View>
+                        <Layout style={styles.icons}>
+                            <Text style={{color:'#FF6262'}} category='h5'>
+                                {this.Alba_salary_type[post.alba_salary_type]}
+                            </Text>
+                            <Text category='h5'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
+                            <Text style={{color:'#7370DD'}} category='h5'>
+                                {post.alba_type?'장기':'단기'}
+                            </Text>
+                            <Text> / </Text>
+                            <Text style={{color:'#393939'}} category='h5'>
+                                연락처
+                            </Text>
+                            <Text category='h5'> {post.post_hp.replace(/[^0-9]/g, "").replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/,"$1-$2-$3").replace("--", "-")}</Text>
+                        </Layout>
+                    </Card>
+                    
+                    <Card disabled={true} style={styles.item}>
+                        <Text category='p2' style={styles.subhead}>근무지역</Text>
+                        <Text style={{margin : 5}}>{post.post_location}</Text>
+                    </Card>
+                    <Card disabled={true} style={styles.item}>
+                        <Text category='p2' style={styles.subhead}>근무조건</Text>
+                        <Layout style = {{flexDirection : 'row'}}>
+                            <View style={{flex : 1, marginLeft : 5}}>
+                                <Text style={styles.gathertext}>급여</Text>
+                            </View>
+                            <View style={{flex : 5, flexDirection : 'row'}}>
+                                <Text style={[styles.gather, {color:'#FF6262'}]}>
+                                    {this.Alba_salary_type[post.alba_salary_type]+' '}
                                 </Text>
-                                <Text category='h5'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
-                                <Text style={{color:'#7370DD'}} category='h5'>
-                                    {post.alba_type?'장기':'단기'}
-                                </Text>
-                                <Text> / </Text>
-                                <Text style={{color:'#393939'}} category='h5'>
-                                    연락처
-                                </Text>
-                                <Text category='h5'> {post.post_hp.replace(/[^0-9]/g, "").replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/,"$1-$2-$3").replace("--", "-")}</Text>
-                            </Layout>
-                        </Card>
-                        
-                        <Card disabled={true} style={styles.item}>
-                            <Text category='p2' style={styles.subhead}>근무지역</Text>
-                            <Text style={{margin : 5}}>{post.post_location}</Text>
-                        </Card>
-                        <Card disabled={true} style={styles.item}>
-                            <Text category='p2' style={styles.subhead}>근무조건</Text>
-                            <Layout style = {{flexDirection : 'row'}}>
-                                <View style={{flex : 1, marginLeft : 5}}>
-                                    <Text style={styles.gathertext}>급여</Text>
-                                </View>
-                                <View style={{flex : 5, flexDirection : 'row'}}>
-                                    <Text style={[styles.gather, {color:'#FF6262'}]}>
-                                        {this.Alba_salary_type[post.alba_salary_type]+' '}
-                                    </Text>
-                                    <Text style={styles.gather}>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
-                                </View>
-                            </Layout>
-                            <Layout style = {{flexDirection : 'row'}}>
-                                <View style={{flex : 1, marginLeft : 5}}>
-                                    <Text style={styles.gathertext}>근무기간</Text>
-                                </View>
-                                <View style={{flex : 5}}>
-                                    <Text style={styles.gather}>{post.alba_type?'장기 (3개월 ~)':'단기 (1일 ~ 3개월)'}</Text>
-                                </View>
-                            </Layout>
-                        </Card>
-                        <Card disabled={true} style={styles.item}>
-                            <HTML
-                                html = {post.post_content}
-                                imagesMaxWidth={Dimensions.get('window').width}
-                                imagesInitialDimensions={{width:400, height : 400}}
-                                />
-                            {this.state.file_images ? this.state.file_images.map((i,index) => <View key={i.uri}>{this.renderImage(i,index)}</View>) : null} 
-                        </Card>
-                    </ScrollView>
+                                <Text style={styles.gather}>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                            </View>
+                        </Layout>
+                        <Layout style = {{flexDirection : 'row'}}>
+                            <View style={{flex : 1, marginLeft : 5}}>
+                                <Text style={styles.gathertext}>근무기간</Text>
+                            </View>
+                            <View style={{flex : 5}}>
+                                <Text style={styles.gather}>{post.alba_type?'장기 (3개월 ~)':'단기 (1일 ~ 3개월)'}</Text>
+                            </View>
+                        </Layout>
+                    </Card>
+                    <Card disabled={true} style={styles.item}>
+                        <HTML
+                            html = {post.post_content}
+                            imagesMaxWidth={Dimensions.get('window').width}
+                            onLinkPress={(event, href)=>{
+                                Linking.openURL(href)
+                            }}/>
+                        {this.state.file_images ? this.state.file_images.map((i,index) => <View key={i.uri}>{this.renderImage(i,index)}</View>) : null} 
+                    </Card>
+                </ScrollView>
+                }
+                <Layout style={{flex:1}}>
                     <TouchableOpacity style={styles.bottomButton} onPress={()=>this.setVisible(true)}>
                         <PaperPlanesvg width = {42} height = {32}/>
                         <Text category = 'h2' style={{color : 'white'}}>지원하기</Text>
                     </TouchableOpacity>
-
                     <Modal
-                            visible={this.state.visible}
-                            backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
-                            onBackdropPress={() => this.setVisible(false)}>
-                            <Card disabled={true} style={{borderRadius:20}}>
-                                <Layout style={{flexDirection:'row'}}>
+                        visible={this.state.visible}
+                        backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
+                        onBackdropPress={() => this.setVisible(false)}>
+                        <Card disabled={true} style={{borderRadius:20}}>
+                            <Layout style={{flexDirection:'row'}}>
+                                <View style={styles.modal_icons}>
+                                    <TouchableOpacity
+                                        onPress={()=>{Linking.openURL(`tel:${post.post_ph}`)}}>
+                                        <Callsvg width={40} height = {40}/>
+                                    </TouchableOpacity>
+                                    <Text>전화</Text>
+                                </View>
                                     <View style={styles.modal_icons}>
-                                        <TouchableOpacity
-                                            onPress={()=>{Linking.openURL(`tel:${post.post_ph}`)}}>
-                                            <Callsvg width={40} height = {40}/>
-                                        </TouchableOpacity>
-                                        <Text>전화</Text>
-                                    </View>
-                                        <View style={styles.modal_icons}>
-                                        <TouchableOpacity
-                                            onPress={()=>{Linking.openURL(`sms:${post.post_ph}`)}}>
-                                            <Callmessagesvg width={40} height = {40}/>
-                                        </TouchableOpacity>
-                                        <Text>메시지</Text>
-                                    </View>
-                                    <View style={styles.modal_icons}>
-                                        <TouchableOpacity
-                                                onPress={()=>{Linking.openURL(`mailto:${post.post_email}`)}}>
-                                                <Emailsvg width={40} height = {40}/>
-                                        </TouchableOpacity>
-                                        <Text>이메일</Text>
-                                    </View>
-                                </Layout>
-                                <Button onPress={()=>this.setVisible(false)} appearance='ghost' >
-                                    취소
-                                </Button>
-                            </Card>
+                                    <TouchableOpacity
+                                        onPress={()=>{Linking.openURL(`sms:${post.post_ph}`)}}>
+                                        <Callmessagesvg width={40} height = {40}/>
+                                    </TouchableOpacity>
+                                    <Text>메시지</Text>
+                                </View>
+                                <View style={styles.modal_icons}>
+                                    <TouchableOpacity
+                                            onPress={()=>{Linking.openURL(`mailto:${post.post_email}`)}}>
+                                            <Emailsvg width={40} height = {40}/>
+                                    </TouchableOpacity>
+                                    <Text>이메일</Text>
+                                </View>
+                            </Layout>
+                            <Button onPress={()=>this.setVisible(false)} appearance='ghost' >
+                                취소
+                            </Button>
+                        </Card>
                     </Modal>
                     <Modal
                         visible={popoverVisible}
@@ -1540,7 +1536,7 @@ class AlbaContent extends React.Component {
                 </Layout>
             </SafeAreaView>
             </Root>
-            )
+        )
     }
 }
 class IlbanContent extends Component {
@@ -1848,9 +1844,15 @@ class IlbanContent extends Component {
                     <Text style={{fontSize:16,fontWeight:'bold'}} category='h3'>{post.post_title}</Text>
                 </View>
                 <View style={{marginHorizontal:25,marginVertical:10}}>
-                    <Text style={{fontSize:13, fontWeight:'100'}} category='p1'>
+                    {/* <Text style={{fontSize:13, fontWeight:'100'}} category='p1'>
                         {post_remove_tags}
-                    </Text>
+                    </Text> */}
+                    <HTML 
+                        html={post.post_content} 
+                        imagesMaxWidth={Dimensions.get('window').width}
+                        onLinkPress={(event, href)=>{
+                            Linking.openURL(href)
+                        }}/>
                 </View>
                 <View style={{alignItems:'center', width:'100%', paddingHorizontal:15}}>
                     {image
@@ -1951,12 +1953,6 @@ class IlbanContent extends Component {
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image} = this.state
 
         return(
-        this.state.isLoading ?
-        <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-            <Text>is Loading now...</Text>
-            <Spinner size="giant"/>
-        </View>
-        :
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {
@@ -1965,8 +1961,12 @@ class IlbanContent extends Component {
                     StatusBar.setBarStyle('default');}}
                 gbckuse={true}
                 right={<this.MoreAction/>}/>
-            <TouchableWithoutFeedback onPress={()=>{ this.commentWrite; Keyboard.dismiss()}}>
-                <Layout style={{flex:1}}>
+            {this.state.isLoading ?
+                <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+                    <Text>is Loading now...</Text>
+                    <Spinner size="giant"/>
+                </View>
+                :<Layout style={{flex:1}}>
                     <List
                         ref={"pstcmtlist"} 
                         data={comment}
@@ -1977,7 +1977,7 @@ class IlbanContent extends Component {
                         style={{backgroundColor:'#ffffff'}}
                     />
                 </Layout>
-            </TouchableWithoutFeedback>
+            }
             <View style={{backgroundColor:'#ffffff',padding:8}}>
                 {this.state.replying ?
                 <TouchableOpacity onPress={this.commentWrite}>
