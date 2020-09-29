@@ -167,6 +167,11 @@ export class StackNav extends React.Component{
         })
         .catch(err=>{
             console.log('session_chk error:'+JSON.stringify(err))
+            this.setState({isLoading:false,isSignedIn:false});
+            messaging().getToken()
+            .then(token=>{
+                this.syncPushToken(token,0)
+            });
         })
     }
     componentDidMount(){
