@@ -251,7 +251,7 @@ class RegisterScreen extends Component {
           //실패 모달
           Alert.alert(
             '가입실패',
-            JSON.stringify(res.data.message),
+            '필수값 압력이나 중복값이 없는지 확인해주세요!',
             [
               {
                 text: 'Cancel',
