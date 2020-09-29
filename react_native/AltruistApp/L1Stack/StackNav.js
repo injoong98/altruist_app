@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions,Animated,View,SafeAreaView,} from 'react-native';
+import {Dimensions,Animated,View,SafeAreaView,Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
@@ -17,7 +17,7 @@ import FindPwScreen from './FindPw'
 import RegisterSuccessScreen from './RegisterSuccess'
 import QuestionScreen from './Question'
 import FinishScreen from './Finish'
-import {Signing} from './Context'
+import {Signing,Notice} from './Context'
 import {AltQueContent} from './L2Bottom/L3Stack/Question'
 import LogoSvg from '../assets/icons/logo.svg'
 import MainSvg from '../assets/icons/main_logo.svg'
@@ -111,7 +111,15 @@ export class StackNav extends React.Component{
                 },
                 session_mem_id:'',
                 is_altruist:false
-            }
+            },
+            noticeContext:{
+                unreadCount:'test success!!',
+                reloadUnreadCount:()=>{
+                    this.getNotiList()
+                }
+            
+            },
+
         }
         
     }
@@ -175,8 +183,25 @@ export class StackNav extends React.Component{
             });
         })
     }
+    getNotiList=()=>{
+        axios.get('http://dev.unyict.org/api/notification?read=N')
+        .then(res=>{
+           console.log('getNotiList success! : '+res.data.view.data.total_rows)   
+           this.setState(prevState=>({
+                noticeContext: {                   // object that we want to update
+                    ...prevState.noticeContext,    // keep all other key-value pairs
+                    unreadCount: res.data.view.data.total_rows       // update the value of specific key
+                } 
+            })
+            )
+        })
+        .catch(err=>{
+            console.log('getNotiList falied : '+ err)
+        })
+    }
     componentDidMount(){
         setTimeout(this.session_chk,600);
+        this.getNotiList()
         messaging()
             .getInitialNotification()
             .then(async remoteMessage=>{
@@ -185,47 +210,56 @@ export class StackNav extends React.Component{
                     this.setState({isPushNoti:true})
                 }
             }) 
+        messaging().onMessage(async remoteMessage => {
+            this.getNotiList()
+            });
+        messaging().onNotificationOpenedApp(async remoteMessage=>{
+            console.log('onNotificationOpenedApp on stackNav.js'+remoteMessage);
+            this.getNotiList()
+        })
             
     }
     render(){
-        const {context,isLoading,isSignedIn} = this.state
+        const {context,isLoading,isSignedIn,noticeContext} = this.state
         return(
             isLoading? 
             <LoadingScreen />
             :
             <Signing.Provider value={context}>
-                <Navigator headerMode="none">
-                    {
-                        !isSignedIn ? 
-                        <>
-                            <Screen name = "Login" component={LoginScreen}/>
-                            <Screen name = "FindPwScreen" component={FindPwScreen}/>
-                            <Screen name = "RegisterScreen" component={RegisterScreen}/>
-                            <Screen name = "AgreementScreen" component={AgreementScreen}/>
-                            <Screen name = "RegisterSuccessScreen" component={RegisterSuccessScreen}/>
-                            <Screen name = "QuestionScreen" component={QuestionScreen}/>
-                            <Screen name = "FinishScreen" component={FinishScreen}/>
-                        </>
-                        :
-                        <>
-                            <Screen name = "Bottom" component={ComBottomNav}/>
-                            <Screen name = "Write" component={defaultWrite}/>
-                            <Screen name = "Content" component={defaultContent}/>
-                            <Screen name = "IlbanContent" component={IlbanContent}/>
-                            <Screen name = "GominContent" component={GominContent}/>
-                            <Screen name = "MarketContent" component={MarketContent}/>
-                            <Screen name = "IlbanWrite" component={IlbanWrite}/>
-                            <Screen name = "AlbaContent" component={AlbaContent}/>
-                            <Screen name = "MarketWrite" component={MarketWrite}/>
-                            <Screen name = "AlbaWrite" component={AlbaWrite}/>
-                            <Screen name = "GominWrite" component={GominWrite}/>
-                            <Screen name = "ApplyComplete" component={ApplyCompleteScreen}/>
-                            <Screen name = "ApplyFail" component={ApplyFailScreen}/>
-                            <Screen name = "StckQueContent" component={AltQueContent}/>
-                        </>
-                    }
+                <Notice.Provider value={noticeContext}>
+                    <Navigator headerMode="none">
+                        {
+                            !isSignedIn ? 
+                            <>
+                                <Screen name = "Login" component={LoginScreen}/>
+                                <Screen name = "FindPwScreen" component={FindPwScreen}/>
+                                <Screen name = "RegisterScreen" component={RegisterScreen}/>
+                                <Screen name = "AgreementScreen" component={AgreementScreen}/>
+                                <Screen name = "RegisterSuccessScreen" component={RegisterSuccessScreen}/>
+                                <Screen name = "QuestionScreen" component={QuestionScreen}/>
+                                <Screen name = "FinishScreen" component={FinishScreen}/>
+                            </>
+                            :
+                            <>
+                                <Screen name = "Bottom" component={ComBottomNav}/>
+                                <Screen name = "Write" component={defaultWrite}/>
+                                <Screen name = "Content" component={defaultContent}/>
+                                <Screen name = "IlbanContent" component={IlbanContent}/>
+                                <Screen name = "GominContent" component={GominContent}/>
+                                <Screen name = "MarketContent" component={MarketContent}/>
+                                <Screen name = "IlbanWrite" component={IlbanWrite}/>
+                                <Screen name = "AlbaContent" component={AlbaContent}/>
+                                <Screen name = "MarketWrite" component={MarketWrite}/>
+                                <Screen name = "AlbaWrite" component={AlbaWrite}/>
+                                <Screen name = "GominWrite" component={GominWrite}/>
+                                <Screen name = "ApplyComplete" component={ApplyCompleteScreen}/>
+                                <Screen name = "ApplyFail" component={ApplyFailScreen}/>
+                                <Screen name = "StckQueContent" component={AltQueContent}/>
+                            </>
+                        }
 
-                </Navigator>
+                    </Navigator>
+                </Notice.Provider>
             </Signing.Provider>
         )}
 }

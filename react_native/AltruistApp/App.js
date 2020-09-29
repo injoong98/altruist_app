@@ -41,11 +41,6 @@ const App = () => {
         })
     })
     
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('이타주의자 알림이 도착했습니다! ', JSON.stringify(remoteMessage.notification.body));
-    });
-
-    return unsubscribe;
   }, []);
 
 

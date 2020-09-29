@@ -1,10 +1,11 @@
 import React from 'react';
 import {View,SafeAreaView,Text,FlatList,StyleSheet,TouchableOpacity,StatusBar} from 'react-native';
 import axios from 'axios';
-import {Spinner} from '@ui-kitten/components'
+import messaging from '@react-native-firebase/messaging'
+import {Spinner,Button} from '@ui-kitten/components'
 import {MyTabBar} from '../../components/TopTab'
 import {PostTime} from '../../components/PostTime'
-
+import {Notice} from '../Context'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
@@ -192,20 +193,25 @@ export class AlarmScreen extends React.Component{
 
     renderNotis =({item,index}) => {
     return(
-        <TouchableOpacity 
-            key={index} 
-            onPress={()=>{this.readNoti(item);}}
-            style={[styles.notiContainer,{backgroundColor: item.not_read_datetime == null ? '#f4f4f4' : '#c4c4c4'}]} 
-        >
-            <View style={{flexDirection:"row",justifyContent:'space-evenly'}}>
-                <View style={{flex:7}}>
-                    <Text>{item.not_message}</Text>
-                </View>
-                <View style={{flex:1}}>
-                    <PostTime category="p1" style={{fontSize:9, color:'#63579D'}} datetime = {item.not_datetime}/>
-                </View>
-            </View>
-        </TouchableOpacity>
+        <Notice.Consumer>
+            {
+                notice=>
+                <TouchableOpacity 
+                    key={index} 
+                    onPress={()=>{this.readNoti(item);notice.reloadUnreadCount();}}
+                    style={[styles.notiContainer,{backgroundColor: item.not_read_datetime == null ? '#f4f4f4' : '#c4c4c4'}]} 
+                >
+                    <View style={{flexDirection:"row",justifyContent:'space-evenly'}}>
+                        <View style={{flex:7}}>
+                            <Text>{item.not_message}</Text>
+                        </View>
+                        <View style={{flex:1}}>
+                            <PostTime category="p1" style={{fontSize:9, color:'#63579D'}} datetime = {item.not_datetime}/>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            }
+        </Notice.Consumer>
     )
     }
 
@@ -220,6 +226,9 @@ export class AlarmScreen extends React.Component{
     }
     componentDidMount(){
         this.getNotiList();
+        messaging().onMessage(async remoteMessage => {
+            this.getNotiList();
+        });
     }
 
     render(){
@@ -232,14 +241,14 @@ export class AlarmScreen extends React.Component{
                     <Spinner size='giant'/>
                 </View>
                      :
-                     <View style={{flex:1,paddingTop:20,backgroundColor:'#ffffff'}}>
-                        <FlatList 
+                <View style={{flex:1,paddingTop:20,backgroundColor:'#ffffff'}}>
+                    <FlatList 
                         data={this.state.noti}
                         renderItem={this.renderNotis}
                         keyExtractor={(item,index)=>index.toString()}
                         style={{backgroundColor:'#ffffff'}}
-                        />
-                     </View>
+                    />
+                </View>
                 }
             </View>
         )

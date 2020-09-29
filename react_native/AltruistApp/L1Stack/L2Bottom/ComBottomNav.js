@@ -14,7 +14,7 @@ import Communitysvg from '../../assets/icons/community.svg'
 import Altsvg from '../../assets/icons/altruist.svg'
 import Bellsvg from '../../assets/icons/bell.svg'
 import Mysvg from '../../assets/icons/mypage.svg'
-import { Signing } from '../Context';
+import { Signing,Notice } from '../Context';
 
 const {Navigator,Screen} = createBottomTabNavigator();
 
@@ -50,7 +50,30 @@ const SpareScreen =({navigation}) =>(
         <View style={{flex:1,backgroundColor:'blue'}}></View>
     </SafeAreaView>
 )
-
+class AlarmIcon extends React.Component{
+    constructor(props){
+        super(props)
+    }
+    render(){
+        return(
+            <View style={{width:50,alignItems:'center'}}>
+                <Bellsvg height={35} />
+                    <Notice.Consumer>{
+                        notice=>
+                        notice.unreadCount>0?
+                            <View style={{position:'absolute', right:0,backgroundColor:'#ff5c57',borderRadius:5,paddingHorizontal:2,paddingVertical:1,minWidth:15,alignItems:'center'}}>
+                                <Text style={{color:'#ffffff',fontSize:10}}>
+                                    {notice.unreadCount}
+                                </Text>
+                            </View>
+                            :
+                            null
+                        }
+                    </Notice.Consumer>
+            </View>
+        )
+    }
+}
 const BottomTabBar = ({ navigation, state }) => (
     <BottomNavigation
       selectedIndex={state.index}
@@ -58,7 +81,7 @@ const BottomTabBar = ({ navigation, state }) => (
       {/* <BottomNavigationTab title={()=><Homesvg height={35} width ={35}/>}/> */}
       <BottomNavigationTab title={()=><Altsvg height={35} />}/>
       <BottomNavigationTab title={()=><Communitysvg height={35} />}/>
-      <BottomNavigationTab title={()=><Bellsvg height={35} />}/>  
+      <BottomNavigationTab title={()=><AlarmIcon />}/>  
       <BottomNavigationTab title={()=><Mysvg height={35} />}/>
       {/* <BottomNavigationTab title={()=><HomeIcon />}/>
       <BottomNavigationTab title={()=><AltruistIcon  />}/>
