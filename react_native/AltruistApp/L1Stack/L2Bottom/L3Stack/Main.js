@@ -83,7 +83,7 @@ class AltMainScreen extends React.Component{
             <View style={{flex:1, alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff'}}>
                 <View style={{ alignItems:'center',justifyContent:'space-evenly'}}>
                     <View style={{marginTop:91}}>
-                        <MainSvg fill="#000"  width={wdithLogo} height={heightLogo}/>
+                        <MainSvg width={wdithLogo} height={heightLogo}/>
                     </View>
                     <View style={{marginTop:22}}>
                         <TextInput 

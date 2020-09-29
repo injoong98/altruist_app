@@ -10,28 +10,11 @@ import ToggleTune from '../../components/ToggleTune';
 import {MyStackNav} from './L3MyStack/MyStackNav'
 
 import {AlarmToptab} from './Alarm'
-import Homesvg from '../../assets/icons/home.svg'
 import Communitysvg from '../../assets/icons/community.svg'
 import Altsvg from '../../assets/icons/altruist.svg'
 import Bellsvg from '../../assets/icons/bell.svg'
 import Mysvg from '../../assets/icons/mypage.svg'
 import { Signing } from '../Context';
-
-const HomeIcon = (props) => (
-    <Icon {...props} name= 'home' pack='alticons'/>
-)
-const AltruistIcon = (props) => (
-    <Icon {...props} name= 'altruist' pack='alticons'/>
-)
-const CommunityIcon = (props) => (
-    <Icon {...props} name= 'community' pack='alticons'/>
-)
-const BellIcon = (props) => (
-    <Icon {...props} name= 'bell' pack='alticons'/>
-)
-const MypageIcon = (props) => (
-    <Icon {...props} name= 'mypage' pack='alticons'/>
-)
 
 const {Navigator,Screen} = createBottomTabNavigator();
 

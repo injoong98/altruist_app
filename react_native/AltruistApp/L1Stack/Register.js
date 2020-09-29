@@ -77,10 +77,6 @@ class RegisterScreen extends Component {
       this.setState({sexStyle: styles.inputDeny});
       return;
     }
-    // if (this.state.mem_userid == '' || this.state.mem_userid == null) {
-    //   this.setState({Style: styles.inputDeny});
-    //   return;
-    // }
     if (this.state.mem_email == '' || this.state.mem_email == null) {
       this.setState({emailStyle: styles.inputDeny});
       return;
@@ -196,6 +192,7 @@ class RegisterScreen extends Component {
         this.setState({checkNull: true});
       } else {
         console.log('checkNotNull : passwordmatched');
+        console.log('this.state.checked', this.state.checked);
         this.setState({
           pwmessage: '',
           pwreStyle: '',
@@ -252,6 +249,19 @@ class RegisterScreen extends Component {
           console.log(res.data.message);
           console.log('실패');
           //실패 모달
+          Alert.alert(
+            '가입실패',
+            '필수값 압력이나 중복값이 없는지 확인해주세요!',
+            [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {text: 'OK', onPress: () => console.log('OK Pressed')},
+            ],
+            {cancelable: false},
+          );
         } else if (res.data.status == 200) {
           console.log('status', res.data.status);
           console.log(res.data.message);
@@ -475,7 +485,10 @@ class RegisterScreen extends Component {
     return (
       <CheckBox
         checked={checked}
-        onChange={(nextChecked) => setChecked(nextChecked)}>
+        onChange={(nextChecked) => {
+          setChecked(nextChecked);
+          this.setState({checked: nextChecked});
+        }}>
         {/* {`Checked: ${checked}`} */}
       </CheckBox>
     );
@@ -524,33 +537,20 @@ class RegisterScreen extends Component {
   nextStep = () => (
     <TouchableOpacity
       style={{
+        flexDirection: 'row',
         flex: 1,
         alignContent: 'flex-end',
         alignSelf: 'flex-end',
       }}
       onPress={() => this.checkInputs()}>
-      <Text style={{color: '#ACACAC'}}>다음</Text>
-      <Nextsvg style={{color: '#ACACAC'}} />
+      <Text style={{color: '#63579D'}}> 다음 </Text>
+      <Nextsvg fill="#63579D" style={{transform: [{rotate: '180deg'}]}} />
     </TouchableOpacity>
   );
 
   render() {
-    const {
-      mem_userid,
-      mem_email,
-      mem_password,
-      mem_password_re,
-      mem_username,
-      mem_nickname,
-      mem_homepage,
-      mem_phone,
-      mem_birthday,
-      mem_sex,
-      mem_address,
-      mem_profile_content,
-      mem_recommend,
-    } = this.state;
     console.log(this.state);
+    console.log('this.state.checked', this.state.checked);
     return (
       <>
         <TopNavigation
@@ -563,9 +563,9 @@ class RegisterScreen extends Component {
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
-            paddingTop: 40,
-            paddingRight: 60,
-            paddingLeft: 60,
+            paddingTop: 20,
+            // paddingRight: 60,
+            // paddingLeft: 60,
             backgroundColor: '#FFFFFF',
           }}>
           <ScrollView>
@@ -788,8 +788,7 @@ class RegisterScreen extends Component {
               </Text>
             </View>
             <View>
-              {!this.state.checked ? (
-                // <Text style={{textAlign: 'right'}}>필수값 확인 ! </Text>
+              {this.state.goNext || !this.state.checked ? (
                 <Text
                   category="s2"
                   style={{color: '#A3A3A3', textAlign: 'right'}}>
@@ -816,22 +815,15 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderColor: '#FFFFFF',
     color: '#A897C2',
-    // height: 30,
-    // padding: 3,
-    // marginTop: 15,
   },
   inputDeny: {
     backgroundColor: '#F8F8F8',
     borderRadius: 15,
     borderColor: 'red',
-    // height: 30,
-    // padding: 3,
-    // marginTop: 15,
   },
   radio: {
     fontSize: 13,
     padding: 3,
-    // marginTop: 15,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
