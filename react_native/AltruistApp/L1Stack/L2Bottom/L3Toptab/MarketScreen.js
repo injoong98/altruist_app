@@ -19,6 +19,7 @@ class MarketScreen extends React.Component {
       current_page:1,
       isListLoading : false,
       isNoMoreData : false,
+      total_rows:0,
     }
   }
   getPostList = async() =>{
@@ -47,7 +48,8 @@ class MarketScreen extends React.Component {
         this.setState({
           lists:response.data.view.list.data.list,
           isLoading:false,
-          isListLoading:false})
+          isListLoading:false,
+          total_rows:response.data.view.list.data.total_rows,})
     })
     .catch((error)=>{
         alert('error')
@@ -124,12 +126,15 @@ class MarketScreen extends React.Component {
   }
 
   load_more_data = () => {
-      if(!this.state.isNoMoreData){
-          this.setState({
-          current_page : this.state.current_page + 1,
-          isListLoading : true},
-          this.getPostList, console.log(this.state.current_page))
-      }
+    if(this.state.total_rows < 20){
+    this.setState({isNoMoreData:true});
+		}
+    else if(!this.state.isNoMoreData){
+      this.setState({
+      current_page : this.state.current_page + 1,
+      isListLoading : true},
+      this.getPostList, console.log(this.state.current_page))
+    }
   }
 
   renderFooter=()=>{

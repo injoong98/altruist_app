@@ -101,7 +101,7 @@ class JauScreen extends React.Component {
     }
 
 	load_more_data = () => {
-		if(this.state.total_rows < 10){
+		if(this.state.total_rows < 20){
 			this.setState({isNoMoreData:true});
 		}
        	else if(!this.state.isNoMoreData){
