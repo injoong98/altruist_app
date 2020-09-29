@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, StatusBar, Dimensions, Linking, VirtualizedList,TextInput} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal, OverflowMenu, MenuItem,Popover} from '@ui-kitten/components'
 import Axios from 'axios';
+import {Signing} from './Context';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import HTML from 'react-native-render-html';
 import {ActionSheet, Root, Container, Row} from 'native-base';
@@ -79,6 +80,8 @@ class GominContent extends React.Component{
             modalType : 0,
         }
     }
+    
+    static contextType = Signing;
 
     postDelete = async () => {
         var formdata = new FormData();
@@ -320,7 +323,7 @@ class GominContent extends React.Component{
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
         return (
-            <View style={{backgroundColor:'#F4F4F4',paddingTop:15, marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10, paddingLeft:25}} >
+            <View style={{backgroundColor:'#F4F4F4',paddingTop:15, marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10, paddingHorizontal:25}} >
                 <View style={{paddingBottom:5,marginTop:10, marginBottom:10}}>
                     <Text style={{fontSize:18}} category='h3'>{post.post_title}</Text>
                 </View>
@@ -495,25 +498,29 @@ class GominContent extends React.Component{
                         <Text style={{fontSize:20, color:'#63579D'}} category='h3'>신고</Text>
                     </TouchableOpacity>
                     <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    <TouchableOpacity 
-                        onPress={()=>{
-                            this.setState({popoverVisible:false});
-                            this.props.navigation.navigate('GominWrite',
-                                {
-                                    statefunction:this.statefunction,
-                                    mode:'edit',
-                                    post:this.state.post,
-                                    content:this.state.content,
-                                })}}
-                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
-                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>수정</Text>
-                    </TouchableOpacity>
-                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    <TouchableOpacity 
-                        onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 1})}}
-                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
-                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>삭제</Text>
-                    </TouchableOpacity>
+                    {this.context.session_mem_id==post.mem_id
+                    ?<View>
+                        <TouchableOpacity 
+                            onPress={()=>{
+                                this.setState({popoverVisible:false});
+                                this.props.navigation.navigate('GominWrite',
+                                    {
+                                        statefunction:this.statefunction,
+                                        mode:'edit',
+                                        post:this.state.post,
+                                        content:this.state.content,
+                                    })}}
+                            style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>수정</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 1})}}
+                            style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>삭제</Text>
+                        </TouchableOpacity>
+                    </View>
+                    :null}
                 </View>   
             </Modal>
             <Modal
@@ -593,6 +600,8 @@ class MarketContent extends React.Component {
             // dealStatusVisible:false
         }
     }
+
+    static contextType = Signing;
     
     statefunction=(str)=>{
         this.setState({isLoading:true});
@@ -607,6 +616,7 @@ class MarketContent extends React.Component {
     async componentDidMount(){
         StatusBar.setBackgroundColor('#F4F4F4');
         StatusBar.setBarStyle('dark-content');
+        console.log(this.context.session_mem_id);
         const {post_id} = this.props.route.params;
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
@@ -614,6 +624,7 @@ class MarketContent extends React.Component {
     }
 
     getPostData = async(post_id)=>{
+        
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({post:response.data.view.post})
@@ -952,8 +963,8 @@ class MarketContent extends React.Component {
                         <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
                     </Layout>
                     <Layout>
-                        <Text style={{marginVertical:10, color:'#439DB1'}} category='c2'>
-                            {post.deal_status=0? '•판매완료'
+                        <Text style={{marginVertical:10, color:post.deal_status==0?'#D4787D':'#439DB1'}} category='c2'>
+                            {post.deal_status==0? '•판매완료'
                             :post.deal_type==0? '•판매중 / 배송':post.deal_type==1? '•판매중 / 직거래':'•판매중 / 배송 & 직거래'}
                         </Text>
                     </Layout>
@@ -1071,11 +1082,6 @@ class MarketContent extends React.Component {
                     onBackdropPress={() => this.setState({popoverVisible:false})}>
                     <View style={{borderRadius:15, backgroundColor:'white'}}>
                         <TouchableOpacity 
-                            onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 4})}}
-                            style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
-                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>판매완료</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
                             onPress={()=>{this.postscrap();this.setState({popoverVisible:false})}}
                             style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
                             <Text style={{fontSize:20, color:'#63579D'}} category='h3'>스크랩</Text>
@@ -1087,6 +1093,8 @@ class MarketContent extends React.Component {
                             <Text style={{fontSize:20, color:'#63579D'}} category='h3'>신고</Text>
                         </TouchableOpacity>
                         <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        {this.context.session_mem_id==post.mem_id
+                        ?<View>
                         <TouchableOpacity 
                             onPress={()=>{
                                 this.setState({popoverVisible:false});
@@ -1107,6 +1115,15 @@ class MarketContent extends React.Component {
                             style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
                             <Text style={{fontSize:20, color:'#63579D'}} category='h3'>삭제</Text>
                         </TouchableOpacity>
+                        {post.deal_status==1
+                        ?<TouchableOpacity 
+                            onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 4})}}
+                            style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>판매완료</Text>
+                        </TouchableOpacity>
+                        :null}
+                        </View>
+                        :null}
                     </View>   
                 </Modal>
                 <Modal
@@ -1184,6 +1201,8 @@ class AlbaContent extends React.Component {
             spinnerModalVisible : false,
         }
     }
+
+    static contextType = Signing;
 
     Alba_salary_type = ['시급', '일급', '주급', '월급'];
 
@@ -1464,25 +1483,29 @@ class AlbaContent extends React.Component {
                                 <Text style={{fontSize:20, color:'#63579D'}} category='h3'>신고</Text>
                             </TouchableOpacity>
                             <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                            <TouchableOpacity 
-                                onPress={()=>{
-                                    this.setState({popoverVisible:false});
-                                    this.props.navigation.navigate('AlbaWrite',
-                                        {
-                                            statefunction:this.statefunction,
-                                            mode:'edit',
-                                            post:this.state.post,
-                                            file_images:this.state.file_images,
-                                        })}}
-                                style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
-                                <Text style={{fontSize:20, color:'#63579D'}} category='h3'>수정</Text>
-                            </TouchableOpacity>
-                            <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                            <TouchableOpacity 
-                                onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 1})}}
-                                style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
-                                <Text style={{fontSize:20, color:'#63579D'}} category='h3'>삭제</Text>
-                            </TouchableOpacity>
+                            {this.context.session_mem_id==post.mem_id
+                            ?<View>
+                                <TouchableOpacity 
+                                    onPress={()=>{
+                                        this.setState({popoverVisible:false});
+                                        this.props.navigation.navigate('AlbaWrite',
+                                            {
+                                                statefunction:this.statefunction,
+                                                mode:'edit',
+                                                post:this.state.post,
+                                                file_images:this.state.file_images,
+                                            })}}
+                                    style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                                    <Text style={{fontSize:20, color:'#63579D'}} category='h3'>수정</Text>
+                                </TouchableOpacity>
+                                <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                                <TouchableOpacity 
+                                    onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 1})}}
+                                    style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                                    <Text style={{fontSize:20, color:'#63579D'}} category='h3'>삭제</Text>
+                                </TouchableOpacity>
+                            </View>
+                            :null}
                         </View>   
                     </Modal>
                     <Modal
@@ -1544,6 +1567,8 @@ class IlbanContent extends Component {
             modalType : 0,
         }
     }
+
+    static contextType = Signing;
 
     postDelete = async () => {
         var formdata = new FormData();
@@ -1802,7 +1827,7 @@ class IlbanContent extends Component {
         const post_remove_tags = post.post_content.replace(regex, '\n');
         return (
             <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:20, paddingTop:10}} >
-                <View style={{marginLeft:15,marginTop:10,marginBottom:13}}>
+                <View style={{marginLeft:25,marginTop:10,marginBottom:13}}>
                     <View style={{display:"flex",flexDirection:'row'}}>
                         <StarIcon />
                         <View>
@@ -1819,10 +1844,10 @@ class IlbanContent extends Component {
                         </View>
                     </View>
                 </View>
-                <View style={{marginLeft:15,paddingBottom:5}}>
+                <View style={{marginHorizontal:25,paddingBottom:5}}>
                     <Text style={{fontSize:16,fontWeight:'bold'}} category='h3'>{post.post_title}</Text>
                 </View>
-                <View style={{marginLeft:15,marginVertical:10}}>
+                <View style={{marginHorizontal:25,marginVertical:10}}>
                     <Text style={{fontSize:13, fontWeight:'100'}} category='p1'>
                         {post_remove_tags}
                     </Text>
@@ -1992,26 +2017,30 @@ class IlbanContent extends Component {
                         <Text style={{fontSize:20, color:'#63579D'}} category='h3'>신고</Text>
                     </TouchableOpacity>
                     <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    <TouchableOpacity 
-                        onPress={()=>{
-                            this.setState({popoverVisible:false});
-                            this.props.navigation.navigate('IlbanWrite',
-                                {
-                                    statefunction:this.statefunction,
-                                    mode:'edit',
-                                    post:this.state.post,
-                                    image:this.state.image,
-                                    content:this.state.content,
-                                })}}
-                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
-                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>수정</Text>
-                    </TouchableOpacity>
-                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    <TouchableOpacity 
-                        onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 1})}}
-                        style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
-                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>삭제</Text>
-                    </TouchableOpacity>
+                    {this.context.session_mem_id==post.mem_id
+                    ?<View>
+                        <TouchableOpacity 
+                            onPress={()=>{
+                                this.setState({popoverVisible:false});
+                                this.props.navigation.navigate('IlbanWrite',
+                                    {
+                                        statefunction:this.statefunction,
+                                        mode:'edit',
+                                        post:this.state.post,
+                                        image:this.state.image,
+                                        content:this.state.content,
+                                    })}}
+                            style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>수정</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 1})}}
+                            style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>삭제</Text>
+                        </TouchableOpacity>
+                    </View>
+                    :null}
                 </View>   
             </Modal>
             <Modal

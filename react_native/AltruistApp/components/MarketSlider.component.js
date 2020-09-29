@@ -16,7 +16,7 @@ export default class Slider extends React.Component {
     }
     
     changeDot = ({nativeEvent}) => {
-        const slide = Math.ceil(nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width);
+        const slide = Math.ceil((nativeEvent.contentOffset.x-1) / (nativeEvent.layoutMeasurement.width));
         if(slide !== this.state.activeDot){
             this.setState({activeDot : slide});
         }

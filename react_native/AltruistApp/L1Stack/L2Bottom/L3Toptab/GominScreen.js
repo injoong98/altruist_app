@@ -121,7 +121,7 @@ class GominScreen extends React.Component {
         <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}}>
             <View>
                 <Text style ={styles.headtext} category="h3" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
-                <Text style={styles.subtext} category="p1" numberOfLines={3}  ellipsizeMode="tail">{post_remove_tags}</Text>
+                <Text style={styles.subtext} category="p1" numberOfLines={2}  ellipsizeMode="tail">{post_remove_tags}</Text>
             </View>
             <View style={styles.subtitle}>
                 <View style={{flex:4,display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4, paddingBottom:5}}> 
@@ -193,7 +193,6 @@ const styles = StyleSheet.create({
         borderRadius : 13,
         marginVertical:4.5,
         marginHorizontal:19,
-        padding:0,
         paddingLeft:21
 
 
@@ -236,11 +235,12 @@ const styles = StyleSheet.create({
     headtext:{
         marginTop:8,
         paddingTop:5,
+        paddingRight:21,
         fontSize:17
     },
     subtext:{
         marginTop:10,
-        maxWidth:200,
+        paddingRight:21,
         fontSize:12
     }
 })

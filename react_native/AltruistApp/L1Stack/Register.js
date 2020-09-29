@@ -249,6 +249,19 @@ class RegisterScreen extends Component {
           console.log(res.data.message);
           console.log('실패');
           //실패 모달
+          Alert.alert(
+            '가입실패',
+            '필수값 압력이나 중복값이 없는지 확인해주세요!',
+            [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {text: 'OK', onPress: () => console.log('OK Pressed')},
+            ],
+            {cancelable: false},
+          );
         } else if (res.data.status == 200) {
           console.log('status', res.data.status);
           console.log(res.data.message);
