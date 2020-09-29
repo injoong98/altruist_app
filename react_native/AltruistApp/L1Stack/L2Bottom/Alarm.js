@@ -13,7 +13,7 @@ const renderNotis =(item,index,navigation,onRefresh) => {
     return(
         <TouchableOpacity 
             key={index} 
-            onPress={()=>{navigation.navigate('GominContent',{OnGoback:() =>onRefresh(),post_id:item.post_id})}}
+            onPress={()=>{navigation.navigate('IlbanContent',{OnGoback:() =>onRefresh(),post_id:item.post_id})}}
             style={[styles.notiContainer,{backgroundColor: '#f4f4f4'}]} 
         >
             <View style={{}}>
@@ -168,7 +168,7 @@ export class AlarmScreen extends React.Component{
                 break;
          }
          if(!content){
-             var content= "GominContent";
+             var content= "IlbanContent";
          }  
         console.log(`list : ${list} + content : ${content}`)
         // navigate(list,{screen})
