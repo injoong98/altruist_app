@@ -166,11 +166,16 @@ export class AlarmScreen extends React.Component{
                 var screen ="AltOpqQueList"
                 break;
          }
+         if(!content){
+             var content= "GominContent";
+         }  
         console.log(`list : ${list} + content : ${content}`)
         // navigate(list,{screen})
-        navigate(content,{post_id})
+        navigate(content,{post_id,OnGoback:() =>this.onRefresh()})
     }
-
+    onRefresh = () =>{
+        this.getNotiList();
+    }
     readNoti = (item) =>{
         axios.get(`http://dev.unyict.org/api/notification/read?not_id=${item.not_id}`)
         .then(res=>{
