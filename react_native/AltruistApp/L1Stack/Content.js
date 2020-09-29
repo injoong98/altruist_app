@@ -323,7 +323,7 @@ class GominContent extends React.Component{
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
         return (
-            <View style={{backgroundColor:'#F4F4F4',paddingTop:15, marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10, paddingLeft:25}} >
+            <View style={{backgroundColor:'#F4F4F4',paddingTop:15, marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10, paddingHorizontal:25}} >
                 <View style={{paddingBottom:5,marginTop:10, marginBottom:10}}>
                     <Text style={{fontSize:18}} category='h3'>{post.post_title}</Text>
                 </View>
@@ -963,8 +963,8 @@ class MarketContent extends React.Component {
                         <Slider width={width} height={width} image={this.state.image} navigation={this.props.navitation}/>
                     </Layout>
                     <Layout>
-                        <Text style={{marginVertical:10, color:'#439DB1'}} category='c2'>
-                            {post.deal_status=0? '•판매완료'
+                        <Text style={{marginVertical:10, color:post.deal_status==0?'#D4787D':'#439DB1'}} category='c2'>
+                            {post.deal_status==0? '•판매완료'
                             :post.deal_type==0? '•판매중 / 배송':post.deal_type==1? '•판매중 / 직거래':'•판매중 / 배송 & 직거래'}
                         </Text>
                     </Layout>
@@ -1115,11 +1115,13 @@ class MarketContent extends React.Component {
                             style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
                             <Text style={{fontSize:20, color:'#63579D'}} category='h3'>삭제</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity 
+                        {post.deal_status==1
+                        ?<TouchableOpacity 
                             onPress={()=>{this.setState({popoverVisible:false, confirmModalVisible:true, modalType : 4})}}
                             style={{padding : 10, paddingHorizontal:40, margin:5, alignItems:'center'}}>
                             <Text style={{fontSize:20, color:'#63579D'}} category='h3'>판매완료</Text>
                         </TouchableOpacity>
+                        :null}
                         </View>
                         :null}
                     </View>   
@@ -1825,7 +1827,7 @@ class IlbanContent extends Component {
         const post_remove_tags = post.post_content.replace(regex, '\n');
         return (
             <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:20, paddingTop:10}} >
-                <View style={{marginLeft:15,marginTop:10,marginBottom:13}}>
+                <View style={{marginLeft:25,marginTop:10,marginBottom:13}}>
                     <View style={{display:"flex",flexDirection:'row'}}>
                         <StarIcon />
                         <View>
@@ -1842,10 +1844,10 @@ class IlbanContent extends Component {
                         </View>
                     </View>
                 </View>
-                <View style={{marginLeft:15,paddingBottom:5}}>
+                <View style={{marginHorizontal:25,paddingBottom:5}}>
                     <Text style={{fontSize:16,fontWeight:'bold'}} category='h3'>{post.post_title}</Text>
                 </View>
-                <View style={{marginLeft:15,marginVertical:10}}>
+                <View style={{marginHorizontal:25,marginVertical:10}}>
                     <Text style={{fontSize:13, fontWeight:'100'}} category='p1'>
                         {post_remove_tags}
                     </Text>
