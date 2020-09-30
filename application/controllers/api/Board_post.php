@@ -18,7 +18,7 @@ class Board_post extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Post', 'Post_meta', 'Post_extra_vars');
+	protected $models = array('Post', 'Post_meta', 'Post_extra_vars','Member');
 
 	/**
 	 * 헬퍼를 로딩합니다
@@ -321,9 +321,6 @@ class Board_post extends CB_Controller
 			return false;
 		}
 
-		// 이벤트가 존재하면 실행합니다
-		$view['view']['event']['step1'] = Events::trigger('step1', $eventname);
-
 		$this->_stat_count_board(element('brd_id', $board)); // stat_count_board ++
 
 		// 세션 생성
@@ -334,6 +331,10 @@ class Board_post extends CB_Controller
 				'1'
 			);
 		}
+		// 글작성자의 프로필 이미지
+		$writer_info = $this->Member_model->get_by_memid(element('mem_id', $post));
+		$view['mem_photo'] = thumb_url('member_photo',element('mem_photo', $writer_info)); 
+		$view['mem_icon'] =thumb_url('member_icon', element('mem_icon', $writer_info), 30); 
 
 		//1대1 질문일경우 글을 읽는 사람이 답변 지정자라면 질문 확인 시간을 저장해준다.
 		//질문 저장 시간이 없다면/ 
@@ -724,9 +725,6 @@ class Board_post extends CB_Controller
 		}
 		$view['view']['highlight_keyword'] = $highlight_keyword;
 
-		// 이벤트가 존재하면 실행합니다
-		$view['view']['event']['step2'] = Events::trigger('step2', $eventname);
-
 
 		$view['view']['next_post'] = '';
 		$view['view']['prev_post'] = '';
@@ -813,129 +811,31 @@ class Board_post extends CB_Controller
 		if ($show_list_from_view) {
 			$view['view']['list'] = $list = $this->_get_list(element('brd_key', $board), 1);
 		}
+	
 
+		$view['view']['short_url'] = $view['view']['canonical'] = post_url(element('brd_key', $board), $post_id);
 
-		// 이벤트가 존재하면 실행합니다
-		$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
-
-		/**
-		 * 레이아웃을 정의합니다
-		 */
-		$page_title = $this->cbconfig->item('site_meta_title_board_post');
-		$meta_description = $this->cbconfig->item('site_meta_description_board_post');
-		$meta_keywords = $this->cbconfig->item('site_meta_keywords_board_post');
-		$meta_author = $this->cbconfig->item('site_meta_author_board_post');
-		$page_name = $this->cbconfig->item('site_page_name_board_post');
-
-		$searchconfig = array(
-			'{게시판명}',
-			'{게시판아이디}',
-			'{글제목}',
-			'{작성자명}',
-		);
-		$replaceconfig = array(
-			element('board_name', $board),
-			element('brd_key', $board),
-			element('post_title', $post),
-			element('post_nickname', $post),
-		);
-
-		$page_title = str_replace($searchconfig, $replaceconfig, $page_title);
-		$meta_description = str_replace($searchconfig, $replaceconfig, $meta_description);
-		$meta_keywords = str_replace($searchconfig, $replaceconfig, $meta_keywords);
-		$meta_author = str_replace($searchconfig, $replaceconfig, $meta_author);
-		$page_name = str_replace($searchconfig, $replaceconfig, $page_name);
-
-		if ($print === false) {
-
-			// 이벤트가 존재하면 실행합니다
-			$view['view']['event']['before_post_layout'] = Events::trigger('before_post_layout', $eventname);
-
-			$view['view']['short_url'] = $view['view']['canonical'] = post_url(element('brd_key', $board), $post_id);
-
-			if(element('use_bitly', $board)) {
-				if(element('bitly_url', element('meta', $post))) {
-					$view['view']['short_url'] = element('bitly_url', element('meta', $post));
-				} elseif($this->cbconfig->item('bitly_access_token')) {
-					$this->load->helper('bitly_helper');
-					$bitlyparams = array();
-					$bitlyparams['access_token'] = $this->cbconfig->item('bitly_access_token');
-					$bitlyparams['longUrl'] = post_url(element('brd_key', $board), $post_id);
-					$bitlyparams['domain'] = 'bit.ly';
-					$bitlyresult = bitly_get('shorten', $bitlyparams);
-					if(element('status_code', $bitlyresult) === 200) {
-						$bitlydata = array('bitly_url' => element('url', element('data', $bitlyresult)));
-						$this->Post_meta_model->save($post_id, element('brd_id', $board), $bitlydata);
-						$view['view']['short_url'] = element('url', element('data', $bitlyresult));
-					}
+		if(element('use_bitly', $board)) {
+			if(element('bitly_url', element('meta', $post))) {
+				$view['view']['short_url'] = element('bitly_url', element('meta', $post));
+			} elseif($this->cbconfig->item('bitly_access_token')) {
+				$this->load->helper('bitly_helper');
+				$bitlyparams = array();
+				$bitlyparams['access_token'] = $this->cbconfig->item('bitly_access_token');
+				$bitlyparams['longUrl'] = post_url(element('brd_key', $board), $post_id);
+				$bitlyparams['domain'] = 'bit.ly';
+				$bitlyresult = bitly_get('shorten', $bitlyparams);
+				if(element('status_code', $bitlyresult) === 200) {
+					$bitlydata = array('bitly_url' => element('url', element('data', $bitlyresult)));
+					$this->Post_meta_model->save($post_id, element('brd_id', $board), $bitlydata);
+					$view['view']['short_url'] = element('url', element('data', $bitlyresult));
 				}
 			}
-
-			$layout_dir = element('board_layout', $board) ? element('board_layout', $board) : $this->cbconfig->item('layout_board');
-			$mobile_layout_dir = element('board_mobile_layout', $board) ? element('board_mobile_layout', $board) : $this->cbconfig->item('mobile_layout_board');
-			$use_sidebar = element('board_sidebar', $board) ? element('board_sidebar', $board) : $this->cbconfig->item('sidebar_board');
-			$use_mobile_sidebar = element('board_mobile_sidebar', $board) ? element('board_mobile_sidebar', $board) : $this->cbconfig->item('mobile_sidebar_board');
-			$skin_dir = element('board_skin', $board) ? element('board_skin', $board) : $this->cbconfig->item('skin_board');
-			$mobile_skin_dir = element('board_mobile_skin', $board) ? element('board_mobile_skin', $board) : $this->cbconfig->item('mobile_skin_board');
-			$layoutconfig = array(
-				'path' => 'board',
-				'layout' => 'layout',
-				'skin' => 'post',
-				'layout_dir' => $layout_dir,
-				'mobile_layout_dir' => $mobile_layout_dir,
-				'use_sidebar' => $use_sidebar,
-				'use_mobile_sidebar' => $use_mobile_sidebar,
-				'skin_dir' => $skin_dir,
-				'mobile_skin_dir' => $mobile_skin_dir,
-				'page_title' => $page_title,
-				'meta_description' => $meta_description,
-				'meta_keywords' => $meta_keywords,
-				'meta_author' => $meta_author,
-				'page_name' => $page_name,
-			);
-			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-			$this->data = $view;
-			// $this->layout = element('layout_skin_file', element('layout', $view));
-			// if ($show_list_from_view) {
-			// 	$list_skin_file = element('use_gallery_list', $board) ? 'gallerylist' : 'list';
-			// 	$listskindir = ($this->cbconfig->get_device_view_type() === 'mobile')
-			// 		? $mobile_skin_dir : $skin_dir;
-			// 	if (empty($listskindir)) {
-			// 		$listskindir
-			// 			= ($this->cbconfig->get_device_view_type() === 'mobile')
-			// 			? $this->cbconfig->item('mobile_skin_default')
-			// 			: $this->cbconfig->item('skin_default');
-			// 	}
-			// 	$this->view = array(
-			// 		element('view_skin_file', element('layout', $view)),
-			// 		'board/' . $listskindir . '/' . $list_skin_file,
-			// 	);
-			// } else {
-			// 	$this->view = element('view_skin_file', element('layout', $view));
-			// }
-			response_result($view);
-
-		} else {
-
-			// 이벤트가 존재하면 실행합니다
-			$view['view']['event']['before_print_layout'] = Events::trigger('before_print_layout', $eventname);
-
-			$layoutconfig = array(
-				'path' => 'helptool',
-				'layout' => 'layout_popup',
-				'skin' => 'print',
-				'layout_dir' => $this->cbconfig->item('layout_helptool'),
-				'mobile_layout_dir' => $this->cbconfig->item('mobile_layout_helptool'),
-				'skin_dir' => $this->cbconfig->item('skin_helptool'),
-				'mobile_skin_dir' => $this->cbconfig->item('mobile_skin_helptool'),
-				'page_title' => $page_title,
-			);
-			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-			// $this->data = $view;
-			// $this->layout = element('layout_skin_file', element('layout', $view));
-			// $this->view = element('view_skin_file', element('layout', $view));
-			response_result($view);
 		}
+		
+		$this->data = $view;
+
+		response_result($view);
 	}
 
 
@@ -1279,6 +1179,11 @@ class Board_post extends CB_Controller
 					}
 
 				}
+				// 글작성자의 프로필 이미지
+				$writer_info = $this->Member_model->get_by_memid(element('mem_id', $val));
+				$result['list'][$key]['mem_photo'] = thumb_url('member_photo',element('mem_photo', $writer_info)); 
+				$result['list'][$key]['mem_icon'] =thumb_url('member_icon', element('mem_icon', $writer_info), 30); 
+
 
 				if (element('post_file', $val) OR element('post_image', $val)) {
 					$post_id = element('post_id', $val);
