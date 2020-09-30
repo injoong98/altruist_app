@@ -18,7 +18,7 @@ class Board_post extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Post', 'Post_meta', 'Post_extra_vars');
+	protected $models = array('Post', 'Post_meta', 'Post_extra_vars','Member');
 
 	/**
 	 * 헬퍼를 로딩합니다
@@ -1279,6 +1279,11 @@ class Board_post extends CB_Controller
 					}
 
 				}
+				// 글작성자의 프로필 이미지
+				$writer_info = $this->Member_model->get_by_memid(element('mem_id', $val));
+				$result['list'][$key]['mem_photo'] = thumb_url('member_photo',element('mem_photo', $writer_info)); 
+				$result['list'][$key]['mem_icon'] =thumb_url('member_icon', element('mem_icon', $writer_info), 30); 
+
 
 				if (element('post_file', $val) OR element('post_image', $val)) {
 					$post_id = element('post_id', $val);
