@@ -223,6 +223,9 @@
 		180F851476C442B0AB3FB4E4 /* plus-btn-round.svg in Resources */ = {isa = PBXBuildFile; fileRef = F35AFAA6ACCF4DA19D5A2153 /* plus-btn-round.svg */; };
 		1E176121A91441D0BC29F5CE /* reload.svg in Resources */ = {isa = PBXBuildFile; fileRef = DD1F375F8E73433AB2236E57 /* reload.svg */; };
 		6741370A0294432FBC17DE5E /* Time.svg in Resources */ = {isa = PBXBuildFile; fileRef = 202E44238DA14FD1B7F9B4BE /* Time.svg */; };
+		1DE56D26AFF840A098539D2C /* double-next.svg in Resources */ = {isa = PBXBuildFile; fileRef = 13D4AB81B4504EBBA9C16D2B /* double-next.svg */; };
+		9E7B0E6E4E794BCD9FA9C18D /* main_logo.svg in Resources */ = {isa = PBXBuildFile; fileRef = 2865856EC6544A7B8FCBB8F5 /* main_logo.svg */; };
+		91CCF08DC84146D3A89B4A82 /* person.svg in Resources */ = {isa = PBXBuildFile; fileRef = C7899962E7FF4C70940A4193 /* person.svg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -476,6 +479,9 @@
 		F35AFAA6ACCF4DA19D5A2153 /* plus-btn-round.svg */ = {isa = PBXFileReference; name = "plus-btn-round.svg"; path = "../assets/icons/plus-btn-round.svg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		DD1F375F8E73433AB2236E57 /* reload.svg */ = {isa = PBXFileReference; name = "reload.svg"; path = "../assets/icons/reload.svg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		202E44238DA14FD1B7F9B4BE /* Time.svg */ = {isa = PBXFileReference; name = "Time.svg"; path = "../assets/icons/Time.svg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		13D4AB81B4504EBBA9C16D2B /* double-next.svg */ = {isa = PBXFileReference; name = "double-next.svg"; path = "../assets/icons/double-next.svg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2865856EC6544A7B8FCBB8F5 /* main_logo.svg */ = {isa = PBXFileReference; name = "main_logo.svg"; path = "../assets/icons/main_logo.svg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C7899962E7FF4C70940A4193 /* person.svg */ = {isa = PBXFileReference; name = "person.svg"; path = "../assets/icons/person.svg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -800,6 +806,9 @@
 				F35AFAA6ACCF4DA19D5A2153 /* plus-btn-round.svg */,
 				DD1F375F8E73433AB2236E57 /* reload.svg */,
 				202E44238DA14FD1B7F9B4BE /* Time.svg */,
+				13D4AB81B4504EBBA9C16D2B /* double-next.svg */,
+				2865856EC6544A7B8FCBB8F5 /* main_logo.svg */,
+				C7899962E7FF4C70940A4193 /* person.svg */,
 			);
 			name = Resources;
 			path = "";
@@ -1170,6 +1179,9 @@
 				180F851476C442B0AB3FB4E4 /* plus-btn-round.svg in Resources */,
 				1E176121A91441D0BC29F5CE /* reload.svg in Resources */,
 				6741370A0294432FBC17DE5E /* Time.svg in Resources */,
+				1DE56D26AFF840A098539D2C /* double-next.svg in Resources */,
+				9E7B0E6E4E794BCD9FA9C18D /* main_logo.svg in Resources */,
+				91CCF08DC84146D3A89B4A82 /* person.svg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
