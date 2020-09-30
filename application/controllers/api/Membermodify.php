@@ -164,7 +164,9 @@ class Membermodify extends CB_Controller
 		/**
 		 * 로그인이 필요한 페이지입니다
 		 */
-		required_user_login('json');
+		if ($this->member->is_member() === false) {
+			response_result($view,'Err','로그인 후 이용해주세요');
+		}
 
 		$mem_id = (int) $this->member->item('mem_id');
 
@@ -513,7 +515,7 @@ class Membermodify extends CB_Controller
 		 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
 		 */
 		if ($form_validation === false OR $file_error !== '' OR $file_error2 !== '') {
-
+			
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formrunfalse'] = Events::trigger('formrunfalse', $eventname);
 
@@ -696,7 +698,7 @@ class Membermodify extends CB_Controller
 			 * 유효성 검사를 통과한 경우입니다.
 			 * 즉 데이터의 insert 나 update 의 process 처리가 필요한 상황입니다
 			 */
-
+			//response_result($view,'Err',validation_errors('', ''));
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
 
@@ -798,9 +800,22 @@ class Membermodify extends CB_Controller
 				@unlink(config_item('uploads_dir') . '/member_icon/' . $this->member->item('mem_icon'));
 			}
 
-			$this->Member_model->update($mem_id, $updatedata);
-			$this->Member_meta_model->save($mem_id, $metadata);
+			$updatedata['mem_profile_content'] = $this->input->post('mem_profile_content', null, '');
 
+			/*********
+			 * 
+			 * 
+			 * 
+			 * update!!
+			 * 
+			 * 
+			 * 
+			 */
+			log_message('error', 'SeiKin Love');
+			$this->Member_model->update($mem_id, $updatedata);
+			log_message('error', 'SeiKin Like');
+			$this->Member_meta_model->save($mem_id, $metadata);
+			/*********************************************************** */
 			$extradata = array();
 			if ($form && is_array($form)) {
 				foreach ($form as $key => $value) {
@@ -914,6 +929,8 @@ class Membermodify extends CB_Controller
 
 			} else {
 				$view['view']['result_message'] = '회원정보가 변경되었습니다. <br />감사합니다';
+				$view['view']['updatedata'] = $updatedata;
+				response_result($view,'success','ok');
 			}
 
 			// 이벤트가 존재하면 실행합니다
@@ -1009,7 +1026,7 @@ class Membermodify extends CB_Controller
 		$config['mem_email'] = array(
 			'field' => 'mem_email',
 			'label' => '이메일',
-			'rules' => 'trim|required|valid_email|max_length[50]|is_unique[member.mem_email.mem_id.' . $mem_id . ']|callback__mem_email_check',
+			'rules' => 'trim|valid_email|max_length[50]|is_unique[member.mem_email.mem_id.' . $mem_id . ']|callback__mem_email_check',
 		);
 
 		$this->load->library(array('form_validation'));
