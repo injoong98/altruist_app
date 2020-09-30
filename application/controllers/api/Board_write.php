@@ -1594,6 +1594,58 @@ EOT;
 	}
 
 	/**
+	 * 오픈 질문의 유효기간을 변경한다.
+	 */
+	public function change_expire_date()
+	{
+		
+		/**
+		 * 프라이머리키에 숫자형이 입력되지 않으면 에러처리합니다
+		 */
+		$post_id = $this->input->post('post_id');
+		if (empty($post_id) OR $post_id < 1) {
+			response_result($view,'Err','프라이머리키에 숫자형이 입력되지 않았습니다.');
+		}
+		
+		/**
+		 *  기존 데이터를 가져옵니다
+		 */
+		$post = $this->Post_model->get_one($post_id);
+		if ( ! element('post_id', $post)) {
+			response_result($view,'Err','post id로 검색 결과가 없습니다..');
+		}
+		if (element('post_del', $post)) {
+			
+			response_result($view,'Err','삭제된 글은 수정하실 수 없습니다.');
+		}
+		$board = $this->board->item_all(element('brd_id', $post));
+		if ( ! element('brd_id', $board)) {
+			response_result($view,'Err','brd_id 가 없습니다.');
+		}
+
+		$view['view']['board_key'] = element('brd_key', $board);
+		$view['view']['post_id'] = element('post_id', $post);
+		$view['view']['answer_expire_date'] = $this->input->post('answer_expire_date', null, '');
+
+		$mem_id = (int) $this->member->item('mem_id');
+		$is_admin = 0;
+		$is_admin =$this->session->userdata('mem_is_admin'); // 채택하려는 사람의 세션 정보 ()
+	
+		if ($is_admin === false && $mem_id !== abs(element('mem_id', $post))) {
+			response_result($_view,'Err','수정할 권한이 없습니다');
+		} else {
+		
+			$updatedata['answer_expire_date'] = $this->input->post('answer_expire_date', null, '');
+			//업데이트
+			$result =	$this->Post_model->update($post_id, $updatedata);
+			if($result) {
+				response_result($view,'success','정상적으로 수정되었습니다');
+			}else{
+				response_result($r,'Err','변경 실패');
+			}
+		}
+	}		
+	/**
 	 * 게시물 수정 페이지입니다
 	 */
 	public function modify($post_id='')
