@@ -158,11 +158,11 @@ class Login extends CB_Controller
 			$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
 
 			if ($use_login_account === 'both') {
-				$userinfo = $this->Member_model->get_by_both($this->input->post('mem_userid'), 'mem_id, mem_userid,mem_nickname');
+				$userinfo = $this->Member_model->get_by_both($this->input->post('mem_userid'), 'mem_id, mem_userid,mem_nickname,mem_is_admin');
 			} elseif ($use_login_account === 'email') {
-				$userinfo = $this->Member_model->get_by_email($this->input->post('mem_userid'), 'mem_id, mem_userid,mem_nickname');
+				$userinfo = $this->Member_model->get_by_email($this->input->post('mem_userid'), 'mem_id, mem_userid,mem_nickname,mem_is_admin');
 			} else {
-				$userinfo = $this->Member_model->get_by_userid($this->input->post('mem_userid'), 'mem_id, mem_userid,mem_nickname');
+				$userinfo = $this->Member_model->get_by_userid($this->input->post('mem_userid'), 'mem_id, mem_userid,mem_nickname,mem_is_admin');
 			}
 			$this->member->update_login_log(element('mem_id', $userinfo), $this->input->post('mem_userid'), 1, '로그인 성공');
 			$this->session->set_userdata(
@@ -172,6 +172,10 @@ class Login extends CB_Controller
 			$this->session->set_userdata(
 				'mem_nickname',
 				element('mem_nickname', $userinfo)
+			);
+			$this->session->set_userdata(
+				'mem_is_admin',
+				element('mem_is_admin', $userinfo)
 			);
 
 			if ($this->input->post('autologin')) {

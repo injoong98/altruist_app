@@ -18,7 +18,7 @@ class Comment_write extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Post', 'Comment');
+	protected $models = array('Post', 'Comment','Member');
 
 	/**
 	 * 헬퍼를 로딩합니다
@@ -36,6 +36,128 @@ class Comment_write extends CB_Controller
 	}
 
 
+	/**
+	 * 답변 채택 기능
+	 * 
+	 * 	 */
+	public function adoption()
+	{
+		$mem_id = $this->session->userdata('mem_id'); // 채택하려는 사람의 세션 정보 ()
+		$mem_is_admin = $this->session->userdata('mem_is_admin'); // 채택하려는 사람의 세션 정보 ()
+		$writer = $this->Member_model->get_one(abs(element('mem_id', $comment))); //답변한 사람
+		$adoption_type = 1; //기본 채택
+		$cmt_id = (int) $this->input->post('cmt_id');
+		$adoption_type = (int) $this->input->post('adoption_type'); // 채택 1 또는 채택 취소 0
+
+	
+		if ($is_accessable === false) {
+			$alertmessage = $this->member->is_member()
+			? '회원님은 댓글을 작성할 수 있는 권한이 없습니다'
+			: '비회원은 댓글을 작성할 수 있는 권한이 없습니다.<br>회원이시라면 로그인 후 이용해 보십시오';
+			$result = array('error' => $alertmessage);
+			response_result($result,'Err',$result['error']);
+		}
+
+	
+		if (empty($cmt_id) OR $cmt_id < 1) {
+			$result = array('error' => '잘못된 접근입니다');
+			response_result($view,'Err','잘못된 접근입니다');
+		}
+
+		$comment = $this->Comment_model->get_one($cmt_id);
+		if ( ! element('cmt_id', $comment)) {
+			$result = array('error' => '잘못된 접근입니다');
+			response_result($view,'Err','잘못된 접근입니다');
+		}
+		
+		
+		//답변 채택은 질문자 또는 관리자만 할 수 있도록. 
+		$post = $this->Post_model->get_one(abs(element('post_id', $comment))); //질문 작성자
+		$post_writer = element('mem_id',$post);
+		if(!$mem_is_admin) {
+			if($mem_id !== $post_writer) { // 질문자 또는 관리자인가
+				$result = array('error' => '질문자만 답변을 채택할수 있습니다.');
+				response_result($result,'Err',$result['error']);
+			}
+		}
+
+		if (element('cmt_del', $comment)) {
+			$result = array('error' => '삭제된 답변은 채택하실 수 없습니다');
+			response_result($result,'Err',$result['error']);
+		}
+	
+		if (element('notice_comment_block', $board) && element('post_notice', $post)) {
+			$result = array('error' => '공지사항 글에는 댓글을 입력하실 수 없습니다.');
+			response_result($result,'Err',$result['error']);
+		}
+		
+		// 동일한 질문에서 이미 답변 채택이 되었는가 확인
+		if($adoption_type == 1 ) {
+			$where = array(
+				'post_id' => element('post_id', $post),
+				'answer_adoption' => $adoption_type,
+			);
+			$answer_adoption_cnt = $this->Comment_model->count_by($where);
+	
+			if ($answer_adoption_cnt > 0) {
+				$result = array('error' => '답변 채택은 하나만 할 수 있습니다.. 이미 답변이 채택되었습니다.');
+				response_result($result,'Err',$result['error']);
+			}
+		}
+		
+		$updatedata['answer_adoption'] = $adoption_type;
+		$update_result = $this->Comment_model->update($cmt_id,$updatedata); //  답변 채택
+		
+		//mem_nickname
+		$mem_nickname = $this->session->userdata('mem_nickname');
+		$mem_id = $this->session->userdata('mem_id');
+		
+		
+		if ($update_result) {
+			if($adoption_type)
+			//채택에 대한 알림
+			$not_message = $mem_nickname. '님께서 '.$writer['mem_nickname'].'님의 답변을 채택하였셨습니다.';
+			$not_url = post_url(element('brd_id', $comment), element('post_id', $comment)) . '#comment_' . $cmt_id;
+
+			if ($adoption_type && $this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_comment')) {
+				$this->load->library('notificationlib');
+				$this->notificationlib->set_noti(
+					abs(element('mem_id', $comment)),
+					$mem_id,
+					'comment',
+					$cmt_id,
+					$not_message,
+					$not_url
+				);
+			}
+			$push_type = 'token';
+			$topic_name = '';
+			if ($adoption_type && $this->cbconfig->item('use_push') && $this->cbconfig->item('notification_comment')) {
+				$this->load->library('pushlib');
+			
+				$this->pushlib->set_push(
+					abs(element('mem_id', $comment)),
+					$mem_id,
+					'이타주의자들',
+					$cmt_id,
+					$not_message,
+					$not_url,
+					$push_type,
+					$topic_name
+				);
+			}
+			response_result($result,'success','ok');
+		}else {
+			$result = array('error' => '답변 채택 실패');
+			response_result($result,'Err',$result['error']);
+		}
+
+		
+	
+
+
+			
+	}
 	/**
 	 * 댓글 작성시 업데이트하는 함수입니다
 	 */
