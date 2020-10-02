@@ -55,7 +55,9 @@ class Board_post extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before'] = Events::trigger('before', $eventname);
 
+		//리스트 가져오는 부분
 		$view['view']['list'] = $list = $this->_get_list($brd_key);
+
 		$view['view']['board_key'] = element('brd_key', element('board', $list));
 
 		// stat_count_board ++
@@ -350,6 +352,10 @@ class Board_post extends CB_Controller
 		} else {
 			$view['view']['post']['display_name'] = '익명사용자';
 		}
+			// 고민게시판은 익명으로 처리
+			if(element('brd_id',$val)== 1) {
+				$result['list'][$key]['display_name'] = '고민자';
+			}
 		$view['view']['post']['display_datetime'] = display_datetime(
 			element('post_datetime', $post),
 			$view_date_style,
@@ -1149,6 +1155,10 @@ class Board_post extends CB_Controller
 				} else {
 					$noticeresult[$key]['display_name'] = '익명사용자';
 				}
+					// 고민게시판은 익명으로 처리
+					if(element('brd_id',$val)== 1) {
+						$result['list'][$key]['display_name'] = '고민자';
+					}
 				$noticeresult[$key]['display_datetime'] = display_datetime(element('post_datetime', $val), $list_date_style, $list_date_style_manual);
 				$noticeresult[$key]['category'] = '';
 				if (element('use_category', $board) && element('post_category', $val)) {
@@ -1229,6 +1239,10 @@ class Board_post extends CB_Controller
 				} else {
 					$result['list'][$key]['display_name'] = '익명사용자';
 				}
+					// 고민게시판은 익명으로 처리
+					if(element('brd_id',$val)== 1) {
+						$result['list'][$key]['display_name'] = '고민자';
+					}
 
 				$result['list'][$key]['display_datetime'] = display_datetime(
 					element('post_datetime', $val),

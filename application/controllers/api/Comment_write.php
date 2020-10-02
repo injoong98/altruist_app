@@ -444,8 +444,8 @@ class Comment_write extends CB_Controller
 					if (element('use_anonymous', $board)) {
 						$updatedata['mem_id'] = (-1) * $mem_id;
 						$updatedata['cmt_userid'] = '';
-						$updatedata['cmt_username'] = '익명사용자';
-						$updatedata['cmt_nickname'] = '익명사용자';
+						$updatedata['cmt_username'] = '익명';
+						$updatedata['cmt_nickname'] = '익명';
 						$updatedata['cmt_email'] = '';
 						$updatedata['cmt_homepage'] = '';
 					} else {
@@ -483,8 +483,11 @@ class Comment_write extends CB_Controller
 				//댓글에 대한 알림
 				$reply_type = '댓글';
 				if( $brd_key == 'indi' || $brd_key == 'opq') $reply_type = '답변';
-
-				$not_message = $updatedata['cmt_nickname'] . '님께서 [' . element('post_title', $post) . '] 에'.$reply_type.'을 남기셨습니다';
+				if (element('brd_id', $board)== 1) {  // 고민게시판은 익명으로 답글 알림.
+					$updatedata['cmt_nickname'] ='익명';
+				}
+			//	$not_message = $updatedata['cmt_nickname'] . '님께서 [' . element('post_title', $post) . '] 에'.$reply_type.'을 남기셨습니다';
+				$not_message = '['.element('post_title', $post) . ']에 '.$reply_type.'이 등록되었습니다.';
 				if ($this->cbconfig->item('use_notification')
 					&& $this->cbconfig->item('notification_comment')) {
 					$this->load->library('notificationlib');
