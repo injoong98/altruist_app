@@ -857,7 +857,7 @@ class Findaccount extends CB_Controller
 			}
 		}
 
-		$view['view']['canonical'] = site_url('findaccount');
+		// $view['view']['canonical'] = site_url('findaccount');
 
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
@@ -892,7 +892,7 @@ class Findaccount extends CB_Controller
 		// $this->layout = element('layout_skin_file', element('layout', $view));
 		$this->view = element('view_skin_file', element('layout', $view));
 		if (!$view['view']['message']) {
-			response_result($view, 'Err', '등록되지 않은 아이디입니다.');
+			response_result($view, 'Err', "이메일 부분에 오류가 있습니다. 문제가 계속 되면 관리자에게 요청하세요.");
 		} else {
 			response_result($view, 'success', '정상');
 		}
