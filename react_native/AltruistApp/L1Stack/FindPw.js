@@ -43,27 +43,22 @@ class FindPwScreen extends Component {
           console.log('status500', res);
           console.log('status', res.status);
           console.log('실패');
+          Alert.alert(
+            '실패',
+            '관리자에게 문의하세요',
+            [
+              {
+                text: 'OK',
+              },
+            ],
+            {cancelable: false},
+          );
         } else if (res.data.status == 200) {
           console.log('status200', res);
           console.log('status', res.status);
-          this.props.navigation.navigate('RegisterSuccessScreen');
-          //실패시,
+          this.props.navigation.navigate('FindRwSuccessScreen');
         } else {
         }
-        // console.log('this.state', this.state);
-        // Alert.alert(
-        //   '가입 테스트',
-        //   '가입 테스트 완료',
-        //   [
-        //     {
-        //       text: 'OK',
-        //       // onPress: () => {
-        //       //   this.gobackfunc();
-        //       // },
-        //     },
-        //   ],
-        //   {cancelable: false},
-        // );
       })
       .catch((error) => {
         console.log('ERROR', error);
@@ -148,11 +143,15 @@ class FindPwScreen extends Component {
               // this.checkNotNull();
               this.checkEmail(this.state.mem_email);
             }}
-            caption={() => (
-              <Text category="s2" style={{color: '#ACACAC', paddingLeft: 10}}>
-                {this.state.checkEmailCaption}
-              </Text>
-            )}
+            caption={() =>
+              this.state.checkEmailCaption ? (
+                <Text category="s2" style={{color: '#ACACAC', paddingLeft: 10}}>
+                  {this.state.checkEmailCaption}
+                </Text>
+              ) : (
+                <Text> </Text>
+              )
+            }
           />
           <Button
             style={{
