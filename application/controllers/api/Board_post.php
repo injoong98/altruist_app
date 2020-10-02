@@ -389,7 +389,7 @@ class Board_post extends CB_Controller
 
 
 		} else {
-			$view['view']['post']['display_name'] = '익명사용자';
+			$view['view']['post']['display_name'] = '익명';
 		}
 		$view['view']['post']['display_datetime'] = display_datetime(
 			element('post_datetime', $post),
@@ -924,6 +924,7 @@ class Board_post extends CB_Controller
 
 		/**
 		 * 상단에 공지사항 부분에 필요한 정보를 가져옵니다.
+		 * 여러가지 상황에 대한 준비
 		 */
 
 		$except_all_notice= false;
@@ -1013,6 +1014,8 @@ class Board_post extends CB_Controller
 				} else {
 					$noticeresult[$key]['display_name'] = '익명사용자';
 				}
+			
+
 				$noticeresult[$key]['display_datetime'] = display_datetime(element('post_datetime', $val), $list_date_style, $list_date_style_manual);
 				$noticeresult[$key]['category'] = '';
 				if (element('use_category', $board) && element('post_category', $val)) {
@@ -1094,7 +1097,7 @@ class Board_post extends CB_Controller
 
 				if (element('mem_id', $val) >= 0) {
 					if(element('post_anoymous_yn', $val)) {// 익명글일경우에는 고민주의자로 표기
-						$result['list'][$key]['display_name'] = '고민주의자';
+						$result['list'][$key]['display_name'] = '익명';
 					}else {
 						$result['list'][$key]['display_name'] = element('post_nickname', $val);
 						// display_username(
@@ -1105,7 +1108,7 @@ class Board_post extends CB_Controller
 						// );
 					}
 				} else {
-					$result['list'][$key]['display_name'] = '익명사용자';
+					$result['list'][$key]['display_name'] = '익명';
 				}
 
 				$result['list'][$key]['display_datetime'] = display_datetime(

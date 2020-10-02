@@ -209,6 +209,11 @@ class Comment_list extends CB_Controller
 					} else {
 						$bestresult[$key]['display_name'] = '익명사용자';
 					}
+					if(element('post_anoymous_yn', $post)) {// 익명글일경우에는 고민주의자로 표기
+						$bestresult[$key]['display_name'] = '익명';
+						$bestresult[$key]['cmt_nickname'] = '익명';
+						$bestresult[$key]['mem_nickname'] = '익명';
+					}
 					$bestresult[$key]['display_datetime'] = display_datetime(
 						element('cmt_datetime', $val),
 						$comment_date_style,
@@ -294,6 +299,11 @@ class Comment_list extends CB_Controller
 					);
 				} else {
 					$result['list'][$key]['display_name'] = '익명사용자';
+				}
+				if(element('post_anoymous_yn', $post)) {// 익명글일경우에는 익명으로 표기
+					$result['list'][$key]['display_name'] = '익명';
+					$result['list'][$key]['cmt_nickname'] = '익명';
+					$result['list'][$key]['mem_nickname'] = '익명';
 				}
 				$result['list'][$key]['display_datetime'] = display_datetime(
 					element('cmt_datetime', $val),
