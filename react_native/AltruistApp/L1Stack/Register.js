@@ -66,6 +66,9 @@ class RegisterScreen extends Component {
     console.log('checkInputs, submit전에');
     // this.state.goNext = 'true';
     this.state.goNext = false;
+    if (!this.state.mem_userid) {
+      return;
+    }
     if (!this.state.mem_username) {
       return;
     }
@@ -102,6 +105,7 @@ class RegisterScreen extends Component {
   checkNotNull = () => {
     console.log('checkNotNull, input칸 떠날때마다');
     if (
+      !this.state.mem_userid ||
       !this.state.mem_username ||
       !this.state.mem_nickname ||
       !this.state.mem_sex ||
@@ -109,6 +113,17 @@ class RegisterScreen extends Component {
       !this.state.mem_password ||
       !this.state.mem_password_re
     ) {
+      if (!this.state.mem_userid) {
+        this.setState({
+          useridStyle: {
+            backgroundColor: '#F8F8F8',
+            borderRadius: 15,
+            borderColor: 'red',
+          },
+        });
+      } else {
+        this.setState({useridStyle: ''});
+      }
       if (!this.state.mem_username) {
         console.log('checkNotNull : usernameisempty');
         this.setState({
@@ -179,6 +194,7 @@ class RegisterScreen extends Component {
       console.log('checkNotNull : atleastoneisnot');
       this.setState({goNext: true});
     } else if (
+      this.state.mem_userid &&
       this.state.mem_username &&
       this.state.mem_nickname &&
       this.state.mem_sex &&
@@ -390,10 +406,10 @@ class RegisterScreen extends Component {
 
   //   TODO : 이메일 중복 확인
   checkEmail = async () => {
-    const {mem_userid} = this.state;
+    const {mem_email} = this.state;
 
     let formdata = new FormData();
-    formdata.append('email', mem_userid);
+    formdata.append('email', mem_email);
 
     await axios
       .post(`http://dev.unyict.org/api/register/email_check`, formdata)
@@ -444,6 +460,26 @@ class RegisterScreen extends Component {
           this.setState({recommendCaption: null});
         } else if (res.data.result == 'available') {
           this.setState({recommendCaption: '없는 아이디 입니다.'});
+        }
+      });
+  };
+
+  //userid - userid API
+  checkId = async () => {
+    const {mem_userid} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('userid', mem_userid);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .then((res) => {
+        console.log(res.data);
+
+        if (res.data.message.includes('사용중')) {
+          this.setState({idCaption: res.data.message});
+        } else if (res.data.result == 'available') {
+          this.setState({idCaption: null});
         }
       });
   };
@@ -615,7 +651,11 @@ class RegisterScreen extends Component {
           빈값 체크
            */}
                 <Input
-                  style={styles.inputs}
+                  style={
+                    this.state.useridStyle
+                      ? this.state.useridStyle
+                      : styles.inputs
+                  }
                   placeholder="* ID"
                   onChangeText={(mem_userid) => {
                     this.setState({
@@ -624,8 +664,9 @@ class RegisterScreen extends Component {
                   }}
                   onEndEditing={() => {
                     this.checkNotNull();
-                    // this.checkEmail(this.state.mem_email);
+                    this.checkId(this.state.mem_userid);
                   }}
+                  caption={this.state.idCaption}
                 />
                 <Input
                   style={
