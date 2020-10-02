@@ -609,6 +609,24 @@ class RegisterScreen extends Component {
                 {/* validation : 사용자가 input창에서 딱 벗어났을 때 
           1. null 값 체크 
           2. mem_email 마지막으로 입력된 값*/}
+
+                {/* id 
+          중복 체크,
+          빈값 체크
+           */}
+                <Input
+                  style={styles.inputs}
+                  placeholder="* ID"
+                  onChangeText={(mem_userid) => {
+                    this.setState({
+                      mem_userid: mem_userid,
+                    });
+                  }}
+                  onEndEditing={() => {
+                    this.checkNotNull();
+                    // this.checkEmail(this.state.mem_email);
+                  }}
+                />
                 <Input
                   style={
                     this.state.emailStyle
@@ -617,11 +635,10 @@ class RegisterScreen extends Component {
                   }
                   keyboardType="email-address"
                   textContentType="emailAddress" //ios
-                  placeholder="* 이메일 (ID겸용)"
+                  placeholder="* 이메일"
                   onChangeText={(mem_email) => {
                     this.setState({
                       mem_email: mem_email,
-                      mem_userid: mem_email,
                     });
                     this.checkEmail(mem_email);
                   }}
