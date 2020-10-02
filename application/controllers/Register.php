@@ -292,10 +292,8 @@ class Register extends CB_Controller
 		$configbasic['mem_userid'] = array(
 			'field' => 'mem_userid',
 			'label' => '아이디',
-			'rules' => 'trim|required|min_length[3]|max_length[50]|is_unique[member_userid.mem_userid]|callback__mem_userid_check',
-			// 'rules' => 'trim|required|valid_email|max_length[50]|is_unique[member.mem_userid]|callback__mem_userid_check',
-			// 'description' => '영문자, 숫자, _ 만 입력 가능. 최소 3자이상 입력하세요',
-			'description' => '이메일을 입력해주세요 / 이메일과 아이디 동일하게 사용합니다',
+			'rules' => 'trim|required|alphanumunder|min_length[3]|max_length[20]|is_unique[member_userid.mem_userid]|callback__mem_userid_check',
+			'description' => '영문자, 숫자, _ 만 입력 가능. 최소 3자이상 입력하세요',
 		);
 
 		$password_description = '비밀번호는 ' . $password_length . '자리 이상이어야 ';
@@ -1064,7 +1062,6 @@ class Register extends CB_Controller
 				);
 				$this->Member_auth_email_model->insert($authdata);
 
-				// $verify_url = site_url('dev.unyict.org/verify/confirmemail?user=' . $this->input->post('mem_userid') . '&code=' . $verificationcode);
 				$verify_url = site_url('verify/confirmemail?user=' . $this->input->post('mem_userid') . '&code=' . $verificationcode);
 
 				$title = str_replace(
@@ -1377,12 +1374,10 @@ class Register extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		// if (!preg_match("/^([a-z0-9_])+$/i", $userid)) {
-		if (!preg_match("/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i", $userid)) {
+		if (!preg_match("/^([a-z0-9_])+$/i", $userid)) {
 			$result = array(
 				'result' => 'no',
-				// 'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
-				'reason' => '이메일을 입력해주세요 / 이메일과 아이디 동일하게 사용합니다',
+				'reason' => '아이디는 숫자, 알파벳, _ 만 입력가능합니다',
 			);
 			exit(json_encode($result));
 		}
