@@ -590,7 +590,7 @@ class RegisterScreen extends Component {
     return (
       <>
         <TopNavigation
-          title="회원가입"
+          title={() => <Text category="h2">회원가입</Text>}
           alignment="center"
           accessoryLeft={this.BackAction}
         />

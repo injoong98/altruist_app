@@ -59,13 +59,13 @@ class RegisterSuccessScreen extends Component {
                 color: '#A897C2',
                 fontWeight: 'bold',
               }}>
-              메일 전송
+              인증 메일 전송
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              메일 전송이 성공하였습니다.
+              인증 메일을 전송하였습니다.
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              메일함을 확인해주세요.
+              인증을 완료하면 로그인하실 수 있습니다.
             </Text>
           </View>
           <View style={{flex: 2}}>
