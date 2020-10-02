@@ -157,7 +157,7 @@ if ($this->cbconfig->item('use_recaptcha')) {
 				mem_userid: {
 					required: true,
 					minlength: 3,
-					maxlength: 50,
+					maxlength: 20,
 					is_userid_available: true
 				},
 				mem_email: {
