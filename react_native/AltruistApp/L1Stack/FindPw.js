@@ -29,21 +29,21 @@ class FindPwScreen extends Component {
 
   SubmitForm = async () => {
     let formdata = new FormData();
-    const {mem_userid} = this.state;
+    const {mem_email} = this.state;
 
     formdata.append('findtype', 'findidpw');
-    formdata.append('idpw_email', mem_userid);
+    formdata.append('idpw_email', mem_email);
     console.info('form', this.state);
 
     await axios
       .post(`http://dev.unyict.org/api/findaccount/findpw`, formdata)
       .then((res) => {
-        if (res.data.status === 500) {
+        if (res.data.status == 500) {
           //실패 모달
           console.log('status500', res);
           console.log('status', res.status);
           console.log('실패');
-        } else if (res.data.status === 200) {
+        } else if (res.data.status == 200) {
           console.log('status200', res);
           console.log('status', res.status);
           this.props.navigation.navigate('RegisterSuccessScreen');
@@ -74,21 +74,32 @@ class FindPwScreen extends Component {
 
   //TODO : 이메일 확인
   checkEmail = async () => {
-    const {mem_userid} = this.state;
+    const {mem_email} = this.state;
 
     let formdata = new FormData();
-    formdata.append('email', mem_userid);
+    formdata.append('email', mem_email);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/email_check`, formdata)
+      .post(`http://dev.unyict.org/api/register/email_check `, formdata)
       .then((res) => {
-        if (!res.data.email) {
-          this.setState({checkEmailCaption: '존재하지 않는 아이디 입니다.'});
+        if (
+          res.data.message.includes('예약어') ||
+          res.data.message.includes('가능')
+        ) {
+          this.setState({
+            checkEmailCaption: '입력한 이메일을 다시 한번 확인해주세요.',
+          });
         } else {
-          this.setState({checkEmailCaption: ''});
+          this.setState({
+            checkEmailCaption: '',
+          });
         }
         console.log('res.data', res.data);
-        console.log('res.data.email', res.data.email);
+      })
+      .catch((error) => {
+        console.log('ERROR', error);
+        console.error();
+        //alert('')
       });
   };
 
@@ -127,18 +138,21 @@ class FindPwScreen extends Component {
           <Input
             style={styles.inputs}
             textContentType="emailAddress" //ios
-            placeholder="* 이메일 (ID겸용)"
-            onChangeText={(mem_userid) => {
+            placeholder="* 이메일"
+            onChangeText={(mem_email) => {
               this.setState({
-                mem_userid: mem_userid,
+                mem_email: mem_email,
               });
-              this.checkEmail(mem_userid);
             }}
             onEndEditing={() => {
               // this.checkNotNull();
-              this.checkEmail(this.state.mem_userid);
+              this.checkEmail(this.state.mem_email);
             }}
-            caption={this.state.checkEmailCaption}
+            caption={() => (
+              <Text category="s2" style={{color: '#ACACAC', paddingLeft: 10}}>
+                {this.state.checkEmailCaption}
+              </Text>
+            )}
           />
           <Button
             style={{
