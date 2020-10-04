@@ -236,6 +236,7 @@ class AltQueContent extends React.Component{
             refreshing:false,
             modalVisible:false,
             cmt_id:'',
+            adoption_type:'',
             popoverVisibel:false,
             confirmModalVisible:false,
             spinnerModalVisible:false,
@@ -264,8 +265,8 @@ class AltQueContent extends React.Component{
             func : ()=>this.cmtBlame(),
         },
         {
-            text : '이 답변을 삭제하시겠습니까?',
-            func :()=>this.cmtDelete(),
+            text : '이 답변을 채택하시겠습니까?',
+            func :()=>this.cmtAdopt(),
         },
     ]
     
@@ -330,6 +331,22 @@ class AltQueContent extends React.Component{
         })
         .catch(error=>{
             this.setState({resultModalVisible:true, replying:false, resultText:error.message});
+        })
+    }
+    cmtAdopt = (cmt_id,adoption_type) =>{
+        var formdata = new FormData();
+        formdata.append('cmt_id',cmt_id)
+        formdata.append('adoption_type',adoption_type)
+        axios.post('http://dev.unyict.org/api/comment_write/adoption',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                alert(`${JSON.stringify(response.data.message)}`)
+            }else{
+                alert(`${JSON.stringify(response.data.message)}`)
+            this.getCommentData(this.state.post.post_id)}
+        })
+        .catch(error=>{
+            alert(`${JSON.stringify(error)}`)
         })
     }
     cmtLike = (cmt_id) =>{
@@ -475,7 +492,7 @@ class AltQueContent extends React.Component{
                     marginLeft:item.cmt_reply==""?15:50,
                     backgroundColor:item.cmt_id==cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4',
                     borderColor : '#FFEAB2',
-                    borderWidth: item.cmt_like ==0 ? 0 :2
+                    borderWidth: item.answer_adoption ==0 ? 0 :2
                 }}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
@@ -507,19 +524,18 @@ class AltQueContent extends React.Component{
                     
                     <TouchableOpacity 
                         style= {{paddingHorizontal:6,paddingVertical:4,borderRadius:4,backgroundColor:'#63579D',marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'center', alignItems:'center'}}
-                        onPress={()=> item.cmt_like ==0 ? this.cmtLike(item.cmt_id) : null}>
+                        onPress={()=>  this.cmtAdopt(item.cmt_id,item.answer_adoption ==0 ? 1 : 0)}>
                        <Text style={{color:'#ffffff'}}>
                         {
-                            item.cmt_like >0?
-                            '선택한 답변입니다.'
+                            item.answer_adoption ==1 ?
+                            '채택한 답변입니다.'
                             :
-                            '답변선택'
+                            '답변채택'
                         }   
-
                         </Text> 
                     </TouchableOpacity>
                     :
-                    item.cmt_like >0?
+                    item.answer_adoption ==1?
 
                     <TouchableOpacity 
                         style= {{paddingHorizontal:6,paddingVertical:4,borderRadius:4,backgroundColor:'#63579D',marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'center', alignItems:'center'}}
@@ -531,7 +547,7 @@ class AltQueContent extends React.Component{
                 }
                 </View>
                 {
-                    item.cmt_like ==0 ?
+                    item.answer_adoption ==0 ?
                     <View style={{marginTop:4,borderTopWidth:0.5,borderColor:'#c4c4c4'}}/>
                     :null
                 }
@@ -580,7 +596,7 @@ class AltQueContent extends React.Component{
         )
     }
     getCommentData = async (post_id)=>{
-        await axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
+        await axios.get(`http://10.0.2.2/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment: response.data.view.data.total_rows>0 ? response.data.view.data.list : [false]})
             
