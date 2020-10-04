@@ -1251,9 +1251,12 @@ class Altruists extends CB_Controller
 		//shuffle($alt_profile); 
 		if ($alt_profile) {
 			foreach ($alt_profile['list'] as $key_alt => $val_alt) {
+				if($val_alt['alt_photo']=="") $val_alt['alt_photo'] = '/assets/images/noimage.png';
 				$result['list'][$key_alt]['alt_profile'] = $val_alt;
 				//멤버 기본 정보
 				$result_member = $this->{$this->modelname}->get_by_memid(element('mem_id', $val_alt));
+				$result_member['mem_nickname']= $result_member['mem_username'];  // 닉네임 노출 안되도록
+				if($result_member['mem_photo']=="") $result_member['mem_photo'] = '/assets/images/noimage.png';// 프로필 기본 사진
 				$result['list'][$key_alt]['mem_basic_info'] = $result_member;
 
 				//전문영역 가져오기
@@ -1294,9 +1297,12 @@ class Altruists extends CB_Controller
 		$alt_profile = $this->Altruists_model->get_admin_list($per_page, $offset, $where_alt);
 		if ($alt_profile) {
 			foreach ($alt_profile['list'] as $key_alt => $val_alt) {
+				if($val_alt['alt_photo']=="") $val_alt['alt_photo'] = '/assets/images/noimage.png';
 				$result['list'][$key_alt]['alt_profile'] = $val_alt;
 				//멤버 기본 정보
 				$result_member = $this->{$this->modelname}->get_by_memid(element('mem_id', $val_alt));
+				$result_member['mem_nickname']= $result_member['mem_username'];  // 닉네임 노출 안되도록
+				if($result_member['mem_photo']=="") $result_member['mem_photo'] = '/assets/images/noimage.png';// 프로필 기본 사진
 				$result['list'][$key_alt]['mem_basic_info'] = $result_member;
 				//전문영역 가져오기
 				$alt_area = $this->Altruists_model->cb_alt_area(element('alt_id', $val_alt));
