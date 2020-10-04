@@ -55,7 +55,13 @@ export const RenderAltList= ({arg,navigation}) => {
                                         numberOfLines={1} 
                                         ellipsizeMode="tail"    
                                     >
-                                        {i.acv_year.trim()+') '}{i.acv_content.trim()}
+                                        {
+                                        i.acv_year ?
+                                            i.acv_year.trim()+') '
+                                        :
+                                            null
+                                        }
+                                        {i.acv_content.trim()}
                                     </Text>
                                 )}
                             </View>
