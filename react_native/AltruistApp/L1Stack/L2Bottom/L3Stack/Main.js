@@ -161,7 +161,7 @@ class AltMainScreen extends React.Component{
                     </View>
                 <View style={{marginVertical:40,width:'90%',alignItems:'center'}}>    
                     <View style={{flexDirection:'row'}}>
-                        <Text category='h2' style={{color:'#63579D'}}>멘토리스트</Text>
+                        <Text category='h2' style={{color:'#63579D'}}>이타주의자들</Text>
                     </View>
                     <TouchableOpacity onPress={()=>{console.log('gd');this.getAltruistsList()}} style={{position:'absolute',right:0}}>
                         <Reloadsvg height={25} width={25} fill="#A9C"/>
