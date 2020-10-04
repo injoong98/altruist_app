@@ -1,30 +1,16 @@
 import React, {Component, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  Alert,
-  DatePickerAndroid,
-} from 'react-native';
+import {View, StyleSheet, SafeAreaView} from 'react-native';
 import {
   Text,
-  Input,
   Button,
-  CheckBox,
   TopNavigation,
   TopNavigationAction,
   Icon,
-  TextInput,
-  Radio,
-  RadioGroup,
-  Datepicker,
-  Calendar,
-  NativeDateService,
 } from '@ui-kitten/components';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
-class RegisterSuccessScreen extends Component {
+class FindRwSuccessScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -59,13 +45,13 @@ class RegisterSuccessScreen extends Component {
                 color: '#A897C2',
                 fontWeight: 'bold',
               }}>
-              인증 메일 전송
+              비밀번호 재설정 메일 전송
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              인증 메일을 전송하였습니다.
+              비밀번호 재설정 메일을 전송하였습니다.
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              인증을 완료하면 로그인하실 수 있습니다.
+              비밀번호 재설정 완료하면 로그인 할 수 있습니다.
             </Text>
           </View>
           <View style={{flex: 2}}>
@@ -113,4 +99,4 @@ const styles = StyleSheet.create({
   gobtn: {},
 });
 
-export default RegisterSuccessScreen;
+export default FindRwSuccessScreen;

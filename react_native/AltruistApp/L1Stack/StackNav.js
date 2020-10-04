@@ -15,6 +15,7 @@ import RegisterScreen from './Register'
 import AgreementScreen from './Agreement'
 import FindPwScreen from './FindPw'
 import RegisterSuccessScreen from './RegisterSuccess'
+import FindRwSuccessScreen from './FindRwSuccess'
 import QuestionScreen from './Question'
 import FinishScreen from './Finish'
 import {Signing,Notice} from './Context'
@@ -234,6 +235,7 @@ export class StackNav extends React.Component{
                                 <Screen name = "Login" component={LoginScreen}/>
                                 <Screen name = "FindPwScreen" component={FindPwScreen}/>
                                 <Screen name = "RegisterScreen" component={RegisterScreen}/>
+                                <Screen name = "FindRwSuccessScreen" component={FindRwSuccessScreen}/>
                                 <Screen name = "AgreementScreen" component={AgreementScreen}/>
                                 <Screen name = "RegisterSuccessScreen" component={RegisterSuccessScreen}/>
                                 <Screen name = "QuestionScreen" component={QuestionScreen}/>
