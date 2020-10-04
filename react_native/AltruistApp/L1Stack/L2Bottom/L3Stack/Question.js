@@ -506,12 +506,11 @@ class AltQueContent extends React.Component{
                             <BlameIcon />
                         </TouchableOpacity> */}
                         {
-                            this.context.session_mem_id == item.mem_id ?
+                            
                         <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
                             <MoreSsvg/>
                         </TouchableOpacity>
-                        :
-                        null
+                        
                         }
                     </View>
                 </View>
@@ -545,6 +544,13 @@ class AltQueContent extends React.Component{
                     :
                     null
                 }
+                    <TouchableOpacity 
+                        style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}
+                        onPress={()=>this.cmtLike(item.cmt_id)}
+                    >
+                        <Heartsvg width='12' height='12'/>
+                    </TouchableOpacity>
+                    <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
                 {
                     item.answer_adoption ==0 ?
