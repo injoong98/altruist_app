@@ -157,7 +157,7 @@ const styles =StyleSheet.create({
     marginTop:18
   },
   optionText:{
-    fontSize:10,
+    fontSize:12,
     fontWeight:'bold',
     color:'#63579D'
   },
