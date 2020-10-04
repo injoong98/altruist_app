@@ -130,7 +130,7 @@ export class AlarmScreen extends React.Component{
             noti:[]
         }
     }
-
+    static contextType = Notice
     navigateToPost=(post_id,brd_id)=>{
         const {navigate} =this.props.navigation
         console.log(`brd_id ::: ${brd_id}`)
@@ -183,6 +183,7 @@ export class AlarmScreen extends React.Component{
             console.log(item.not_type=='comment')
             if(item.not_type=='comment'){
                 console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
+                this.context.reloadUnreadCount();
                 this.navigateToPost(item.post_id,item.brd_id)
             }
             this.getNotiList()
@@ -198,7 +199,7 @@ export class AlarmScreen extends React.Component{
                 notice=>
                 <TouchableOpacity 
                     key={index} 
-                    onPress={()=>{this.readNoti(item);notice.reloadUnreadCount();}}
+                    onPress={()=>{this.readNoti(item);}}
                     style={[styles.notiContainer,{backgroundColor: item.not_read_datetime == null ? '#f4f4f4' : '#c4c4c4'}]} 
                 >
                     <View style={{flexDirection:"row",justifyContent:'space-evenly'}}>
