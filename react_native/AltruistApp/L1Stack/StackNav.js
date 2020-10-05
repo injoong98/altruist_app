@@ -121,6 +121,7 @@ export class StackNav extends React.Component{
             noticeContext:{
                 unreadCount:'test success!!',
                 reloadUnreadCount:()=>{
+                    console.log('reloadUnreadCount run')
                     this.getNotiList()
                 }
             

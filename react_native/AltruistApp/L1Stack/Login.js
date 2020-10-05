@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,TextInput,StyleSheet,Dimensions} from 'react-native';
+import {View,TextInput,StyleSheet,Dimensions,Keyboard,TouchableWithoutFeedback} from 'react-native';
 import {Text,Input,Button,CheckBox} from '@ui-kitten/components';
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
@@ -94,18 +94,23 @@ class LoginScreen extends React.Component{
         const wdithLogo = (width*0.47);
         const heightLogo = (wdithLogo*0.57);
         return(
-            <View style={{flex:1,backgroundColor:'#ffffff'}}>
+          <View
+            style={{flex:1,backgroundColor:'#ffffff'}}
+          >
+            <TouchableWithoutFeedback 
+              style={{borderWidth:2,backgroundColor:'#ffffff'}}
+              onPress={()=>{Keyboard.dismiss()}}
+            >
               <View style={{alignItems:'center',position:'relative',top:'35%'}}>
                 <View style={{backgroundColor:'#ffffff'}}>
                   <LogoSvg  width={wdithLogo} height={heightLogo}/>
                 </View>
                 <TextInput
                     style={styles.testInput}
-                    placeholder="이메일"
+                    placeholder="아이디 혹은 이메일"
                     onChangeText={nextValue => this.setState({mem_userid:nextValue})}
                     placeholderTextColor='#A897C2'
                     value={mem_userid}
-                    onEndEditing={()=>this.refs.pwinput.focus()}
                 />
                 <TextInput
                     ref='pwinput'
@@ -136,8 +141,8 @@ class LoginScreen extends React.Component{
                   </TouchableOpacity>
                 </View>
               </View>
-
-            </View>
+            </TouchableWithoutFeedback>
+          </View>
         )
     }
 }

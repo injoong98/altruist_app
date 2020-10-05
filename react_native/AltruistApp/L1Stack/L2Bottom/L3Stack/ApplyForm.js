@@ -14,7 +14,7 @@ import {
   ScrollView,
   Dimensions,
   StatusBar,
-  Image
+  Image, Keyboard
 } from 'react-native';
 import {
   Layout,
@@ -305,11 +305,15 @@ class AltApplyFormScreen extends React.Component {
     formdata.append("alt_answertype", 3);
     formdata.append("alt_status", 'R');
     formdata.append("alt_honor", 0);
-    formdata.append("alt_photo", {
-      uri: alt_photo.uri,
-      type: alt_photo.type,
-      name: alt_photo.name,
-    });
+
+    if(alt_photo.uri){
+      console.log('alt_photo!={}')
+      formdata.append("alt_photo", {
+        uri: alt_photo.uri,
+        type: alt_photo.type,
+        name: alt_photo.name,
+      });
+    }
 
     for(var i=0;i<count-1;i++){
       formdata.append("acv_type[]", acv_type[i]);
@@ -324,13 +328,17 @@ class AltApplyFormScreen extends React.Component {
       formdata.append("act_id[]", actSelected[index].act_id);
       
     })
-    acv_file1.map((item) => {
-      formdata.append('acv_file1[]', {
-        uri: item.uri,
-        type: item.type,
-        name: item.name,
+    if(acv_file1.length >0){
+      acv_file1.map((item) => {
+        if(item.uri){
+            formdata.append('acv_file1[]', {
+              uri: item.uri,
+              type: item.type,
+              name: item.name,
+            });
+        }
       });
-    });
+    }    
     console.log(formdata);
 
     await axios
@@ -352,6 +360,29 @@ class AltApplyFormScreen extends React.Component {
 
       });
   };
+
+  formValidation =() =>{
+    const {alt_aboutme,alt_content} = this.state
+    var isNull = false
+    console.log('isNull 1 : ' + isNull);
+    if(alt_aboutme==null||alt_aboutme==''){
+      console.log('isNull 2 : ' + isNull);
+      this.setState({aboutmeIsNull:true});
+      isNull=true;
+    }
+    if(alt_content==null||alt_content==''){
+      console.log('isNull 3 : ' + isNull);
+      this.setState({contentIsNull:true})
+      isNull=true;
+    }
+    if(!isNull){
+      console.log('isNull 4 : ' + isNull);
+      this.setAltruist();
+    }else{
+      console.log('isNull 5 : ' + isNull);
+      this.refs.formScroll.scrollTo('top')
+    }
+  }
 
   getAreaCat = async () => {
     await axios
@@ -403,7 +434,7 @@ class AltApplyFormScreen extends React.Component {
           gbckuse={true}
           style={{backgroundColor:'#f4f4f4'}}
         />
-        <ScrollView style={{paddingHorizontal:"5%"}}>
+        <ScrollView style={{paddingHorizontal:"5%"}} ref='formScroll'>
           <View style={{flexDirection:'row'}}>
             <TouchableHighlight onPress={()=>this.attatchProfImg()} >
                 <View >
@@ -421,11 +452,19 @@ class AltApplyFormScreen extends React.Component {
                 value={alt_aboutme}
                 onChangeText={(text) => this.setState({alt_aboutme:text})}
                 placeholder='자기PR (50자 이내)'
-                style={[styles.contentInput,{}]}
+                style={[styles.contentInput,{borderWidth: this.state.aboutmeIsNull ? 1:0,borderColor :this.state.aboutmeIsNull ? '#DB2434':'#ffffff'}]}
                 multiline={true}
                 placeholderTextColor='#A897C2'
                 textAlignVertical="top"
+               onBackdropPress={()=>Keyboard.dismiss()}
                 />
+                {
+                  this.state.aboutmeIsNull ? 
+                  
+                  <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>한 줄 소개는 필수값입니다.</Text>
+                  :
+                  null
+                }
             </View>
           </View>
           <View style={{marginTop:25}}>
@@ -433,12 +472,21 @@ class AltApplyFormScreen extends React.Component {
               value={alt_content}
               onChangeText={(text) => this.setState({alt_content: text})}
               placeholder='자기소개'
-              style={[styles.contentInput,{minHeight:75}]}
+              style={[styles.contentInput,{minHeight:75,borderWidth: this.state.contentIsNull ? 1:0,borderColor :this.state.contentIsNull ? '#DB2434':'#ffffff'}]}
               multiline={true}
               textAlignVertical='top'
               placeholderTextColor='#A897C2'
+              onBackdropPress={()=>Keyboard.dismiss()}
             />
           </View>
+          {
+            this.state.contentIsNull ? 
+            
+            <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>자기 소개는 필수값입니다.</Text>
+            :
+            null
+          }
+
           <View style={{marginLeft:10,marginTop:40}}>
             <Text style={styles.fieldTitle}>전문 분야</Text>
           </View>
@@ -529,7 +577,7 @@ class AltApplyFormScreen extends React.Component {
           <View style={{marginTop:40,paddingLeft:10,}}>
             <Text style={styles.fieldTitle}>경력 사항 첨부파일</Text>
             <View style={{flexDirection:'row',alignItems:'flex-end',marginTop:16}}>
-              <Text>-</Text>
+              <Text>- </Text>
               <Text style={{fontWeight:'bold'}}>관리자 확인</Text>
               <Text>에만 사용되며</Text> 
               <Text style={{fontWeight:'bold'}}>동의없이 공개</Text>
@@ -570,10 +618,11 @@ class AltApplyFormScreen extends React.Component {
           <View style={{alignItems:'center',justifyContent:'center',marginTop:30}}>  
           <TouchableHighlight 
             style={{alignItems:'center',justifyContent:'center',borderRadius:7.5,height:33,width:60,backgroundColor:'#63579D'}}
-            onPress={() => this.setAltruist()}>
+            onPress={() => this.formValidation()}>
             <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>신청</Text>
           </TouchableHighlight>
           </View>
+
         </ScrollView>
             <Modal
                 visible={filterModalVisible}
