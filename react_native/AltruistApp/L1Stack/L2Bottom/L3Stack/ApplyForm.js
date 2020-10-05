@@ -342,7 +342,7 @@ class AltApplyFormScreen extends React.Component {
     console.log(formdata);
 
     await axios
-      .post('http://10.0.2.2/api/altruists/apply', formdata)
+      .post('http://dev.unyict.org/api/altruists/apply', formdata)
       .then((response) => {
         this.setState({spinnerModalVisible:false})
         if (response.data.status == '500') {
@@ -360,6 +360,10 @@ class AltApplyFormScreen extends React.Component {
 
       });
   };
+
+  formValidation =() =>{
+
+  }
 
   getAreaCat = async () => {
     await axios
@@ -537,7 +541,7 @@ class AltApplyFormScreen extends React.Component {
           <View style={{marginTop:40,paddingLeft:10,}}>
             <Text style={styles.fieldTitle}>경력 사항 첨부파일</Text>
             <View style={{flexDirection:'row',alignItems:'flex-end',marginTop:16}}>
-              <Text>-</Text>
+              <Text>- </Text>
               <Text style={{fontWeight:'bold'}}>관리자 확인</Text>
               <Text>에만 사용되며</Text> 
               <Text style={{fontWeight:'bold'}}>동의없이 공개</Text>
@@ -578,10 +582,9 @@ class AltApplyFormScreen extends React.Component {
           <View style={{alignItems:'center',justifyContent:'center',marginTop:30}}>  
           <TouchableHighlight 
             style={{alignItems:'center',justifyContent:'center',borderRadius:7.5,height:33,width:60,backgroundColor:'#63579D'}}
-            onPress={() => this.setAltruist()}>
+            onPress={() => this.formValidation()}>
             <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>신청</Text>
           </TouchableHighlight>
-          <Button onPress={()=>console.log(JSON.stringify(this.state.alt_photo))}>state</Button>
           </View>
 
         </ScrollView>
