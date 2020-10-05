@@ -287,6 +287,22 @@ class AltQueContent extends React.Component{
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
         })
     }
+    postLike = () =>{
+        var formdata = new FormData();
+        formdata.append('post_id',this.state.post.post_id)
+        formdata.append('like_type',1)
+        axios.post('http://dev.unyict.org/api/postact/post_like',formdata)
+        .then(response=>{
+            if(response.data.status ==500){
+                this.setState({resultModalVisible:true, resultText : response.data.message});
+            }else{
+                this.getPostData(this.state.post.post_id)
+            }
+        })
+        .catch(error=>{
+            this.setState({resultModalVisible:true, resultText : error.message});
+        })
+    }
     postDelete = async () => {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
@@ -593,7 +609,7 @@ class AltQueContent extends React.Component{
                 <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
                         <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
-                            <Thumbsvg/>
+                            <Heartsvg height={15} width={15}/>
                         </TouchableOpacity>
                         <Text>{post.post_like}</Text>
                     </View>
