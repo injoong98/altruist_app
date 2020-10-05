@@ -1822,7 +1822,7 @@ EOT;
 		if ($this->_mem_userid_check($userid) === false) {
 			$result = array(
 				'result' => 'no',
-				'reason' => $userid . '은(는) 예약어로 사용하실 수 없는 회원아이디입니다',
+				'reason' => $userid . '은(는) 사용하실 수 없는 회원아이디입니다',
 			);
 			exit(json_encode($result));
 		}
@@ -1885,7 +1885,7 @@ EOT;
 		if ($this->_mem_email_check($email) === false) {
 			$result = array(
 				'result' => 'no',
-				'reason' => $email . '은(는) 예약어로 사용하실 수 없는 이메일입니다',
+				'reason' => $email . '은(는) 사용하실 수 없는 이메일입니다',
 			);
 			exit(json_encode($result));
 		}
@@ -2006,7 +2006,7 @@ EOT;
 		if (preg_match("/[\,]?{$str}/i", $this->cbconfig->item('denied_userid_list'))) {
 			$this->form_validation->set_message(
 				'_mem_userid_check',
-				$str . ' 은(는) 예약어로 사용하실 수 없는 회원아이디입니다'
+				$str . ' 은(는) 사용하실 수 없는 회원아이디입니다'
 			);
 			return false;
 		}
@@ -2032,7 +2032,7 @@ EOT;
 		if (preg_match("/[\,]?{$str}/i", $this->cbconfig->item('denied_nickname_list'))) {
 			$this->form_validation->set_message(
 				'_mem_nickname_check',
-				$str . ' 은(는) 예약어로 사용하실 수 없는 닉네임입니다'
+				$str . ' 은(는) 사용하실 수 없는 닉네임입니다'
 			);
 			return false;
 		}
