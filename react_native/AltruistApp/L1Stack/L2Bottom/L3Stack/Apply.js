@@ -69,30 +69,15 @@ class AltApplyScreen extends React.Component {
 
   goNextStep() {
     if (this.state.checkboxes.includes(false)) {
-      alert('이용 약관 동의가 필요합니다.');
+      alert('지원하기 전에 한번 다 읽어보시고 체크박스에 체크 부탁드립니다 !');
     } else {
       this.props.navigation.navigate('AltApplyForm');
     }
   }
 
-  GetAgreement = async () => {
-    await axios
-      .get(`http://dev.unyict.org/api/register/get_register_policy`)
-      .then((res) => {
-        // let key = 0;
-        // //리스트에 key값 넣기
-        console.log(res);
-        console.log('apply policy', res.data.view);
-        this.setState({information: res.data.view});
-      })
-      .catch((error) => {
-        console.log('ERROR', error);
-        console.error();
-      });
-  };
-
   render() {
     const {information} = this.state;
+    console.log(information);
     const {navigation} = this.props;
     const {title} = this.state;
     return (
@@ -111,7 +96,6 @@ class AltApplyScreen extends React.Component {
               <View style={styles.checkbox}>
                 <this.CheckAgrees i={0} />
                 <Text category="p1" style={styles.chkText}>
-                  {/* {information.member_register_policy3} */}
                   {`당신의 가치 있는 경험을 사람들에게 공유하세요.
 Share your valuable experiences with people.
 이타주의자는 자신이 갖고 있는 재능과 경험을 사람들에게 나누고자 하는 사람입니다.
@@ -123,7 +107,8 @@ Share your valuable experiences with people.
                 <this.CheckAgrees i={1} />
                 <Text category="p1" style={styles.chkText}>
                   {`STEP1. 질문이 올 경우 푸쉬알람이 전송됩니다.
-STEP2. 자신에게 온 질문은 '마이페이지 > 이타주의자 > 질문함'에서 확인할 수 있습니다.
+STEP2. 자신에게 온 질문은 
+'마이페이지 > 이타주의자 > 질문함'에서 확인할 수 있습니다.
 STEP3. 질문을 선택하여 답변을 작성합니다.
 
 [Check-Point]
@@ -204,7 +189,7 @@ const styles = StyleSheet.create({
   },
   chkText: {
     color: '#696969',
-    fontSize: 13,
+    fontSize: 12,
     marginLeft: 14,
   },
   btn: {
