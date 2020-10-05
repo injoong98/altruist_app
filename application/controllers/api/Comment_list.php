@@ -245,9 +245,9 @@ class Comment_list extends CB_Controller
 			'post_id' => $post_id,
 			'cmt_del <>' => 2,
 		);
-		//오픈 질문함이고 자기 글이 아닐 때 로그인 멤버의 댓글만 가져오기
+		//오픈 질문함이고 자기 글이 아닐 때 로그인 멤버의 댓글 and 채택 된 답변 만 가져오기
 		if($board['brd_key']=='opq' && $mem_id!=$post['mem_id']){
-			$where='`post_id`='.$post_id.' AND `cmt_del` <> 2'.' AND `cb_member`.`mem_id` = '.$mem_id;
+			$where='`post_id`='.$post_id.' AND (`cmt_del` <> 2'.' AND `cb_member`.`mem_id` = '.$mem_id.' OR  answer_adoption = 1)';
 		}
 
 		$result = $this->Comment_model
