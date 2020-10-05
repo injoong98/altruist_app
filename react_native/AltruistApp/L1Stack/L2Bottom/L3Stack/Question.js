@@ -268,6 +268,10 @@ class AltQueContent extends React.Component{
             text : '이 답변을 채택하시겠습니까?',
             func :()=>this.cmtAdopt(),
         },
+        {
+            text : '이 답변을 삭제하시겠습니까?',
+            func :()=>this.cmtDelete(),
+        },
     ]
     
     cmtBlame = () =>{
@@ -722,7 +726,7 @@ class AltQueContent extends React.Component{
                     {
                         this.context.session_mem_id ==post.mem_id ?  
                             <TouchableOpacity 
-                                onPress={()=>{this.setState({confirmModalVisible:true,modalType:2,modalVisible:false})}}
+                                onPress={()=>{this.setState({confirmModalVisible:true,modalType:3,modalVisible:false})}}
                                 style={{padding:10,margin:3}}>
                                 <Text style={{fontSize:13,color:'#63579D'}}>답변 신고</Text>
                             </TouchableOpacity>
@@ -735,7 +739,7 @@ class AltQueContent extends React.Component{
                             </TouchableOpacity>
                                 <View style={{borderWidth:0.5,borderColor:'#c4c4c4'}}/>
                             <TouchableOpacity 
-                                onPress={()=>{this.setState({modalVisible:false,confirmModalVisible:true,modalType:3})}}
+                                onPress={()=>{this.setState({modalVisible:false,confirmModalVisible:true,modalType:5})}}
                                 style={{padding:10,margin:3}}>
                                 <Text style={{fontSize:13,color:'#63579D'}}>답변 삭제</Text>
                             </TouchableOpacity>
@@ -847,9 +851,18 @@ class AltQueList extends React.Component{
                                         color: item.post_comment_count > 0 ? '#63579D' : item.question_read_date==null ? '#FF6262': '#A7D8F3'
                                     }}
                                 >
-                                    {item.post_comment_count > 0 ?  '답변 완료' : item.question_read_date==null ? '답변 대기' : `답변 중\n(${item.question_read_date}읽음)`}
-                                    
+                                    {item.post_comment_count > 0 ?  '답변 완료' : item.question_read_date==null ? '답변 대기' : '답변 중'}
                                 </Text>
+                                {
+                                    item.question_read_date==null ?
+                                    null
+                                    :
+                                    <View style={{flexDirection:'row'}}>
+                                        <Text category='s2' style={{color:'#A7D8F3'}}>(</Text>
+                                        <PostTime style={{color:'#A7D8F3'}} datetime = {item.question_read_date}/>
+                                        <Text category='s2' style={{color:'#A7D8F3'}}>확인)</Text>
+                                    </View>
+                                }
                             </View>
                             :
                             null
