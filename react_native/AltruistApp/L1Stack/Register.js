@@ -18,7 +18,11 @@ import {
   Radio,
   RadioGroup,
 } from '@ui-kitten/components';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
 import axios from 'axios';
 import Nextsvg from '../assets/icons/double-next.svg';
 
@@ -493,6 +497,7 @@ class RegisterScreen extends Component {
     await axios
       .post(`http://dev.unyict.org/api/register/nickname_check`, formdata)
       .then((res) => {
+        console.log(res.data);
         if (res.data.reason == '닉네임값이 넘어오지 않았습니다') {
           this.setState({goNext: true});
           this.setState({nicknameCaption: '닉네임값을 입력해주세요'});
@@ -570,6 +575,8 @@ class RegisterScreen extends Component {
     this.setState({captionCheck: eqaulPW});
   };
 
+  captionAlign = (caption) => <Text category="p1">{caption}</Text>;
+
   nextStep = () => (
     <TouchableOpacity
       style={{
@@ -594,14 +601,11 @@ class RegisterScreen extends Component {
           alignment="center"
           accessoryLeft={this.BackAction}
         />
+
         <SafeAreaView
           style={{
             flex: 1,
-            justifyContent: 'center',
             alignItems: 'center',
-            paddingTop: 20,
-            // paddingRight: 60,
-            // paddingLeft: 60,
             backgroundColor: '#FFFFFF',
           }}>
           <ScrollView>
@@ -635,6 +639,7 @@ class RegisterScreen extends Component {
                   }}
                   onEndEditing={() => {
                     this.checkNotNull();
+                    this.checkNickname();
                   }}
                   caption={this.state.nicknameCaption}
                 />
@@ -643,13 +648,12 @@ class RegisterScreen extends Component {
               </View>
               <View style={{flex: 1}}>
                 {/* validation : 사용자가 input창에서 딱 벗어났을 때 
-          1. null 값 체크 
-          2. mem_email 마지막으로 입력된 값*/}
-
+                1. null 값 체크 
+                2. mem_email 마지막으로 입력된 값*/}
                 {/* id 
-          중복 체크,
-          빈값 체크
-           */}
+                중복 체크,
+                빈값 체크
+                    */}
                 <Input
                   style={
                     this.state.useridStyle
@@ -716,6 +720,7 @@ class RegisterScreen extends Component {
                     this.EqualPW(this.state.mem_password, mem_password_re);
                   }}
                   onEndEditing={() => {
+                    this.checkPassword();
                     this.checkNotNull();
                   }}
                   caption={this.state.captionCheck}

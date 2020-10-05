@@ -53,7 +53,7 @@ class LoadingScreen extends React.Component{
             <SafeAreaView style={{flex:1}}>
                 <Animated.View 
                     style={{flex:1,justifyContent:"center", alignItems:"center",backgroundColor:"#ffffff",opacity:this.state.opacity}}>
-                    <MainSvg width={wdithLogo} height={heightLogo}/>
+                    <MainSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/>
                 </Animated.View>   
             </SafeAreaView>
     )}
