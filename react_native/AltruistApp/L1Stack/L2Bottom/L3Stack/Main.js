@@ -176,11 +176,11 @@ class AltMainScreen extends React.Component{
                             </TouchableHighlight>
                         }
 
-                        <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltList')}>
+                        {/* <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltList')}>
                             <Text numberOfLines={1} category="h1" style={styles.btnText}>
                             멘토리스트
                             </Text>
-                        </TouchableHighlight>
+                        </TouchableHighlight> */}
                         <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltOpqQueList')}>
                             <Text numberOfLines={1} category="h1" style={styles.btnText}>
                             오픈 질문
