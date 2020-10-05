@@ -89,9 +89,9 @@ class Mypage extends React.Component{
                               </View>
                         </TouchableOpacity>  
                     </View>
-                    <TouchableOpacity onPress={()=>{alert('more')}} style={{position:'absolute',top:8,right:0 }}>
+                    {/* <TouchableOpacity onPress={()=>{alert('more')}} style={{position:'absolute',top:8,right:0 }}>
                       <MoreSvg height={19} width={19}/>
-                    </TouchableOpacity > 
+                    </TouchableOpacity >  */}
                   </View>
                   <View style={{ marginHorizontal:40,marginBottom:20}}>
                     <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
