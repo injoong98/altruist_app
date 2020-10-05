@@ -69,10 +69,20 @@ class Login extends CB_Controller
 		function session_check()
 		{	
 			$view['session'] = '';
-			if($_SESSION['mem_id'] == "") {
-				$view['session'] = 'N';
+			if($_SESSION['mem_id'] == ""||$_SESSION['mem_id'] == 0){
+				$token = $this->input->post('token');
+				$token_saved = $this->db->get_where('cb_push_token',array('ptk_token'=>$token))->row_array();
+				if(!$token_saved){
+					$view['session'] = 'N';
+				}else{
+					$_SESSION['mem_id'] = $token_saved['mem_id'];	
+				}
+			}
+
+			if($_SESSION['mem_id'] == ""||$_SESSION['mem_id'] == 0){
 				response_result($view,'Err','로그인 정보가 없습니다.');
-			}else {
+			}
+			else{
 				$_SESSION['is_altruist'] = $this->is_altruist($_SESSION['mem_id']) ? $this->is_altruist($_SESSION['mem_id']): false ;
 				
 				$view['session'] = $_SESSION;
@@ -440,8 +450,10 @@ class Login extends CB_Controller
 
 		delete_cookie('autologin');
 
+		$this->db->update('cb_push_token',array('mem_id'=>0),array('ptk_token'=>$this->input->post('token')));
 		$this->session->sess_destroy();
 		
+
 		response_result($_SESSION);
 		return true;
 
