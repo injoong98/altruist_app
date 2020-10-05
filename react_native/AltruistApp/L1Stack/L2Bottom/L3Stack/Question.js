@@ -618,7 +618,7 @@ class AltQueContent extends React.Component{
         )
     }
     getCommentData = async (post_id)=>{
-        await axios.get(`http://10.0.2.2/api/comment_list/lists/${post_id}`)
+        await axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment: response.data.view.data.total_rows>0 ? response.data.view.data.list : [false]})
             
