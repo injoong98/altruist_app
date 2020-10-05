@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,Image,TextInput, SafeAreaView,StyleSheet,KeyboardAvoidingView,ScrollView,TouchableHighlight} from 'react-native';
+import {View,Image,TextInput, SafeAreaView,StyleSheet,KeyboardAvoidingView,ScrollView,TouchableHighlight,Keyboard} from 'react-native';
 import {Text} from '@ui-kitten/components'
 import axios from 'axios'
 import Camsvg from '../../../assets/icons/Icon_Cam.svg';
@@ -99,18 +99,20 @@ export class MyProfEdit extends React.Component{
         formdata.append('mem_profile_content',mem_profile_content)
 
         new_mem_photo.uri ?
-        formdata.append("mem_photo[]", {
+        formdata.append("mem_photo", {
             uri: new_mem_photo.uri,
             type: new_mem_photo.type,
             name: new_mem_photo.name,
           })
         :
         null
-
+    
         axios.post('http://dev.unyict.org/api/membermodify/modify',formdata)
-        .then(res=>{
-            console.log('res : '+res.data )
-            alert(JSON.stringify(res.data))
+        .then(res=>{    
+            const regex = /(<([^>]+)>)|&nbsp;/ig;
+            const result_message = res.data.view.result_message.replace(regex, '\n');
+            alert(result_message)
+            this.props.route.params.onGoback()
         })
         .catch(err=>{
             console.log('err : '+err )
@@ -120,7 +122,7 @@ export class MyProfEdit extends React.Component{
 
     componentDidMount(){
         const{mem_username,mem_nickname,mem_email,mem_phone,mem_birthday,mem_sex,mem_profile_content,mem_photo}=this.props.route.params.mem_info
-        this.setState({mem_username,mem_nickname,mem_email,mem_phone,mem_birthday,mem_sex,mem_profile_content,mem_photo:{uri:mem_photo}})
+        this.setState({mem_username,mem_nickname,mem_email,mem_phone,mem_birthday,mem_sex,mem_profile_content,old_mem_photo:{uri:mem_photo}})
     }
 
     render(){
@@ -131,6 +133,7 @@ export class MyProfEdit extends React.Component{
                     text='프로필 수정'
                     right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
                     func={() => {
+                        Keyboard.dismiss();
                         this.modify();
                     }}
                     gbckfunc={() => {
@@ -148,7 +151,7 @@ export class MyProfEdit extends React.Component{
                             <>
                             <View style={{borderRadius:62.5,width:125, height : 125,overflow:'hidden'}} >
                             <Image 
-                                source = {{uri : new_mem_photo.uri ? new_mem_photo.uri: 'http://dev.unyict.org/'+ (old_mem_photo.uri ? old_mem_photo.uri: 'uploads/altwink-rect.png')}} 
+                                source = {{uri : new_mem_photo.uri ? new_mem_photo.uri: 'http://dev.unyict.org/'+ (old_mem_photo.uri ?'uploads/member_photo/'+ old_mem_photo.uri: 'uploads/altwink-rect.png')}} 
                                 style = {{ width : '100%', height : '100%', resizeMode:'contain',borderWidth:1}}
                             />
                             </View>
@@ -213,7 +216,7 @@ export class MyProfEdit extends React.Component{
                                     <Text category='h1' style={{fontSize:16,color:'#63579D'}}>자기소개</Text>
                                 </View>
                                 <TextInput
-                                    value={mem_profile_content} 
+                                    value={mem_profile_content!=null ? mem_profile_content:null} 
                                     style={[styles.textInput]} 
                                     onChangeText={(text)=>this.setState({mem_profile_content:text})}
                                     multiline={true}

@@ -46,7 +46,9 @@ class Mypage extends React.Component{
           alert(JSON.stringify(err))
       })
     }
-    
+    onRefresh = () => {
+        this.loadMemInfo();
+    }
     componentDidMount(){
         this.loadMemInfo();
     }
@@ -62,7 +64,7 @@ class Mypage extends React.Component{
                   <View style={{flexDirection:'row',margin:35,backgroundColor:'#F0F0F0',borderRadius:10}}>
                       <View style={{marginVertical:20,marginLeft:30,borderRadius:62.5,width:125, height : 125,overflow:'hidden'}}>
                         <Image 
-                            source = {{uri : 'http://dev.unyict.org/'+ (mem_photo ? mem_photo: 'uploads/altwink-rect.png')}} 
+                            source = {{uri : 'http://dev.unyict.org/'+ (mem_photo ?'uploads/member_photo/'+mem_photo: 'uploads/altwink-rect.png')}} 
                             style = {{ width : '100%', height : '100%', resizeMode:'contain',borderWidth:1}}
                         />
                       </View>
@@ -148,18 +150,18 @@ class Mypage extends React.Component{
                       <Text category='h2' style={styles.menuTitle}>계정</Text>
                     </View>
                     <View>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>navigate('MyProfEdit',{mem_info:this.state.mem_info})} >
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>navigate('MyProfEdit',{mem_info:this.state.mem_info,onGoback:this.onRefresh})} >
                         <Text style={styles.menuItem}>프로필 수정</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{this.setState({logOutModalVisible:true})}} >
                         <Text style={styles.menuItem}>로그아웃</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{()=>{this.sessionChk();}}}>
+                      {/* <TouchableOpacity style={styles.menuContainer} onPress={()=>{()=>{this.sessionChk();}}}>
                         <Text style={styles.menuItem}>세션체크</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarm');}}>
                         <Text style={styles.menuItem}>알림 체크</Text>
-                      </TouchableOpacity>
+                      </TouchableOpacity> */}
                     </View>
                   </View>
 
