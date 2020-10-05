@@ -14,7 +14,7 @@ import {
   ScrollView,
   Dimensions,
   StatusBar,
-  Image
+  Image, Keyboard
 } from 'react-native';
 import {
   Layout,
@@ -362,7 +362,26 @@ class AltApplyFormScreen extends React.Component {
   };
 
   formValidation =() =>{
-
+    const {alt_aboutme,alt_content} = this.state
+    var isNull = false
+    console.log('isNull 1 : ' + isNull);
+    if(alt_aboutme==null||alt_aboutme==''){
+      console.log('isNull 2 : ' + isNull);
+      this.setState({aboutmeIsNull:true});
+      isNull=true;
+    }
+    if(alt_content==null||alt_content==''){
+      console.log('isNull 3 : ' + isNull);
+      this.setState({contentIsNull:true})
+      isNull=true;
+    }
+    if(!isNull){
+      console.log('isNull 4 : ' + isNull);
+      this.setAltruist();
+    }else{
+      console.log('isNull 5 : ' + isNull);
+      this.refs.formScroll.scrollTo('top')
+    }
   }
 
   getAreaCat = async () => {
@@ -415,7 +434,7 @@ class AltApplyFormScreen extends React.Component {
           gbckuse={true}
           style={{backgroundColor:'#f4f4f4'}}
         />
-        <ScrollView style={{paddingHorizontal:"5%"}}>
+        <ScrollView style={{paddingHorizontal:"5%"}} ref='formScroll'>
           <View style={{flexDirection:'row'}}>
             <TouchableHighlight onPress={()=>this.attatchProfImg()} >
                 <View >
@@ -433,11 +452,19 @@ class AltApplyFormScreen extends React.Component {
                 value={alt_aboutme}
                 onChangeText={(text) => this.setState({alt_aboutme:text})}
                 placeholder='자기PR (50자 이내)'
-                style={[styles.contentInput,{}]}
+                style={[styles.contentInput,{borderWidth: this.state.aboutmeIsNull ? 1:0,borderColor :this.state.aboutmeIsNull ? '#DB2434':'#ffffff'}]}
                 multiline={true}
                 placeholderTextColor='#A897C2'
                 textAlignVertical="top"
+               onBackdropPress={()=>Keyboard.dismiss()}
                 />
+                {
+                  this.state.aboutmeIsNull ? 
+                  
+                  <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>한 줄 소개는 필수값입니다.</Text>
+                  :
+                  null
+                }
             </View>
           </View>
           <View style={{marginTop:25}}>
@@ -445,12 +472,21 @@ class AltApplyFormScreen extends React.Component {
               value={alt_content}
               onChangeText={(text) => this.setState({alt_content: text})}
               placeholder='자기소개'
-              style={[styles.contentInput,{minHeight:75}]}
+              style={[styles.contentInput,{minHeight:75,borderWidth: this.state.contentIsNull ? 1:0,borderColor :this.state.contentIsNull ? '#DB2434':'#ffffff'}]}
               multiline={true}
               textAlignVertical='top'
               placeholderTextColor='#A897C2'
+              onBackdropPress={()=>Keyboard.dismiss()}
             />
           </View>
+          {
+            this.state.contentIsNull ? 
+            
+            <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>자기 소개는 필수값입니다.</Text>
+            :
+            null
+          }
+
           <View style={{marginLeft:10,marginTop:40}}>
             <Text style={styles.fieldTitle}>전문 분야</Text>
           </View>
