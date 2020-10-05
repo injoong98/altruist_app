@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Member Userid model class
@@ -15,7 +15,8 @@ class Member_userid_model extends CB_Model
 	/**
 	 * 테이블명
 	 */
-	public $_table = 'member_userid';
+	// public $_table = 'member_userid';
+	public $_table = 'cb_member';
 
 	/**
 	 * 사용되는 테이블의 프라이머리키
