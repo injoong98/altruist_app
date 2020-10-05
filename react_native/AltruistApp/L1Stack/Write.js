@@ -431,7 +431,7 @@ class MarketWrite extends React.Component {
 
   //사진버튼 클릭했을 때
   onClickAddImage() {
-    const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
+    const buttons = ['카메라 촬영', '갤러리에서 선택', '취소'];
     ActionSheet.show(
       {options: buttons, cancelButtonIndex: 2, title: 'Select a photo'},
       (buttonIndex) => {
@@ -1418,7 +1418,7 @@ class IlbanWrite extends React.Component {
 
   //사진버튼 클릭했을 때
   onClickAddImage() {
-    const buttons = ['Take Photo', 'Choose Photo from Gallery', 'Cancel'];
+    const buttons = ['카메라 촬영', '갤러리에서 선택', '취소'];
     ActionSheet.show(
       {options: buttons, cancelButtonIndex: 2, title: 'Select a photo'},
       (buttonIndex) => {
