@@ -1063,7 +1063,7 @@ class AltQuestionWrite extends React.Component
                 [
                     { 
                         text: "닫기", 
-                        onPress: ()=> this.props.navigation.goBack()
+                        onPress: ()=> this.props.navigation.navigate('AltMain')
                     }
                 ],
                 { cancelable: false }
