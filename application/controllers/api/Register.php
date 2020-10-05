@@ -1324,7 +1324,7 @@ class Register extends CB_Controller
 		if ($this->_mem_userid_check($userid) === false) {
 			$result = array(
 				'result' => 'no',
-				'reason' => $userid . '은(는) 예약어로 사용하실 수 없는 회원아이디입니다',
+				'reason' => $userid . '은(는)사용하실 수 없는 회원아이디입니다',
 			);
 			exit(json_encode($result));
 		}
@@ -1387,7 +1387,7 @@ class Register extends CB_Controller
 		if ($this->_mem_email_check($email) === false) {
 			$result = array(
 				'result' => 'no',
-				'reason' => $email . '은(는) 예약어로 사용하실 수 없는 이메일입니다',
+				'reason' => $email . '은(는) 사용하실 수 없는 이메일입니다',
 			);
 			exit(json_encode($result));
 		}
@@ -1552,7 +1552,7 @@ class Register extends CB_Controller
 		if ($this->_mem_userid_check($userid) === false) {
 			$result = array(
 				'result' => 'no',
-				'reason' => $userid . '은(는) 예약어로 사용하실 수 없는 회원아이디입니다',
+				'reason' => $userid . '은(는) 사용할 수 없는 회원아이디입니다',
 			);
 			response_result($result, 'Err', $result['reason']);
 		}
@@ -1616,7 +1616,7 @@ class Register extends CB_Controller
 		if ($this->_mem_email_check($email) === false) {
 			$result = array(
 				'result' => 'no',
-				'reason' => $email . '은(는) 예약어로 사용하실 수 없는 이메일입니다',
+				'reason' => $email . '는 사용할 수 없는 이메일입니다',
 			);
 			response_result($result, 'Err', $result['reason']);
 		}
@@ -1744,7 +1744,7 @@ class Register extends CB_Controller
 		if (preg_match("/[\,]?{$str}/i", $this->cbconfig->item('denied_userid_list'))) {
 			$this->form_validation->set_message(
 				'_mem_userid_check',
-				$str . ' 은(는) 예약어로 사용하실 수 없는 회원아이디입니다'
+				$str . ' 은(는) 사용하실 수 없는 회원아이디입니다'
 			);
 			return false;
 		}
@@ -1770,7 +1770,7 @@ class Register extends CB_Controller
 		if (preg_match("/[\,]?{$str}/i", $this->cbconfig->item('denied_nickname_list'))) {
 			$this->form_validation->set_message(
 				'_mem_nickname_check',
-				$str . ' 은(는) 예약어로 사용하실 수 없는 닉네임입니다'
+				$str . '은(는) 사용하실 수 없는 닉네임입니다'
 			);
 			return false;
 		}
@@ -1782,7 +1782,7 @@ class Register extends CB_Controller
 		if ($row > 0) {
 			$this->form_validation->set_message(
 				'_mem_nickname_check',
-				$str . ' 는 이미 다른 회원이 사용하고 있는 닉네임입니다'
+				$str . '는 이미 다른 회원이 사용하고 있는 닉네임입니다'
 			);
 			return false;
 		}
@@ -1795,7 +1795,7 @@ class Register extends CB_Controller
 		if ($row > 0) {
 			$this->form_validation->set_message(
 				'_mem_nickname_check',
-				$str . ' 는 이미 다른 회원이 사용하고 있는 닉네임입니다'
+				$str . '는 이미 다른 회원이 사용하고 있는 닉네임입니다'
 			);
 			return false;
 		}
@@ -1816,7 +1816,7 @@ class Register extends CB_Controller
 		if (in_array($emaildomain, $denied_list)) {
 			$this->form_validation->set_message(
 				'_mem_email_check',
-				$emaildomain . ' 은(는) 사용하실 수 없는 이메일입니다'
+				$emaildomain . '은(는)사용하실 수 없는 이메일입니다'
 			);
 			return false;
 		}

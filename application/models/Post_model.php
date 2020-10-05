@@ -99,6 +99,10 @@ class Post_model extends CB_Model
 		if ($search_where) {
 			$this->db->where($search_where);
 		}
+		//신고 건수 이상은 아예 안나오도록 
+		$blame = array('post_blame <=' => 2);
+		$this->db->where($blame);
+		
 		if ($category_id) {
 			if (strpos($category_id, '.')) {
 				$this->db->like('post_category', $category_id . '', 'after');

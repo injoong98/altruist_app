@@ -1169,7 +1169,7 @@ class Altruists extends CB_Controller
 		if (preg_match("/[\,]?{$str}/i", $this->cbconfig->item('prohibit_id'))) {
 			$this->form_validation->set_message(
 				'_mem_userid_check',
-				$str . ' 은(는) 예약어로 사용하실 수 없는 회원아이디입니다'
+				$str . ' 은(는) 사용하실 수 없는 회원아이디입니다'
 			);
 			return false;
 		}

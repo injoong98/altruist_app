@@ -24,9 +24,11 @@ class AltMainScreen extends React.Component{
         this.state={
             title:'',
             modalVisible:false,
-            btnContainerWidth: new Animated.Value(0),
-            btnContainerCompressed:true,
-            isLoading:true
+            btnContainerWidth: new Animated.Value(1),
+            btnContainerCompressed:false,
+            isLoading:true,
+            lists:[],
+            listsShowing:[]
         }
     }
     static contextType = Signing;
@@ -51,11 +53,25 @@ class AltMainScreen extends React.Component{
         }).start();
         
     }
+    sortAltList = () =>{
+        const {lists} = this.state;
+        var listsShowing = [];
+        var randomIndex = Math.floor(Math.random()*lists.length)
+        console.log('lists.length : '+lists.length)
+        console.log('randomIndex : '+randomIndex)
+        console.log('randomIndex % lists.length : '+randomIndex % lists.length)
+        for(var i=0 ; i<6; i++){
+            listsShowing[i] =  lists[randomIndex % lists.length];
+            randomIndex++;
+        }
+        this.setState({listsShowing})
+    }
     getAltruistsList = async() => {
         this.setState({isLoading:true})
         await axios.get('http://dev.unyict.org/api/altruists/lists?rand=Y')
         .then((response) => {
-            this.setState({lists:response.data.view.data.list,alt_list_showing:response.data.view.data.list})
+            this.setState({lists:response.data.view.data.list})
+            this.sortAltList();
             this.setState({isLoading:false})
         })
         .catch((error)=>{
@@ -65,17 +81,17 @@ class AltMainScreen extends React.Component{
     }
     componentDidMount(){
         this.getAltruistsList()
-        this.setState({isLoading:false})
 
     }
 
     renderHeadSection = () =>{
         const {navigation} =this.props
-        const {title,btnContainerCompressed,btnContainerWidth} =this.state
+        const {title,btnContainerCompressed,btnContainerWidth,isLoading} =this.state
         const btnContainerWidthInterpolate = btnContainerWidth.interpolate({
             inputRange:[0,1],
             outputRange:["0%","90%"]
         })
+        console.log('renderHeadSection : '+ isLoading)
         const wdithLogo = (width*0.8);
         const heightLogo = (wdithLogo*0.57);
         return(
@@ -85,14 +101,14 @@ class AltMainScreen extends React.Component{
                     <View style={{marginTop:91}}>
                         <MainSvg width={wdithLogo} height={heightLogo}/>
                     </View>
-                    <View style={{marginTop:22}}>
+                    {/* <View style={{marginTop:22}}>
                         <TextInput 
                             style={styles.titleInput} 
                             value={title} 
                             onChangeText={text =>this.setState({title:text})}
                             placeholder="이타주의자들에게 질문 해보세요"
                             placeholderTextColor='#A897C2'
-                            onEndEditing={()=>navigation.navigate('AltList',{title:title})}
+                            onEndEditing={()=>console.log('gd')}
                         />
                         <TouchableOpacity 
                             style={{position:"absolute",right:5,top:6}}
@@ -100,15 +116,43 @@ class AltMainScreen extends React.Component{
                         >
                             <Searchsvg height={25} width={25} fill='#A9C' />
                         </TouchableOpacity>
-                    </View>
-                    <View style={{marginTop:28}} >
+                    </View> */}
+                    <View style={{marginTop:28,alignItems:'center'}} >
+                        {/* {
+                            this.context.is_altruist =='Y'?
+                            null
+                                :
+                            <TouchableOpacity 
+                                style={styles.mainbtn}
+                                onPress={()=>navigation.navigate('AltQueToptab',{title:title})}
+                            >
+                                <Text category='h2' style={{color:'#A897C2',fontSize:18}}>지원하기</Text>
+                            
+                            </TouchableOpacity>
+                        }   
+                        
                         <TouchableOpacity 
-                            style={{display:'flex', flexDirection:'row',padding:5}}
+                            style={styles.mainbtn}
+                            onPress={()=>navigation.navigate('AltOpqQueList',{title:title})}
+                        >
+                            <Text category='h2' style={{color:'#A897C2',fontSize:18}}>오픈 질문</Text>
+                        
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                            style={styles.mainbtn}
+                            onPress={()=>navigation.navigate('AltQueToptab',{title:title})}
+                        >
+                            <Text category='h2' style={{color:'#A897C2',fontSize:18}}>1:1 질문</Text>
+                        
+                        </TouchableOpacity> */}
+                        <TouchableOpacity 
+                            style={styles.mainbtn}
                             onPress={()=>navigation.navigate('AltList',{title:title})}
                         >
                             <Text category='h2' style={{color:'#A897C2',fontSize:18}}>이타주의자 찾기</Text>
                         
                         </TouchableOpacity>
+                       
                     </View>
                     
                 </View>
@@ -149,7 +193,7 @@ class AltMainScreen extends React.Component{
                         </TouchableHighlight>
                     </Animated.View>
                 </View>
-                {/* <View style={{marginBottom:15,marginTop:30}}>
+                <View style={{marginBottom:15,marginTop:30}}>
                         <Slider
                             height={100} 
                             image={[
@@ -158,13 +202,20 @@ class AltMainScreen extends React.Component{
                             ]}
                             dotStyle={{position:'absolute'}}
                         /> 
-                    </View> */}
+                    </View>
                 <View style={{marginVertical:40,width:'90%',alignItems:'center'}}>    
                     <View style={{flexDirection:'row'}}>
                         <Text category='h2' style={{color:'#63579D'}}>이타주의자들</Text>
                     </View>
-                    <TouchableOpacity onPress={()=>{console.log('gd');this.getAltruistsList()}} style={{position:'absolute',right:0}}>
+                        
+                        <TouchableOpacity onPress={()=>{this.sortAltList()}} style={{position:'absolute',right:0}}>
+                    {
+                        isLoading 
+                        ? 
+                        null 
+                        :
                         <Reloadsvg height={25} width={25} fill="#A9C"/>
+                    }
                     </TouchableOpacity>
                 </View>
             </View>
@@ -189,10 +240,11 @@ class AltMainScreen extends React.Component{
                 <List
                     contentContainerStyle={styles.contentContainer}
                     ListHeaderComponent={this.renderHeadSection}
-                    data={this.state.lists}
+                    data={this.state.listsShowing}
                     renderItem={isLoading ? Loading: (arg)=>{return(<RenderAltList {...this.props} arg={arg} />)} }
                     style={{backgroundColor:'#ffffff'}}
                 />    
+                
             </SafeAreaView>
         )
     }
@@ -229,6 +281,15 @@ const styles = StyleSheet.create({
         color:'#ffffff',
         fontSize:14,
         overflow:"hidden",
+    },
+    mainbtn:{
+        display:'flex',
+        flexDirection:'row',
+        padding:5,
+        borderWidth:2,
+        borderColor:'#A897C2',
+        borderRadius:3,
+        marginTop:10,
     }
 })
 

@@ -987,21 +987,22 @@ class Board_write extends CB_Controller
 				
 			} else if( $brd_key == 'opq' ) { // 오픈
 
-
-
-
 				//오픈질문일경우 질문에 선택된 전문영역을 가진 이타주의자들의 토큰 설정.,
 				// 활성 이타주의자의 전문분야와 매칭하여 멤버 아이디를 가져오고 루프를 돌려서 여러 명에게 보낸다
 				// 해당 인원에게 알림도 포함.
+				$act_id = " '    ' " ;
 				for( $i= 0 ; count($_POST['act_id'])-1 >= $i; $i++ ) {
 					$a= '1';
-					$act_id = $_POST['act_id'][$i] ;
+					$act_id = $act_id.","."'".$_POST['act_id'][$i]."'" ;
+				}	
+					//$act_id = $_POST['act_id'][$i] ;
 					//act_id 경력 카테고리 코드를 가지는 이타주의자들 
+					//SELECT ara.*, pro.mem_id
 					$sql =<<<EOT
-					SELECT ara.*, pro.mem_id
+					SELECT distinct pro.mem_id
 					FROM cb_alt_area ara
 					LEFT JOIN cb_alt_profile pro ON ara.alt_id = pro.alt_id
-					WHERE pro.alt_status ='Y' AND ara.act_id =$act_id 
+					WHERE pro.alt_status ='Y' AND ara.act_id in ( $act_id ) 
 EOT;
 					$query = $this->db->query($sql);
 					$target_members =   $query->result();
@@ -1040,7 +1041,7 @@ EOT;
 							);
 						}
 					}
-				}
+				 //}// for 
 
 			}else { //일반
 				/*
