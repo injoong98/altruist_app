@@ -147,7 +147,8 @@ class Findaccount extends CB_Controller
 				);
 				$this->Member_auth_email_model->insert($authdata);
 
-				$verify_url = site_url('dev.unyict.org/verify/resetpassword?user=' . element('mem_userid', $mb) . '&code=' . $verificationcode);
+				$verify_url = 'http://peacedesigners.org/password.php?user=' . element('mem_userid', $mb) . '&code=' . $verificationcode;
+				//$verify_url = site_url('dev.unyict.org/verify/resetpassword?user=' . element('mem_userid', $mb) . '&code=' . $verificationcode);
 
 				$searchconfig = array(
 					'{홈페이지명}',
@@ -783,7 +784,7 @@ class Findaccount extends CB_Controller
 				);
 				$this->Member_auth_email_model->insert($authdata);
 
-				$verify_url = site_url('verify/resetpassword?user=' . element('mem_userid', $mb) . '&code=' . $verificationcode);
+				$verify_url = 'http://peacedesigners.org/password.php?user=' . element('mem_userid', $mb) . '&code=' . $verificationcode;
 				// $verify_url = site_url('dev.unyict.org/verify/resetpassword?user=' . element('mem_userid', $mb) . '&code=' . $verificationcode);
 
 				$searchconfig = array(
