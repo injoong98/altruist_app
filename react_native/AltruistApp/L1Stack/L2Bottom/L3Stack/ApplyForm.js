@@ -305,11 +305,15 @@ class AltApplyFormScreen extends React.Component {
     formdata.append("alt_answertype", 3);
     formdata.append("alt_status", 'R');
     formdata.append("alt_honor", 0);
-    formdata.append("alt_photo", {
-      uri: alt_photo.uri,
-      type: alt_photo.type,
-      name: alt_photo.name,
-    });
+
+    if(alt_photo.uri){
+      console.log('alt_photo!={}')
+      formdata.append("alt_photo", {
+        uri: alt_photo.uri,
+        type: alt_photo.type,
+        name: alt_photo.name,
+      });
+    }
 
     for(var i=0;i<count-1;i++){
       formdata.append("acv_type[]", acv_type[i]);
@@ -324,17 +328,21 @@ class AltApplyFormScreen extends React.Component {
       formdata.append("act_id[]", actSelected[index].act_id);
       
     })
-    acv_file1.map((item) => {
-      formdata.append('acv_file1[]', {
-        uri: item.uri,
-        type: item.type,
-        name: item.name,
+    if(acv_file1.length >0){
+      acv_file1.map((item) => {
+        if(item.uri){
+            formdata.append('acv_file1[]', {
+              uri: item.uri,
+              type: item.type,
+              name: item.name,
+            });
+        }
       });
-    });
+    }    
     console.log(formdata);
 
     await axios
-      .post('http://dev.unyict.org/api/altruists/apply', formdata)
+      .post('http://10.0.2.2/api/altruists/apply', formdata)
       .then((response) => {
         this.setState({spinnerModalVisible:false})
         if (response.data.status == '500') {
@@ -573,7 +581,9 @@ class AltApplyFormScreen extends React.Component {
             onPress={() => this.setAltruist()}>
             <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>신청</Text>
           </TouchableHighlight>
+          <Button onPress={()=>console.log(JSON.stringify(this.state.alt_photo))}>state</Button>
           </View>
+
         </ScrollView>
             <Modal
                 visible={filterModalVisible}
