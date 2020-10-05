@@ -315,7 +315,7 @@ class Board_post extends CB_Controller
 				return false;
 			}
 		}
-		if (element('use_personal', $board) && $is_admin === false
+		if (element('use_personal', $board) /* && $is_admin === false */
 			&& $mem_id !== abs(element('mem_id', $post))&& $mem_id !== abs(element('answer_mem_id', $post))) {
 			alert('1:1 게시판은 본인의 글 이외의 열람이 금지되어있습니다.');
 			return false;
@@ -750,7 +750,7 @@ class Board_post extends CB_Controller
 				&& $this->cbconfig->get_device_view_type() === 'mobile') {
 				$where['post_notice'] = 0;
 			}
-			if (element('use_personal', $board) && $is_admin === false) {
+			if (element('use_personal', $board) /* &&  $is_admin === false */) {
 				$where['post.mem_id'] = $mem_id;
 			}
 			$sfield = $sfieldchk = $this->input->get('sfield', null, '');
@@ -1012,7 +1012,7 @@ class Board_post extends CB_Controller
 						($use_sideview ? 'Y' : 'N')
 					);
 				} else {
-					$noticeresult[$key]['display_name'] = '익명사용자';
+					$noticeresult[$key]['display_name'] = '익명';
 				}
 			
 
@@ -1038,7 +1038,8 @@ class Board_post extends CB_Controller
 		/**
 		 * 게시판 목록에 필요한 정보를 가져옵니다.
 		 */
-		if ($brd_key=='indi' && $is_admin === false) {
+		//if ($brd_key=='indi' && $is_admin === false) {
+		if ($brd_key=='indi' ) {
 			if($this->input->get('type')=='send'){
 				$where = "`cb_post`.brd_id=".$this->board->item_key('brd_id', $brd_key)." AND (`cb_post`.mem_id=".$mem_id.")";
 			}else{
@@ -1057,7 +1058,8 @@ class Board_post extends CB_Controller
 			   && $this->cbconfig->get_device_view_type() === 'mobile') {
 			   $where['post_notice'] = 0;
 		   }
-		   if (element('use_personal', $board) && $is_admin === false) {
+		   //if (element('use_personal', $board) && $is_admin === false) {
+			   if (element('use_personal', $board) ) {
 			   $where['post.mem_id'] = $mem_id;
 		   }
 		}
