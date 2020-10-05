@@ -470,8 +470,8 @@ class Board_post extends CB_Controller
 			if ($file && is_array($file)) {
 				foreach ($file as $key => $value) {
 					if (element('pfi_is_image', $value)) {
-						$value['origin_image_url'] = site_url(config_item('uploads_dir') . '/post/' . element('pfi_filename', $value));
 						$value['thumb_image_url'] = thumb_url('post', element('pfi_filename', $value), $image_width);
+						$value['origin_image_url'] = thumb_url('post', element('pfi_filename', $value), $image_width);//site_url(config_item('uploads_dir') . '/post/' . element('pfi_filename', $value));
 						$view['view']['file_image'][] = $value;
 					} else {
 						$value['download_link'] = site_url('postact/download/' . element('pfi_id', $value));
@@ -1199,7 +1199,8 @@ class Board_post extends CB_Controller
 					if ($file && is_array($file)) {
 						foreach ($file as $key1 => $value1) {
 							if (element('pfi_is_image', $value1)) { 
-								$value1['origin_image_url'] = site_url(config_item('uploads_dir') . '/post/' . element('pfi_filename', $value1));
+								//$value1['origin_image_url2'] = site_url(config_item('uploads_dir') . '/post/' . element('pfi_filename', $value1));
+								$value1['origin_image_url'] = thumb_url('post', element('pfi_filename', $value1), 300);  
 								$value1['thumb_image_url'] = thumb_url('post', element('pfi_filename', $value1), $image_width);
 							}
 							$result['list'][$key]['file'][$key1] = $value1;

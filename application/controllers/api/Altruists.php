@@ -1594,10 +1594,10 @@ class Altruists extends CB_Controller
 		try {
 
 			$this->db->trans_start();
-
+			if($updatephoto =='' || $updatephoto == null) $updatephoto = '/';
 			//프로필 저장 
 			$insertdata = array();
-			$insertdata['mem_id'] = $this->input->post('mem_id');
+			$insertdata['mem_id'] = $this->input->post('mem_id','');
 			$insertdata['alt_aboutme'] = $this->input->post('alt_aboutme');
 			$insertdata['alt_content'] = $this->input->post('alt_content');
 			$insertdata['alt_answertype'] = $this->input->post('alt_answertype');
@@ -1607,8 +1607,9 @@ class Altruists extends CB_Controller
 			$insertdata['alt_photo'] = $updatephoto;
 			$insertdata['alt_title'] = $this->input->post('alt_title');
 			// alt_datetime - 자동 입력으로 생략 cdate('Y-m-d H:i:s');
-
+						
 			$alt_id = $this->Altruists_model->insert($insertdata);
+			//log_message('error', 'alt_id :'.$alt_id);
 
 
 			//경력 정보 저장
@@ -1629,18 +1630,20 @@ class Altruists extends CB_Controller
 			}
 
 			$acv_result = $this->db->insert_batch('cb_alt_cv', $acv_insert);
-
+			//log_message('error', 'acv_result :'.$acv_result);
 			//전문영역 저장
 			$area_insert = array();
 			if (isset($_POST['act_id'])  && is_array($_POST['act_id']) && count($_POST['act_id']) > 0) {
 				for ($i = 0; count($_POST['act_id']) - 1 >= $i; $i++) {
 					$area_insert[$i]['alt_id']      = 	$alt_id;
+					//log_message('error', '$area_insert[$i][alt_id] :'.$area_insert[$i]['alt_id']);
 					$area_insert[$i]['act_id']    =    $_POST['act_id'][$i];
+					//log_message('error', '$area_insert[$i][act_id]  :'.$area_insert[$i]['act_id'] );
 				}
 			}
 
 			$area_result = $this->db->insert_batch('cb_alt_area', $area_insert);
-
+			//log_message('error', 'area_result :'.$area_result);
 			//commit 
 			$this->db->trans_complete();
 
@@ -1819,7 +1822,7 @@ EOT;
 		if ($this->_mem_userid_check($userid) === false) {
 			$result = array(
 				'result' => 'no',
-				'reason' => $userid . '은(는) 예약어로 사용하실 수 없는 회원아이디입니다',
+				'reason' => $userid . '은(는) 사용하실 수 없는 회원아이디입니다',
 			);
 			exit(json_encode($result));
 		}
@@ -1882,7 +1885,7 @@ EOT;
 		if ($this->_mem_email_check($email) === false) {
 			$result = array(
 				'result' => 'no',
-				'reason' => $email . '은(는) 예약어로 사용하실 수 없는 이메일입니다',
+				'reason' => $email . '은(는) 사용하실 수 없는 이메일입니다',
 			);
 			exit(json_encode($result));
 		}
@@ -2003,7 +2006,7 @@ EOT;
 		if (preg_match("/[\,]?{$str}/i", $this->cbconfig->item('denied_userid_list'))) {
 			$this->form_validation->set_message(
 				'_mem_userid_check',
-				$str . ' 은(는) 예약어로 사용하실 수 없는 회원아이디입니다'
+				$str . ' 은(는) 사용하실 수 없는 회원아이디입니다'
 			);
 			return false;
 		}
@@ -2029,7 +2032,7 @@ EOT;
 		if (preg_match("/[\,]?{$str}/i", $this->cbconfig->item('denied_nickname_list'))) {
 			$this->form_validation->set_message(
 				'_mem_nickname_check',
-				$str . ' 은(는) 예약어로 사용하실 수 없는 닉네임입니다'
+				$str . ' 은(는) 사용하실 수 없는 닉네임입니다'
 			);
 			return false;
 		}
