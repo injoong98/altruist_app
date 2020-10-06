@@ -609,6 +609,8 @@ class RegisterScreen extends Component {
 
         <SafeAreaView
           style={{
+            paddingTop: 30,
+            paddingBottom: 30,
             flex: 1,
             alignItems: 'center',
             backgroundColor: '#FFFFFF',

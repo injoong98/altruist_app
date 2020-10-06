@@ -990,7 +990,7 @@ class Register extends CB_Controller
 				$this->Member_auth_email_model->insert($authdata);
 
 				// $verify_url = site_url('verify/confirmemail?user=' . $this->input->post('mem_userid') . '&code=' . $verificationcode);
-				$verify_url = 'http://peacedesigners.org/appWelcome.php?u?user=' . $this->input->post('mem_userid') . '&code=' . $verificationcode;
+				$verify_url = 'http://peacedesigners.org/appWelcome.php?user=' . $this->input->post('mem_userid') . '&code=' . $verificationcode;
 
 				$title = str_replace(
 					$searchconfig,
