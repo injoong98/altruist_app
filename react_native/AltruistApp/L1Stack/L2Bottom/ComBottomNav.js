@@ -2,18 +2,16 @@ import React from 'react';
 import {createBottomTabNavigator}from '@react-navigation/bottom-tabs';
 import {ComToptabNav} from './L3Toptab/ComToptabNav';
 import {AltStackNav} from './L3Stack/AltStackNav';
+import messaging from '@react-native-firebase/messaging'
 
-import {SafeAreaView,View, Image} from 'react-native';
-import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, Card, Icon} from '@ui-kitten/components';
+import {SafeAreaView,View, Image,Animated,StyleSheet} from 'react-native';
+import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, Card, Icon, styled} from '@ui-kitten/components';
 
 import ToggleTune from '../../components/ToggleTune';
 import {MyStackNav} from './L3MyStack/MyStackNav'
 
 import {AlarmToptab} from './Alarm'
 import Communitysvg from '../../assets/icons/community_svg.svg'
-import Altsvg from '../../assets/icons/altruist.svg'
-import Bellsvg from '../../assets/icons/bell.svg'
-import Mysvg from '../../assets/icons/mypage.svg'
 import { Signing,Notice } from '../Context';
 
 const AltIcon = (props) => (
@@ -62,6 +60,30 @@ const SpareScreen =({navigation}) =>(
 class AlarmIcon extends React.Component{
     constructor(props){
         super(props)
+        this.state={
+            size : new Animated.Value(1)
+        }
+    }
+    alarmAction = () => {
+        Animated.sequence([
+            Animated.timing(this.state.size,{
+                toValue:3,
+                duration: 250,
+                useNativeDriver: false
+            }),
+            Animated.timing(this.state.size,{
+                toValue:1,
+                duration: 250,
+                useNativeDriver: false
+            })
+        ]).start()
+        
+    };
+    componentDidMount(){
+        this.alarmAction();
+        messaging().onMessage(async remoteMessage => {
+            this.alarmAction();
+            });
     }
     render(){
         return(
@@ -70,11 +92,15 @@ class AlarmIcon extends React.Component{
                     <Notice.Consumer>{
                         notice=>
                         notice.unreadCount>0?
-                            <View style={{position:'absolute', right:0,backgroundColor:'#ff5c57',borderRadius:5,paddingHorizontal:2,paddingVertical:1,minWidth:15,alignItems:'center'}}>
+                            <Animated.View 
+                                style={[styles.numberContainer,{
+                                    paddingHorizontal:this.state.size,
+                                    paddingVertical:this.state.size,
+                                }]}>
                                 <Text style={{color:'#ffffff',fontSize:10}}>
                                     {notice.unreadCount}
                                 </Text>
-                            </View>
+                            </Animated.View>
                             :
                             null
                         }
@@ -121,3 +147,13 @@ export class ComBottomNav extends React.Component{
             </Navigator>
         )}
 }
+
+const styles = StyleSheet.create({
+    numberContainer:{position:'absolute',
+    right:0,
+    backgroundColor:'#ff5c57',
+    borderRadius:5,
+    minWidth:15,
+    alignItems:'center'}
+                                   
+})
