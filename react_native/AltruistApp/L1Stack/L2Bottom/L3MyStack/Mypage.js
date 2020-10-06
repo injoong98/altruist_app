@@ -57,8 +57,6 @@ class Mypage extends React.Component{
       const {logOutModalVisible} = this.state
       const {mem_point,mem_nickname,mem_photo,mem_profile_content} = this.state.mem_info
       const {navigate} =this.props.navigation
-      console.log('mem_photo : ',mem_photo)
-      console.log('type : '+typeof(mem_nickname))
         return(
           <SafeAreaView style={{flex:1}}>
               <ScrollView style={{flex:1,backgroundColor:'#ffffff'}}>
