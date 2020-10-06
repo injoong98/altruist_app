@@ -16,6 +16,15 @@ import Bellsvg from '../../assets/icons/bell.svg'
 import Mysvg from '../../assets/icons/mypage.svg'
 import { Signing,Notice } from '../Context';
 
+const AltIcon = (props) => (
+    <Icon {...props} name='altruist' pack='alticons' />
+  );
+const BellIcon = (props) => (
+    <Icon {...props} name='bell' pack='alticons' />
+  );
+const MyIcon = (props) => (
+    <Icon {...props} name='mypage' pack='alticons' />
+  );
 const {Navigator,Screen} = createBottomTabNavigator();
 
 const ToggleScreen=()=>(
@@ -79,10 +88,10 @@ const BottomTabBar = ({ navigation, state }) => (
       selectedIndex={state.index}
       onSelect={index => navigation.navigate(state.routeNames[index])}>
       {/* <BottomNavigationTab title={()=><Homesvg height={35} width ={35}/>}/> */}
-      <BottomNavigationTab title={()=><Altsvg height={35} />}/>
+      <BottomNavigationTab title={()=><AltIcon style={{height:35,width:35}}/>}/>
       <BottomNavigationTab title={()=><Communitysvg height={35} />}/>
-      <BottomNavigationTab title={()=><AlarmIcon />}/>  
-      <BottomNavigationTab title={()=><Mysvg height={35} />}/>
+      <BottomNavigationTab title={()=><BellIcon  style={{height:35,width:49}}/>}/>  
+      <BottomNavigationTab title={()=><MyIcon style={{height:35,width:58}}/>}/>
       {/* <BottomNavigationTab title={()=><HomeIcon />}/>
       <BottomNavigationTab title={()=><AltruistIcon  />}/>
       <BottomNavigationTab title={()=><CommunityIcon  />}/>
