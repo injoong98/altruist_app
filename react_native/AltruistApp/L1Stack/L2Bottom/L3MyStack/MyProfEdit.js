@@ -119,7 +119,21 @@ export class MyProfEdit extends React.Component{
             alert(JSON.stringify(err))
         })
     }
+    checkCharNum=()=>{
+        const {mem_nickname} = this.state;
+       if( mem_nickname.length > 10){
+           this.setState({nickLengthOver:true})
+        }else{
+            this.setState({nickLengthOver:false})
 
+       }
+    }
+    trim=()=>{
+        const {mem_nickname} = this.state;
+       if( mem_nickname.length > 10){
+           this.setState({mem_nickname:mem_nickname.slice(0,10)},this.checkCharNum)
+        };
+    }
     componentDidMount(){
         const{mem_username,mem_nickname,mem_email,mem_phone,mem_birthday,mem_sex,mem_profile_content,mem_photo}=this.props.route.params.mem_info
         this.setState({mem_username,mem_nickname,mem_email,mem_phone,mem_birthday,mem_sex,mem_profile_content,old_mem_photo:{uri:mem_photo}})
@@ -179,8 +193,12 @@ export class MyProfEdit extends React.Component{
                                 <TextInput
                                     value={mem_nickname} 
                                     style={styles.textInput} 
-                                    onChangeText={(text)=>this.setState({mem_nickname:text})}
+                                    onChangeText={(text)=>{this.setState({mem_nickname:text},this.checkCharNum)}}
+                                    onEndEditing={this.trim}
                                     />
+                            </View>
+                            <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',}}>
+                                <Text category='s2' style={{opacity: this.state.nickLengthOver ? 1:0,color:'#DB2434'}}>닉네임은 10자 이하입니다.</Text>
                             </View>
                             <View style={styles.inputContainer}>
                                 <View>
@@ -216,7 +234,7 @@ export class MyProfEdit extends React.Component{
                                     <Text category='h1' style={{fontSize:16,color:'#63579D'}}>자기소개</Text>
                                 </View>
                                 <TextInput
-                                    value={mem_profile_content!=null ? mem_profile_content:null} 
+                                    value={mem_profile_content!='null'? mem_profile_content:null} 
                                     style={[styles.textInput]} 
                                     onChangeText={(text)=>this.setState({mem_profile_content:text})}
                                     multiline={true}

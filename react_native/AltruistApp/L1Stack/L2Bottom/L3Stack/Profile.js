@@ -118,13 +118,8 @@ class AltProfileScreen extends React.Component {
           </View>
 
           <View
-            style={{
-              backgroundColor: 'white',
-              borderRadius: 20,
-              padding: 10,
-              margin: 5,
-            }}>
-            <Text category="h5">전문 분야</Text>
+            style={styles.title}>
+            <Text category="h5" style={styles.titleText}>전문 분야</Text>
             <View
               style={{
                 flexDirection: 'row',
@@ -138,37 +133,27 @@ class AltProfileScreen extends React.Component {
           </View>
 
           <View
-            style={{
-              backgroundColor: 'white',
-              borderRadius: 20,
-              padding: 10,
-              margin: 5,
-            }}>
-            <Text category="h5">멘토 소개</Text>
+            style={styles.title}>
+            <Text category="h5" style={styles.titleText}>멘토 소개</Text>
             <Text category="p2">{altruist.alt_profile.alt_aboutme}</Text>
           </View>
           <View
-            style={{
-              backgroundColor: 'white',
-              borderRadius: 20,
-              padding: 10,
-              margin: 5,
-            }}>
-            <Text category="h5">인사말</Text>
-            <Text category="p2">{altruist.alt_profile.alt_content}</Text>
+            style={styles.title}>
+            <Text category="h5" style={styles.titleText} >인사말</Text>
+            <Text category="p2" style={{lineHeight:22}}>{altruist.alt_profile.alt_content}</Text>
           </View>
 
           <View
-            style={{
-              backgroundColor: 'white',
-              borderRadius: 20,
-              padding: 10,
-              margin: 5,
-            }}>
-            <Text category="h5">주요 활동 및 경력</Text>
+            style={styles.title}>
+            <Text category="h5" style={styles.titleText}>주요 활동 및 경력</Text>
             {altruist.get_alt_cv.map((i) => (
               <Text category="p2" key={i.acv_id}>
-                {i.acv_year.trim() + ') '}
+                {
+                i.acv_year ?
+                  i.acv_year.trim()+') '
+                :
+                  null
+                }
                 {i.acv_content.trim()}
               </Text>
             ))}
@@ -186,6 +171,15 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: '40%',
   },
+  title:{
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 15,
+    margin: 5,
+  },
+  titleText:{
+    marginBottom:10
+  }
 });
 
 export default AltProfileScreen;

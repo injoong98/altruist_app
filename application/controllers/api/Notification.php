@@ -103,7 +103,7 @@ class Notification extends CB_Controller
 					$result['list'][$key]['read_url'] = 'javascript:;';
 					$result['list'][$key]['onClick'] = 'note_list(' . element('not_content_id', $val) . ');';
 				}
-				if (element('not_type', $val) === 'comment') {
+				if (element('not_type', $val) === 'comment'||element('not_type', $val) === 'comment_comment') {
 					$this->db->select('post_id,brd_id');
 					$comment_info = $this->db->get_where('cb_comment',array('cmt_id'=>element('not_content_id', $val)))->row_array() ; 
 					$result['list'][$key]['post_id'] = element('post_id',$comment_info);

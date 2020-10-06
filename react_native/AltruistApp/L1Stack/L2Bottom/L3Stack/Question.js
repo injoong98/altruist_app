@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity,KeyboardAvoidingView,Alert, ScrollView, Dimensions,TouchableHighlight,StatusBar,Keyboard} from 'react-native'
+import {SafeAreaView,TextInput,View,StyleSheet,TouchableOpacity,KeyboardAvoidingView,Alert, ScrollView, Dimensions,TouchableHighlight,StatusBar,Keyboard,Pressable} from 'react-native'
 import {Layout,Text,TopNavigation, Button,Icon, TopNavigationAction,List,Spinner,Divider,Modal,Popover} from '@ui-kitten/components'
 import axios from 'axios'
 
@@ -1164,10 +1164,13 @@ class AltQuestionWrite extends React.Component
                 gbckuse={true}
             />
             <KeyboardAvoidingView
-                    style={{flex:1}} 
+                    style={{flex:1,borderWidth:0}} 
                     behavior={Platform.OS == "ios" ? "padding" : "height"}
             >
-                <View style={{ flex:1,backgroundColor:"#f4f4f4",padding:10}}>
+                <Pressable 
+                    style={{ flex:1,backgroundColor:"#f4f4f4",padding:10,borderWidth:0}}
+                    onPress={()=>Keyboard.dismiss()}
+                >
                     <View style={{display:'flex',flexDirection:'row',paddingHorizontal:10}}>
                     {
                         answer_mem_id ? 
@@ -1237,7 +1240,7 @@ class AltQuestionWrite extends React.Component
                             placeholderTextColor='#A897C2'
                         />
                     </View>
-                </View>
+                </Pressable>
            </KeyboardAvoidingView>
            <Modal
                 visible={filterModalVisible}

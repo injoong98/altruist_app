@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView,TextInput,StyleSheet,View,TouchableOpacity,Dimensions,TouchableHighlight,Animated} from 'react-native';
+import {SafeAreaView,TextInput,Image,StyleSheet,View,TouchableOpacity,Dimensions,TouchableHighlight,Animated} from 'react-native';
 import {Text,Icon,Spinner,List} from '@ui-kitten/components';
 import axios from 'axios'
 
@@ -98,8 +98,9 @@ class AltMainScreen extends React.Component{
         <>
             <View style={{flex:1, alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff'}}>
                 <View style={{ alignItems:'center',justifyContent:'space-evenly'}}>
-                    <View style={{marginTop:91}}>
+                    <View style={{marginTop:41}}>
                         <MainSvg width={wdithLogo} height={heightLogo}/>
+                        {/* <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/'}}/> */}
                     </View>
                     {/* <View style={{marginTop:22}}>
                         <TextInput 
@@ -188,7 +189,7 @@ class AltMainScreen extends React.Component{
                         </TouchableHighlight>
                         <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltQueToptab')}>
                             <Text numberOfLines={1} category="h1" style={styles.btnText}>
-                            일대일 질문
+                            1:1 질문
                             </Text>
                         </TouchableHighlight>
                     </Animated.View>
