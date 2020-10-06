@@ -116,35 +116,35 @@ class AlbaScreen extends React.Component {
         style={styles.carditem}>
           <View style={{flexDirection : 'row'}}>
               <View style={{flex : 6.5}}>
-                <View style={{flexDirection:'row', margin : 5, padding : 5, flex : 6, height:50}}>
-                  <View style={{flex:3}}>
+                <View style={{flexDirection:'row', marginVertical : 5, padding : 5, flex : 6, height:50}}>
+                  <View style={{flex:2.5}}>
                     <Text category = 'h4' style={{padding:5 , borderRadius : 20}} 
                           numberOfLines={2} ellipsizeMode='tail'>{item.title}
                     </Text>
                   </View>
                   <View style={styles.NameView}>
-                    <Text style={{fontSize:12}} category='h1'>{item.post_nickname}</Text>
-                    <PostTime datetime = {item.post_datetime}/>
+                    <Text category='h4' style={{fontSize:12}} numberOfLines={1}>{item.post_nickname}</Text>
+                    <PostTime category='c1' datetime = {item.post_datetime}/>
                   </View>
                 </View>
                 <View style = {{flexDirection : 'row', flex:1}}>
-                  <View style = {{flexDirection : 'row', backgroundColor:'white', borderTopRightRadius:10, flex:1, width : 220, maxHeight:40}}>
+                  <View style = {{flexDirection : 'row', backgroundColor:'white', borderTopRightRadius:10, flex:1, width : 220, maxHeight:35}}>
                     <View style={{flexDirection : 'row', alignItems : 'center', flex:0.6, marginLeft : 5}}>
-                      <Text style={{color:'#FF6262', fontWeight:'bold'}} category='p1'>
+                      <Text style={{color:'#FF6262', fontWeight:'bold'}} category='c1'>
                         {this.Alba_salary_type[item.alba_salary_type].str+' '}
                       </Text>
-                      <Text category='p1' numberOfLines={1} ellipsizeMode='tail'> 
+                      <Text category='c1' numberOfLines={1} ellipsizeMode='tail'> 
                         {(item.alba_salary).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                       </Text>
                     </View>
                     <View style={{flexDirection : 'row', alignItems : 'center', flex:1}}>
-                      <Text style={{color:'#7370DD', fontWeight:'bold'}} category='p1'>{item.alba_type == 0?'단기':'장기'}</Text>
-                      <Text category='p1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
+                      <Text style={{color:'#7370DD', fontWeight:'bold'}} category='c1'>{item.alba_type == 0?'단기':'장기'}</Text>
+                      <Text category='c1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
                     </View>
                   </View>
-                  <View style={{alignItems:'center',paddingHorizontal:10}}>
+                  <View style={{alignItems:'center', marginLeft : 10, width : 30}}>
                     <Viewsvg width = {20} height={20}/>
-                    <Text style = {{marginHorizontal:5}} category="p1">{item.post_hit}</Text>
+                    <Text style = {{marginHorizontal:5}} category="c1">{item.post_hit}</Text>
                   </View>
                 </View>
               </View>
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     width : 80, 
     height : 80, 
     borderRadius : 15, 
-    margin : 7
+    margin : 7,
   },
   NameView: {
     flex:1,

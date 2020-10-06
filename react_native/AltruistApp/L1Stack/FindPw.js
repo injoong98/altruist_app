@@ -103,20 +103,19 @@ class FindPwScreen extends Component {
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
         <TopNavigation
-          title={() => <Text category="h2">비밀번호 재설정</Text>}
+          title={() => <Text category="h2"></Text>}
           alignment="center"
           accessoryLeft={this.BackAction}
+          style={{}}
         />
-        <View style={{flex: 3}}>
+        <View style={{flex: 1,justifyContent:'center'}}>
           <View style={{paddingBottom: 30}}>
             <Text
-              category="h3"
+              category="h2"
               style={{
                 alignSelf: 'center',
                 paddingTop: 40,
                 paddingBottom: 20,
-                color: '#A897C2',
-                fontWeight: 'bold',
               }}>
               비밀번호 재설정
             </Text>

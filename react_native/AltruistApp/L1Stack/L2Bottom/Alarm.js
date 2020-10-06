@@ -205,10 +205,10 @@ export class AlarmScreen extends React.Component{
                     style={[styles.notiContainer,{backgroundColor: item.not_read_datetime == null ? '#f4f4f4' : '#c4c4c4'}]} 
                 >
                     <View style={{flexDirection:"row",justifyContent:'space-evenly'}}>
-                        <View style={{flex:7}}>
+                        <View style={{flex:9}}>
                             <Text>{item.not_message}</Text>
                         </View>
-                        <View style={{flex:1}}>
+                        <View style={{flex:2,alignItems:'flex-end'}}>
                             <PostTime category="p1" style={{fontSize:9, color:'#63579D'}} datetime = {item.not_datetime}/>
                         </View>
                     </View>
