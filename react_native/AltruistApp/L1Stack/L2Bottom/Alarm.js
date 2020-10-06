@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,SafeAreaView,Text,FlatList,StyleSheet,TouchableOpacity,StatusBar} from 'react-native';
+import {View,SafeAreaView,Text,FlatList,StyleSheet,TouchableOpacity,ActivityIndicator} from 'react-native';
 import axios from 'axios';
 import messaging from '@react-native-firebase/messaging'
 import {TabBar, Tab,Spinner,Button} from '@ui-kitten/components'
@@ -32,61 +32,65 @@ const renderNotis =(item,index,navigation,onRefresh) => {
 export class AlarmFaq extends React.Component{
     constructor(props){
         super(props)
-        this.state={
-            isLoading:false,
-            noti:[]
-        }
-    }
-    getNotiList=()=>{
-        this.setState({isLoading:true});
-        axios.get('http://dev.unyict.org/api/board_post/lists/faq')
-        .then(res=>{
-            this.setState({noti:res.data.view.list.data.list,isLoading:false})
-        })
-        .catch(err=>{
-            console.log('getNotiList : '+ err)
-        })
-    }
-    onRefresh=()=>{
-        this.getNotiList();   
-    }
-    componentDidMount(){
-        this.getNotiList();
     }
     render(){
-        const {noti,isLoading} =this.state
         return(
-            <View  style={styles.container} style={{flex:1}}>
-                {
-                 isLoading?
-                 <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
-                     <Spinner size='giant'/>
-                 </View>
-                     :
-                     <View style={{flex:1,paddingTop:20,backgroundColor:'#ffffff'}}>
-                        <FlatList 
-                        data={noti}
-                        renderItem={({item,index})=>renderNotis(item,index,this.props.navigation,this.onRefresh)}
-                        keyExtractor={(item,index)=>index.toString()}
-                        style={{backgroundColor:'#ffffff'}}
-                        />
-                     </View>
-                }
-            </View>
+            <AlarmNotices type='faq'/>
         )
     }
 }
 export class AlarmOfficial extends React.Component{
     constructor(props){
         super(props)
+    }
+    render(){
+        return(
+            <AlarmNotices type='notice'/>
+        )
+    }
+}
+export class AlarmNotices extends React.Component{
+    constructor(props){
+        super(props)
         this.state={
-            isLoading:false,
-            noti:[]
+            isLoading:true,
+            refreshing:false,
+            isNoMoreData:false,
+            noti:[],
+            current_page:1,
+            isListLoading:false
         }
     }
+    renderFooter=()=>{
+        return(
+          this.state.isListLoading ?
+          <View style = {styles.loader}>
+            <ActivityIndicator size='large'/>
+          </View>:null
+        )
+    }
+    getPostList = async() =>{
+        await axios.get(`http://dev.unyict.org/api/board_post/lists/${this.props.type}?page=${this.state.current_page}`)
+        .then((response)=>{
+          if(response.data.view.list.data.list.length > 0){
+            this.setState({
+              noti:this.state.noti.concat(response.data.view.list.data.list),
+              isLoading:false,
+              isListLoading:false,
+            })
+          }
+          else{
+            console.log('no page data');
+            this.setState({isListLoading:false, isNoMoreData : true});
+          }
+        })
+        .catch((error)=>{
+            alert('error : '+error)
+        })
+      }
     getNotiList=()=>{
         this.setState({isLoading:true});
-        axios.get('http://dev.unyict.org/api/board_post/lists/notice')
+        axios.get(`http://dev.unyict.org/api/board_post/lists/${this.props.type}`)
         .then(res=>{
             this.setState({noti:res.data.view.list.data.list,isLoading:false})
         })
@@ -96,6 +100,17 @@ export class AlarmOfficial extends React.Component{
     }
     onRefresh=()=>{
         this.getNotiList();   
+    }
+    load_more_data = () => {
+        if(this.state.total_rows < 20){
+			this.setState({isNoMoreData:true});
+		}
+       	else if(!this.state.isNoMoreData){
+            this.setState({
+            current_page : this.state.current_page + 1,
+            isListLoading : true},
+            this.getPostList, console.log(this.state.current_page))
+        }
     }
     componentDidMount(){
         this.getNotiList();
@@ -116,6 +131,11 @@ export class AlarmOfficial extends React.Component{
                         renderItem={({item,index})=>renderNotis(item,index,this.props.navigation,this.onRefresh)}
                         keyExtractor={(item,index)=>index.toString()}
                         style={{backgroundColor:'#ffffff'}}
+                        onRefresh={this.onRefresh}
+                        refreshing={this.state.refreshing}
+                        onEndReached={this.load_more_data}
+                        onEndReachedThreshold = {0.9}
+                        ListFooterComponent={this.renderFooter}
                         />
                      </View>
                 }
