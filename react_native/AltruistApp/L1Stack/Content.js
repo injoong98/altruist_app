@@ -68,6 +68,7 @@ class GominContent extends React.Component{
             content:'',
             cmt_content:'',
             cmt_id:'',
+            mem_icon_url:'',
             replying:false,
             isLoading:true,
             refreshing:false,
@@ -277,7 +278,7 @@ class GominContent extends React.Component{
     getPostData = async (post_id)=>{
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post});
+            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_icon});
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
             this.setState({content:post_remove_tagsf})
@@ -334,7 +335,10 @@ class GominContent extends React.Component{
                 </View>
                 <View style={{display:"flex",flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
                     <View style={{flexDirection:'row'}}>
-                        <StarIcon />
+                        {post.post_anoymous_yn=='0'
+                        ?<Image source={{uri : this.state.mem_icon_url}} style={{width:22, height:22, marginRight:5}}/>
+                        :null
+                        }
                         <View>
                             <Text category="h4" style={{fontSize:11, color:'#393939'}}>{post.display_name}</Text>
                             <View style={{flexDirection:'row', justifyContent:'center'}}>
@@ -392,7 +396,7 @@ class GominContent extends React.Component{
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
-                        <StarIcon />
+                        <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/>
                         <View>
                             <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
                             <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
@@ -583,6 +587,7 @@ class MarketContent extends React.Component {
             comment : '',
             cmt_content : '',
             cmt_id:'',
+            mem_icon_url:'',
             isLoading : true,
             refreshing : false,
             replying:false,
@@ -623,7 +628,7 @@ class MarketContent extends React.Component {
         
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post})
+            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_icon})
             if (response.data.view.file_image){
                 this.setState({image: response.data.view.file_image.map(function(item, index){
                     var image_info = {};
@@ -916,7 +921,7 @@ class MarketContent extends React.Component {
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
-                        <StarIcon />
+                        <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/>
                         <View>
                             <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
                             <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
@@ -975,11 +980,11 @@ class MarketContent extends React.Component {
                     </Layout>
                     <Divider/>
                     <Layout style={{height:30,flexDirection:'row', marginTop:15}}>
-                        <Layout style={{width:30}}>
-                            <Image source={require('../assets/images/icon-social-dark.png')} style={{flex : 1, width:'100%', resizeMode:'contain'}}/>
+                        <Layout style={{width:40}}>
+                            <Image source={{uri : this.state.mem_icon_url}} style={{flex : 1, width:40, height:40, borderRadius:5, resizeMode:'contain'}}/>
                         </Layout>
                         <Layout style={{flex:1, justifyContent:'center', paddingLeft:5}}>
-                            <Text category='h6'>{post.post_nickname}</Text>
+                            <Text category='h5'>{post.post_nickname}</Text>
                         </Layout>
                         <Layout style={{flexDirection:'row'}}>
                             <Layout style={{justifyContent:'center', alignItems:'center'}}>
@@ -1331,7 +1336,6 @@ class AlbaContent extends React.Component {
         const {post, confirmModalVisible, resultModalVisible, spinnerModalVisible, modalType, popoverVisible} = this.state;
         
         return(
-            <Root>
             <SafeAreaView style={{flex:1}}>
                 <WriteContentToptab
                 backgroundColor='#F4F4F4'
@@ -1350,36 +1354,36 @@ class AlbaContent extends React.Component {
                 :<ScrollView style={{backgroundColor : '#F4F4F4'}}>
                     <Card disabled={true} style={styles.item}>
                         <Layout style={{flex:1, flexDirection:'row'}}>
-                            <View style={{flex:1}}>
+                            {/* <View style={{flex:1}}>
+                            </View> */}
+                            <View style={{flex:1, flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
+                                {post.post_thumb_use > 0?<Image style={{width : 60, height : 60, borderRadius:10}} source={{uri:this.state.thumb_image.origin_image_url}}/>
+                                :<Image style={{width : 60, height : 60, borderRadius:10}} source={require('../assets/images/noimage.png')}/>}
+                                {/* <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text> */}
                             </View>
-                            <View style={{flex:2, flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
-                                {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:this.state.thumb_image.origin_image_url}}/>
-                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
-                                <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text>
-                            </View>
-                            <View style={{flex: 1, flexDirection : 'row', justifyContent:'flex-end'}}>
-                                <View style={{marginHorizontal:10, alignItems:'center'}}>
-                                    <Viewsvg width={20} height={20}/>
-                                    <Text category='p1'>{post.post_hit}</Text>
+                            <View style={{flexDirection : 'row', justifyContent:'flex-end', position:'absolute', right:0, top:0}}>
+                                <View style={{marginRight:0, alignItems:'center'}}>
+                                    <Viewsvg width={15} height={15}/>
+                                    <Text category='p1' style={{fontSize:10}}>{post.post_hit}</Text>
                                 </View>
-                                <View style={{marginHorizontal:10, alignItems:'center'}}>
-                                    <Timesvg width={20} height={20}/>
-                                    <PostTime category='p1' datetime = {post.post_datetime}/>
+                                <View style={{marginLeft:10, alignItems:'center'}}>
+                                    <Timesvg width={15} height={15}/>
+                                    <PostTime category='p1' style={{fontSize:10}} datetime = {post.post_datetime}/>
                                 </View>
                             </View>
                         </Layout>
                         <View style={styles.title}>
-                            <Text category= 'h1' style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
+                            <Text category= 'h3' style={{margin : 10}}>{post.post_title}</Text>
                         </View>
                         <Layout style={styles.icons}>
                             <Text style={{color:'#FF6262'}} category='h5'>
                                 {this.Alba_salary_type[post.alba_salary_type]}
                             </Text>
-                            <Text category='h5'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
+                            <Text category='h5'> {(post.alba_salary).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원 / </Text>
                             <Text style={{color:'#7370DD'}} category='h5'>
                                 {post.alba_type?'장기':'단기'}
                             </Text>
-                            <Text> / </Text>
+                            <Text category='h5'> / </Text>
                             <Text style={{color:'#393939'}} category='h5'>
                                 연락처
                             </Text>
@@ -1397,19 +1401,22 @@ class AlbaContent extends React.Component {
                             <View style={{flex : 1, marginLeft : 5}}>
                                 <Text style={styles.gathertext}>급여</Text>
                             </View>
-                            <View style={{flex : 5, flexDirection : 'row'}}>
-                                <Text style={[styles.gather, {color:'#FF6262'}]}>
+                            <View style={{flex : 5, flexDirection : 'row', marginLeft : 5}}>
+                                <Text style={{color:'#FF6262', marginVertical : 5}}>
                                     {this.Alba_salary_type[post.alba_salary_type]+' '}
                                 </Text>
-                                <Text style={styles.gather}>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                                <Text style={{marginVertical : 5}}>{(post.alba_salary).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원</Text>
                             </View>
                         </Layout>
                         <Layout style = {{flexDirection : 'row'}}>
                             <View style={{flex : 1, marginLeft : 5}}>
                                 <Text style={styles.gathertext}>근무기간</Text>
                             </View>
-                            <View style={{flex : 5}}>
-                                <Text style={styles.gather}>{post.alba_type?'장기 (3개월 ~)':'단기 (1일 ~ 3개월)'}</Text>
+                            <View style={{flex : 5, marginLeft : 5, flexDirection:'row'}}>
+                                <Text style={{color:'#7370DD', marginVertical : 5}}>
+                                    {post.alba_type?'장기':'단기'}
+                                </Text>
+                                <Text style={{marginVertical : 5,}}>{post.alba_type?'(3개월 ~)':'(1일 ~ 3개월)'}</Text>
                             </View>
                         </Layout>
                     </Card>
@@ -1422,42 +1429,40 @@ class AlbaContent extends React.Component {
                             }}/>
                         {this.state.file_images ? this.state.file_images.map((i,index) => <View key={i.uri}>{this.renderImage(i,index)}</View>) : null} 
                     </Card>
-                </ScrollView>
-                }
-                <Layout>
-                    <TouchableOpacity style={styles.bottomButton} onPress={()=>this.setVisible(true)}>
+                </ScrollView>}
+                    <TouchableOpacity style={styles.bottomButton} onPress={()=>this.setState({visible:true})}>
                         <PaperPlanesvg width = {42} height = {32}/>
                         <Text category = 'h2' style={{color : 'white'}}>지원하기</Text>
                     </TouchableOpacity>
                     <Modal
                         visible={this.state.visible}
                         backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
-                        onBackdropPress={() => this.setVisible(false)}>
+                        onBackdropPress={() => this.setState({visible:false})}>
                         <Card disabled={true} style={{borderRadius:20}}>
                             <Layout style={{flexDirection:'row'}}>
                                 <View style={styles.modal_icons}>
                                     <TouchableOpacity
-                                        onPress={()=>{Linking.openURL(`tel:${post.post_ph}`)}}>
+                                        onPress={()=>{this.setState({visible:false});Linking.openURL(`tel:${post.post_hp}`)}}>
                                         <Callsvg width={40} height = {40}/>
                                     </TouchableOpacity>
                                     <Text>전화</Text>
                                 </View>
                                     <View style={styles.modal_icons}>
                                     <TouchableOpacity
-                                        onPress={()=>{Linking.openURL(`sms:${post.post_ph}`)}}>
+                                        onPress={()=>{this.setState({visible:false});Linking.openURL(`sms:${post.post_hp}`)}}>
                                         <Callmessagesvg width={40} height = {40}/>
                                     </TouchableOpacity>
                                     <Text>메시지</Text>
                                 </View>
                                 <View style={styles.modal_icons}>
                                     <TouchableOpacity
-                                            onPress={()=>{Linking.openURL(`mailto:${post.post_email}`)}}>
+                                            onPress={()=>{this.setState({visible:false});Linking.openURL(`mailto:${post.post_email}`)}}>
                                             <Emailsvg width={40} height = {40}/>
                                     </TouchableOpacity>
                                     <Text>이메일</Text>
                                 </View>
                             </Layout>
-                            <Button onPress={()=>this.setVisible(false)} appearance='ghost' >
+                            <Button onPress={()=>this.setState({visible:false})} appearance='ghost' >
                                 취소
                             </Button>
                         </Card>
@@ -1533,9 +1538,7 @@ class AlbaContent extends React.Component {
                         backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}>
                         <Spinner size='giant'/>
                     </Modal>
-                </Layout>
             </SafeAreaView>
-            </Root>
         )
     }
 }
@@ -1549,6 +1552,7 @@ class IlbanContent extends Component {
             cmt_content:'',
             cmt_id:'',
             image:[],
+            mem_icon_url:'',
             replying:false,
             isLoading:true,
             refreshing:false,
@@ -1761,7 +1765,7 @@ class IlbanContent extends Component {
     getPostData = async (post_id)=>{
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post});
+            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_icon});
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
             this.setState({content:post_remove_tagsf})
@@ -1825,7 +1829,7 @@ class IlbanContent extends Component {
             <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:20, paddingTop:10}} >
                 <View style={{marginLeft:25,marginTop:10,marginBottom:13}}>
                     <View style={{display:"flex",flexDirection:'row'}}>
-                        <StarIcon />
+                        <Image source={{uri : this.state.mem_icon_url}} style={{width:23, height:23, marginRight:5}}/>
                         <View>
                             <Text category="s2" style={{fontSize:12}}>{post.display_name}</Text>
                             <View style={{display:"flex",flexDirection:'row'}}>
@@ -1914,7 +1918,7 @@ class IlbanContent extends Component {
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
-                        <StarIcon />
+                        <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/>
                         <View>
                             <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
                             <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
@@ -2022,6 +2026,7 @@ class IlbanContent extends Component {
                         <TouchableOpacity 
                             onPress={()=>{
                                 this.setState({popoverVisible:false});
+                                console.log(this.state.image);
                                 this.props.navigation.navigate('IlbanWrite',
                                     {
                                         statefunction:this.statefunction,
@@ -2167,9 +2172,6 @@ const styles = StyleSheet.create({
     },
     gathertext : {
         color : 'gray',
-        marginVertical : 5,
-    },
-    gather :{
         marginVertical : 5,
     },
     bottom: {

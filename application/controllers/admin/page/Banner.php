@@ -75,6 +75,7 @@ class Banner extends CB_Controller
 			'ban_hit' => $param->sort('ban_hit', 'asc'),
 			'ban_order' => $param->sort('ban_order', 'asc'),
 			'ban_activated' => $param->sort('ban_activated', 'asc'),
+			'post_id' => $this->input->post('post_id'),
 		);
 		$findex = $this->input->get('findex') ? $this->input->get('findex') : $this->{$this->modelname}->primary_key;
 		$forder = $this->input->get('forder', null, 'desc');
@@ -304,9 +305,9 @@ class Banner extends CB_Controller
 				$uploadconfig = array();
 				$uploadconfig['upload_path'] = $upload_path;
 				$uploadconfig['allowed_types'] = 'jpg|jpeg|png|gif';
-				$uploadconfig['max_size'] = '2000';
-				$uploadconfig['max_width'] = '1000';
-				$uploadconfig['max_height'] = '1000';
+				$uploadconfig['max_size'] = '200000';
+				$uploadconfig['max_width'] = '90000';
+				$uploadconfig['max_height'] = '90000';
 				$uploadconfig['encrypt_name'] = true;
 
 				$this->upload->initialize($uploadconfig);
@@ -390,6 +391,7 @@ class Banner extends CB_Controller
 				'ban_height' => $ban_height,
 				'ban_order' => $ban_order,
 				'ban_activated' => $ban_activated,
+				'post_id' => $this->input->post('post_id'),
 			);
 			if ($this->input->post('ban_image_del')) {
 				$updatedata['ban_image'] = '';

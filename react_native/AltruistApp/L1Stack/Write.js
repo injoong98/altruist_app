@@ -1098,9 +1098,9 @@ class AlbaWrite extends React.Component {
   }
 
   renderSelectItems = () => (
-    <View style = {{marginLeft : 12, marginVertical : 10, alignItems:'center', justifyContent:'center'}}>
-        <TouchableOpacity style={{flexDirection:'row', borderRadius:10, backgroundColor:'#978DC7', paddingHorizontal:15, paddingVertical:5, width:100, justifyContent:'space-between'}} onPress={()=>this.setState({popoverVisible:true})}>    
-          <Text category='h5' style={{color:'white'}}>
+    <View style = {{marginVertical : 10, alignItems:'center', justifyContent:'center'}}>
+        <TouchableOpacity style={{flexDirection:'row', borderRadius:10, backgroundColor:'#978DC7', paddingHorizontal:15, paddingVertical:5, justifyContent:'space-between'}} onPress={()=>this.setState({popoverVisible:true})}>    
+          <Text category='h5' style={{color:'white', marginRight:5}}>
             {this.Salary_Type[this.state.alba_salary_type]}</Text>
           <Text style={{color:'white'}}>▼</Text>
         </TouchableOpacity>
@@ -1132,7 +1132,7 @@ class AlbaWrite extends React.Component {
           <ScrollView>
             <TextInput
               value={post_title}
-              style={[styles.input,{fontSize: 24, marginTop: 10}]}
+              style={[styles.input,{fontSize: 18, marginTop: 10}]}
               placeholder="제목"
               onChangeText={(nextText) => {this.setState({post_title: nextText});}}
             />
@@ -1153,7 +1153,7 @@ class AlbaWrite extends React.Component {
                     visible={this.state.isTipVisible}
                     placement="bottom end"
                     onBackdropPress={() => this.setTipVisible(false)}>
-                    <Text>3개월미만은 단기, 3개월 이상은 장기</Text>
+                    <Text category='c2' style={{color:'white'}}>3개월미만은 단기, 3개월 이상은 장기</Text>
                   </Tooltip>
                 </View>
                 <View style={{flexDirection: 'row', alignItems:'center', flex:1 }}>
@@ -1207,7 +1207,7 @@ class AlbaWrite extends React.Component {
             </View>
             <TextInput
               value={post_location}
-              style={[styles.input, {fontSize: 20}]}
+              style={[styles.input, {fontSize: 18}]}
               placeholder="근무지"
               onChangeText={(nextText) => {
                 this.setState({post_location: nextText});
@@ -1215,7 +1215,7 @@ class AlbaWrite extends React.Component {
             />
             <TextInput
               value={post_content}
-              style={[styles.input, {fontSize: 20}]}
+              style={[styles.input, {fontSize: 18}]}
               multiline={true}
               numberOfLines={5}
               placeholder="내용"
@@ -1233,7 +1233,10 @@ class AlbaWrite extends React.Component {
                   justifyContent: 'space-between',
                   marginVertical: 10,
                 }}>
-                <Text category="h4"> 사진</Text>
+                <View style={{flexDirection:'row', alignItems:'baseline'}}>
+                  <Text category='h4'> 사진 </Text>
+                  <Text category='c1'>(* 맨 첫 이미지에 회사 로고를 넣어주세요.)</Text>
+                </View>
                 <TouchableOpacity onPress={() => this.pickMultiple()}>
                   <Camsvg />
                 </TouchableOpacity>
@@ -1255,9 +1258,7 @@ class AlbaWrite extends React.Component {
                   }></CheckBox>
                 <Text style={{fontSize: 12}} category="c2">
                   {' '}
-                  {this.state.post_thumb_use
-                    ? '회사 로고(썸네일)가 없을경우 체크해주세요.'
-                    : '맨 첫 이미지로 썸네일을 넣어주세요.'}
+                  회사 로고가 없을경우 체크해주세요.
                 </Text>
               </View>
             </Layout>
@@ -1477,7 +1478,10 @@ class IlbanWrite extends React.Component {
       mime: image.mime,
       path: image.path,
       content: image.data,
-      index: this.state.Image_index,
+      props : {
+        edit : false, 
+        index: this.state.Image_index
+      },
     };
     console.log(item);
     this.setState({Image_index: this.state.Image_index + 1});
@@ -1487,12 +1491,9 @@ class IlbanWrite extends React.Component {
   
   deleteImage(index) {
     const {images, Image_index} = this.state;
-    index==this.state.post_main_thumb
-    ?this.setState({post_main_thumb:0})
-    :null;
     images.splice(index,1);
-    images.map(i => i.index>index
-      ?i.index--
+    images.map(i => i.props.index>index
+      ?i.props.index--
       :null
     );
     this.setState({images: images, Image_index:Image_index-1});
@@ -1507,13 +1508,13 @@ class IlbanWrite extends React.Component {
         <Image
           style={styles.market_RenderImage}
           source={
-            image.edit
+            image.props.edit
               ? {uri: image.url}
               : image.url
           }
         />
         <View style={{position:'absolute', right:0, zIndex:2, width:20, height:20}}>
-          <TouchableWithoutFeedback onPress={()=>this.deleteImage(image.index)}>
+          <TouchableWithoutFeedback onPress={()=>this.deleteImage(image.props.index)}>
             <Icon style={{width:20, height:20}} fill='#63579D' name='close-outline'/>
           </TouchableWithoutFeedback>
         </View>
