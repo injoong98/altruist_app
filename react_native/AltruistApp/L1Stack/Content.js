@@ -1373,7 +1373,7 @@ class AlbaContent extends React.Component {
                             </View>
                         </Layout>
                         <View style={styles.title}>
-                            <Text category= 'h1' style={{margin : 10, fontSize : 28}}>{post.post_title}</Text>
+                            <Text category= 'h3' style={{margin : 10}}>{post.post_title}</Text>
                         </View>
                         <Layout style={styles.icons}>
                             <Text style={{color:'#FF6262'}} category='h5'>
