@@ -68,7 +68,7 @@ class RegisterSuccessScreen extends Component {
               인증을 완료하면 로그인하실 수 있습니다.
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              메일함에 없을 경우,
+              메일함에서 보이지 않을 경우,
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
               스팸함을 확인해주세요 !
