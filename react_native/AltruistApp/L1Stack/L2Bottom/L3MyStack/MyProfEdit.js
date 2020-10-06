@@ -216,7 +216,7 @@ export class MyProfEdit extends React.Component{
                                     <Text category='h1' style={{fontSize:16,color:'#63579D'}}>자기소개</Text>
                                 </View>
                                 <TextInput
-                                    value={mem_profile_content!=null ? mem_profile_content:null} 
+                                    value={mem_profile_content!='null'? mem_profile_content:null} 
                                     style={[styles.textInput]} 
                                     onChangeText={(text)=>this.setState({mem_profile_content:text})}
                                     multiline={true}
