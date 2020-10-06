@@ -10,7 +10,7 @@ import ToggleTune from '../../components/ToggleTune';
 import {MyStackNav} from './L3MyStack/MyStackNav'
 
 import {AlarmToptab} from './Alarm'
-import Communitysvg from '../../assets/icons/community.svg'
+import Communitysvg from '../../assets/icons/community_svg.svg'
 import Altsvg from '../../assets/icons/altruist.svg'
 import Bellsvg from '../../assets/icons/bell.svg'
 import Mysvg from '../../assets/icons/mypage.svg'
