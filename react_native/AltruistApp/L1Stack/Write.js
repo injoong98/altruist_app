@@ -1099,7 +1099,7 @@ class AlbaWrite extends React.Component {
 
   renderSelectItems = () => (
     <View style = {{marginLeft : 12, marginVertical : 10, alignItems:'center', justifyContent:'center'}}>
-        <TouchableOpacity style={{flexDirection:'row', borderRadius:10, backgroundColor:'#978DC7', paddingHorizontal:15, paddingVertical:5, width:100, justifyContent:'space-between'}} onPress={()=>this.setState({popoverVisible:true})}>    
+        <TouchableOpacity style={{flexDirection:'row', borderRadius:10, backgroundColor:'#978DC7', paddingHorizontal:15, paddingVertical:5, justifyContent:'space-between'}} onPress={()=>this.setState({popoverVisible:true})}>    
           <Text category='h5' style={{color:'white'}}>
             {this.Salary_Type[this.state.alba_salary_type]}</Text>
           <Text style={{color:'white'}}>▼</Text>
@@ -1153,7 +1153,7 @@ class AlbaWrite extends React.Component {
                     visible={this.state.isTipVisible}
                     placement="bottom end"
                     onBackdropPress={() => this.setTipVisible(false)}>
-                    <Text>3개월미만은 단기, 3개월 이상은 장기</Text>
+                    <Text category='p2' style={{color:'white'}}>3개월미만은 단기, 3개월 이상은 장기</Text>
                   </Tooltip>
                 </View>
                 <View style={{flexDirection: 'row', alignItems:'center', flex:1 }}>

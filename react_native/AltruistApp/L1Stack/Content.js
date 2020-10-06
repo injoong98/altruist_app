@@ -1336,7 +1336,6 @@ class AlbaContent extends React.Component {
         const {post, confirmModalVisible, resultModalVisible, spinnerModalVisible, modalType, popoverVisible} = this.state;
         
         return(
-            <Root>
             <SafeAreaView style={{flex:1}}>
                 <WriteContentToptab
                 backgroundColor='#F4F4F4'
@@ -1358,8 +1357,8 @@ class AlbaContent extends React.Component {
                             {/* <View style={{flex:1}}>
                             </View> */}
                             <View style={{flex:1, flexDirection:'row', alignItems : 'center', justifyContent : 'center'}}>
-                                {post.post_thumb_use > 0?<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={{uri:this.state.thumb_image.origin_image_url}}/>
-                                :<Image style={{width : 80, height : 80, resizeMode:'contain'}} source={require('../assets/images/noimage.png')}/>}
+                                {post.post_thumb_use > 0?<Image style={{width : 60, height : 60, borderRadius:10}} source={{uri:this.state.thumb_image.origin_image_url}}/>
+                                :<Image style={{width : 60, height : 60, borderRadius:10}} source={require('../assets/images/noimage.png')}/>}
                                 {/* <Text category='h5' style={{margin : 15}}>{post.post_nickname}</Text> */}
                             </View>
                             <View style={{flexDirection : 'row', justifyContent:'flex-end', position:'absolute', right:0, top:0}}>
@@ -1380,11 +1379,11 @@ class AlbaContent extends React.Component {
                             <Text style={{color:'#FF6262'}} category='h5'>
                                 {this.Alba_salary_type[post.alba_salary_type]}
                             </Text>
-                            <Text category='h5'> {(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')} / </Text>
+                            <Text category='h5'> {(post.alba_salary).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원 / </Text>
                             <Text style={{color:'#7370DD'}} category='h5'>
                                 {post.alba_type?'장기':'단기'}
                             </Text>
-                            <Text> / </Text>
+                            <Text category='h5'> / </Text>
                             <Text style={{color:'#393939'}} category='h5'>
                                 연락처
                             </Text>
@@ -1402,19 +1401,22 @@ class AlbaContent extends React.Component {
                             <View style={{flex : 1, marginLeft : 5}}>
                                 <Text style={styles.gathertext}>급여</Text>
                             </View>
-                            <View style={{flex : 5, flexDirection : 'row'}}>
-                                <Text style={[styles.gather, {color:'#FF6262'}]}>
+                            <View style={{flex : 5, flexDirection : 'row', marginLeft : 5}}>
+                                <Text style={{color:'#FF6262', marginVertical : 5}}>
                                     {this.Alba_salary_type[post.alba_salary_type]+' '}
                                 </Text>
-                                <Text style={styles.gather}>{(post.alba_salary != '추후협의'?post.alba_salary+'원':post.alba_salary).replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                                <Text style={{marginVertical : 5}}>{(post.alba_salary).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원</Text>
                             </View>
                         </Layout>
                         <Layout style = {{flexDirection : 'row'}}>
                             <View style={{flex : 1, marginLeft : 5}}>
                                 <Text style={styles.gathertext}>근무기간</Text>
                             </View>
-                            <View style={{flex : 5}}>
-                                <Text style={styles.gather}>{post.alba_type?'장기 (3개월 ~)':'단기 (1일 ~ 3개월)'}</Text>
+                            <View style={{flex : 5, marginLeft : 5, flexDirection:'row'}}>
+                                <Text style={{color:'#7370DD', marginVertical : 5}}>
+                                    {post.alba_type?'장기':'단기'}
+                                </Text>
+                                <Text style={{marginVertical : 5,}}>{post.alba_type?'(3개월 ~)':'(1일 ~ 3개월)'}</Text>
                             </View>
                         </Layout>
                     </Card>
@@ -1427,42 +1429,40 @@ class AlbaContent extends React.Component {
                             }}/>
                         {this.state.file_images ? this.state.file_images.map((i,index) => <View key={i.uri}>{this.renderImage(i,index)}</View>) : null} 
                     </Card>
-                </ScrollView>
-                }
-                <Layout>
-                    <TouchableOpacity style={styles.bottomButton} onPress={()=>this.setVisible(true)}>
+                </ScrollView>}
+                    <TouchableOpacity style={styles.bottomButton} onPress={()=>this.setState({visible:true})}>
                         <PaperPlanesvg width = {42} height = {32}/>
                         <Text category = 'h2' style={{color : 'white'}}>지원하기</Text>
                     </TouchableOpacity>
                     <Modal
                         visible={this.state.visible}
                         backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
-                        onBackdropPress={() => this.setVisible(false)}>
+                        onBackdropPress={() => this.setState({visible:false})}>
                         <Card disabled={true} style={{borderRadius:20}}>
                             <Layout style={{flexDirection:'row'}}>
                                 <View style={styles.modal_icons}>
                                     <TouchableOpacity
-                                        onPress={()=>{Linking.openURL(`tel:${post.post_ph}`)}}>
+                                        onPress={()=>{this.setState({visible:false});Linking.openURL(`tel:${post.post_hp}`)}}>
                                         <Callsvg width={40} height = {40}/>
                                     </TouchableOpacity>
                                     <Text>전화</Text>
                                 </View>
                                     <View style={styles.modal_icons}>
                                     <TouchableOpacity
-                                        onPress={()=>{Linking.openURL(`sms:${post.post_ph}`)}}>
+                                        onPress={()=>{this.setState({visible:false});Linking.openURL(`sms:${post.post_hp}`)}}>
                                         <Callmessagesvg width={40} height = {40}/>
                                     </TouchableOpacity>
                                     <Text>메시지</Text>
                                 </View>
                                 <View style={styles.modal_icons}>
                                     <TouchableOpacity
-                                            onPress={()=>{Linking.openURL(`mailto:${post.post_email}`)}}>
+                                            onPress={()=>{this.setState({visible:false});Linking.openURL(`mailto:${post.post_email}`)}}>
                                             <Emailsvg width={40} height = {40}/>
                                     </TouchableOpacity>
                                     <Text>이메일</Text>
                                 </View>
                             </Layout>
-                            <Button onPress={()=>this.setVisible(false)} appearance='ghost' >
+                            <Button onPress={()=>this.setState({visible:false})} appearance='ghost' >
                                 취소
                             </Button>
                         </Card>
@@ -1538,9 +1538,7 @@ class AlbaContent extends React.Component {
                         backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}>
                         <Spinner size='giant'/>
                     </Modal>
-                </Layout>
             </SafeAreaView>
-            </Root>
         )
     }
 }
@@ -2174,9 +2172,6 @@ const styles = StyleSheet.create({
     },
     gathertext : {
         color : 'gray',
-        marginVertical : 5,
-    },
-    gather :{
         marginVertical : 5,
     },
     bottom: {

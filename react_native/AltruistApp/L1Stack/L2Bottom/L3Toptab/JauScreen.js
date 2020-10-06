@@ -104,7 +104,7 @@ class JauScreen extends React.Component {
 	load_more_data = () => {
 		if(this.state.total_rows < 20){
 			this.setState({isNoMoreData:true});
-			console.log('load_more_data isNoMoreData : '+isNoMoreData)
+			console.log('load_more_data isNoMoreData : '+this.state.isNoMoreData);
 		}
        	else if(!this.state.isNoMoreData){
 			this.setState({ current_page : this.state.current_page + 1, isListLoading : true}, this.getPostList)
