@@ -56,8 +56,11 @@ export const AltQueToptab= ({navigation}) => (
           gbckuse={true}
           style={{backgroundColor:'#f4f4f4'}}
       /> */}
-    <TopBarTune text="질문" func={()=>navigation.navigate('Meet')} />
-
+    <TopBarTune 
+      text="질문" func={()=>navigation.navigate('Meet')}
+      gbckuse={true}
+      gbckfunc={()=>{navigation.goBack()}}
+    />
       <TabNavigator/>
   </SafeAreaView>
 );
