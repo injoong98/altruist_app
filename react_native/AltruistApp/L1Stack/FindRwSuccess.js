@@ -28,22 +28,20 @@ class FindRwSuccessScreen extends Component {
   render() {
     console.log(this.state);
     return (
-      <SafeAreaView style={{flex: 2, backgroundColor: '#FFFFFF'}}>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
         <TopNavigation
-          title={() => <Text category="h2">메일 전송</Text>}
+          title={() => <Text category="h2"></Text>}
           alignment="center"
           accessoryLeft={this.BackAction}
         />
-        <View style={{flex: 4}}>
-          <View style={{flex: 1}}>
+        <View style={{flex: 1,justifyContent:'center'}}>
+          <View style={{}}>
             <Text
-              category="h3"
+              category="h2"
               style={{
                 alignSelf: 'center',
-                paddingTop: 60,
+                
                 paddingBottom: 20,
-                color: '#A897C2',
-                fontWeight: 'bold',
               }}>
               비밀번호 재설정 메일 전송
             </Text>
@@ -54,7 +52,7 @@ class FindRwSuccessScreen extends Component {
               비밀번호 재설정 완료하면 로그인 할 수 있습니다.
             </Text>
           </View>
-          <View style={{flex: 2}}>
+          <View style={{marginTop:30}}>
             <Button
               style={{
                 alignSelf: 'center',
