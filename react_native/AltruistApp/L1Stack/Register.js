@@ -224,7 +224,12 @@ class RegisterScreen extends Component {
         console.log('checkNotNull : emailisnotright');
         this.setState({goNext: true});
       }
-      if (!this.state.checked) {
+      if (this.state.EmailCaption.includes('예약어')) {
+        this.setState({goNext: true});
+      }
+      if (this.state.EmailCaption.includes('가능')) {
+        this.setState({goNext: false});
+        this.setState({pwStyle: ''});
       }
     }
     // return;

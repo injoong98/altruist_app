@@ -95,10 +95,11 @@ class AltMainScreen extends React.Component{
         const wdithLogo = (width*0.8);
         const heightLogo = (wdithLogo*0.57);
         return(
-        <>
-            <View style={{flex:1, alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff'}}>
-                <View style={{ alignItems:'center',justifyContent:'space-evenly'}}>
-                    <View style={{marginTop:91}}>
+            <View style={{flex:1}}>
+
+            <View style={{height:height,alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff',paddingBottom:100}}>
+                <View style={{flex:2,alignItems:'center',justifyContent:'center'}}>
+                    <View style={{}}>
                         <MainSvg width={wdithLogo} height={heightLogo}/>
                         {/* <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/'}}/> */}
                     </View>
@@ -118,7 +119,7 @@ class AltMainScreen extends React.Component{
                             <Searchsvg height={25} width={25} fill='#A9C' />
                         </TouchableOpacity>
                     </View> */}
-                    <View style={{marginTop:28,alignItems:'center'}} >
+                    <View style={{alignItems:'center'}} >
                         {/* {
                             this.context.is_altruist =='Y'?
                             null
@@ -146,65 +147,64 @@ class AltMainScreen extends React.Component{
                             <Text category='h2' style={{color:'#A897C2',fontSize:18}}>1:1 질문</Text>
                         
                         </TouchableOpacity> */}
+                    </View>
+                    <View style={{alignItems:'center'}}>
                         <TouchableOpacity 
                             style={styles.mainbtn}
                             onPress={()=>navigation.navigate('AltList',{title:title})}
                         >
                             <Text category='h2' style={{color:'#A897C2',fontSize:18}}>이타주의자 찾기</Text>
-                        
                         </TouchableOpacity>
-                       
                     </View>
-                    
                 </View>
-                <View style={{marginTop:150,flexDirection:'row',width:'100%',paddingLeft:40,paddingRight:12}}>                        
-                    <TouchableHighlight style={[styles.btn,{borderRadius:15,width:30}]} onPress={btnContainerCompressed?this.maximizing:this.minimizing}>
-                        {btnContainerCompressed? 
-                            <Plussvg height={30} width={30}/>
-                            :
-                            <Minussvg height={30} width={30}/>
-                        }    
-                    </TouchableHighlight>
-                    <Animated.View style={{flexDirection:'row',justifyContent:'space-evenly',overflow:'hidden',width:btnContainerWidthInterpolate}}>
-                        {
-                            this.context.is_altruist =='Y'?
-                            null
-                            :
-                            <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltApply')}>
+                <View style={{flex:1,justifyContent:'flex-end',paddingBottom:10}}>
+                    <View style={{flexDirection:'row',width:'100%',paddingLeft:40,paddingRight:12,marginBottom:'5%'}}>                        
+                        <TouchableHighlight style={[styles.btn,{borderRadius:15,width:30}]} onPress={btnContainerCompressed?this.maximizing:this.minimizing}>
+                            {btnContainerCompressed? 
+                                <Plussvg height={30} width={30}/>
+                                :
+                                <Minussvg height={30} width={30}/>
+                            }    
+                        </TouchableHighlight>
+                        <Animated.View style={{flexDirection:'row',justifyContent:'space-evenly',overflow:'hidden',width:btnContainerWidthInterpolate}}>
+                            {
+                                this.context.is_altruist =='Y'?
+                                null
+                                :
+                                <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltApply')}>
+                                    <Text numberOfLines={1} category="h1" style={styles.btnText}>
+                                    지원
+                                    </Text>
+                                </TouchableHighlight>
+                            }
+
+                            {/* <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltList')}>
                                 <Text numberOfLines={1} category="h1" style={styles.btnText}>
-                                지원
+                                멘토리스트
+                                </Text>
+                            </TouchableHighlight> */}
+                            {/* <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltOpqQueList')}>
+                                <Text numberOfLines={1} category="h1" style={styles.btnText}>
+                                오픈 질문
+                                </Text>
+                            </TouchableHighlight> */}
+                            <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltQueToptab')}>
+                                <Text numberOfLines={1} category="h1" style={styles.btnText}>
+                                질문함
                                 </Text>
                             </TouchableHighlight>
-                        }
-
-                        {/* <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltList')}>
-                            <Text numberOfLines={1} category="h1" style={styles.btnText}>
-                            멘토리스트
-                            </Text>
-                        </TouchableHighlight> */}
-                        <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltOpqQueList')}>
-                            <Text numberOfLines={1} category="h1" style={styles.btnText}>
-                            오픈 질문
-                            </Text>
-                        </TouchableHighlight>
-                        <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltQueToptab')}>
-                            <Text numberOfLines={1} category="h1" style={styles.btnText}>
-                            일대일 질문
-                            </Text>
-                        </TouchableHighlight>
-                    </Animated.View>
-                </View>
-                <View style={{marginBottom:15,marginTop:30}}>
-                        <Slider
-                            height={100} 
-                            image={[
-                                {id:0,url:'/uploads/6e3a7e4e1f77abb3b060_20200904100225599.jpg'},
-                                {id:1,url:'/uploads/59901fc0cb0b6526dee1_20200903153758446.jpg'}    
-                            ]}
-                            dotStyle={{position:'absolute'}}
-                        /> 
+                        </Animated.View>
                     </View>
-                <View style={{marginVertical:40,width:'90%',alignItems:'center'}}>    
+                    <Slider
+                        height={100} 
+                        image={[
+                            {id:0,url:'/uploads/6e3a7e4e1f77abb3b060_20200904100225599.jpg'},
+                            {id:1,url:'/uploads/59901fc0cb0b6526dee1_20200903153758446.jpg'}    
+                        ]}
+                        dotStyle={{position:'absolute'}}
+                    /> 
+                </View>
+                <View style={{width:'90%',alignItems:'center'}}>    
                     <View style={{flexDirection:'row'}}>
                         <Text category='h2' style={{color:'#63579D'}}>이타주의자들</Text>
                     </View>
@@ -220,7 +220,9 @@ class AltMainScreen extends React.Component{
                     </TouchableOpacity>
                 </View>
             </View>
-        </>
+            </View>
+
+        
     )}
 
     

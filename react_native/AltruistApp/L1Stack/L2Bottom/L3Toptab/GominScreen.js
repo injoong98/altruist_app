@@ -126,7 +126,7 @@ class GominScreen extends React.Component {
         <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}}>
             <View>
                 <Text style ={styles.headtext} category="h3" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
-                <Text style={styles.subtext} category="p1" numberOfLines={2}  ellipsizeMode="tail">{post_remove_tags}</Text>
+                <Text style={styles.subtext} category="p1" numberOfLines={1}  ellipsizeMode="tail">{post_remove_tags}</Text>
             </View>
             <View style={styles.subtitle}>
                 <View style={{flex:4,display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4, paddingBottom:5}}> 

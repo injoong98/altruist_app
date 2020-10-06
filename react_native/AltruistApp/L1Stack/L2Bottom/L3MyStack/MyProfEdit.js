@@ -121,7 +121,7 @@ export class MyProfEdit extends React.Component{
     }
     checkCharNum=()=>{
         const {mem_nickname} = this.state;
-       if( mem_nickname.length > 20){
+       if( mem_nickname.length > 10){
            this.setState({nickLengthOver:true})
         }else{
             this.setState({nickLengthOver:false})
@@ -130,10 +130,9 @@ export class MyProfEdit extends React.Component{
     }
     trim=()=>{
         const {mem_nickname} = this.state;
-       if( mem_nickname.length > 20){
-           this.setState({mem_nickname:mem_nickname.slice(0,20)})
-        }
-        this.checkCharNum();
+       if( mem_nickname.length > 10){
+           this.setState({mem_nickname:mem_nickname.slice(0,10)},this.checkCharNum)
+        };
     }
     componentDidMount(){
         const{mem_username,mem_nickname,mem_email,mem_phone,mem_birthday,mem_sex,mem_profile_content,mem_photo}=this.props.route.params.mem_info
@@ -199,7 +198,7 @@ export class MyProfEdit extends React.Component{
                                     />
                             </View>
                             <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',}}>
-                                <Text category='s2' style={{opacity: this.state.nickLengthOver ? 1:0,color:'#DB2434'}}>닉네임은 20자 이하입니다.</Text>
+                                <Text category='s2' style={{opacity: this.state.nickLengthOver ? 1:0,color:'#DB2434'}}>닉네임은 10자 이하입니다.</Text>
                             </View>
                             <View style={styles.inputContainer}>
                                 <View>

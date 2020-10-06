@@ -149,8 +149,8 @@ class JauScreen extends React.Component {
 			style={styles.itembox}
 			onPress={() => {this.props.navigation.navigate('IlbanContent', {OnGoback: () => this.onRefresh(),post_id: item.post_id});}}
 			>
-			<View style={{flex:1, backgroundColor:'white', width:111, borderBottomRightRadius:15}}>
-				<Text category='s2' style={{fontSize:14,color:'#63579D', padding:5, flex:1}}>{'#'+this.category[item.post_category]}</Text>
+			<View style={{flex:1, backgroundColor:'white', width:90, borderBottomRightRadius:15}}>
+				<Text category='s2' style={{fontSize:12, color:'#63579D', padding:5, flex:1}}>{'#'+this.category[item.post_category]}</Text>
 			</View>
 			<View style={{marginHorizontal:20, marginTop:5}}>
 				<View style={{paddingVertical:4, paddingLeft:5}}>
@@ -207,7 +207,7 @@ class JauScreen extends React.Component {
 					:null
 					}
 				</View>
-				<View style={{flexDirection:'row', flex:1, marginTop:30}}>
+				<View style={{flexDirection:'row', flex:1, marginTop:30, justifyContent:'flex-end'}}>
 					<View style={{flex:2, flexDirection:'row'}}> 
 						<View style={{flexDirection:'row', flex:1, alignItems:'flex-end', paddingBottom:8}}>
 							<Text category="s2" style={{fontSize:12, color:'#63579D', marginRight:5}}>{item.display_name} </Text>
@@ -261,7 +261,7 @@ class JauScreen extends React.Component {
 						key={index}
 						style={{alignItems:'center', justifyContent:'center', marginHorizontal:5}}
 						onPress={async()=>{this.setState({current_category:index, current_page:1},this.getPostFirst)}}>
-						<Text category='h3' key={index} style={{color:(current_category==index?'white':'#543D78')}}> {'#'+str} </Text>
+						<Text category='h6' key={index} style={{color:(current_category==index?'white':'#543D78')}}> {'#'+str} </Text>
 					</TouchableOpacity>))}
 				</ScrollView>
 				<View style={{flex:20}}>

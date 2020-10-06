@@ -2,11 +2,13 @@ import React from 'react';
 import {View,SafeAreaView,Text,FlatList,StyleSheet,TouchableOpacity,StatusBar} from 'react-native';
 import axios from 'axios';
 import messaging from '@react-native-firebase/messaging'
-import {Spinner,Button} from '@ui-kitten/components'
-import {MyTabBar} from '../../components/TopTab'
+import {TabBar, Tab,Spinner,Button} from '@ui-kitten/components'
+import {MyTabBar,TopTab} from '../../components/TopTab'
 import {PostTime} from '../../components/PostTime'
+import {TopBarTune} from '../../components/TopBarTune'
 import {Notice} from '../Context'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
 const renderNotis =(item,index,navigation,onRefresh) => {
@@ -242,7 +244,7 @@ export class AlarmScreen extends React.Component{
                     <Spinner size='giant'/>
                 </View>
                      :
-                <View style={{flex:1,paddingTop:20,backgroundColor:'#ffffff'}}>
+                <View style={{flex:1,paddingTop:10,backgroundColor:'#ffffff'}}>
                     <FlatList 
                         data={this.state.noti}
                         renderItem={this.renderNotis}
@@ -255,20 +257,34 @@ export class AlarmScreen extends React.Component{
         )
     }
 }
-    
-  const TabNavigator = () => (
-    <Navigator tabBar={props => <MyTabBar {...props} />}>
-      <Screen name='AlarmPrivate' component={AlarmScreen} options={ {title:'알람'}}/>
-      <Screen name='AlarmOfficial' component={AlarmOfficial}  options={{title:'공지사항'}}/>
-      <Screen name='AlarmFaq' component={AlarmFaq}  options={{title:'FAQ'}}/>
-    </Navigator>
+
+
+
+const TopTabBar = ({ navigation, state }) => (
+    <TabBar
+        selectedIndex={state.index}
+        onSelect={index => {navigation.navigate(state.routeNames[index]);console.log(state.index)}}
+        indicatorStyle={styles.indicatorStyle}
+      >
+      <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h2' belowctgry="h4" abovetext="알림"  selected={state.index} thisindex ={0}/> }/>
+      <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h2' belowctgry="h4" abovetext="공지사항" selected={state.index} thisindex ={1}/> }/>
+      <Tab title={evaProps => <TopTab {...evaProps} abovectgry='h2' belowctgry="h4" abovetext="FAQ"  selected={state.index} thisindex ={2}/> }/>
+    </TabBar>
   );
+const TabNavigator = () => (
+<Navigator tabBar={props => <TopTabBar {...props} />}>
+    <Screen name='AlarmPrivate' component={AlarmScreen} options={ {title:'알람'}}/>
+    <Screen name='AlarmOfficial' component={AlarmOfficial}  options={{title:'공지사항'}}/>
+    <Screen name='AlarmFaq' component={AlarmFaq}  options={{title:'FAQ'}}/>
+</Navigator>
+);
   
 export class AlarmToptab extends React.Component{
     
     render(){
         return (
             <SafeAreaView style={{flex:1,}}>
+                <TopBarTune text="알람" func={()=>navigation.navigate('Meet')} />
                 <TabNavigator/>
             </SafeAreaView>
         );

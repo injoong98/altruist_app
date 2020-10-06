@@ -10,12 +10,12 @@ const IconProvider = (source) => ({
 export const AltIconsPack = {
   name: 'alticons',
   icons: {
-    altruist: IconProvider(require('./assets/icons/altruist.svg')),
-    bell: IconProvider(require('./assets/icons/bell.svg')),
+    altruist: IconProvider(require('./assets/icons/alt_png.png')),
+    bell: IconProvider(require('./assets/icons/bell_png.png')),
     community: IconProvider(require('./assets/icons/community.svg')),
     'heart-filled': IconProvider(require('./assets/icons/heart.svg')),
     home: IconProvider(require('./assets/icons/home.svg')),
-    mypage: IconProvider(require('./assets/icons/mypage.svg')),
+    mypage: IconProvider(require('./assets/icons//my_png.png')),
     'paper-plane': IconProvider(require('./assets/icons/paper-plane.svg')),
     'thumb-up': IconProvider(require('./assets/icons/thumb-up.svg')),
     'thumb-up-filled': IconProvider(

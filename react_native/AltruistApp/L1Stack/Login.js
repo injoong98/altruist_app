@@ -101,45 +101,45 @@ class LoginScreen extends React.Component{
               style={{borderWidth:2,backgroundColor:'#ffffff'}}
               onPress={()=>{Keyboard.dismiss()}}
             >
-              <View style={{alignItems:'center',position:'relative',top:'35%'}}>
-                <View style={{backgroundColor:'#ffffff'}}>
+              <View style={{position:'relative',flex:1,alignItems:'center',justifyContent:'center'}}>
+                <View style={{backgroundColor:'#ffffff',alignItems:'center',justifyContent:'center'}}>
                   <LogoSvg  width={wdithLogo} height={heightLogo}/>
                 </View>
-                <TextInput
-                    style={styles.testInput}
-                    placeholder="아이디 혹은 이메일"
-                    onChangeText={nextValue => this.setState({mem_userid:nextValue})}
-                    placeholderTextColor='#A897C2'
-                    value={mem_userid}
-                />
-                <TextInput
-                    ref='pwinput'
-                    style={styles.testInput}
-                    secureTextEntry={true}
-                    placeholder="비밀번호"
-                    onChangeText={nextValue => this.setState({mem_password:nextValue})}
-                    placeholderTextColor='#A897C2'
-                    value={mem_password}
-                />
-                
-                <TouchableOpacity style={styles.logInBtn} onPress={()=>signIn(mem_userid,mem_password,autologin)}>
-                  <Text category='h2' style={{fontSize:12,color:'#ffffff'}}>
-                    로그인
-                  </Text>  
-                </TouchableOpacity>
-                <View style={{marginTop:26, justifyContent:'center',alignItems:'center'}}>
+                  <TextInput
+                      style={styles.testInput}
+                      placeholder="아이디 혹은 이메일"
+                      onChangeText={nextValue => this.setState({mem_userid:nextValue})}
+                      placeholderTextColor='#A897C2'
+                      value={mem_userid}
+                  />
+                  <TextInput
+                      ref='pwinput'
+                      style={styles.testInput}
+                      secureTextEntry={true}
+                      placeholder="비밀번호"
+                      onChangeText={nextValue => this.setState({mem_password:nextValue})}
+                      placeholderTextColor='#A897C2'
+                      value={mem_password}
+                  />
                   
-                  <TouchableOpacity onPress={()=>this.props.navigation.navigate('FindPwScreen')}>
-                    <Text style={styles.optionText}>
-                    비밀번호 찾기
+                  <TouchableOpacity style={styles.logInBtn} onPress={()=>signIn(mem_userid,mem_password,autologin)}>
+                    <Text category='h2' style={{fontSize:12,color:'#ffffff'}}>
+                      로그인
                     </Text>  
                   </TouchableOpacity>
-                  <TouchableOpacity style={{marginTop:9}} onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
-                    <Text style={styles.optionText}>
-                      회원 가입
-                    </Text>  
-                  </TouchableOpacity>
-                </View>
+                  <View style={{marginTop:26, justifyContent:'center',alignItems:'center'}}>
+                    
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('FindPwScreen')}>
+                      <Text style={styles.optionText}>
+                      비밀번호 찾기
+                      </Text>  
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{marginTop:9}} onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
+                      <Text style={styles.optionText}>
+                        회원 가입
+                      </Text>  
+                    </TouchableOpacity>
+                  </View>
               </View>
             </TouchableWithoutFeedback>
           </View>
