@@ -111,12 +111,13 @@ class AltMainScreen extends React.Component{
         const wdithLogo = (width*0.8);
         const heightLogo = (wdithLogo*0.57);
         return(
+        <View style={{marginBottom:30,borderWidth:0}}>
             <View style={{flex:1}}>
                 <View style={{height:height,alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff',paddingBottom:100}}>
                     <View style={{flex:2,alignItems:'center',justifyContent:'center'}}>
                         <View style={{}}>
-                            <MainSvg width={wdithLogo} height={heightLogo}/>
-                            {/* <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/'}}/> */}
+                            {/* <MainSvg width={wdithLogo} height={heightLogo}/> */}
+                            <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
                         </View>
                         {/* <View style={{marginTop:22}}>
                             <TextInput 
@@ -218,23 +219,23 @@ class AltMainScreen extends React.Component{
                         /> 
                     </View>
                 </View>
-                <View style={{width:'90%',alignItems:'center'}}>    
-                    <View style={{flexDirection:'row'}}>
-                        <Text category='h2' style={{color:'#63579D'}}>이타주의자들</Text>
-                    </View>
-                        
-                        <TouchableOpacity onPress={()=>{this.sortAltList()}} style={{position:'absolute',right:0}}>
-                    {
-                        isLoading 
-                        ? 
-                        null 
-                        :
-                        <Reloadsvg height={25} width={25} fill="#A9C"/>
-                    }
-                    </TouchableOpacity>
-                </View>
             </View>
-
+            <View style={{width:'90%',alignItems:'center'}}>    
+                <View style={{flexDirection:'row'}}>
+                    <Text category='h2' style={{color:'#63579D'}}>이타주의자들</Text>
+                </View>
+                    
+                    <TouchableOpacity onPress={()=>{this.sortAltList()}} style={{position:'absolute',right:0}}>
+                {
+                    isLoading 
+                    ? 
+                    null 
+                    :
+                    <Reloadsvg height={25} width={25} fill="#A9C"/>
+                }
+                </TouchableOpacity>
+            </View>
+        </View>
         
     )}
 
