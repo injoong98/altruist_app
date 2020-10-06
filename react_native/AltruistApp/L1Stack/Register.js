@@ -126,12 +126,99 @@ class RegisterScreen extends Component {
     );
   };
 
-  notRequiredList = ['휴대폰 번호', '생년월일', '추천인'];
+  notRequiredList = ['휴대전화', '생년월일', '추천인'];
 
   notRequiredStates = ['mem_phone', 'mem_birthday', 'mem_recommend'];
 
-  NotRequiredInput = ({n, props}) => {
-    const {maxLength, dataDetectorTypes, keyboardType} = this.props;
+  maxLength = [13, 11, 20];
+
+  dataDetectorTypes = ['phoneNumber', 'phoneNumber', null];
+  keyboardType = ['phone-pad', 'numeric', null];
+
+  PhoneHyphen = (phonenum) => {
+    var number = phonenum.replace(/[^0-9]/g, '');
+    var phone = '';
+
+    if (number.length < 4) {
+      return number;
+    } else if (number.length < 7) {
+      phone += number.substr(0, 3);
+      phone += '-';
+      phone += number.substr(3);
+    } else if (number.length < 11) {
+      phone += number.substr(0, 3);
+      phone += '-';
+      phone += number.substr(3, 3);
+      phone += '-';
+      phone += number.substr(6);
+    } else {
+      phone += number.substr(0, 3);
+      phone += '-';
+      phone += number.substr(3, 4);
+      phone += '-';
+      phone += number.substr(7);
+    }
+    var value = phone;
+    this.setState({mem_phone: value});
+  };
+
+  BdayHyphen = (phonenum) => {
+    console.log(phonenum);
+    var number = phonenum.replace(/[^0-9]/g, '');
+    var phone = '';
+    console.log(number);
+
+    let this_year = new Date().getFullYear();
+    console.log(this_year);
+
+    if (number.length < 5) {
+      console.log(number);
+      return number;
+    } else if (number.length < 7) {
+      phone += number.substr(0, 4);
+      phone += '-';
+      phone += number.substr(4);
+    } else if (number.length < 11) {
+      phone += number.substr(0, 4);
+      phone += '-';
+      phone += number.substr(4, 2);
+      phone += '-';
+      phone += number.substr(6);
+    } else {
+      phone += number.substr(0, 4);
+      phone += '-';
+      phone += number.substr(4, 2);
+      phone += '-';
+      phone += number.substr(6);
+    }
+
+    var value = phone;
+    this.setState({mem_birthday: value});
+  };
+
+  bdaySubstr = (overwrited) => {
+    let phonefinal = '';
+
+    if (10 < overwrited.length) {
+      console.log('14이상', overwrited.length);
+      phonefinal = overwrited.substr(0, 10);
+      this.setState({mem_birthday: phonefinal});
+    }
+    console.log('bdaySubstr', phonefinal);
+  };
+
+  phoneSubstr = (overwrited) => {
+    let phonefinal = '';
+    if (13 < overwrited.length) {
+      console.log('14이상', overwrited.length);
+      phonefinal += overwrited.substr(0, 13);
+      this.setState({mem_phone: phonefinal});
+    }
+    console.log('phonefinal', phonefinal);
+  };
+
+  NotRequiredInput = ({n}) => {
+    // const {maxLength, dataDetectorTypes, keyboardType} = this.props;
     // const [val, setVal] = useState(''); // 입력한 값을 set
     // const [color, setColor] = useState('#FFFFFF'); // 입력한 값을 set
     const [checked, setChecked] = useState(false);
@@ -143,12 +230,14 @@ class RegisterScreen extends Component {
 
     return (
       <Input
-        maxLength={13}
-        // dataDetectorTypes={dataDetectorTypes}
-        // keyboardType={keyboardType}
+        maxLength={this.maxLength[n]}
+        dataDetectorTypes={this.dataDetectorTypes[n]}
+        keyboardType={this.keyboardType[n]}
         style={[{borderRadius: 15, borderColor: '#FFFFFF'}]}
         placeholder={notRequiredList}
         onChangeText={(nextVal) => {
+          this.maxLength[0] ? this.PhoneHyphen(nextVal) : null;
+          this.maxLength[1] ? this.BdayHyphen(nextVal) : null;
           setNotRequiredVal(nextVal);
           this.setState({[key]: notRequired});
         }}
@@ -429,26 +518,10 @@ class RegisterScreen extends Component {
           <this.requiredInput i={5} />
           <View style={{padding: 10}}></View>
           {/* 휴대폰번호 */}
-          <this.NotRequiredInput
-            n={0}
-            maxLength={13}
-            dataDetectorTypes={`phoneNumber`}
-            keyboardType={`phone-pad`}
-          />
-          {console.log(
-            <this.NotRequiredInput
-              n={0}
-              maxLength={`13`}
-              dataDetectorTypes={`phoneNumber`}
-              keyboardType={`phone-pad`}></this.NotRequiredInput>,
-          )}
+          <this.NotRequiredInput n={0} />
+
           {/* 생일 */}
-          <this.NotRequiredInput
-            n={1}
-            maxLength={10}
-            dataDetectorTypes={`phoneNumber`}
-            keyboardType={`numeric`}
-          />
+          <this.NotRequiredInput n={1} />
           {/* 추천인 */}
           <this.NotRequiredInput n={2} />
 
