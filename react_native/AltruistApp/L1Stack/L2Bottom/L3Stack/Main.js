@@ -203,6 +203,7 @@ class AltMainScreen extends React.Component{
                         ]}
                         dotStyle={{position:'absolute'}}
                     /> 
+            </View>
                 </View>
                 <View style={{width:'90%',alignItems:'center'}}>    
                     <View style={{flexDirection:'row'}}>
@@ -219,7 +220,6 @@ class AltMainScreen extends React.Component{
                     }
                     </TouchableOpacity>
                 </View>
-            </View>
             </View>
 
         
