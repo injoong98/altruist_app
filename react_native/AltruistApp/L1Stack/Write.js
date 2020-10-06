@@ -8,6 +8,7 @@ import { StyleSheet, SafeAreaView, View, Image, ScrollView, TouchableWithoutFeed
   TextInput,
   Keyboard,
   StatusBar,
+  Pressable
 } from 'react-native';
 import {
   Layout,
@@ -207,55 +208,61 @@ class GominWrite extends React.Component {
       spinnerVisible, resultVisible, } = this.state;
     return (
       <SafeAreaView style={{flex: 1}}>
-        <WriteContentToptab text="고민 작성"
-          right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-          func={this.filterSpamKeyword}
-          gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
-          gbckuse={true}/>
-        <TextInput
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: 8.5,
-            marginTop: 18,
-            marginHorizontal: 12,
-            marginBottom: 14,
-            fontSize: 18,
-          }}
-          placeholder="제목"
-          onChangeText={(nextValue) => this.setState({post_title: nextValue})}
-          placeholderTextColor="#A897C2"
-          value={post_title}
-        />
-        <TextInput
-          value={post_content}
-          style={{
-            height: '80%',
-            maxHeight: '50%',
-            backgroundColor: '#ffffff',
-            borderRadius: 8.5,
-            marginHorizontal: 12,
-            marginBottom: 14,
-            fontSize: 18,
-          }}
-          placeholder="내용"
-          onChangeText={(nextValue) => this.setState({post_content: nextValue})}
-          multiline={true}
-          textAlignVertical="top"
-          textStyle={{minHeight: 100}}
-          placeholderTextColor="#A897C2"
-        />
-        <View style={{alignItems: 'flex-end', paddingRight: 12}}>
-          <CheckBox
-            checked={checked}
-            onChange={(nextChecked) =>
-              this.setState({
-                post_anoymous_yn: nextChecked ? 1 : 0,
-                checked: nextChecked,
-              })
-            }>
-            {() => <Text category="h3">익명</Text>}
-          </CheckBox>
-        </View>
+        <Pressable
+          style={{flex: 1}}
+          onPress={()=>Keyboard.dismiss()}
+        >
+
+          <WriteContentToptab text="고민 작성"
+            right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+            func={this.filterSpamKeyword}
+            gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
+            gbckuse={true}/>
+          <TextInput
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: 8.5,
+              marginTop: 18,
+              marginHorizontal: 12,
+              marginBottom: 14,
+              fontSize: 18,
+            }}
+            placeholder="제목"
+            onChangeText={(nextValue) => this.setState({post_title: nextValue})}
+            placeholderTextColor="#A897C2"
+            value={post_title}
+          />
+          <TextInput
+            value={post_content}
+            style={{
+              height: '80%',
+              maxHeight: '50%',
+              backgroundColor: '#ffffff',
+              borderRadius: 8.5,
+              marginHorizontal: 12,
+              marginBottom: 14,
+              fontSize: 18,
+            }}
+            placeholder="내용"
+            onChangeText={(nextValue) => this.setState({post_content: nextValue})}
+            multiline={true}
+            textAlignVertical="top"
+            textStyle={{minHeight: 100}}
+            placeholderTextColor="#A897C2"
+          />
+          <View style={{alignItems: 'flex-end', paddingRight: 12}}>
+            <CheckBox
+              checked={checked}
+              onChange={(nextChecked) =>
+                this.setState({
+                  post_anoymous_yn: nextChecked ? 1 : 0,
+                  checked: nextChecked,
+                })
+              }>
+              {() => <Text category="h3">익명</Text>}
+            </CheckBox>
+          </View>
+        </Pressable>
 
         <Modal
           visible={modalVisible}
