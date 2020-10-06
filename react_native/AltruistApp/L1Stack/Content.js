@@ -1831,7 +1831,7 @@ class IlbanContent extends Component {
             <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:20, paddingTop:10}} >
                 <View style={{marginLeft:25,marginTop:10,marginBottom:13}}>
                     <View style={{display:"flex",flexDirection:'row'}}>
-                        <Image source={{uri : this.state.mem_icon_url}} style={{width:20, height:20, marginRight:5}}/>
+                        <Image source={{uri : this.state.mem_icon_url}} style={{width:23, height:23, marginRight:5}}/>
                         <View>
                             <Text category="s2" style={{fontSize:12}}>{post.display_name}</Text>
                             <View style={{display:"flex",flexDirection:'row'}}>
@@ -2028,6 +2028,7 @@ class IlbanContent extends Component {
                         <TouchableOpacity 
                             onPress={()=>{
                                 this.setState({popoverVisible:false});
+                                console.log(this.state.image);
                                 this.props.navigation.navigate('IlbanWrite',
                                     {
                                         statefunction:this.statefunction,

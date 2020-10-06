@@ -1477,7 +1477,10 @@ class IlbanWrite extends React.Component {
       mime: image.mime,
       path: image.path,
       content: image.data,
-      index: this.state.Image_index,
+      props : {
+        edit : false, 
+        index: this.state.Image_index
+      },
     };
     console.log(item);
     this.setState({Image_index: this.state.Image_index + 1});
@@ -1487,12 +1490,9 @@ class IlbanWrite extends React.Component {
   
   deleteImage(index) {
     const {images, Image_index} = this.state;
-    index==this.state.post_main_thumb
-    ?this.setState({post_main_thumb:0})
-    :null;
     images.splice(index,1);
-    images.map(i => i.index>index
-      ?i.index--
+    images.map(i => i.props.index>index
+      ?i.props.index--
       :null
     );
     this.setState({images: images, Image_index:Image_index-1});
@@ -1507,13 +1507,13 @@ class IlbanWrite extends React.Component {
         <Image
           style={styles.market_RenderImage}
           source={
-            image.edit
+            image.props.edit
               ? {uri: image.url}
               : image.url
           }
         />
         <View style={{position:'absolute', right:0, zIndex:2, width:20, height:20}}>
-          <TouchableWithoutFeedback onPress={()=>this.deleteImage(image.index)}>
+          <TouchableWithoutFeedback onPress={()=>this.deleteImage(image.props.index)}>
             <Icon style={{width:20, height:20}} fill='#63579D' name='close-outline'/>
           </TouchableWithoutFeedback>
         </View>
