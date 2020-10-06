@@ -131,7 +131,7 @@ class LoginScreen extends React.Component{
                     
                     <TouchableOpacity onPress={()=>this.props.navigation.navigate('FindPwScreen')}>
                       <Text style={styles.optionText}>
-                      비밀번호 찾기
+                      비밀번호 재설정
                       </Text>  
                     </TouchableOpacity>
                     <TouchableOpacity style={{marginTop:9}} onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
