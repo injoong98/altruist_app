@@ -5,6 +5,7 @@ import BellLargesvg from '../assets/icons/bell-large.svg'
 import Uploadsvg from '../assets/icons/upload.svg'
 import Backsvg from '../assets/icons/back-arrow-white.svg'
 import Pensvg from '../assets/icons/pencil-outline-color.svg'
+import Viewsvg from '../assets/icons/view.svg'
 
 export class TopBarTune extends React.Component {
     constructor(props){
@@ -56,6 +57,14 @@ export class TopBarTune extends React.Component {
                                     style={{flexDirection:'row',width:'100%',alignItems:'center',justifyContent:'center',paddingLeft:20}}>
                                     <Text category='h2' style={{fontSize:13,color:'#A897C2'}}>질문하기</Text>
                                     <Pensvg width={28} height={22}/>
+                                </TouchableOpacity>
+                                :
+                                this.props.right =='alarm'?
+                                <TouchableOpacity 
+                                    onPress={this.props.func}
+                                    style={{flexDirection:'row',width:'100%',alignItems:'center',justifyContent:'center',paddingLeft:20}}>
+                                    <Text category='h2' style={{fontSize:13,color:'#A897C2'}}>모두읽음처리</Text>
+                                    <Viewsvg width={28} height={22}/>
                                 </TouchableOpacity>
                                 :
                                 null}

@@ -265,7 +265,7 @@ export class AlarmScreen extends React.Component{
                 <TouchableOpacity 
                     key={index} 
                     onPress={()=>{this.readNoti(item);}}
-                    style={[styles.notiContainer,{backgroundColor: item.not_read_datetime == null ? '#f4f4f4' : '#c4c4c4'}]} 
+                    style={[styles.notiContainer,{backgroundColor: item.not_read_datetime != null ||notice.unreadCount==0? '#c4c4c4' : '#f4f4f4'}]} 
                 >
                     <View style={{flexDirection:"row",justifyContent:'space-evenly'}}>
                         <View style={{flex:9}}>
@@ -348,11 +348,23 @@ const TabNavigator = () => (
 );
   
 export class AlarmToptab extends React.Component{
-    
+    static contextType = Notice
+    readall=async()=>{
+        await axios.get(`http://dev.unyict.org/api/notification/readall`)
+        .then(res=>{
+            this.context.reloadUnreadCount();
+            this.context.getNotiList()
+        })
+        .catch(err=>{
+        })
+    }
     render(){
         return (
             <SafeAreaView style={{flex:1,}}>
-                <TopBarTune text="알람" func={()=>navigation.navigate('Meet')} />
+                <TopBarTune text="알람" 
+                    func={()=>this.readall()}
+                    right='alarm'
+                />
                 <TabNavigator/>
             </SafeAreaView>
         );
