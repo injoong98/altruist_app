@@ -10,8 +10,14 @@ import {
 } from '@ui-kitten/components';
 import axios from 'axios';
 
-const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
-
+const BackIcon = (props) => (
+  <Icon
+    style={{width: 24, height: 24}}
+    fill="#63579D"
+    name="back-arrow"
+    pack="alticons"
+  />
+);
 class FindPwScreen extends Component {
   constructor(props) {
     super(props);
@@ -108,7 +114,7 @@ class FindPwScreen extends Component {
           accessoryLeft={this.BackAction}
           style={{}}
         />
-        <View style={{flex: 1,justifyContent:'center'}}>
+        <View style={{flex: 1, justifyContent: 'center'}}>
           <View style={{paddingBottom: 30}}>
             <Text
               category="h2"

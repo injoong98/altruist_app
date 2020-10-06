@@ -26,25 +26,20 @@ import {
 import axios from 'axios';
 import Nextsvg from '../assets/icons/double-next.svg';
 
-const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
+const BackIcon = (props) => (
+  <Icon
+    style={{width: 24, height: 24}}
+    fill="#63579D"
+    name="back-arrow"
+    pack="alticons"
+  />
+);
 
 class RegisterScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // mem_userid: '',
-      // mem_email: '',
-      // mem_password: '',
-      // mem_password_re: '',
-      mem_username: '',
-      mem_nickname: '',
-      mem_homepage: '',
-      mem_phone: '',
-      mem_birthday: '',
       mem_sex: '1',
-      mem_address: '',
-      mem_profile_content: '',
-      mem_recommend: '',
       captionCheck: '',
       column: '',
       borderColor: '',
@@ -90,7 +85,8 @@ class RegisterScreen extends Component {
     const [color, setColor] = useState('#FFFFFF'); // 입력한 값을 set
     const [checked, setChecked] = useState(false);
     const [nextValKey, setNextValKey] = useState(this.requiredStates[i]);
-    const [finalVal, setfinalVal] = useState('');
+    const [finalVal, setFinalVal] = useState('');
+    const [caption, setCaption] = useState('');
     const initialBoarderColor = '#FFFFFF';
 
     console.log('현재 nextKEY : ', nextValKey);
@@ -103,17 +99,23 @@ class RegisterScreen extends Component {
       <Input
         style={[{borderRadius: 15, borderColor: color}]}
         placeholder={this.requiredInputList[i]}
-        secureTextEntry={false}
+        secureTextEntry={!nextValKey.includes('password') ? false : true}
         onChangeText={(nextVal) => {
-          setfinalVal(nextVal);
+          setFinalVal(nextVal);
           this.setState({[nextValKey]: finalVal});
         }}
+        caption={() =>
+          caption ? (
+            <Text style={{paddingLeft: 10, fontSize: 10}}>{caption}</Text>
+          ) : null
+        }
         onEndEditing={() =>
           //중복, 형식 체크
           // : 닉네임, ID, EMAIL, 비밀번호, 비밀번호 확인
           {
             this.setState({[nextValKey]: finalVal});
-            !finalVal ? setColor('red') : color;
+            !finalVal ? setColor('red') : setColor('#FFFFFF');
+            !finalVal ? setCaption('없습니다 값이') : setCaption('');
             {
               console.log('color', color);
               console.log('finalVal', finalVal);
@@ -128,17 +130,28 @@ class RegisterScreen extends Component {
 
   notRequiredStates = ['mem_phone', 'mem_birthday', 'mem_recommend'];
 
-  NotRequiredInput = ({i}) => {
+  NotRequiredInput = ({n, props}) => {
+    const {maxLength, dataDetectorTypes, keyboardType} = this.props;
     // const [val, setVal] = useState(''); // 입력한 값을 set
     // const [color, setColor] = useState('#FFFFFF'); // 입력한 값을 set
     const [checked, setChecked] = useState(false);
-    const [nextValKey, setNextValKey] = useState(this.notRequiredStates[i]);
-    const [finalVal, setfinalVal] = useState('');
+    const [notRequiredList, setNotRequiredList] = useState(
+      this.notRequiredList[n],
+    );
+    const [key, setKey] = useState(this.notRequiredStates[n]);
+    const [notRequired, setNotRequiredVal] = useState('');
 
     return (
       <Input
+        maxLength={13}
+        // dataDetectorTypes={dataDetectorTypes}
+        // keyboardType={keyboardType}
         style={[{borderRadius: 15, borderColor: '#FFFFFF'}]}
-        placeholder={this.notRequiredList[i]}
+        placeholder={notRequiredList}
+        onChangeText={(nextVal) => {
+          setNotRequiredVal(nextVal);
+          this.setState({[key]: notRequired});
+        }}
       />
     );
   };
@@ -197,6 +210,8 @@ class RegisterScreen extends Component {
   // checkAgreementState = () => (
 
   // );
+
+  //이거 꼭 수정하기
   ReadAgreement = () => (
     <View style={{flexDirection: 'row', justifyContent: 'center'}}>
       <TouchableOpacity
@@ -207,6 +222,7 @@ class RegisterScreen extends Component {
           })
         }>
         <Text
+          category="s1"
           style={{
             color: '#63579D',
             textDecorationLine: 'underline',
@@ -217,6 +233,7 @@ class RegisterScreen extends Component {
         </Text>
       </TouchableOpacity>
       <Text
+        category="s1"
         style={{
           color: '#63579D',
         }}>
@@ -231,6 +248,7 @@ class RegisterScreen extends Component {
           })
         }>
         <Text
+          category="s1"
           style={{
             color: '#63579D',
             textDecorationLine: 'underline',
@@ -241,6 +259,7 @@ class RegisterScreen extends Component {
         </Text>
       </TouchableOpacity>
       <Text
+        category="s1"
         style={{
           color: '#63579D',
         }}>
@@ -248,77 +267,219 @@ class RegisterScreen extends Component {
       </Text>
     </View>
   );
-  // checkFormAndDuplicate = (j) => {
-  //   checkKeyList[j] = this.state;
 
-  //   let formdata = new FormData();
-  //   formdata.append(checkFormAndDuplicateList[j], this.checkKeyList[j]);
+  SubmitForm = async () => {
+    const {
+      mem_username,
+      mem_nickname,
+      mem_sex,
+      mem_userid,
+      mem_email,
+      mem_password,
+      mem_password_re,
+      mem_phone,
+      mem_birthday,
+      mem_recommend,
+    } = this.state;
 
-  //   await axios
-  //   .post(this.APIList[j], formdata)
-  //   .then((res) => {
-  //     console.log(res.data);
+    let formdata = new FormData();
+    formdata.append('mem_username', mem_username);
+    formdata.append('mem_nickname', mem_nickname);
+    formdata.append('mem_sex', mem_sex);
+    formdata.append('mem_userid', mem_userid);
+    formdata.append('mem_email', mem_email);
+    formdata.append('mem_password', mem_password);
+    formdata.append('mem_password_re', mem_password_re);
+    formdata.append('mem_phone', mem_phone);
+    formdata.append('mem_birthday', mem_birthday);
+    formdata.append('mem_recommend', mem_recommend);
+    console.info('form', this.state);
 
-  //   });
-  // }
+    await axios
+      .post('http://dev.unyict.org/api/register/form', formdata)
+      .then((res) => {
+        console.log('response', res);
+        console.log('status', res.data.status);
+        console.log('data', res.data);
+        if (res.data.status == 500) {
+          console.log('status', res.data.status);
+          console.log(res.data.message);
+          console.log('실패');
+          //실패 모달
+          Alert.alert(
+            '가입실패',
+            '문제가 계속되면 관리자에게 문의해주세요. \ndev.altruists.net@gmail.com',
+            [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {text: 'OK', onPress: () => console.log('OK Pressed')},
+            ],
+            {cancelable: false},
+          );
+        } else if (res.data.status == 200) {
+          console.log('status', res.data.status);
+          console.log(res.data.message);
+          this.props.navigation.navigate('RegisterSuccessScreen');
+        } else {
+        }
+      })
+      .catch((error) => {
+        console.log('ERROR', error);
+        console.error();
+      });
+  };
+
+  //map OR bind notRequiredStates + requiredStates
+  //AND for statement without useing for() or foreach()
+  checkRequires = () => {
+    const {
+      mem_username,
+      mem_nickname,
+      mem_sex,
+      mem_userid,
+      mem_email,
+      mem_password,
+      mem_password_re,
+
+      mem_phone,
+      mem_birthday,
+      mem_recommend,
+    } = this.state;
+
+    //필수값 하나라도 없으면 필수값입력 안내
+    if (
+      !mem_username ||
+      !mem_nickname ||
+      !mem_sex ||
+      !mem_userid ||
+      !mem_email ||
+      !mem_password ||
+      !mem_password_re
+    ) {
+      Alert.alert(
+        '필수값 미입력',
+        '필수값은 \n이름, 닉네임, 성별, 아이디, 이메일, 비밀번호, 비밀번호 확인(총 7개)입니다.\n한번 더 확인 후, 문제가 계속되면\n관리자에게 문의해주세요.',
+        [{text: '확인', onPress: () => console.log('OK Pressed')}],
+        {cancelable: false},
+      );
+    } else {
+      console.log('yes');
+      this.SubmitForm();
+    }
+  };
+
+  nextStep = () => (
+    <TouchableOpacity
+      style={{
+        paddingBottom: 60,
+        flexDirection: 'row',
+        alignContent: 'flex-end',
+        alignSelf: 'flex-end',
+      }}
+      onPress={() => this.checkRequires()}>
+      <Text style={{color: '#63579D'}} category="p2">
+        다음{' '}
+      </Text>
+      <Nextsvg fill="#63579D" style={{transform: [{rotate: '180deg'}]}} />
+    </TouchableOpacity>
+  );
 
   //end : components
 
   render() {
     console.log(this.state);
     return (
-      <View
+      <SafeAreaView
         style={{
-          backgroundColor: '#FFFFFF',
           flex: 1,
-          justifyContent: 'center',
-          alignContent: 'center',
-          paddingLeft: 30,
-          paddingRight: 30,
         }}>
-        {/* 이름 */}
-        <this.requiredInput i={0} />
-        {/* 닉네임 */}
-        <this.requiredInput i={1} />
-        {/* 성별 */}
-        <this.RadioSexSelection />
-        {/* '* ID', */}
-        <this.requiredInput i={2} />
-        {/* '* EMAIL', */}
-        <this.requiredInput i={3} />
-        {/* '* 비밀번호', */}
-        <this.requiredInput i={4} />
-        {/* '* 비밀번호 확인', */}
-        <this.requiredInput i={5} />
-        {/* 휴대폰번호 */}
-        <this.NotRequiredInput i={0} />
-        {/* 생일 */}
-        <this.NotRequiredInput i={1} />
-        {/* 추천인 */}
-        <this.NotRequiredInput i={2} />
-        {/* 서명문 체크 */}
-        {/* <this.checkAgreementState /> */}
-        <View
+        <TopNavigation
+          title={() => <Text category="h2">회원가입</Text>}
+          alignment="center"
+          accessoryLeft={this.BackAction}
+        />
+        <ScrollView
           style={{
-            // flex: 1,
-            paddingTop: 20,
-            paddingBottom: 20,
-            padding: 3,
-            alignSelf: 'center',
-            textDecorationColor: '#63579D',
-            flexDirection: 'row',
+            backgroundColor: '#FFFFFF',
+            flex: 1,
+            paddingEnd: 45,
+            paddingStart: 45,
+            paddingTop: 30,
           }}>
-          <this.CheckboxKitten />
-          <Text category="s1" style={{color: '#63579D'}}>
-            {` `} * 하늘 부모님 성회 아래
-            {`\n`} {` `}
-            {` `} 이타주의자 활동을 양심적으로 하겠습니다
-          </Text>
-        </View>
-        {/* 개인정보 처리 & 이용약관 */}
-        <this.ReadAgreement />
-        <Text category="p2">다음</Text>
-      </View>
+          {/* <ScrollView
+          style={{
+            backgroundColor: 'red',
+          }}> */}
+          {/* 이름 */}
+          <this.requiredInput i={0} />
+          {/* 닉네임 */}
+          <this.requiredInput i={1} />
+          {/* 성별 */}
+          <this.RadioSexSelection />
+          {/* '* ID', */}
+          <this.requiredInput i={2} />
+          {/* '* EMAIL', */}
+          <this.requiredInput i={3} />
+          {/* '* 비밀번호', */}
+          <this.requiredInput i={4} />
+          {/* '* 비밀번호 확인', */}
+          <this.requiredInput i={5} />
+          <View style={{padding: 10}}></View>
+          {/* 휴대폰번호 */}
+          <this.NotRequiredInput
+            n={0}
+            maxLength={13}
+            dataDetectorTypes={`phoneNumber`}
+            keyboardType={`phone-pad`}
+          />
+          {console.log(
+            <this.NotRequiredInput
+              n={0}
+              maxLength={`13`}
+              dataDetectorTypes={`phoneNumber`}
+              keyboardType={`phone-pad`}></this.NotRequiredInput>,
+          )}
+          {/* 생일 */}
+          <this.NotRequiredInput
+            n={1}
+            maxLength={10}
+            dataDetectorTypes={`phoneNumber`}
+            keyboardType={`numeric`}
+          />
+          {/* 추천인 */}
+          <this.NotRequiredInput n={2} />
+
+          {/* 서명문 체크 */}
+          <View
+            style={{
+              paddingTop: 10,
+              // paddingLeft: 10, paddingRight: 10,
+              // flex: 1,
+              alignSelf: 'center',
+              textDecorationColor: '#63579D',
+              flexDirection: 'row',
+            }}>
+            <this.CheckboxKitten />
+            <Text category="s1" style={{color: '#63579D'}}>
+              {` `} * 하늘 부모님 성회 아래
+              {`\n`} {` `}
+              이타주의자 활동을 양심적으로 하겠습니다
+            </Text>
+          </View>
+          {/* 개인정보 처리 & 이용약관 */}
+          <View
+            style={{
+              paddingTop: 20,
+              paddingBottom: 20,
+            }}>
+            <this.ReadAgreement />
+          </View>
+          <this.nextStep />
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
