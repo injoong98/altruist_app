@@ -101,10 +101,7 @@ class RegisterScreen extends Component {
 
     return (
       <Input
-        style={[
-          {borderRadius: 15},
-          !finalVal ? {borderColor: initialBoarderColor} : {borderColor: color},
-        ]}
+        style={[{borderRadius: 15, borderColor: color}]}
         placeholder={this.requiredInputList[i]}
         secureTextEntry={false}
         onChangeText={(nextVal) => {
@@ -137,7 +134,6 @@ class RegisterScreen extends Component {
     const [checked, setChecked] = useState(false);
     const [nextValKey, setNextValKey] = useState(this.notRequiredStates[i]);
     const [finalVal, setfinalVal] = useState('');
-    const initialBoarderColor = '#FFFFFF';
 
     return (
       <Input
