@@ -149,7 +149,11 @@ export class AlarmScreen extends React.Component{
         super(props)
         this.state={
             isLoading:true,
-            noti:[]
+            refreshing:false,
+            isNoMoreData:false,
+            noti:[],
+            current_page:1,
+            isListLoading:false
         }
     }
     static contextType = Notice
@@ -195,6 +199,44 @@ export class AlarmScreen extends React.Component{
         console.log(`list : ${list} + content : ${content}`)
         // navigate(list,{screen})
         navigate(content,{post_id,OnGoback:() =>this.onRefresh()})
+    }
+    renderFooter=()=>{
+        return(
+          this.state.isListLoading ?
+          <View style = {styles.loader}>
+            <ActivityIndicator size='large'/>
+          </View>:null
+        )
+    }
+    getPostList = async() =>{
+        await axios.get(`http://dev.unyict.org/api/notification?page=${this.state.current_page}`)
+        .then((res)=>{
+          if(res.data.view.data.list.length > 0){
+            this.setState({
+              noti:this.state.noti.concat(res.data.view.data.list),
+              isLoading:false,
+              isListLoading:false,
+            })
+          }
+          else{
+            console.log('no page data');
+            this.setState({isListLoading:false, isNoMoreData : true});
+          }
+        })
+        .catch((error)=>{
+            alert('error : '+error)
+        })
+      }
+    load_more_data = () => {
+        if(this.state.total_rows < 20){
+			this.setState({isNoMoreData:true});
+		}
+       	else if(!this.state.isNoMoreData){
+            this.setState({
+            current_page : this.state.current_page + 1,
+            isListLoading : true},
+            this.getPostList, console.log(this.state.current_page))
+        }
     }
     onRefresh = () =>{
         this.getNotiList();
@@ -270,6 +312,11 @@ export class AlarmScreen extends React.Component{
                         renderItem={this.renderNotis}
                         keyExtractor={(item,index)=>index.toString()}
                         style={{backgroundColor:'#ffffff'}}
+                        onRefresh={this.onRefresh}
+                        refreshing={this.state.refreshing}
+                        onEndReached={this.load_more_data}
+                        onEndReachedThreshold = {0.9}
+                        ListFooterComponent={this.renderFooter}
                     />
                 </View>
                 }
