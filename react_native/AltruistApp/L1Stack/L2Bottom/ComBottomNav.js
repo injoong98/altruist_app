@@ -66,7 +66,7 @@ class AlarmIcon extends React.Component{
     render(){
         return(
             <View style={{width:50,alignItems:'center'}}>
-                <Bellsvg height={35} />
+                <BellIcon style={{height:30,width:42}} />
                     <Notice.Consumer>{
                         notice=>
                         notice.unreadCount>0?
@@ -90,7 +90,7 @@ const BottomTabBar = ({ navigation, state }) => (
       {/* <BottomNavigationTab title={()=><Homesvg height={35} width ={35}/>}/> */}
       <BottomNavigationTab title={()=><AltIcon style={{height:30,width:30}}/>}/>
       <BottomNavigationTab title={()=><Communitysvg height={30} width={64}/>}/>
-      <BottomNavigationTab title={()=><BellIcon  style={{height:30,width:42}}/>}/>  
+      <BottomNavigationTab title={()=><AlarmIcon />}/>  
       <BottomNavigationTab title={()=><MyIcon style={{height:30,width:49}}/>}/>
       {/* <BottomNavigationTab title={()=><HomeIcon />}/>
       <BottomNavigationTab title={()=><AltruistIcon  />}/>

@@ -242,14 +242,15 @@ export class AlarmScreen extends React.Component{
         this.getNotiList();
     }
     readNoti = (item) =>{
+        console.log('item.not_id'+item.not_id)
         axios.get(`http://dev.unyict.org/api/notification/read?not_id=${item.not_id}`)
         .then(res=>{
             console.log(item.not_type=='comment')
             if(item.not_type=='comment'){
                 console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
-                this.context.reloadUnreadCount();
                 this.navigateToPost(item.post_id,item.brd_id)
             }
+            this.context.reloadUnreadCount();
             this.getNotiList()
         })
         .catch(err=>{
