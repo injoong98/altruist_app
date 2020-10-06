@@ -18,7 +18,7 @@ class Board_post extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Post', 'Post_meta', 'Post_extra_vars','Member');
+	protected $models = array('Post', 'Post_meta', 'Post_extra_vars','Member','Banner');
 
 	/**
 	 * 헬퍼를 로딩합니다
@@ -128,7 +128,32 @@ class Board_post extends CB_Controller
 
 		
 	}
+	/**
+	 * 게시판 목록입니다.
+	 */
+	public function banner()
+	{
+		$_position= $this->input->post('postition');
+		if (empty($_position)) {
+			response_result($_view, 'Err', "필수 요청값 누락");
+		}
+		$_type = 'rand';
+		$_limit = 10;
+		$view = array();
+		$view['view'] = array();
+		
+		// 불러오기
+		$view['view']['banners'] = banner($_position, $_type, $_limit, $_start_tag, $_end_tag);
+	
+		$result = $this->Banner_model->get_banner($_position, $_type, $_limit);
+		foreach ($result as $key => $val) {
 
+			$result[$key]['ban_thumb_img'] = thumb_url('banner',element('ban_image', $val),element('ban_width', $val),element('ban_height', $val));
+		}
+		$view['view']['banners'] =$result;//
+		response_result($view);
+	
+	}
 
 	/**
 	 * 게시물 열람 페이지입니다

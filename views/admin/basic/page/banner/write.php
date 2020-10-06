@@ -65,6 +65,12 @@
 				</div>
 			</div>
 			<div class="form-group">
+				<label class="col-sm-2 control-label">게시글 ID</label>
+				<div class="col-md-2">
+					<input type="text" class="form-control" name="post_id" value="<?php echo set_value('post_id', element('post_id', element('data', $view))); ?>" />
+				</div>
+			</div>
+			<div class="form-group">
 				<label class="col-sm-2 control-label">배너 사이즈</label>
 				<div class="col-sm-10 form-inline">
 					가로 :
