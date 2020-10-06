@@ -223,8 +223,8 @@ class RegisterScreen extends Component {
       if (this.state.EmailCaption.includes('없는')) {
         console.log('checkNotNull : emailisnotright');
         this.setState({goNext: true});
-      }
-      if (!this.state.checked) {
+      } else {
+        this.setState({goNext: false});
       }
     }
     // return;
