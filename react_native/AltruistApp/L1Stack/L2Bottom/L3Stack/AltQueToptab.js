@@ -57,7 +57,9 @@ export const AltQueToptab= ({navigation}) => (
           style={{backgroundColor:'#f4f4f4'}}
       /> */}
     <TopBarTune 
-      text="질문" func={()=>navigation.navigate('Meet')}
+      text="질문" 
+      func={()=>navigation.navigate('AltList')}
+      right='que'
       gbckuse={true}
       gbckfunc={()=>{navigation.goBack()}}
     />
