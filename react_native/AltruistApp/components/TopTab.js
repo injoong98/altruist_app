@@ -13,7 +13,11 @@ export class TopTab extends React.Component{
         return(
         <View style={styles.tabcontainer}>
             <Text style={thisindex==selected ?styles.borderselected : styles.border} category={abovectgry}>{abovetext}</Text>
+            {
+                belowtext!=''&belowtext!=null?
             <Text style={thisindex==selected ?styles.borderselected : styles.border} category={belowctgry}>{belowtext}</Text>
+              :null
+             }
         </View>
         )
     }
@@ -74,7 +78,7 @@ export function MyTabBar({ state, descriptors, navigation, position }) {
 const styles = StyleSheet.create({
     tabcontainer:{
         paddingBottom:18,
-        paddingTop:16
+        paddingTop:16,
     },
     border :{
         lineHeight:20,
