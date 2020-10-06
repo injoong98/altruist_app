@@ -71,7 +71,7 @@ class Mypage extends React.Component{
                       <View style={{maxWidth:'40%',marginHorizontal:16,marginTop:13,marginBottom:24,justifyContent:'space-between'}}>
                         <View style={{marginTop:15,display:'flex',flexDirection:'row', alignItems:'flex-end'}}>
                             <Text category='h2' style={{fontSize:24,color:'#63579D'}}>{mem_nickname}</Text>
-                            <View style={{height:'80%',marginLeft:10,alignItems:'flex-end'}}>
+                            <View style={{height:'80%',marginLeft:0,alignItems:'flex-end'}}>
                                 <ThumbSvg height={24} width={24}/>          
                             </View>
                         </View>  
