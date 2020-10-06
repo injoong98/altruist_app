@@ -437,9 +437,7 @@ class Membermodify extends CB_Controller
 					$uploadconfig = array();
 					$uploadconfig['upload_path'] = $upload_path;
 					$uploadconfig['allowed_types'] = 'jpg|jpeg|png|gif';
-					$uploadconfig['max_size'] = '2000';
-					$uploadconfig['max_width'] = '1000';
-					$uploadconfig['max_height'] = '1000';
+					$uploadconfig['max_size'] = 10*1024;
 					$uploadconfig['encrypt_name'] = true;
 
 					$this->upload->initialize($uploadconfig);

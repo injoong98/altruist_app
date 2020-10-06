@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions,Animated,View,SafeAreaView,Alert} from 'react-native';
+import {Dimensions,Animated,View,SafeAreaView,Alert,Image} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
@@ -21,7 +21,7 @@ import FinishScreen from './Finish'
 import {Signing,Notice} from './Context'
 import {AltQueContent} from './L2Bottom/L3Stack/Question'
 import LogoSvg from '../assets/icons/logo.svg'
-import MainSvg from '../assets/icons/main_logo.svg'
+import MainImg from '../assets/images/main-logo-img.png'
 
 const {width} = Dimensions.get('window')
 const wdithLogo = (width*0.7);
@@ -40,7 +40,15 @@ class LoadingScreen extends React.Component{
     fadeIn = () => {
         Animated.timing(this.state.opacity,{
             toValue:1,
-            duration: 400,
+            duration: 600,
+            useNativeDriver: false
+        }).start();
+    }
+    
+    fadeOut = () => {
+        Animated.timing(this.state.opacity,{
+            toValue:1,
+            duration: 0,
             useNativeDriver: false
         }).start();
     }
@@ -48,12 +56,17 @@ class LoadingScreen extends React.Component{
     componentDidMount(){
         this.fadeIn();
     }
+    componentWillUnmount(){
+        this.fadeOut();
+    }
+
     render(){
+        
         return(
             <SafeAreaView style={{flex:1}}>
                 <Animated.View 
                     style={{flex:1,justifyContent:"center", alignItems:"center",backgroundColor:"#ffffff",opacity:this.state.opacity}}>
-                    <MainSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/>
+                    <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/>
                 </Animated.View>   
             </SafeAreaView>
     )}

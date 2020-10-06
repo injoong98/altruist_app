@@ -887,15 +887,15 @@ class AltQueList extends React.Component{
                     item.brd_id == 11 ?
                     <View style={styles.infocontainer}>
                         <View style={{alignItems:'center',}}>
-                            <Heartsvg />
+                            <Heartsvg width={15} height={20}/>
                             <Text style={styles.infotext} category="s1">{item.post_like}</Text>
                         </View>
                         <View style={{alignItems:'center',}}>
-                            <Commentsvg />
+                            <Commentsvg width={20} height={20}/>
                             <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
                         </View>
                         <View style={{alignItems:'center',}}>
-                            <Viewsvg />
+                            <Viewsvg width={20} height={20}/>
                             <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                         </View>
                     </View>
@@ -1336,7 +1336,10 @@ const styles = StyleSheet.create({
         marginTop:10, display:"flex",flexDirection:"row", justifyContent:"space-between",
     },
     infocontainer:{
-        display:"flex",flexDirection:"row",justifyContent:'space-evenly',
+        display:"flex",
+        flexDirection:"row",
+        justifyContent:'space-evenly'
+        ,alignItems:'flex-end',    
         borderTopLeftRadius:23,
         width:116,
         backgroundColor:"#ffffff",

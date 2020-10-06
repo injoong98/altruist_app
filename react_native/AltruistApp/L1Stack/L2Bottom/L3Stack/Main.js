@@ -97,7 +97,7 @@ class AltMainScreen extends React.Component{
         return(
             <View style={{flex:1}}>
 
-            <View style={{height:height,alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff',paddingBottom:50}}>
+            <View style={{height:height,alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff',paddingBottom:100}}>
                 <View style={{flex:2,alignItems:'center',justifyContent:'center'}}>
                     <View style={{}}>
                         <MainSvg width={wdithLogo} height={heightLogo}/>
@@ -183,14 +183,14 @@ class AltMainScreen extends React.Component{
                                 멘토리스트
                                 </Text>
                             </TouchableHighlight> */}
-                            <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltOpqQueList')}>
+                            {/* <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltOpqQueList')}>
                                 <Text numberOfLines={1} category="h1" style={styles.btnText}>
                                 오픈 질문
                                 </Text>
-                            </TouchableHighlight>
+                            </TouchableHighlight> */}
                             <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltQueToptab')}>
                                 <Text numberOfLines={1} category="h1" style={styles.btnText}>
-                                1:1 질문
+                                질문함
                                 </Text>
                             </TouchableHighlight>
                         </Animated.View>

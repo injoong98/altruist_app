@@ -108,15 +108,22 @@ class AltProfileScreen extends React.Component {
               </View>
             </View>
             
-        <TouchableOpacity 
-          style={{position:'absolute',right:10,bottom:10,borderRadius:7, backgroundColor:'#63579D',paddingVertical:8,paddingHorizontal:16}} 
-          onPress={() =>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:altruist.alt_profile.mem_id,altruist})}>
-          <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>
-            질문하기
-          </Text>
-        </TouchableOpacity>
+            <TouchableOpacity 
+              style={{position:'absolute',right:10,bottom:10,borderRadius:7, backgroundColor:'#63579D',paddingVertical:8,paddingHorizontal:16}} 
+              onPress={() =>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:altruist.alt_profile.mem_id,altruist})}>
+              <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>
+                질문하기
+              </Text>
+            </TouchableOpacity>
           </View>
-
+          {
+            altruist.alt_profile.alt_aboutme!=null&&altruist.alt_profile.alt_aboutme!=''? 
+            <View
+              style={styles.title}>
+              <Text >"{altruist.alt_profile.alt_aboutme}"</Text>
+            </View>
+            :null
+          }
           <View
             style={styles.title}>
             <Text category="h5" style={styles.titleText}>전문 분야</Text>
@@ -131,23 +138,17 @@ class AltProfileScreen extends React.Component {
               ))}
             </View>
           </View>
-
-          <View
-            style={styles.title}>
-            <Text category="h5" style={styles.titleText}>멘토 소개</Text>
-            <Text category="p2">{altruist.alt_profile.alt_aboutme}</Text>
-          </View>
           <View
             style={styles.title}>
             <Text category="h5" style={styles.titleText} >인사말</Text>
-            <Text category="p2" style={{lineHeight:22}}>{altruist.alt_profile.alt_content}</Text>
+            <Text  style={{lineHeight:22}}>{altruist.alt_profile.alt_content}</Text>
           </View>
 
           <View
             style={styles.title}>
             <Text category="h5" style={styles.titleText}>주요 활동 및 경력</Text>
             {altruist.get_alt_cv.map((i) => (
-              <Text category="p2" key={i.acv_id}>
+              <Text style ={{marginBottom:10}}key={i.acv_id}>
                 {
                 i.acv_year ?
                   i.acv_year.trim()+') '

@@ -58,6 +58,7 @@ class Mypage extends React.Component{
       const {mem_point,mem_nickname,mem_photo,mem_profile_content} = this.state.mem_info
       const {navigate} =this.props.navigation
       console.log('mem_photo : ',mem_photo)
+      console.log('type : '+typeof(mem_nickname))
         return(
           <SafeAreaView style={{flex:1}}>
               <ScrollView style={{flex:1,backgroundColor:'#ffffff'}}>
@@ -70,10 +71,16 @@ class Mypage extends React.Component{
                       </View>
                       <View style={{maxWidth:'40%',marginHorizontal:16,marginTop:13,marginBottom:24,justifyContent:'space-between'}}>
                         <View style={{marginTop:15,display:'flex',flexDirection:'row', alignItems:'flex-end'}}>
-                            <Text category='h2' style={{fontSize:24,color:'#63579D'}}>{mem_nickname}</Text>
-                            <View style={{height:'80%',marginLeft:0,alignItems:'flex-end'}}>
-                                <ThumbSvg height={24} width={24}/>          
-                            </View>
+                            <Text category='h2' style={{fontSize:20,color:'#63579D'}}>{mem_nickname}</Text>
+                            {
+                              mem_nickname ?
+                                mem_nickname.length <6 ? 
+                                  <View style={{height:'80%',marginLeft:5,alignItems:'flex-end'}}>
+                                      <ThumbSvg height={20} width={20}/>          
+                                  </View>
+                                  :null
+                                :null
+                            }
                         </View>  
                         <View style={{marginVertical:10}}>
                             <Text style={{fontSize:9,maxHeight:'100%'}} numberOfLines={2}> {mem_profile_content} </Text>          

@@ -91,7 +91,7 @@ class LoginScreen extends React.Component{
     render(){
         const {mem_userid,mem_password,autologin} = this.state;
         const { signIn } = this.context
-        const wdithLogo = (width/1.414);
+        const wdithLogo = (width*0.47);
         const heightLogo = (wdithLogo*0.57);
         return(
           <View
