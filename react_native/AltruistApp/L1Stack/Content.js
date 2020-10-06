@@ -1424,7 +1424,7 @@ class AlbaContent extends React.Component {
                     </Card>
                 </ScrollView>
                 }
-                <Layout style={{flex:1}}>
+                <Layout>
                     <TouchableOpacity style={styles.bottomButton} onPress={()=>this.setVisible(true)}>
                         <PaperPlanesvg width = {42} height = {32}/>
                         <Text category = 'h2' style={{color : 'white'}}>지원하기</Text>
