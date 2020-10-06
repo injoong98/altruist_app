@@ -40,7 +40,8 @@ class JauScreen extends React.Component {
 
 	getPostList = async () => {
 		const{current_category, current_page} = this.state;
-		await axios.get( `http://dev.unyict.org/api/board_post/lists/ilban?category_id=${current_category}?page=${current_page}`)
+		console.log(current_page);
+		await axios.get( `http://dev.unyict.org/api/board_post/lists/ilban?category_id=${current_category}&page=${current_page}`)
 			.then((response) => {
 				if(response.data.view.list.data.list.length > 0){
 					this.setState({
@@ -103,10 +104,10 @@ class JauScreen extends React.Component {
 	load_more_data = () => {
 		if(this.state.total_rows < 20){
 			this.setState({isNoMoreData:true});
+			console.log('load_more_data isNoMoreData : '+isNoMoreData)
 		}
        	else if(!this.state.isNoMoreData){
-			this.setState({ current_page : this.state.current_page + 1, isListLoading : true}, this.getPostList,
-				console.log(this.state.current_page))
+			this.setState({ current_page : this.state.current_page + 1, isListLoading : true}, this.getPostList)
         }
 	}
 	
