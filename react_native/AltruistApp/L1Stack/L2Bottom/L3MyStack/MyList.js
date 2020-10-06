@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView,View,YellowBox,StyleSheet,ActivityIndicator,TouchableOpacity} from 'react-native';
+import {SafeAreaView,View,LogBox,StyleSheet,ActivityIndicator,TouchableOpacity} from 'react-native';
 import { Text,List,Spinner,TopNavigationAction,TopNavigation} from '@ui-kitten/components';
 import axios from 'axios'
 import {PostTime} from '../../../components/PostTime'
@@ -8,7 +8,7 @@ import Viewsvg from '../../../assets/icons/view.svg'
 import Commentsvg from '../../../assets/icons/comment.svg'
 import Backsvg from '../../../assets/icons/back-arrow-color.svg'
 
-YellowBox.ignoreWarnings([
+LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
   ]);
 

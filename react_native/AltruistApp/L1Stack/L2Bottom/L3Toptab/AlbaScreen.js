@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, Layout, ActivityIndicator, YellowBox, TouchableOpacity, LogBox} from 'react-native';
+import { StyleSheet, View, Image, Layout, ActivityIndicator, TouchableOpacity, LogBox} from 'react-native';
 import { Card, List, Text, Divider, Button, Spinner} from '@ui-kitten/components';
 import axios from 'axios';
 import {PostTime} from '../../../components/PostTime';
