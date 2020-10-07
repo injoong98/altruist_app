@@ -350,6 +350,7 @@ class AltApplyFormScreen extends React.Component {
           
         } else {
           this.props.navigation.navigate('ApplyComplete');
+          this.context.session_chk()
         }
       })
 

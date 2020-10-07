@@ -47,7 +47,7 @@ export class TopBarTune extends React.Component {
                                 <TouchableOpacity 
                                     onPress={this.props.func}
                                     style={{flexDirection:'row',width:'100%',alignItems:'center',justifyContent:'center',paddingLeft:20}}>
-                                    <Text category='h2' style={{fontSize:13,color:'#A897C2'}}>오픈질문하기</Text>
+                                    <Text category='h2' style={{fontSize:15,color:'#A897C2'}}>오픈질문하기</Text>
                                     <Pensvg width={28} height={22}/>
                                 </TouchableOpacity>
                                 :
@@ -55,7 +55,7 @@ export class TopBarTune extends React.Component {
                                 <TouchableOpacity 
                                     onPress={this.props.func}
                                     style={{flexDirection:'row',width:'100%',alignItems:'center',justifyContent:'center',paddingLeft:20}}>
-                                    <Text category='h2' style={{fontSize:13,color:'#A897C2'}}>질문하기</Text>
+                                    <Text category='h2' style={{fontSize:15,color:'#A897C2'}}>질문하기</Text>
                                     <Pensvg width={28} height={22}/>
                                 </TouchableOpacity>
                                 :

@@ -4,7 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {SafeAreaView} from 'react-native'
 import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction} from '@ui-kitten/components';
 import AltMainScreen from './Main';
-import AltApplyScreen from './Apply';
+import AltApplyScreen,{AltApplyStatus} from './Apply';
 import AltListScreen from './List';
 import AltProfileScreen from './Profile';
 import {AltQuestionWrite,AltQueType,AltAreaList,AltQueContent,AltQueList,AltReplying,AltOpqQueList} from './Question';
@@ -41,6 +41,7 @@ export const AltStackNav = () =>(
         <Screen name = "AltProfile" component={AltProfileScreen}/>
         <Screen name = "AltApplyForm" component={AltApplyFormScreen}/>
         <Screen name = "AltApplyComplete" component={ApplyCompleteScreen}/>
+        <Screen name = "AltApplyStatus" component={AltApplyStatus}/>
         <Screen name = "AltQueType" component={AltQueType}/>
         <Screen name = "AltAreaList" component={AltAreaList}/>
         <Screen name = "AltQuestionWrite" component={AltQuestionWrite}/>

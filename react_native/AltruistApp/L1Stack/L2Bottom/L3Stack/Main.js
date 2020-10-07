@@ -58,9 +58,6 @@ class AltMainScreen extends React.Component{
         const {lists} = this.state;
         var listsShowing = [];
         var randomIndex = Math.floor(Math.random()*lists.length)
-        console.log('lists.length : '+lists.length)
-        console.log('randomIndex : '+randomIndex)
-        console.log('randomIndex % lists.length : '+randomIndex % lists.length)
         for(var i=0 ; i<6; i++){
             listsShowing[i] =  lists[randomIndex % lists.length];
             randomIndex++;
@@ -85,7 +82,6 @@ class AltMainScreen extends React.Component{
         data.append('postition','main_middle')
         await axios.post("http://dev.unyict.org/api/board_post/banner",data)
         .then(res=>{
-            console.log("res.data.view.banners : "+JSON.stringify(res.data.view.banners))
             this.setState({banners:res.data.view.banners})
         }
         )
@@ -107,14 +103,13 @@ class AltMainScreen extends React.Component{
             inputRange:[0,1],
             outputRange:["0%","90%"]
         })
-        console.log('renderHeadSection : '+ isLoading)
         const wdithLogo = (width/1.414);
         const heightLogo = (wdithLogo*0.57);
         return(
         <View style={{marginBottom:30,borderWidth:0}}>
             <View style={{flex:1}}>
                 <View style={{height:height,alignItems:'center',minHeight:'100%',backgroundColor:'#ffffff',paddingBottom:100}}>
-                    <View style={{flex:2,alignItems:'center',justifyContent:'center'}}>
+                    <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
                         <View style={{}}>
                             {/* <MainSvg width={wdithLogo} height={heightLogo}/> */}
                             <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
@@ -164,17 +159,40 @@ class AltMainScreen extends React.Component{
                             
                             </TouchableOpacity> */}
                         </View>
-                        <View style={{alignItems:'center'}}>
-                            <TouchableOpacity 
-                                style={styles.mainbtn}
-                                onPress={()=>navigation.navigate('AltList',{title:title})}
-                            >
-                                <Text category='h2' style={{color:'#A897C2',fontSize:18}}>이타주의자 찾기</Text>
-                            </TouchableOpacity>
-                        </View>
+                    </View>
+                    <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+                        <TouchableOpacity 
+                            style={styles.mainbtn}
+                            onPress={()=>navigation.navigate('AltList',{title})}
+                        >
+                            <Text category='h2' style={{color:'#A897C2',fontSize:18}}>이타주의자 찾기</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                            style={styles.mainbtn}
+                            onPress={()=>navigation.navigate('AltQuestionWrite',{title})}
+                        >
+                            <Text category='h2' style={{color:'#A897C2',fontSize:18}}>오픈 질문 하기</Text>
+                        </TouchableOpacity>
+                        {
+                            this.context.is_altruist =='Y'?
+                                null
+                            :
+                                <TouchableOpacity 
+                                    style={styles.mainbtn}
+                                    onPress={()=>navigation.navigate(this.context.is_altruist =='R'?'AltApplyStatus':'AltApply')}
+                                >
+                                    <Text category='h2' style={{color:'#A897C2',fontSize:18}}>지원 하기</Text>
+                                </TouchableOpacity>
+                        }
+                        <TouchableOpacity 
+                            style={styles.mainbtn}
+                            onPress={()=>navigation.navigate('AltQueToptab',{title})}
+                        >
+                            <Text category='h2' style={{color:'#A897C2',fontSize:18}}>질문함</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={{flex:1,justifyContent:'flex-end',paddingBottom:10}}>
-                        <View style={{flexDirection:'row',width:'100%',paddingLeft:40,paddingRight:12,marginBottom:'5%'}}>                        
+                        {/* <View style={{flexDirection:'row',width:'100%',paddingLeft:40,paddingRight:12,marginBottom:'5%'}}>                        
                             <TouchableHighlight style={[styles.btn,{borderRadius:15,width:30}]} onPress={btnContainerCompressed?this.maximizing:this.minimizing}>
                                 {btnContainerCompressed? 
                                     <Plussvg height={30} width={30}/>
@@ -187,30 +205,30 @@ class AltMainScreen extends React.Component{
                                     this.context.is_altruist =='Y'?
                                     null
                                     :
-                                    <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltApply')}>
+                                    <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate(this.context.is_altruist =='R'?'AltApplyStatus':'AltApply')}>
                                         <Text numberOfLines={1} category="h1" style={styles.btnText}>
                                         지원
                                         </Text>
                                     </TouchableHighlight>
                                 }
 
-                                {/* <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltList')}>
+                                <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltList')}>
                                     <Text numberOfLines={1} category="h1" style={styles.btnText}>
                                     멘토리스트
                                     </Text>
-                                </TouchableHighlight> */}
-                                {/* <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltOpqQueList')}>
+                                </TouchableHighlight>
+                                <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltOpqQueList')}>
                                     <Text numberOfLines={1} category="h1" style={styles.btnText}>
                                     오픈 질문
                                     </Text>
-                                </TouchableHighlight> */}
+                                </TouchableHighlight>
                                 <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltQueToptab')}>
                                     <Text numberOfLines={1} category="h1" style={styles.btnText}>
                                     질문함
                                     </Text>
                                 </TouchableHighlight>
                             </Animated.View>
-                        </View>
+                        </View> */}
                         <MainSlider
                             height={100} 
                             image={banners}
@@ -306,7 +324,9 @@ const styles = StyleSheet.create({
         borderWidth:2,
         borderColor:'#A897C2',
         borderRadius:3,
-        marginTop:10,
+        marginTop:20,
+        minWidth:160,
+        justifyContent:'center'
     }
 })
 
