@@ -108,7 +108,7 @@ class AltMainScreen extends React.Component{
             outputRange:["0%","90%"]
         })
         console.log('renderHeadSection : '+ isLoading)
-        const wdithLogo = (width*0.8);
+        const wdithLogo = (width/1.414);
         const heightLogo = (wdithLogo*0.57);
         return(
         <View style={{marginBottom:30,borderWidth:0}}>

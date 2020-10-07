@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,TextInput,StyleSheet,Dimensions,Keyboard,TouchableWithoutFeedback} from 'react-native';
+import {View,TextInput,StyleSheet,Dimensions,Keyboard,TouchableWithoutFeedback,Image} from 'react-native';
 import {Text,Input,Button,CheckBox} from '@ui-kitten/components';
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
@@ -92,7 +92,7 @@ class LoginScreen extends React.Component{
         const {mem_userid,mem_password,autologin} = this.state;
         const { signIn } = this.context
         const wdithLogo = (width*0.67);
-        const heightLogo = (wdithLogo*0.87);
+        const heightLogo = (wdithLogo*0.57);
         return(
           <View
             style={{flex:1,backgroundColor:'#ffffff'}}
@@ -103,7 +103,8 @@ class LoginScreen extends React.Component{
             >
               <View style={{position:'relative',flex:1,alignItems:'center',justifyContent:'center'}}>
                 <View style={{backgroundColor:'#ffffff',alignItems:'center',justifyContent:'center'}}>
-                  <LogoSvg  width={wdithLogo} height={heightLogo}/>
+                  {/* <LogoSvg  width={wdithLogo} height={heightLogo}/> */}
+                  <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
                 </View>
                   <TextInput
                       style={styles.testInput}

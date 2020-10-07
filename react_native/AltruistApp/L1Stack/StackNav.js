@@ -24,7 +24,7 @@ import LogoSvg from '../assets/icons/logo.svg'
 import MainImg from '../assets/images/main-logo-img.png'
 
 const {width} = Dimensions.get('window')
-const wdithLogo = (width*0.7);
+const wdithLogo = (width*0.67);
 const heightLogo = (wdithLogo*0.57);
 
 const {Navigator,Screen} = createStackNavigator();
@@ -66,7 +66,8 @@ class LoadingScreen extends React.Component{
             <SafeAreaView style={{flex:1}}>
                 <Animated.View 
                     style={{flex:1,justifyContent:"center", alignItems:"center",backgroundColor:"#ffffff",opacity:this.state.opacity}}>
-                    <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/>
+                    {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
+                    <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
                 </Animated.View>   
             </SafeAreaView>
     )}
