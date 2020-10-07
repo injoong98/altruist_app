@@ -107,6 +107,7 @@ class Pushlib extends CI_Controller
 			'topic_name' => $topic_name // topic 명 
 		);
 		$result = $this->request_fcm($pushdata);
+		log_message('Error','to:'.$pushdata['target_id'].' from:'.$pushdata['mem_id'].' message:'.$pushdata['body']);
 	}
 
 	public function request_fcm($pushdata)
