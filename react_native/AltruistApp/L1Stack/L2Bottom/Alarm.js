@@ -302,7 +302,7 @@ export class AlarmScreen extends React.Component{
     }
 
     render(){
-        const {isLoading} = this.state
+        const {isLoading,noti} = this.state
         return(
             <View  style={styles.container} style={{flex:1}}>
                 {
@@ -311,6 +311,7 @@ export class AlarmScreen extends React.Component{
                     <Spinner size='giant'/>
                 </View>
                      :
+                     noti.length>0?
                 <View style={{flex:1,paddingTop:10,backgroundColor:'#ffffff'}}>
                     <FlatList 
                         data={this.state.noti}
@@ -324,6 +325,13 @@ export class AlarmScreen extends React.Component{
                         ListFooterComponent={this.renderFooter}
                     />
                 </View>
+                :
+                <View style={{flex:1,paddingTop:10,backgroundColor:'#ffffff',alignItems:'center'}}>
+                    <Text>
+                        알림 내역이 없습니다.
+                    </Text>
+                </View>
+
                 }
             </View>
         )
