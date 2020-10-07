@@ -741,27 +741,27 @@ class Findaccount extends CB_Controller
 		 * 유효성 검사를 하지 않는 경우, 또는 유효성 검사에 실패한 경우입니다.
 		 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
 		 */
-
+		
 		if ($this->form_validation->run() === false) {
-			response_result($view, 'Err', validation_errors('', ''));
-			// 이벤트가 존재하면 실행합니다
-			$view['view']['event']['formrunfalse'] = Events::trigger('formrunfalse', $eventname);
+		
+			response_result($view,'Err',validation_errors('', ''));
+		
 		} else {
 
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
-
+			
 			if ($this->input->post('findtype') === 'findidpw') {
 
 				// 이벤트가 존재하면 실행합니다
 				$view['view']['event']['findidpw_before'] = Events::trigger('findidpw_before', $eventname);
-
+				
 				$mb = $this->Member_model->get_by_email($this->input->post('idpw_email'));
 				if (!$mb) {
 					$this->load->model('Member_dormant_model');
 					$mb = $this->Member_dormant_model->get_by_email($this->input->post('idpw_email'));
 				}
-
+				
 				$mem_id = (int) element('mem_id', $mb);
 				$mae_type = 3;
 
@@ -784,7 +784,7 @@ class Findaccount extends CB_Controller
 					'mae_generate_datetime' => cdate('Y-m-d H:i:s'),
 				);
 				$r_auth_input = $this->Member_auth_email_model->insert($authdata);
-				log_message('Error', 'insert auth email : ', $r_auth_input);
+				//log_message('Error','insert auth email : ',$r_auth_input);
 				$verify_url = 'http://peacedesigners.org/password.php?user=' . element('mem_userid', $mb) . '&code=' . $verificationcode;
 				// $verify_url = site_url('dev.unyict.org/verify/resetpassword?user=' . element('mem_userid', $mb) . '&code=' . $verificationcode);
 
@@ -844,7 +844,7 @@ class Findaccount extends CB_Controller
 					$replaceconfig_escape,
 					$this->cbconfig->item('send_email_findaccount_user_content')
 				);
-				log_message('Error', 'before send email');
+				//log_message('Error','before send email');
 				$this->email->clear(true);
 				$this->email->from($this->cbconfig->item('webmaster_email'), $this->cbconfig->item('webmaster_name'));
 				$this->email->to($this->input->post('idpw_email'));
@@ -852,6 +852,9 @@ class Findaccount extends CB_Controller
 				$this->email->message($content);
 				$this->email->send();
 
+
+				// 메일이 안보내졌을때...
+				
 				$view['view']['message'] = $this->input->post('idpw_email') . '로 인증메일이 발송되었습니다. <br />발송된 인증메일을 확인하신 후에 회원님의 정보 확인이 가능합니다';
 
 				// 이벤트가 존재하면 실행합니다
@@ -894,7 +897,11 @@ class Findaccount extends CB_Controller
 		// $this->layout = element('layout_skin_file', element('layout', $view));
 		$this->view = element('view_skin_file', element('layout', $view));
 		if (!$view['view']['message']) {
+<<<<<<< HEAD
+			response_result($view, 'Err', "find_type :".$this->input->post('findtype')." email posted : ".$this->input->post('idpw_email')."이메일 부분에 오류가 있습니다. 문제가 계속 되면 관리자에게 요청하세요.");
+=======
 			response_result($view, 'Err', "find_type :" . $this->input->post('findtype') . " email posted : " . $this->input->post('idpw_email') . "이메일 부분에 오류가 있습니다. 문제가 계속 되면 관리자에게 요청하세요.");
+>>>>>>> e9fb0729e8ed4fad40c4ff7f55b23c5c34401b00
 		} else {
 			response_result($view, 'success', '정상');
 		}
