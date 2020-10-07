@@ -8,7 +8,14 @@ import {
   Icon,
 } from '@ui-kitten/components';
 
-const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
+const BackIcon = (props) => (
+  <Icon
+    style={{width: 24, height: 24}}
+    fill="#63579D"
+    name="back-arrow"
+    pack="alticons"
+  />
+);
 
 class FindRwSuccessScreen extends Component {
   constructor(props) {
@@ -34,13 +41,13 @@ class FindRwSuccessScreen extends Component {
           alignment="center"
           accessoryLeft={this.BackAction}
         />
-        <View style={{flex: 1,justifyContent:'center'}}>
+        <View style={{flex: 1, justifyContent: 'center'}}>
           <View style={{}}>
             <Text
               category="h2"
               style={{
                 alignSelf: 'center',
-                
+
                 paddingBottom: 20,
               }}>
               비밀번호 재설정 메일 전송
@@ -52,7 +59,7 @@ class FindRwSuccessScreen extends Component {
               비밀번호 재설정 완료하면 로그인 할 수 있습니다.
             </Text>
           </View>
-          <View style={{marginTop:30}}>
+          <View style={{marginTop: 30}}>
             <Button
               style={{
                 alignSelf: 'center',

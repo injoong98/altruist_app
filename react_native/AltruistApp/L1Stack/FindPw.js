@@ -83,10 +83,7 @@ class FindPwScreen extends Component {
     await axios
       .post(`http://dev.unyict.org/api/register/email_check `, formdata)
       .then((res) => {
-        if (
-          res.data.message.includes('예약어') ||
-          res.data.message.includes('가능')
-        ) {
+        if (!res.data.message.includes('이미 사용중')) {
           this.setState({
             checkEmailCaption: '입력한 이메일을 다시 한번 확인해주세요.',
           });
@@ -100,7 +97,6 @@ class FindPwScreen extends Component {
       .catch((error) => {
         console.log('ERROR', error);
         console.error();
-        //alert('')
       });
   };
 
@@ -140,9 +136,7 @@ class FindPwScreen extends Component {
             textContentType="emailAddress" //ios
             placeholder="* 이메일"
             onChangeText={(mem_email) => {
-              this.setState({
-                mem_email: mem_email,
-              });
+              this.setState({mem_email});
             }}
             onEndEditing={() => {
               // this.checkNotNull();
