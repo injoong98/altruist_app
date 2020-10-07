@@ -953,19 +953,20 @@ class Findaccount extends CB_Controller
 
 				// 이벤트가 존재하면 실행합니다
 				$view['view']['event']['verifyemail_before'] = Events::trigger('verifyemail_before', $eventname);
-				$mb = $this->Member_model->get_by_email($this->input->post('idpw_email'));
+
+				$mb = $this->Member_model->get_by_email($this->input->post('verify_email'));
 				if (!$mb) {
 					$this->load->model('Member_dormant_model');
-					$mb = $this->Member_dormant_model->get_by_email($this->input->post('idpw_email'));
+					$mb = $this->Member_dormant_model->get_by_email($this->input->post('verify_email'));
 				}
 				$mem_id = (int) element('mem_id', $mb);
-				$mae_type = 3;
+				$mae_type = 2;
 
 				$vericode = array('$', '/', '.');
 				$verificationcode = str_replace(
 					$vericode,
 					'',
-					password_hash($mem_id . '-' . $this->input->post('idpw_email') . '-' . random_string('alnum', 10), PASSWORD_BCRYPT)
+					password_hash($mem_id . '-' . $this->input->post('verify_email') . '-' . random_string('alnum', 10), PASSWORD_BCRYPT)
 				);
 
 				$beforeauthdata = array(
@@ -979,10 +980,9 @@ class Findaccount extends CB_Controller
 					'mae_type' => $mae_type,
 					'mae_generate_datetime' => cdate('Y-m-d H:i:s'),
 				);
-				$r_auth_input = $this->Member_auth_email_model->insert($authdata);
-				//log_message('Error','insert auth email : ',$r_auth_input);
+				$this->Member_auth_email_model->insert($authdata);
 				$verify_url = 'http://peacedesigners.org/reAuth.php?user=' . element('mem_userid', $mb) . '&code=' . $verificationcode;
-				// $verify_url = site_url('dev.unyict.org/verify/resetpassword?user=' . element('mem_userid', $mb) . '&code=' . $verificationcode);
+				// $verify_url = site_url('verify/confirmemail?user=' . element('mem_userid', $mb) . '&code=' . $verificationcode);
 
 				$searchconfig = array(
 					'{홈페이지명}',
@@ -996,7 +996,7 @@ class Findaccount extends CB_Controller
 					'{쪽지수신여부}',
 					'{문자수신여부}',
 					'{회원아이피}',
-					'{패스워드변경주소}',
+					'{메일인증주소}',
 				);
 				$receive_email = element('mem_receive_email', $mb) ? '동의' : '거부';
 				$receive_note = element('mem_use_note', $mb) ? '동의' : '거부';
@@ -1033,25 +1033,22 @@ class Findaccount extends CB_Controller
 				$title = str_replace(
 					$searchconfig,
 					$replaceconfig,
-					$this->cbconfig->item('send_email_findaccount_user_title')
+					$this->cbconfig->item('send_email_resendverify_user_title')
 				);
 				$content = str_replace(
 					$searchconfig,
 					$replaceconfig_escape,
-					$this->cbconfig->item('send_email_findaccount_user_content')
+					$this->cbconfig->item('send_email_resendverify_user_content')
 				);
-				//log_message('Error','before send email');
+
 				$this->email->clear(true);
 				$this->email->from($this->cbconfig->item('webmaster_email'), $this->cbconfig->item('webmaster_name'));
-				$this->email->to($this->input->post('idpw_email'));
+				$this->email->to($this->input->post('verify_email'));
 				$this->email->subject($title);
 				$this->email->message($content);
 				$this->email->send();
 
-
-				// 메일이 안보내졌을때...
-
-				$view['view']['message'] = $this->input->post('idpw_email') . '로 인증메일이 발송되었습니다. <br />발송된 인증메일을 확인 후, 로그인을 진행할 수 있습니다.';
+				$view['view']['message'] = $this->input->post('verify_email') . '로 인증메일이 발송되었습니다. <br />발송된 인증메일을 확인하신 후에 사이트 이용이 가능합니다';
 
 				// 이벤트가 존재하면 실행합니다
 				$view['view']['event']['verifyemail_after'] = Events::trigger('verifyemail_after', $eventname);
@@ -1093,7 +1090,7 @@ class Findaccount extends CB_Controller
 		// $this->layout = element('layout_skin_file', element('layout', $view));
 		$this->view = element('view_skin_file', element('layout', $view));
 		if (!$view['view']['message']) {
-			response_result($view, 'Err', "find_type :" . $this->input->post('findtype') . " email posted : " . $this->input->post('idpw_email') . "이메일 부분에 오류가 있습니다. 문제가 계속 되면 관리자에게 요청하세요.");
+			response_result($view, 'Err', "find_type :" . $this->input->post('findtype') . " email posted : " . $this->input->post('verify_email') . "이메일 부분에 오류가 있습니다. 문제가 계속 되면 관리자에게 요청하세요.");
 		} else {
 			response_result($view, 'success', '정상');
 		}

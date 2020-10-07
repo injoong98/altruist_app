@@ -38,7 +38,7 @@ class ResendAuthmailScreen extends Component {
     const {mem_email} = this.state;
 
     formdata.append('findtype', 'verifyemail');
-    formdata.append('idpw_email', mem_email);
+    formdata.append('verify_email', mem_email);
     console.info('form', this.state);
 
     await axios
