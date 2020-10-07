@@ -37,34 +37,14 @@ class ResendAuthmailScreen extends Component {
     let formdata = new FormData();
     const {mem_email} = this.state;
 
-    formdata.append('findtype', 'findidpw');
-    formdata.append('idpw_email', mem_email);
+    formdata.append('findtype', 'verifyemail');
+    formdata.append('verify_email', mem_email);
     console.info('form', this.state);
 
     await axios
-      .post(`http://dev.unyict.org/api/findaccount/findpw`, formdata)
+      .post(`http://dev.unyict.org/api/findaccount/verifyemail`, formdata)
       .then((res) => {
-        if (res.data.status == 500) {
-          //실패 모달
-          console.log('status500', res);
-          console.log('status', res.status);
-          console.log('실패');
-          Alert.alert(
-            '실패',
-            '관리자에게 문의하세요',
-            [
-              {
-                text: 'OK',
-              },
-            ],
-            {cancelable: false},
-          );
-        } else if (res.data.status == 200) {
-          console.log('status200', res);
-          console.log('status', res.status);
-          this.props.navigation.navigate('FindRwSuccessScreen');
-        } else {
-        }
+        console.log(res);
       })
       .catch((error) => {
         console.log('ERROR', error);
@@ -119,16 +99,16 @@ class ResendAuthmailScreen extends Component {
                 paddingTop: 40,
                 paddingBottom: 20,
               }}>
-              비밀번호 재설정
+              인증 메일 재전송
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              가입하신 메일 주소로 알려드립니다.
+              인증 메일을 못 받았을 경우,
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              가입할 때 등록한 메일 주소를 입력하고
+              가입시 입력한 메일 주소를 입력하고
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              "PW 재설정" 버튼을 클릭해주세요.
+              "Email 재전송" 버튼을 클릭해주세요.
             </Text>
           </View>
           <Input
@@ -155,7 +135,7 @@ class ResendAuthmailScreen extends Component {
           <Button
             style={{
               alignSelf: 'center',
-              width: 114,
+              width: 124,
               height: 34,
               borderRadius: 6,
             }}
@@ -167,7 +147,7 @@ class ResendAuthmailScreen extends Component {
                       '입력한 이메일을 다시 한번 확인해주세요.',
                   })
             }>
-            PW 재설정
+            Email 재전송
           </Button>
         </View>
       </SafeAreaView>

@@ -104,4 +104,4 @@ const styles = StyleSheet.create({
   gobtn: {},
 });
 
-export default ResendAuthmailSuccess;
+export default ResendAuthmailSuccessScreen;

@@ -128,18 +128,28 @@ class LoginScreen extends React.Component{
                       로그인
                     </Text>  
                   </TouchableOpacity>
-                  <View style={{marginTop:26, justifyContent:'center',alignItems:'center'}}>
+                  <View style={{marginTop:26,  justifyContent:'center',alignItems:'center'}}>
                     
-                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('FindPwScreen')}>
-                      <Text style={styles.optionText}>
-                      비밀번호 재설정
-                      </Text>  
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{marginTop:9}} onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
+                    <TouchableOpacity  onPress={()=>this.props.navigation.navigate('RegisterScreen')}>
                       <Text style={styles.optionText}>
                         회원 가입
                       </Text>  
                     </TouchableOpacity>
+                    <View style={{flexDirection:'row', marginVertical : 15 }}>
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('FindPwScreen')}>
+                      <Text style={styles.optionText}>
+                      비밀번호 재설정 
+                      </Text>  
+                    </TouchableOpacity>
+                      <Text style={styles.optionText}>
+                      {`  /  `}
+                      </Text>  
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('ResendAuthmailScreen')}>
+                      <Text style={styles.optionText}>
+                      인증메일 재전송
+                      </Text>  
+                    </TouchableOpacity>
+                    </View>
                   </View>
               </View>
             </TouchableWithoutFeedback>
