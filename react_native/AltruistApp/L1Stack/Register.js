@@ -513,7 +513,7 @@ class RegisterScreen extends Component {
         console.log(res.data);
         if (res.data.reason == '닉네임값이 넘어오지 않았습니다') {
           this.setState({goNext: true});
-          this.setState({nicknameCaption: '닉네임값을 입력해주세요'});
+          this.setState({nicknameCaption: '닉네임을 입력해주세요'});
         } else {
           if (res.data.message.includes('사용중')) {
             this.setState({goNext: true});
@@ -962,7 +962,7 @@ class RegisterScreen extends Component {
                   color: '#A3A3A3',
                   textAlign: 'right',
                 }}>
-                필수값 확인해주세요.
+                필수 인적사항을 채워주세요.
               </Text>
             ) : (
               <this.nextStep />
