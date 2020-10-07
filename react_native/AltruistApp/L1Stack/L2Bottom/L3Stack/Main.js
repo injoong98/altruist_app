@@ -58,9 +58,6 @@ class AltMainScreen extends React.Component{
         const {lists} = this.state;
         var listsShowing = [];
         var randomIndex = Math.floor(Math.random()*lists.length)
-        console.log('lists.length : '+lists.length)
-        console.log('randomIndex : '+randomIndex)
-        console.log('randomIndex % lists.length : '+randomIndex % lists.length)
         for(var i=0 ; i<6; i++){
             listsShowing[i] =  lists[randomIndex % lists.length];
             randomIndex++;
@@ -85,7 +82,6 @@ class AltMainScreen extends React.Component{
         data.append('postition','main_middle')
         await axios.post("http://dev.unyict.org/api/board_post/banner",data)
         .then(res=>{
-            console.log("res.data.view.banners : "+JSON.stringify(res.data.view.banners))
             this.setState({banners:res.data.view.banners})
         }
         )
@@ -107,7 +103,6 @@ class AltMainScreen extends React.Component{
             inputRange:[0,1],
             outputRange:["0%","90%"]
         })
-        console.log('renderHeadSection : '+ isLoading)
         const wdithLogo = (width/1.414);
         const heightLogo = (wdithLogo*0.57);
         return(
