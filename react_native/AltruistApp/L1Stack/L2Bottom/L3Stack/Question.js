@@ -641,7 +641,8 @@ class AltQueContent extends React.Component{
             this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert(JSON.stringify(error))
+            alert('글이 존재 하지 않습니다.');
+            this.props.navigate.goBack()
         })
     }
     onRefresh=()=>{

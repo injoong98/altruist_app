@@ -284,7 +284,8 @@ class GominContent extends React.Component{
             this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert(JSON.stringify(error))
+            alert('글이 존재 하지 않습니다.');
+            this.props.navigate.goBack()
         })
     }
     onRefresh=()=>{
@@ -642,7 +643,8 @@ class MarketContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert(JSON.stringify(error))
+            alert('글이 존재 하지 않습니다.');
+            this.props.navigate.goBack()
         })
     }
     
@@ -1238,7 +1240,8 @@ class AlbaContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert(error)
+            alert('글이 존재 하지 않습니다.');
+            this.props.navigate.goBack()
         })
     }
 
@@ -1784,7 +1787,8 @@ class IlbanContent extends Component {
             }
         })
         .catch((error)=>{
-            alert(JSON.stringify(error))
+            alert('글이 존재 하지 않습니다.');
+            this.props.navigate.goBack()
         })
     }
     
