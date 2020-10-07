@@ -36,7 +36,9 @@ class JauScreen extends React.Component {
 
 	ignoredTags = [...IGNORED_TAGS, 'img'];
 
-	category = ['전체', '아무말있어요', '게임있어요', '소식있어요', '정보있어요'];
+	// category = ['전체', '아무말있어요', '게임있어요', '소식있어요', '정보있어요'];
+	category = ['전체', '자유', '게임', '소식', '정보'];
+
 
 	getPostList = async () => {
 		const{current_category, current_page} = this.state;
