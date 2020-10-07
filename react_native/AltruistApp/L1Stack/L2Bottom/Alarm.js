@@ -246,9 +246,13 @@ export class AlarmScreen extends React.Component{
         axios.get(`http://dev.unyict.org/api/notification/read?not_id=${item.not_id}`)
         .then(res=>{
             console.log(item.not_type=='comment')
-            if(item.not_type=='comment'){
+            if(item.not_type=='comment'||item.not_type=='comment_comment'){
                 console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
                 this.navigateToPost(item.post_id,item.brd_id)
+            }else if(item.not_type=='이타주의자들'&&item.not_message.includes("질문")){
+                console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
+                this.navigateToPost(item.not_content_id,'10')
+
             }
             this.context.reloadUnreadCount();
             this.getNotiList()
