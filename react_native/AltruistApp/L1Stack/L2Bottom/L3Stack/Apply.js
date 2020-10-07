@@ -22,9 +22,58 @@ import {
 } from '@ui-kitten/components';
 import {FlatList} from 'react-native-gesture-handler';
 import {WriteContentToptab} from '../../../components/WriteContentTopBar';
+import FlowerP from '../../../assets/icons/flower-peach.svg'
+import FlowerS from '../../../assets/icons/flower-sky.svg'
+import FlowerY from '../../../assets/icons/flower-yellow.svg'
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
+export class AltApplyStatus extends React.Component {
+    constructor(props){
+      super(props)
+    }
+  
+  BackAction = () =>(
+      <TopNavigationAction icon={BackIcon} onPress={() => {this.props.navigation.goBack()}}/>
+  )
 
+  render(){ 
+      return(
+          <SafeAreaView style={styles.statusContainer}>
+                  <WriteContentToptab
+                      gbckfunc={() => {
+                          this.props.navigation.navigate('AltMain');
+                      }}
+                      gbckuse={true}
+                  />
+                  <Layout style={styles.statusWrapper}>
+                      <View style={{alignItems:'center',paddingHorizontal:30,paddingTop:35,paddingBottom:0}}>
+                          <Text category='h2' style={styles.statusTitle}>이타주의자</Text>
+                          <Text category='h2' style={styles.statusTitle}>승인 대기중입니다.</Text>
+                          <View style={{position:'absolute',bottom:0,right:0}}>
+                              <FlowerS height={30.8} width={30}/>
+                          </View>
+                          <View style={{position:'absolute',top:40,left:5}}>
+                              <FlowerY height={15.8} width={15}/>
+                          </View>
+                          <View style={{position:'absolute',top:5,left:15}}>
+                              <FlowerP height={30.8} width={30}/>
+                          </View>
+                      </View>
+                      <View style={{marginTop:30,alignItems:'center'}}>
+                          <Text style={{}}> 현재 심사 중에 있으니 기다려 주시길 바랍니다.</Text>
+                          <Text style={{marginTop:10}}> 관리자 확인과 정식 등록 시 리스트에 보이게 됩니다.</Text>
+                          <Text style={{marginTop:10}}> 심사 완료 시 푸쉬 알림으로 알려드립니다.</Text>
+                      </View>
+                      <TouchableHighlight 
+                          style={{marginTop:50, alignItems:'center',justifyContent:'center',borderRadius:7.5,height:33,width:60,backgroundColor:'#63579D'}}
+                          onPress={() => this.props.navigation.navigate('AltMain')}>
+                          <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>완료</Text>
+                      </TouchableHighlight>
+                  </Layout>
+          </SafeAreaView>
+      )
+  }
+}
 class AltApplyScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -203,6 +252,19 @@ const styles = StyleSheet.create({
   btnText: {
     color: '#ffffff',
   },
+  statusContainer: {
+    flex: 1,
+    backgroundColor:'#ffffff',
+  },
+  statusWrapper :{
+      flex:1,
+      alignItems:'center',
+      justifyContent:'center'
+  },
+  statusTitle: {
+      color:'#63579D',
+      fontSize:24
+  }
 });
 
 export default AltApplyScreen;

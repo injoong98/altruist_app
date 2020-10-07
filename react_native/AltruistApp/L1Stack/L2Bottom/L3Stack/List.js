@@ -14,82 +14,88 @@ const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
 
-export const RenderAltList= ({arg,navigation}) => {
-    const cardHeight= deviceWidth*0.9*100/337;
-    return(
-        <TouchableOpacity
-            style={{flexDirection:'row',height:cardHeight,marginBottom:cardHeight*0.15,marginHorizontal:'5%',backgroundColor:'#F4F4F4',alignItems:'center',borderTopRightRadius:7,borderBottomRightRadius:7}}
-            onPress = {()=>{navigation.navigate('AltProfile', arg.item.alt_profile.alt_id)}}
-        >
-            <View style={{flex:9,}}>
-                <Image 
-                    source = {{uri : 'http://dev.unyict.org/'+ (arg.item.alt_profile.alt_photo !=null ? arg.item.alt_profile.alt_photo: 'uploads/altwink-rect.png')}} 
-                    style = {{flex : 1, width : '100%', height : '100%', resizeMode:'cover',borderWidth:1}}
-                />
-            </View>
-            <View style={{flex:22,height:'100%'}}>
-                <View style={{flex:73,flexDirection:'row'}}>
-                    <View style={{flex:1}}>
-                        <View style={{flex:1,width:'100%',paddingLeft:'18%'}}>
-                            <Text category='h2' style={{fontSize:18,marginTop:12}}>
-                                {arg.item.mem_basic_info.mem_nickname}
-                            </Text>
-                            <Text style={{fontSize:12,fontWeight:'600'}}>
-                                {arg.item.alt_profile.alt_aboutme}
-                            </Text>
-                        </View>                        
-                    </View>
-                    <View style={{flex:1,alignItems:'flex-start'}}>
-                       <View style={{flex:1,backgroundColor:'#ffffff',width:'84%',borderBottomLeftRadius:5,borderBottomRightRadius:5,paddingTop:5,paddingLeft:9}}>
-                            <View style={{flexDirection:'row', alignItems:'flex-start'}}>
-                                <Honorsvg height={9} width={6}/>
-                                <Text category='h2' style={{fontSize:9,lineHeight:9,marginLeft:4}}>경력</Text>
-                            </View>
-                            <View style={{marginTop:5}}>
-                                {
-                                arg.item.get_alt_cv.map((i)=>
-                                    <Text 
-                                        category ='p1'
-                                        style = {{fontSize:10,marginBottom:4}} 
-                                        key={i.acv_id}
-                                        numberOfLines={1} 
-                                        ellipsizeMode="tail"    
-                                    >
-                                        {
-                                        i.acv_year ?
-                                            i.acv_year.trim()+') '
-                                        :
-                                            null
-                                        }
-                                        {i.acv_content.trim()}
-                                    </Text>
-                                )}
-                            </View>
-                       </View>
-                    </View>
+export class RenderAltList extends React.Component{
+    componentDidMount(){
+    }
+    render(){
+        const cardHeight= deviceWidth*0.9*100/337;
+        const {arg,navigation} = this.props;
+
+        return(
+            <TouchableOpacity
+                style={{flexDirection:'row',height:cardHeight,marginBottom:cardHeight*0.15,marginHorizontal:'5%',backgroundColor:'#F4F4F4',alignItems:'center',borderTopRightRadius:7,borderBottomRightRadius:7}}
+                onPress = {()=>{navigation.navigate('AltProfile', arg.item.alt_profile.alt_id)}}
+            >
+                <View style={{flex:9,}}>
+                    <Image 
+                        source = {{uri : 'http://dev.unyict.org/'+ (arg.item.alt_profile.alt_photo !=null ? arg.item.alt_profile.alt_photo: 'uploads/altwink-rect.png')}} 
+                        style = {{flex : 1, width : '100%', height : '100%', resizeMode:'cover',borderWidth:1}}
+                    />
                 </View>
-                <View style={{flex:27,flexDirection:'row',paddingLeft:'9%'}}>
-                    <ScrollView horizontal={true} style={{}}>
-                        <View style={{justifyContent:'center'}}>
-                            <View style={{flexDirection:'row',backgroundColor:'#808080',paddingLeft:5,borderRadius:3}}>
-                            {
-                                arg.item.alt_area.map(({act_content})=>(
-                                    <Text key={act_content} style={{color:'#ffffff',fontSize:8,fontWeight:'700',marginRight:5}}>{`#${act_content}`}</Text>
-                                ))
-                            }
-                            </View>
+                <View style={{flex:22,height:'100%'}}>
+                    <View style={{flex:73,flexDirection:'row'}}>
+                        <View style={{flex:1}}>
+                            <View style={{flex:1,width:'100%',paddingLeft:'18%'}}>
+                                <Text category='h2' style={{fontSize:18,marginTop:12}}>
+                                    {arg.item.mem_basic_info.mem_nickname}
+                                </Text>
+                                <Text style={{fontSize:12,fontWeight:'600'}}>
+                                    {arg.item.alt_profile.alt_aboutme}
+                                </Text>
+                            </View>                        
                         </View>
-                    </ScrollView >
+                        <View style={{flex:1,alignItems:'flex-start'}}>
+                           <View style={{flex:1,backgroundColor:'#ffffff',width:'84%',borderBottomLeftRadius:5,borderBottomRightRadius:5,paddingTop:5,paddingLeft:9}}>
+                                <View style={{flexDirection:'row', alignItems:'flex-start'}}>
+                                    <Honorsvg height={9} width={6}/>
+                                    <Text category='h2' style={{fontSize:9,lineHeight:9,marginLeft:4}}>경력</Text>
+                                </View>
+                                <View style={{marginTop:5}}>
+                                    {
+                                    arg.item.get_alt_cv.map((i)=>
+                                        <Text 
+                                            category ='p1'
+                                            style = {{fontSize:10,marginBottom:4}} 
+                                            key={i.acv_id}
+                                            numberOfLines={1} 
+                                            ellipsizeMode="tail"    
+                                        >
+                                            {
+                                            i.acv_year ?
+                                                i.acv_year.trim()+') '
+                                            :
+                                                null
+                                            }
+                                            {i.acv_content.trim()}
+                                        </Text>
+                                    )}
+                                </View>
+                           </View>
+                        </View>
+                    </View>
+                    <View style={{flex:27,flexDirection:'row',paddingLeft:'9%'}}>
+                        <ScrollView horizontal={true} style={{}} ref='areas'>
+                            <View style={{justifyContent:'center'}}>
+                                <View style={{flexDirection:'row',backgroundColor:'#808080',paddingLeft:5,borderRadius:3}}>
+                                {
+                                    arg.item.alt_area.map(({act_content})=>(
+                                        <Text key={act_content} style={{color:'#ffffff',fontSize:8,fontWeight:'700',marginRight:5}}>{`#${act_content}`}</Text>
+                                    ))
+                                }
+                                </View>
+                            </View>
+                        </ScrollView >
+                    </View>
                 </View>
-            </View>
-            <View style={{flex:2,right:0}}>
-                <Rightsvg width={22} height={22}/>
-            </View>
-            <View style={{position:'absolute' , right:15,top:10}}>
-            <Heartsvg width={18} height={18}/>
-            </View>
-        </TouchableOpacity>
-    )
+                <View style={{flex:2,right:0}}>
+                    <Rightsvg width={22} height={22}/>
+                </View>
+                <View style={{position:'absolute' , right:15,top:10}}>
+                <Heartsvg width={18} height={18}/>
+                </View>
+            </TouchableOpacity>
+        )
+    }
 }
 
 class AltListScreen extends React.Component{

@@ -182,7 +182,7 @@ class AltMainScreen extends React.Component{
                                     this.context.is_altruist =='Y'?
                                     null
                                     :
-                                    <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate('AltApply')}>
+                                    <TouchableHighlight style={styles.btn} onPress={()=>navigation.navigate(this.context.is_altruist =='R'?'AltApplyStatus':'AltApply')}>
                                         <Text numberOfLines={1} category="h1" style={styles.btnText}>
                                         지원
                                         </Text>
