@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component, isValidElement, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -39,15 +39,20 @@ class RegisterScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      goNext: false,
       mem_sex: '1',
       captionCheck: '',
       column: '',
       borderColor: '',
       EmailIcon: false,
-      goNext: true,
       date: new Date(),
       val: '',
       checked: false,
+      nicknameCaption: '',
+      idCaption: '',
+      EmailCaption: '',
+      pwmessage: '',
+      equalPw: '',
     };
   }
 
@@ -81,13 +86,18 @@ class RegisterScreen extends Component {
   ];
 
   requiredInput = ({i}) => {
-    const [val, setVal] = useState(''); // 입력한 값을 set
-    const [color, setColor] = useState('#FFFFFF'); // 입력한 값을 set
-    const [checked, setChecked] = useState(false);
+    const [color, setColor] = useState('#F8F8F8'); // 입력한 값을 set
     const [nextValKey, setNextValKey] = useState(this.requiredStates[i]);
     const [finalVal, setFinalVal] = useState('');
-    const [caption, setCaption] = useState('');
-    const initialBoarderColor = '#FFFFFF';
+
+    const requiredCaption = [
+      null,
+      this.state.nicknameCaption,
+      this.state.idCaption,
+      this.state.EmailCaption,
+      this.state.pwmessage,
+      this.state.equalPw,
+    ];
 
     console.log('현재 nextKEY : ', nextValKey);
     console.log('현재 nextKEY : ', finalVal);
@@ -97,33 +107,59 @@ class RegisterScreen extends Component {
 
     return (
       <Input
-        style={[{borderRadius: 15, borderColor: color}]}
+        style={[
+          {backgroundColor: '#F8F8F8', borderRadius: 15, borderColor: color},
+        ]}
         placeholder={this.requiredInputList[i]}
         secureTextEntry={!nextValKey.includes('password') ? false : true}
         onChangeText={(nextVal) => {
           setFinalVal(nextVal);
           this.setState({[nextValKey]: finalVal});
+          i == 1 && this.checkNickname();
+          i == 2 && this.checkId();
+          i == 3 && this.checkEmail();
+          i == 4 && this.checkPassword();
+          i == 5 && this.EqualPW(this.state.mem_password, finalVal);
         }}
         caption={() =>
-          caption ? (
-            <Text style={{paddingLeft: 10, fontSize: 10}}>{caption}</Text>
+          requiredCaption[i] ? (
+            <Text
+              style={{
+                color: 'red',
+                paddingLeft: 10,
+                fontSize: 10,
+                paddingBottom: 3,
+              }}>
+              {requiredCaption[i]}
+            </Text>
           ) : null
         }
-        onEndEditing={() =>
-          //중복, 형식 체크
-          // : 닉네임, ID, EMAIL, 비밀번호, 비밀번호 확인
-          {
-            this.setState({[nextValKey]: finalVal});
-            !finalVal ? setColor('red') : setColor('#FFFFFF');
-            !finalVal ? setCaption('없습니다 값이') : setCaption('');
-            {
-              console.log('color', color);
-              console.log('finalVal', finalVal);
-            }
-          }
-        }
+        onEndEditing={() => {
+          this.setState({[nextValKey]: finalVal});
+          !finalVal ? setColor('red') : setColor('#F8F8F8');
+          i == 1 && this.checkNickname();
+          i == 2 && this.checkId();
+          i == 3 && this.checkEmail();
+          i == 4 && this.checkPassword();
+          i == 5 && this.EqualPW(this.state.mem_password, finalVal);
+        }}
       />
     );
+  };
+
+  //   TODO : 패스워드 확인
+  EqualPW = (a, b = '') => {
+    console.log(this.state);
+    let equalPw = '';
+    let pwmessage = '';
+    if (a == b) {
+      equalPw = '';
+    } else {
+      pwmessage = '';
+      equalPw = '비밀번호가 일치하지 않습니다.';
+    }
+    this.setState({equalPw: equalPw});
+    this.setState({pwmessage: pwmessage});
   };
 
   notRequiredList = ['휴대전화', '생년월일', '추천인'];
@@ -134,6 +170,14 @@ class RegisterScreen extends Component {
 
   dataDetectorTypes = ['phoneNumber', 'phoneNumber', null];
   keyboardType = ['phone-pad', 'numeric', null];
+
+  //성별, 생년월일 "" STring으로 안9들어가는 문제
+  // 생년월일 string으로 변환하는 문제
+  ConvertString = (something) => {
+    console.info(something);
+    let type = something.toString();
+    return type;
+  };
 
   PhoneHyphen = (phonenum) => {
     var number = phonenum.replace(/[^0-9]/g, '');
@@ -245,15 +289,15 @@ class RegisterScreen extends Component {
     );
   };
 
-  checkKeyList = ['', 'nickname', 'userid', 'email', 'password', 'password_re'];
-  APIList = [
-    '',
-    'http://dev.unyict.org/api/register/nickname_check',
-    'http://dev.unyict.org/api/register/userid_check',
-    'http://dev.unyict.org/api/register/email_check',
-    'http://dev.unyict.org/api/register/password_check',
-    '',
-  ];
+  // checkKeyList = ['', 'nickname', 'userid', 'email', 'password', 'password_re'];
+  // APIList = [
+  //   '',
+  //   'http://dev.unyict.org/api/register/nickname_check',
+  //   'http://dev.unyict.org/api/register/userid_check',
+  //   'http://dev.unyict.org/api/register/email_check',
+  //   'http://dev.unyict.org/api/register/password_check',
+  //   '',
+  // ];
 
   //   TODO : 성별
   RadioSexSelection = () => {
@@ -296,9 +340,14 @@ class RegisterScreen extends Component {
     );
   };
 
-  // checkAgreementState = () => (
-
-  // );
+  NoString = (str) => {
+    var nostring = str.replace(/\D/g, '');
+    this.setState({mem_phone: nostring});
+  };
+  NoString2 = (str) => {
+    var nostring2 = str.replace(/\D/g, '');
+    this.setState({mem_birthday: nostring2});
+  };
 
   //이거 꼭 수정하기
   ReadAgreement = () => (
@@ -356,6 +405,108 @@ class RegisterScreen extends Component {
       </Text>
     </View>
   );
+  //   TODO : 이메일 중복 확인
+  checkEmail = async () => {
+    const {mem_email} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('email', mem_email);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/email_check`, formdata)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.message.includes('예약어')) {
+          // this.setState({goNext: true});
+          this.setState({EmailCaption: res.data.message});
+        } else if (res.data.message.includes('사용중')) {
+          // this.setState({goNext: true});
+          this.setState({EmailCaption: res.data.message});
+        } else {
+          this.setState({EmailCaption: res.data.message});
+        }
+      });
+  };
+
+  //   TODO : 비밀번호 확인
+  checkPassword = async () => {
+    const {mem_password} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('password', mem_password);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/password_check`, formdata)
+      .then((res) => {
+        console.log(res.data);
+        const pwmessage = res.data.message;
+        this.setState({pwmessage: pwmessage});
+      });
+  };
+
+  //추천인 - userid API
+  checkRecommend = async () => {
+    const {mem_recommend} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('userid', mem_recommend);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .then((res) => {
+        console.log(res.data);
+
+        if (res.data.message.includes('사용중')) {
+          this.setState({recommendCaption: null});
+        } else if (res.data.result == 'available') {
+          this.setState({recommendCaption: '없는 아이디 입니다.'});
+        }
+      });
+  };
+
+  //userid - userid API
+  checkId = async () => {
+    const {mem_userid} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('userid', mem_userid);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .then((res) => {
+        console.log(res.data);
+
+        if (res.data.message.includes('사용중')) {
+          this.setState({idCaption: res.data.message});
+        } else if (res.data.result == 'available') {
+          this.setState({idCaption: null});
+        }
+      });
+  };
+
+  checkNickname = async () => {
+    const {mem_nickname} = this.state;
+
+    let formdata = new FormData();
+    formdata.append('nickname', mem_nickname);
+
+    await axios
+      .post(`http://dev.unyict.org/api/register/nickname_check`, formdata)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.reason == '닉네임값이 넘어오지 않았습니다') {
+          this.setState({goNext: true});
+          this.setState({nicknameCaption: '닉네임값을 입력해주세요'});
+        } else {
+          if (res.data.message.includes('사용중')) {
+            this.setState({goNext: true});
+            this.setState({nicknameCaption: res.data.reason});
+          } else {
+            this.setState({nicknameCaption: res.data.reason});
+          }
+        }
+      });
+  };
 
   SubmitForm = async () => {
     const {
@@ -455,25 +606,37 @@ class RegisterScreen extends Component {
         {cancelable: false},
       );
     } else {
-      console.log('yes');
-      this.SubmitForm();
+      if (!checked) {
+        this.setState({goNext: false});
+      } else {
+        console.log('yes');
+        this.setState({goNext: true});
+        this.SubmitForm();
+      }
     }
   };
 
   nextStep = () => (
-    <TouchableOpacity
+    <View
       style={{
         paddingBottom: 60,
         flexDirection: 'row',
         alignContent: 'flex-end',
         alignSelf: 'flex-end',
-      }}
-      onPress={() => this.checkRequires()}>
-      <Text style={{color: '#63579D'}} category="p2">
-        다음{' '}
-      </Text>
-      <Nextsvg fill="#63579D" style={{transform: [{rotate: '180deg'}]}} />
-    </TouchableOpacity>
+      }}>
+      {!this.state.goNext ? (
+        <Text style={{color: '#63579D'}} category="p2">
+          필수값을 입력해주세요
+        </Text>
+      ) : (
+        <TouchableOpacity onPress={() => this.checkRequires()}>
+          <Text style={{color: '#63579D'}} category="p2">
+            다음{' '}
+          </Text>
+          <Nextsvg fill="#63579D" style={{transform: [{rotate: '180deg'}]}} />
+        </TouchableOpacity>
+      )}
+    </View>
   );
 
   //end : components
@@ -505,7 +668,7 @@ class RegisterScreen extends Component {
           {/* 이름 */}
           <this.requiredInput i={0} />
           {/* 닉네임 */}
-          <this.requiredInput i={1} />
+          <this.requiredInput i={1} caption={this.state.idCaption} />
           {/* 성별 */}
           <this.RadioSexSelection />
           {/* '* ID', */}
@@ -517,13 +680,59 @@ class RegisterScreen extends Component {
           {/* '* 비밀번호 확인', */}
           <this.requiredInput i={5} />
           <View style={{padding: 10}}></View>
-          {/* 휴대폰번호 */}
-          <this.NotRequiredInput n={0} />
 
+          <Input
+            style={styles.inputs}
+            maxLength={13}
+            keyboardType="phone-pad"
+            dataDetectorTypes="phoneNumber"
+            placeholder="휴대전화"
+            onChangeText={(mem_phone) => {
+              this.setState({mem_phone: mem_phone});
+              this.NoString(mem_phone);
+              this.PhoneHyphen(mem_phone);
+            }}
+            onEndEditing={() => {
+              this.phoneSubstr(this.state.mem_phone);
+            }}
+            caption={this.state.phoneCaption}
+            value={this.state.mem_phone}
+          />
+          <Input
+            style={styles.inputs}
+            maxLength={10}
+            keyboardType="numeric"
+            dataDetectorTypes="phoneNumber"
+            placeholder="생년월일 ( ex. 2000-01-01 ) "
+            onChangeText={(mem_birthday) => {
+              this.setState({mem_birthday: mem_birthday});
+              this.NoString2(mem_birthday);
+              this.BdayHyphen(mem_birthday);
+            }}
+            onEndEditing={() => this.bdaySubstr(this.state.mem_birthday)}
+            caption={this.state.bdayCaption}
+            value={this.state.mem_birthday}
+          />
+
+          <Input
+            style={styles.inputs}
+            placeholder="추천인 아이디"
+            onChangeText={(mem_recommend) =>
+              this.setState({mem_recommend: mem_recommend})
+            }
+            onEndEditing={() => {
+              this.checkNotNull();
+              this.checkRecommend();
+            }}
+            caption={this.state.recommendCaption}
+          />
+
+          {/* 휴대폰번호 */}
+          {/* <this.NotRequiredInput n={0} /> */}
           {/* 생일 */}
-          <this.NotRequiredInput n={1} />
+          {/* <this.NotRequiredInput n={1} /> */}
           {/* 추천인 */}
-          <this.NotRequiredInput n={2} />
+          {/* <this.NotRequiredInput n={2} /> */}
 
           {/* 서명문 체크 */}
           <View
