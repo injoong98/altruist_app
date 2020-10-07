@@ -96,7 +96,8 @@ export class StackNav extends React.Component{
                         if(response.data.status == 200 )
                         {
                             this.setState({isSignedIn:true});
-                            this.session_chk()
+                            this.session_chk();
+                            this.getNotiList();
                         }
                         else{
                             const regex = /(<([^>]+)>)|&nbsp;/ig;

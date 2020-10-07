@@ -897,7 +897,11 @@ class Findaccount extends CB_Controller
 		// $this->layout = element('layout_skin_file', element('layout', $view));
 		$this->view = element('view_skin_file', element('layout', $view));
 		if (!$view['view']['message']) {
+<<<<<<< HEAD
 			response_result($view, 'Err', "find_type :".$this->input->post('findtype')." email posted : ".$this->input->post('idpw_email')."이메일 부분에 오류가 있습니다. 문제가 계속 되면 관리자에게 요청하세요.");
+=======
+			response_result($view, 'Err', "find_type :" . $this->input->post('findtype') . " email posted : " . $this->input->post('idpw_email') . "이메일 부분에 오류가 있습니다. 문제가 계속 되면 관리자에게 요청하세요.");
+>>>>>>> e9fb0729e8ed4fad40c4ff7f55b23c5c34401b00
 		} else {
 			response_result($view, 'success', '정상');
 		}

@@ -17,7 +17,7 @@ const BackIcon = (props) => (
   />
 );
 
-class FindRwSuccessScreen extends Component {
+class ResendAuthmailSuccessScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -50,13 +50,13 @@ class FindRwSuccessScreen extends Component {
 
                 paddingBottom: 20,
               }}>
-              비밀번호 재설정 메일 전송
+              인증 메일 재전송
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              비밀번호 재설정 메일을 전송하였습니다.
+              인증 메일 재전송 메일을 전송하였습니다.
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              비밀번호 재설정 완료하면 로그인 할 수 있습니다.
+              인증을 완료하면 로그인 할 수 있습니다.
             </Text>
           </View>
           <View style={{marginTop: 30}}>
@@ -104,4 +104,4 @@ const styles = StyleSheet.create({
   gobtn: {},
 });
 
-export default FindRwSuccessScreen;
+export default ResendAuthmailSuccess;

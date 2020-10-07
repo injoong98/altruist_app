@@ -517,7 +517,7 @@ class AltQueContent extends React.Component{
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
                         <View>
-                            <Text category="s2">{`[${item.cmt_nickname}] 님의 답변`}</Text>
+                            <Text category="s2">{`[${item.cmt_username}] 님의 답변`}</Text>
                             <PostTime datetime={item.cmt_datetime}/>
                         </View>
                     </View>

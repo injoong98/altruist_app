@@ -18,7 +18,7 @@ const BackIcon = (props) => (
     pack="alticons"
   />
 );
-class FindPwScreen extends Component {
+class ResendAuthmailScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -191,4 +191,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FindPwScreen;
+export default ResendAuthmailScreen;
