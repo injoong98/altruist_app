@@ -365,7 +365,7 @@ export class AlarmToptab extends React.Component{
     render(){
         return (
             <SafeAreaView style={{flex:1,}}>
-                <TopBarTune text="알람" 
+                <TopBarTune text="알림" 
                     func={()=>this.readall()}
                     right='alarm'
                 />
