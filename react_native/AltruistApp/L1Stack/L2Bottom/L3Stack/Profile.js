@@ -132,6 +132,7 @@ class AltProfileScreen extends React.Component {
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
                 marginVertical: 5,
+                flexWrap:'wrap'
               }}>
               {altruist.alt_area.map((i) => (
                 <Tag style={{color:'#63579D',fontWeight:'bold'}} key={i.act_id}>{i.act_content}</Tag>
