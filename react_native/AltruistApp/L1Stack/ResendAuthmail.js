@@ -42,29 +42,9 @@ class ResendAuthmailScreen extends Component {
     console.info('form', this.state);
 
     await axios
-      .post(`http://dev.unyict.org/api/findaccount/findpw`, formdata)
+      .post(`http://dev.unyict.org/api/findaccount/`, formdata)
       .then((res) => {
-        if (res.data.status == 500) {
-          //실패 모달
-          console.log('status500', res);
-          console.log('status', res.status);
-          console.log('실패');
-          Alert.alert(
-            '실패',
-            '관리자에게 문의하세요',
-            [
-              {
-                text: 'OK',
-              },
-            ],
-            {cancelable: false},
-          );
-        } else if (res.data.status == 200) {
-          console.log('status200', res);
-          console.log('status', res.status);
-          this.props.navigation.navigate('FindRwSuccessScreen');
-        } else {
-        }
+        res;
       })
       .catch((error) => {
         console.log('ERROR', error);
