@@ -65,6 +65,7 @@ class AlarmIcon extends React.Component{
         }
     }
     alarmAction = () => {
+        console.log('alarmAction')
         Animated.sequence([
             Animated.timing(this.state.size,{
                 toValue:3,
@@ -80,7 +81,6 @@ class AlarmIcon extends React.Component{
         
     };
     componentDidMount(){
-        this.alarmAction();
         messaging().onMessage(async remoteMessage => {
             this.alarmAction();
             });

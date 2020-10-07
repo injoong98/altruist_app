@@ -291,7 +291,7 @@ export class AlarmScreen extends React.Component{
         })
     }
     componentDidMount(){
-        this.getNotiList();
+        this.setState({noti:this.context.noti},this.setState({isLoading:false}))
         messaging().onMessage(async remoteMessage => {
             this.getNotiList();
         });
@@ -353,7 +353,7 @@ export class AlarmToptab extends React.Component{
         await axios.get(`http://dev.unyict.org/api/notification/readall`)
         .then(res=>{
             this.context.reloadUnreadCount();
-            this.context.getNotiList()
+            this.context.getFirstNotiList();
         })
         .catch(err=>{
         })
