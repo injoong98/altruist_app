@@ -1,6 +1,7 @@
 import React, {Component, useState} from 'react';
 import {
   View,
+  TextInput,
   StyleSheet,
   SafeAreaView,
   Keyboard,
@@ -587,8 +588,6 @@ class RegisterScreen extends Component {
     this.setState({captionCheck: eqaulPW});
   };
 
-  captionAlign = (caption) => <Text category="p1">{caption}</Text>;
-
   nextStep = () => (
     <TouchableOpacity
       style={{
@@ -605,8 +604,7 @@ class RegisterScreen extends Component {
           paddingBottom: 60,
           color: '#63579D',
         }}>
-        {' '}
-        다음{' '}
+        {`다 음  `}
       </Text>
       <Nextsvg fill="#63579D" style={{transform: [{rotate: '180deg'}]}} />
     </TouchableOpacity>
@@ -633,114 +631,184 @@ class RegisterScreen extends Component {
             paddingStart: 45,
             paddingTop: 30,
           }}>
-          <View>
-            {/* 필수 */}
-            <Input
-              style={
-                this.state.usernameStyle
-                  ? this.state.usernameStyle
-                  : styles.inputs
-              }
-              placeholder="* 이름"
-              onChangeText={(mem_username) => {
-                this.setState({mem_username: mem_username});
-              }}
-              onEndEditing={() => {
-                this.checkNotNull();
-              }}
-            />
-            <Input
-              style={
-                this.state.nicknameStyle
-                  ? this.state.nicknameStyle
-                  : styles.inputs
-              }
-              placeholder="* 닉네임 "
-              onChangeText={(mem_nickname) => {
-                this.setState({mem_nickname: mem_nickname});
-                this.checkNotNull();
-              }}
-              onEndEditing={() => {
-                this.checkNotNull();
-                this.checkNickname();
-              }}
-              caption={this.state.nicknameCaption}
-            />
-
-            <this.RadioSexSelection />
-            {/* validation : 사용자가 input창에서 딱 벗어났을 때 
+          {/* 필수 */}
+          <Input
+            style={
+              this.state.usernameStyle
+                ? this.state.usernameStyle
+                : styles.inputs
+            }
+            placeholder="* 이름"
+            onChangeText={(mem_username) => {
+              this.setState({mem_username: mem_username});
+            }}
+            onEndEditing={() => {
+              this.checkNotNull();
+            }}
+          />
+          <Input
+            style={
+              this.state.nicknameStyle
+                ? this.state.nicknameStyle
+                : styles.inputs
+            }
+            placeholder="* 닉네임 "
+            onChangeText={(mem_nickname) => {
+              this.setState({mem_nickname: mem_nickname});
+              this.checkNotNull();
+            }}
+            onEndEditing={() => {
+              this.checkNotNull();
+              this.checkNickname();
+            }}
+            caption={() =>
+              this.state.nicknameCaption != null && (
+                <Text
+                  style={{
+                    color: 'red',
+                    paddingLeft: 10,
+                    fontSize: 10,
+                    paddingBottom: 3,
+                  }}>
+                  {this.state.nicknameCaption}
+                </Text>
+              )
+            }
+          />
+          <this.RadioSexSelection />
+          {/* validation : 사용자가 input창에서 딱 벗어났을 때 
                 1. null 값 체크 
                 2. mem_email 마지막으로 입력된 값*/}
-            {/* id 
+          {/* id 
                 중복 체크,
                 빈값 체크
                     */}
-            <Input
-              style={
-                this.state.useridStyle ? this.state.useridStyle : styles.inputs
-              }
-              placeholder="* ID"
-              onChangeText={(mem_userid) => {
-                this.setState({
-                  mem_userid: mem_userid,
-                });
-              }}
-              onEndEditing={() => {
-                this.checkNotNull();
-                this.checkId(this.state.mem_userid);
-              }}
-              caption={this.state.idCaption}
-            />
-            <Input
-              style={
-                this.state.emailStyle ? this.state.emailStyle : styles.inputs
-              }
-              keyboardType="email-address"
-              textContentType="emailAddress" //ios
-              placeholder="* 이메일"
-              onChangeText={(mem_email) => {
-                this.setState({
-                  mem_email: mem_email,
-                });
-                this.checkEmail(mem_email);
-              }}
-              onEndEditing={() => {
-                this.checkNotNull();
-                this.checkEmail(this.state.mem_email);
-              }}
-              caption={this.state.EmailCaption}
-            />
-            <Input
-              style={this.state.pwStyle ? this.state.pwStyle : styles.inputs}
-              secureTextEntry={true}
-              placeholder="* 비밀번호"
-              onChangeText={(mem_password) => {
-                this.setState({mem_password: mem_password});
-                this.EqualPW(mem_password, this.state.mem_password_re);
-              }}
-              onEndEditing={() => {
-                this.checkPassword();
-                this.checkNotNull();
-              }}
-              caption={this.state.pwmessage}
-            />
-            <Input
-              style={
-                this.state.pwreStyle ? this.state.pwreStyle : styles.inputs
-              }
-              secureTextEntry={true}
-              placeholder="* 비밀번호 확인"
-              onChangeText={(mem_password_re) => {
-                this.setState({mem_password_re: mem_password_re});
-                this.EqualPW(this.state.mem_password, mem_password_re);
-              }}
-              onEndEditing={() => {
-                this.checkPassword();
-                this.checkNotNull();
-              }}
-              caption={this.state.captionCheck}
-            />
-          </View>
+          <Input
+            style={
+              this.state.useridStyle ? this.state.useridStyle : styles.inputs
+            }
+            placeholder="* ID"
+            onChangeText={(mem_userid) => {
+              this.setState({
+                mem_userid: mem_userid,
+              });
+            }}
+            onEndEditing={() => {
+              this.checkNotNull();
+              this.checkId(this.state.mem_userid);
+            }}
+            caption={() =>
+              this.state.idCaption != null && (
+                <Text
+                  style={{
+                    color: 'red',
+                    paddingLeft: 10,
+                    fontSize: 10,
+                    paddingBottom: 3,
+                  }}>
+                  {this.state.idCaption}
+                </Text>
+              )
+            }
+          />
+          <Input
+            style={
+              this.state.emailStyle ? this.state.emailStyle : styles.inputs
+            }
+            keyboardType="email-address"
+            textContentType="emailAddress" //ios
+            placeholder="* 이메일"
+            onChangeText={(mem_email) => {
+              this.setState({
+                mem_email: mem_email,
+              });
+              this.checkEmail(mem_email);
+            }}
+            onEndEditing={() => {
+              this.checkNotNull();
+              this.checkEmail(this.state.mem_email);
+            }}
+            caption={() =>
+              this.state.EmailCaption != null && (
+                <Text
+                  style={{
+                    color: 'red',
+                    paddingLeft: 10,
+                    fontSize: 10,
+                    paddingBottom: 3,
+                  }}>
+                  {this.state.EmailCaption}
+                </Text>
+              )
+            }
+          />
+          <TextInput
+            style={[
+              {
+                fontSize: 13,
+                paddingHorizontal: 10,
+                maxHeight: 40,
+              },
+              this.state.pwStyle ? this.state.pwStyle : styles.inputs,
+            ]}
+            secureTextEntry={true}
+            placeholder="    * 비밀번호"
+            onChangeText={(mem_password) => {
+              this.setState({mem_password: mem_password});
+              this.EqualPW(mem_password, this.state.mem_password_re);
+            }}
+            onEndEditing={() => {
+              this.checkPassword();
+              this.checkNotNull();
+            }}
+            caption={() =>
+              this.state.pwmessage != null && (
+                <Text
+                  style={{
+                    color: 'red',
+                    paddingLeft: 10,
+                    fontSize: 10,
+                    paddingBottom: 13,
+                  }}>
+                  {this.state.pwmessage}
+                </Text>
+              )
+            }
+          />
+          <TextInput
+            style={[
+              {
+                fontSize: 13,
+                paddingHorizontal: 5,
+                marginVertical: 7,
+                maxHeight: 40,
+              },
+              this.state.pwreStyle ? this.state.pwreStyle : styles.inputs,
+            ]}
+            secureTextEntry={true}
+            placeholder="    * 비밀번호 확인"
+            onChangeText={(mem_password_re) => {
+              this.setState({mem_password_re: mem_password_re});
+              this.EqualPW(this.state.mem_password, mem_password_re);
+            }}
+            onEndEditing={() => {
+              this.checkPassword();
+              this.checkNotNull();
+            }}
+            caption={() =>
+              this.state.captionCheck != null && (
+                <Text
+                  style={{
+                    color: 'red',
+                    paddingLeft: 10,
+                    fontSize: 10,
+                    paddingTop: 13,
+                  }}>
+                  {this.state.captionCheck}
+                </Text>
+              )
+            }
+          />
           <View style={{paddingTop: 15}}>
             <Input
               style={styles.inputs}
@@ -756,10 +824,22 @@ class RegisterScreen extends Component {
               onEndEditing={() => {
                 this.phoneSubstr(this.state.mem_phone);
               }}
-              caption={this.state.phoneCaption}
+              caption={() =>
+                this.state.phoneCaption != null && (
+                  <Text
+                    style={{
+                      color: 'red',
+                      paddingLeft: 10,
+                      fontSize: 10,
+                      paddingBottom: 3,
+                    }}>
+                    {this.state.phoneCaption}
+                  </Text>
+                )
+              }
               value={this.state.mem_phone}
             />
-            {/* <this.DatepickerBday /> */}
+
             <Input
               style={styles.inputs}
               maxLength={10}
@@ -786,10 +866,21 @@ class RegisterScreen extends Component {
                 this.checkNotNull();
                 this.checkRecommend();
               }}
-              caption={this.state.recommendCaption}
+              caption={() =>
+                this.state.recommendCaption != null && (
+                  <Text
+                    style={{
+                      color: 'red',
+                      paddingLeft: 10,
+                      fontSize: 10,
+                      paddingBottom: 3,
+                    }}>
+                    {this.state.recommendCaption}
+                  </Text>
+                )
+              }
             />
           </View>
-
           <View
             style={{
               paddingTop: 30,
@@ -892,7 +983,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
     borderRadius: 15,
     borderColor: '#FFFFFF',
-    color: '#A897C2',
+    color: '#63579D',
   },
   inputDeny: {
     backgroundColor: '#F8F8F8',
