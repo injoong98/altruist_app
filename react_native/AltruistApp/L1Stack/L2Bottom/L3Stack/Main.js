@@ -162,7 +162,7 @@ class AltMainScreen extends React.Component{
                         </View>    
                         
                     </View>
-                    <View style={{flex:1,justifyContent:'flex-end',paddingBottom:70}}>
+                    <View style={{flex:1,justifyContent:'flex-end',paddingBottom:20}}>
                         {/* <View style={{flexDirection:'row',width:'100%',paddingLeft:40,paddingRight:12,marginBottom:'5%'}}>                        
                             <TouchableHighlight style={[styles.btn,{borderRadius:15,width:30}]} onPress={btnContainerCompressed?this.maximizing:this.minimizing}>
                                 {btnContainerCompressed? 
