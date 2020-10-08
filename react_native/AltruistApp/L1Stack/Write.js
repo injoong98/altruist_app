@@ -8,7 +8,8 @@ import { StyleSheet, SafeAreaView, View, Image, ScrollView, TouchableWithoutFeed
   TextInput,
   Keyboard,
   StatusBar,
-  Pressable
+  Pressable,
+  Platform
 } from 'react-native';
 import {
   Layout,
@@ -179,16 +180,20 @@ class GominWrite extends React.Component {
   };
 
   gobackfunc = () => {
-    StatusBar.setBackgroundColor('#B09BDE');
-    StatusBar.setBarStyle('default');
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#B09BDE');
+      StatusBar.setBarStyle('default');
+    }
     const {navigation, route} = this.props;
     navigation.goBack();
     route.params.statefunction();
   };
 
   componentDidMount = () => {
-    StatusBar.setBackgroundColor('#F4F4F4');
-    StatusBar.setBarStyle('dark-content');
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#F4F4F4');
+      StatusBar.setBarStyle('dark-content');
+    }
   }
 
   modalList =[
@@ -361,8 +366,11 @@ class MarketWrite extends React.Component {
   }
 
   componentDidMount() {
-    StatusBar.setBackgroundColor('#F4F4F4');
-    StatusBar.setBarStyle('dark-content');
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#F4F4F4');
+      StatusBar.setBarStyle('dark-content');
+    }
+
   }
 
   submitPost = async () => {
@@ -429,8 +437,10 @@ class MarketWrite extends React.Component {
   };
 
   gobackfunc = () => {
-    StatusBar.setBackgroundColor('#B09BDE');
-    StatusBar.setBarStyle('default');
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#B09BDE');
+      StatusBar.setBarStyle('default');
+    }
     const {navigation, route} = this.props;
     navigation.goBack();
     route.params.statefunction();
@@ -908,8 +918,10 @@ class AlbaWrite extends React.Component {
   Salary_Type = ['시급', '일급', '주급', '월급'];
   
   componentDidMount() {
-    StatusBar.setBackgroundColor('#F4F4F4');
-    StatusBar.setBarStyle('dark-content');
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#F4F4F4');
+      StatusBar.setBarStyle('dark-content');
+    }
   }
   
   setTipVisible = (bool) => {
@@ -1001,8 +1013,10 @@ class AlbaWrite extends React.Component {
 
   gobackfunc = () => {
     this.cleanupImages();
-    StatusBar.setBackgroundColor('#B09BDE');
-    StatusBar.setBarStyle('default');
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#B09BDE');
+      StatusBar.setBarStyle('default');
+    }
     const {navigation, route} = this.props;
     navigation.goBack();
     route.params.statefunction();
@@ -1407,8 +1421,11 @@ class IlbanWrite extends React.Component {
 
   gobackfunc = () => {
     this.cleanupImages();
-    StatusBar.setBackgroundColor('#B09BDE');
-    StatusBar.setBarStyle('default');
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#B09BDE');
+      StatusBar.setBarStyle('default');
+    }
+
     const {navigation, route} = this.props;
     navigation.goBack();
     route.params.statefunction();
@@ -1542,8 +1559,10 @@ class IlbanWrite extends React.Component {
   );
 
   componentDidMount() {
-    StatusBar.setBackgroundColor('#F4F4F4');
-    StatusBar.setBarStyle('dark-content');
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#F4F4F4');
+      StatusBar.setBarStyle('dark-content');
+    }
   }
 
   modalList =[

@@ -121,8 +121,10 @@ class AltReplying extends React.Component{
         this.setState({confirmModalVisible:true,modalType:3});
     }
     componentDidMount(){
-        StatusBar.setBackgroundColor('#F4F4F4');
-        StatusBar.setBarStyle('dark-content');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#F4F4F4');
+            StatusBar.setBarStyle('dark-content');
+        }
         const {navigation} =this.props
         navigation.addListener('beforeRemove',(e)=>{
             console.log(this.state.goBackOk)
@@ -139,8 +141,10 @@ class AltReplying extends React.Component{
         })
     }
     componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+        }
     }
     render(){
         const {post,title,comment,confirmModalVisible,resultModalVisible,spinnerModalVisible,modalType} = this.state
@@ -517,7 +521,7 @@ class AltQueContent extends React.Component{
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
                         <View>
-                            <Text category="s2">{`[${item.cmt_nickname}] 님의 답변`}</Text>
+                            <Text category="s2">{`[${item.cmt_username}] 님의 답변`}</Text>
                             <PostTime datetime={item.cmt_datetime}/>
                         </View>
                     </View>
@@ -641,7 +645,8 @@ class AltQueContent extends React.Component{
             this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert(JSON.stringify(error))
+            alert('글이 존재 하지 않습니다.');
+            this.props.navigate.goBack()
         })
     }
     onRefresh=()=>{
@@ -1137,14 +1142,18 @@ class AltQuestionWrite extends React.Component
         })
     }
     componentDidMount(){
-        StatusBar.setBackgroundColor('#F4F4F4');
-        StatusBar.setBarStyle('dark-content');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#F4F4F4');
+            StatusBar.setBarStyle('dark-content');
+        }
         this.getAreaCategory()
     }
 
     componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+        }
     }
     render(){
         const {title,content,filterModalVisible,actSelected} = this.state;

@@ -16,6 +16,8 @@ import AgreementScreen from './Agreement'
 import FindPwScreen from './FindPw'
 import RegisterSuccessScreen from './RegisterSuccess'
 import FindRwSuccessScreen from './FindRwSuccess'
+import ResendAuthmailScreen from './ResendAuthmail'
+import ResendAuthmailSuccessScreen from './ResendAuthmailSuccess'
 import QuestionScreen from './Question'
 import FinishScreen from './Finish'
 import {Signing,Notice} from './Context'
@@ -96,7 +98,8 @@ export class StackNav extends React.Component{
                         if(response.data.status == 200 )
                         {
                             this.setState({isSignedIn:true});
-                            this.session_chk()
+                            this.session_chk();
+                            this.getNotiList();
                         }
                         else{
                             const regex = /(<([^>]+)>)|&nbsp;/ig;
@@ -133,11 +136,16 @@ export class StackNav extends React.Component{
                 is_altruist:false
             },
             noticeContext:{
+                noti:[],
                 unreadCount:'test success!!',
                 reloadUnreadCount:()=>{
                     console.log('reloadUnreadCount run')
                     this.getNotiList()
-                }
+                },
+                getFirstNotiList:()=>{
+                    console.log('getFirstNotiList run')
+                    this.getFirstNotiList()
+                },
             
             },
 
@@ -213,14 +221,31 @@ export class StackNav extends React.Component{
             });
         })
     }
+    getFirstNotiList=()=>{
+        axios.get('http://dev.unyict.org/api/notification')
+        .then(res=>{
+           console.log('getFirstNotiList success! : '+res.data.view.data.total_rows)   
+           this.setState(prevState=>({
+                noticeContext: {                  
+                    ...prevState.noticeContext,
+                    noti: res.data.view.data.list,
+                } 
+            })
+            )
+        })
+        .catch(err=>{
+            console.log('getFirstNotiList falied : '+ err)
+        })
+    }
     getNotiList=()=>{
         axios.get('http://dev.unyict.org/api/notification?read=N')
         .then(res=>{
            console.log('getNotiList success! : '+res.data.view.data.total_rows)   
            this.setState(prevState=>({
-                noticeContext: {                   // object that we want to update
-                    ...prevState.noticeContext,    // keep all other key-value pairs
-                    unreadCount: res.data.view.data.total_rows       // update the value of specific key
+                noticeContext: {                  
+                    ...prevState.noticeContext,
+                    unreadCount: res.data.view.data.total_rows,
+                         
                 } 
             })
             )
@@ -231,7 +256,8 @@ export class StackNav extends React.Component{
     }
     componentDidMount(){
         setTimeout(this.session_chk,600);
-        this.getNotiList()
+        this.getNotiList();
+        this.getFirstNotiList();
         messaging()
             .getInitialNotification()
             .then(async remoteMessage=>{
@@ -239,14 +265,17 @@ export class StackNav extends React.Component{
                 if(remoteMessage!=null){
                     this.setState({isPushNoti:true})
                 }
-            }) 
+            }) ;
         messaging().onMessage(async remoteMessage => {
-            this.getNotiList()
+            this.getNotiList(),
+            this.getFirstNotiList()
             });
         messaging().onNotificationOpenedApp(async remoteMessage=>{
             console.log('onNotificationOpenedApp on stackNav.js'+remoteMessage);
             this.getNotiList()
-        })
+            this.getFirstNotiList()
+            this.setState({isPushNoti:true})
+        });
             
     }
     render(){
@@ -264,9 +293,11 @@ export class StackNav extends React.Component{
                                 <Screen name = "Login" component={LoginScreen}/>
                                 <Screen name = "FindPwScreen" component={FindPwScreen}/>
                                 <Screen name = "RegisterScreen" component={RegisterScreen}/>
+                                <Screen name = "ResendAuthmailScreen" component={ResendAuthmailScreen}/>
                                 <Screen name = "FindRwSuccessScreen" component={FindRwSuccessScreen}/>
                                 <Screen name = "AgreementScreen" component={AgreementScreen}/>
                                 <Screen name = "RegisterSuccessScreen" component={RegisterSuccessScreen}/>
+                                <Screen name = "ResendAuthmailSuccessScreen" component={ResendAuthmailSuccessScreen}/>
                                 <Screen name = "QuestionScreen" component={QuestionScreen}/>
                                 <Screen name = "FinishScreen" component={FinishScreen}/>
                             </>

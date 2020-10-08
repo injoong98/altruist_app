@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,StyleSheet,TouchableOpacity, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {View,StyleSheet,TouchableOpacity, TouchableWithoutFeedback, Keyboard,Platform} from 'react-native';
 import {Text,Icon,Button} from '@ui-kitten/components'
 import BellLargesvg from '../assets/icons/bell-large.svg'
 import Uploadsvg from '../assets/icons/upload.svg'
@@ -47,7 +47,7 @@ export class TopBarTune extends React.Component {
                                 <TouchableOpacity 
                                     onPress={this.props.func}
                                     style={{flexDirection:'row',width:'100%',alignItems:'center',justifyContent:'center',paddingLeft:20}}>
-                                    <Text category='h2' style={{fontSize:13,color:'#A897C2'}}>오픈질문하기</Text>
+                                    <Text category='h2' style={{fontSize:15,color:'#A897C2'}}>오픈질문하기</Text>
                                     <Pensvg width={28} height={22}/>
                                 </TouchableOpacity>
                                 :
@@ -55,7 +55,7 @@ export class TopBarTune extends React.Component {
                                 <TouchableOpacity 
                                     onPress={this.props.func}
                                     style={{flexDirection:'row',width:'100%',alignItems:'center',justifyContent:'center',paddingLeft:20}}>
-                                    <Text category='h2' style={{fontSize:13,color:'#A897C2'}}>질문하기</Text>
+                                    <Text category='h2' style={{fontSize:15,color:'#A897C2'}}>질문하기</Text>
                                     <Pensvg width={28} height={22}/>
                                 </TouchableOpacity>
                                 :
@@ -94,7 +94,8 @@ const styles = StyleSheet.create({
         backgroundColor:"#B09BDE",
         width:"100%",
         height:"100%",
-        position:'absolute'
+        position:'absolute',
+        justifyContent:'center'
     },  
     rightside:{
         backgroundColor:"#B09BDE",
@@ -111,11 +112,7 @@ const styles = StyleSheet.create({
     toptext:{
         textAlignVertical:'center',
         textAlign:'center',
-        height:"100%",
         color:"#ffffff",
-        // borderColor:'blue',
-        // borderStyle:'solid',
-        // borderWidth:1
     },
     topicon:{
         height:35,

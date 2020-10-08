@@ -135,8 +135,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-        versionCode 3200007
-        versionName "0.7"
+        versionCode 3200009
+        versionName "0.9"
     }
     splits {
         abi {

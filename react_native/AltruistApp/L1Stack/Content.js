@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, StatusBar, Dimensions, Linking, VirtualizedList,TextInput} from 'react-native';
+import {StyleSheet,SafeAreaView, View, Image, ScrollView,Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity, StatusBar, Dimensions, Linking, VirtualizedList,TextInput,Platform} from 'react-native';
 import {Card,Layout,Button,Text,TopNavigation,TopNavigationAction,Icon, Divider, Input,List,Spinner, Modal, OverflowMenu, MenuItem,Popover} from '@ui-kitten/components'
 import Axios from 'axios';
 import {Signing} from './Context';
@@ -7,7 +7,6 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import HTML from 'react-native-render-html';
 import {ActionSheet, Root, Container, Row} from 'native-base';
 import Slider from '../components/MarketSlider.component'
-import { Alert } from 'react-native';
 import {PostTime} from '../components/PostTime'
 import Confirm from '../components/confirm.component'
 import { WriteContentToptab } from '../components/WriteContentTopBar'
@@ -284,7 +283,8 @@ class GominContent extends React.Component{
             this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert(JSON.stringify(error))
+            alert('글이 존재 하지 않습니다.');
+            this.props.navigate.goBack()
         })
     }
     onRefresh=()=>{
@@ -292,8 +292,10 @@ class GominContent extends React.Component{
         this.getCommentData(post_id);
     } 
     async componentDidMount(){
-        StatusBar.setBackgroundColor('#FFFFFF');
-        StatusBar.setBarStyle('dark-content');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#FFFFFF');
+            StatusBar.setBarStyle('dark-content');        
+        }
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
@@ -435,9 +437,9 @@ class GominContent extends React.Component{
          return(
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
-                gbckfunc={() => {
+                gbckfunc={() => {if(Platform.OS!=='ios'){
                     StatusBar.setBackgroundColor('#B09BDE')
-                    StatusBar.setBarStyle('default')
+                    StatusBar.setBarStyle('default')}
                     this.props.navigation.goBack()
                     this.props.route.params.OnGoback()}}
                 gbckuse={true}
@@ -615,8 +617,10 @@ class MarketContent extends React.Component {
     // }
 
     async componentDidMount(){
-        StatusBar.setBackgroundColor('#F4F4F4');
-        StatusBar.setBarStyle('dark-content');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#F4F4F4');
+            StatusBar.setBarStyle('dark-content');
+        }
         console.log(this.context.session_mem_id);
         const {post_id} = this.props.route.params;
         await this.getPostData(post_id)
@@ -642,7 +646,8 @@ class MarketContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert(JSON.stringify(error))
+            alert('글이 존재 하지 않습니다.');
+            this.props.navigate.goBack()
         })
     }
     
@@ -1034,8 +1039,11 @@ class MarketContent extends React.Component {
                     gbckfunc={() => {
                         this.props.navigation.goBack();
                         this.props.route.params.OnGoback();
-                        StatusBar.setBackgroundColor('#B09BDE');
-                        StatusBar.setBarStyle('default');}}
+                        if(Platform.OS!=='ios'){
+                            StatusBar.setBackgroundColor('#B09BDE');
+                            StatusBar.setBarStyle('default');}
+                        }
+                        }                        
                     gbckuse={true}
                     right={<this.MoreAction/>}/>
                 {this.state.isLoading ?
@@ -1208,8 +1216,10 @@ class AlbaContent extends React.Component {
     Alba_salary_type = ['시급', '일급', '주급', '월급'];
 
     async componentDidMount(){
-        StatusBar.setBackgroundColor('#F4F4F4');
-        StatusBar.setBarStyle('dark-content');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#F4F4F4');
+            StatusBar.setBarStyle('dark-content');
+        }
         const {post_id} = this.props.route.params;
         await this.getPostData(post_id)
         .then(()=>{this.setState({isLoading:false})})
@@ -1238,7 +1248,8 @@ class AlbaContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert(error)
+            alert('글이 존재 하지 않습니다.');
+            this.props.navigate.goBack()
         })
     }
 
@@ -1342,8 +1353,10 @@ class AlbaContent extends React.Component {
                 gbckfunc={() => {
                     this.props.navigation.goBack();
                     this.props.route.params.OnGoback();
-                    StatusBar.setBackgroundColor('#B09BDE');
-                    StatusBar.setBarStyle('default');}}
+                    if(Platform.OS!=='ios'){
+                        StatusBar.setBackgroundColor('#B09BDE');
+                        StatusBar.setBarStyle('default');}}
+                    }            
                 gbckuse={true}
                 right={<this.MoreAction/>}/>
                 {this.state.isLoading?
@@ -1784,7 +1797,8 @@ class IlbanContent extends Component {
             }
         })
         .catch((error)=>{
-            alert(JSON.stringify(error))
+            alert('글이 존재 하지 않습니다.');
+            this.props.navigate.goBack()
         })
     }
     
@@ -1794,8 +1808,11 @@ class IlbanContent extends Component {
     } 
 
     async componentDidMount(){
-        StatusBar.setBackgroundColor('#FFFFFF');
-        StatusBar.setBarStyle('dark-content');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#FFFFFF');
+            StatusBar.setBarStyle('dark-content');
+        }
+
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
@@ -1961,8 +1978,10 @@ class IlbanContent extends Component {
             <WriteContentToptab
                 gbckfunc={() => {
                     this.props.navigation.goBack();
-                    StatusBar.setBackgroundColor('#B09BDE');
-                    StatusBar.setBarStyle('default');}}
+                    if(Platform.OS!=='ios'){
+                        StatusBar.setBackgroundColor('#B09BDE');
+                        StatusBar.setBarStyle('default');}}
+                    }
                 gbckuse={true}
                 right={<this.MoreAction/>}/>
             {this.state.isLoading ?

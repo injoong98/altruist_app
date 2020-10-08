@@ -14,7 +14,9 @@ import {
   ScrollView,
   Dimensions,
   StatusBar,
-  Image, Keyboard
+  Image, 
+  Keyboard,
+  Platform
 } from 'react-native';
 import {
   Layout,
@@ -350,6 +352,7 @@ class AltApplyFormScreen extends React.Component {
           
         } else {
           this.props.navigation.navigate('ApplyComplete');
+          this.context.session_chk()
         }
       })
 
@@ -408,8 +411,10 @@ class AltApplyFormScreen extends React.Component {
       });
   }
   componentDidMount() {
-    StatusBar.setBackgroundColor('#F4F4F4');
-    StatusBar.setBarStyle('dark-content');
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#F4F4F4');
+      StatusBar.setBarStyle('dark-content');
+    }
     this.getAreaCat();
     this.getUserInfo();
     this.setState({mem_id:this.context.session_mem_id,isLoading:false});
@@ -417,8 +422,10 @@ class AltApplyFormScreen extends React.Component {
 
   }
   componentWillUnmount(){
-    StatusBar.setBackgroundColor('#B09BDE');
-    StatusBar.setBarStyle('default');
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#B09BDE');
+      StatusBar.setBarStyle('default');
+    }
   }
 
   render() {
