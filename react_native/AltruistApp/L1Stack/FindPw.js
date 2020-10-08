@@ -7,6 +7,8 @@ import {
   TopNavigation,
   TopNavigationAction,
   Icon,
+  Tab,
+  TabBar,
 } from '@ui-kitten/components';
 import axios from 'axios';
 
@@ -18,10 +20,38 @@ const BackIcon = (props) => (
     pack="alticons"
   />
 );
+
+const TitleContent = ({title = 0}) => {
+  return (
+    <View style={{paddingBottom: 30}}>
+      <Text
+        category="h2"
+        style={{
+          alignSelf: 'center',
+          paddingTop: 40,
+          paddingBottom: 20,
+        }}>
+        {title}로 찾기
+      </Text>
+      <Text style={{alignSelf: 'center', color: '#A897C2'}}>
+        가입하신 {title}로 {title != `이메일` && '메일을 찾아 '}알려드립니다.
+      </Text>
+      <Text style={{alignSelf: 'center', color: '#A897C2'}}>
+        가입할 때 등록한 {title}를 입력하고
+      </Text>
+      <Text style={{alignSelf: 'center', color: '#A897C2'}}>
+        "PW 재설정" 버튼을 클릭해주세요.
+      </Text>
+    </View>
+  );
+};
 class FindPwScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      title: ['아이디', '휴대폰번호', '이메일'],
+      indexClick: 0,
+    };
   }
 
   BackAction = () => (
@@ -95,37 +125,38 @@ class FindPwScreen extends Component {
       });
   };
 
+  FindPwTab = () => {
+    const [selectedIndex, setSelectedIndex] = React.useState(0);
+    console.log(selectedIndex);
+    return (
+      <TabBar
+        selectedIndex={selectedIndex}
+        onSelect={(index) => {
+          setSelectedIndex(index);
+          this.setState({indexClick: index});
+        }}>
+        <Tab title="아이디" />
+        <Tab title="휴대전화" />
+        <Tab title="이메일" />
+      </TabBar>
+    );
+  };
   render() {
-    console.log(this.state);
+    const {title, indexClick} = this.state;
+    // const title = this.state;
+    // console.log(this.state);
+    console.log('title -  ', title);
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
         <TopNavigation
-          title={() => <Text category="h2"></Text>}
+          title={() => <Text category="h2">비밀번호 재설정</Text>}
           alignment="center"
           accessoryLeft={this.BackAction}
           style={{}}
         />
+        <this.FindPwTab />
         <View style={{flex: 1, justifyContent: 'center'}}>
-          <View style={{paddingBottom: 30}}>
-            <Text
-              category="h2"
-              style={{
-                alignSelf: 'center',
-                paddingTop: 40,
-                paddingBottom: 20,
-              }}>
-              비밀번호 재설정
-            </Text>
-            <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              가입하신 메일 주소로 알려드립니다.
-            </Text>
-            <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              가입할 때 등록한 메일 주소를 입력하고
-            </Text>
-            <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              "PW 재설정" 버튼을 클릭해주세요.
-            </Text>
-          </View>
+          <TitleContent title={title[indexClick]} />
           <Input
             style={styles.inputs}
             textContentType="emailAddress" //ios
