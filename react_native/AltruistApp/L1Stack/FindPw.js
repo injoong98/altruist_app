@@ -123,30 +123,68 @@ class FindPwScreen extends Component {
   };
 
   //TODO : 이메일 확인
-  checkEmail = async () => {
-    const {mem_email} = this.state;
+  checkExists = async (type, value) => {
+    console.log(type);
+    console.log(value);
 
     let formdata = new FormData();
-    formdata.append('email', mem_email);
 
-    await axios
-      .post(`http://dev.unyict.org/api/register/email_check `, formdata)
-      .then((res) => {
-        if (!res.data.message.includes('이미 사용중')) {
-          this.setState({
-            checkEmailCaption: '입력한 이메일을 다시 한번 확인해주세요.',
-          });
-        } else {
-          this.setState({
-            checkEmailCaption: '',
-          });
-        }
-        console.log('res.data', res.data);
-      })
-      .catch((error) => {
-        console.log('ERROR', error);
-        console.error();
-      });
+    //ID
+    if (type == 'idpw_id') {
+      formdata.append('userid', value);
+
+      await axios
+        .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+        .then((res) => {
+          if (res.data.result != `no`) {
+            this.setState({
+              checkEmailCaption: `등록되지 않은 아이디입니다.
+입력한 아이디를 다시 한번 확인해주세요.`,
+            });
+          } else {
+            this.setState({
+              checkEmailCaption: 'hi',
+            });
+          }
+          console.log('emailCaption', this.state.checkEmailCaption);
+
+          console.log('res.data', res.data);
+        })
+        .catch((error) => {
+          console.log('ERROR', error);
+          console.error();
+        });
+    }
+    //휴대폰
+    else if (type == 'idpw_hp') {
+      formdata.append('hp', value);
+    }
+    //이메일
+    else if (type == 'idpw_email') {
+      formdata.append('email', value);
+
+      await axios
+        .post(`http://dev.unyict.org/api/register/email_check`, formdata)
+        .then((res) => {
+          if (!res.data.message.includes('이미 사용중')) {
+            this.setState({
+              checkEmailCaption: `등록되지 않은 이메일 입니다.
+              입력한 이메일을 다시 한번 확인해주세요.`,
+            });
+          } else {
+            this.setState({
+              checkEmailCaption: '',
+            });
+          }
+          console.log('emailCaption', this.state.checkEmailCaption);
+          console.log('res.data', res.data);
+        })
+        .catch((error) => {
+          console.log('ERROR', error);
+          console.error();
+        });
+    } else {
+    }
   };
 
   FindPwTab = () => {
@@ -176,8 +214,6 @@ class FindPwScreen extends Component {
   FindPwInput = () => {
     const {indexClick, title, formName} = this.state;
     console.log('formName[indexClick]', formName[indexClick]);
-    let formname = [...formName];
-    console.log(formname);
     return (
       <Input
         style={styles.inputs}
@@ -185,19 +221,18 @@ class FindPwScreen extends Component {
         onChangeText={(text) =>
           this.inputChangeHandler(formName[indexClick], text)
         }
-        // onChangeText={this.toggleOnChangeHandler}
-        // onEndEditing={() => {
-        //   this.checkEmail(this.state.mem_email);
-        // }}
-        // caption={() =>
-        //   this.state.checkEmailCaption ? (
-        //     <Text category="s2" style={{color: '#ACACAC', paddingLeft: 10}}>
-        //       {this.state.checkEmailCaption}
-        //     </Text>
-        //   ) : (
-        //     <Text> </Text>
-        //   )
-        // }
+        onEndEditing={(valu) => {
+          this.checkExists(formName[indexClick], valu.nativeEvent.text);
+        }}
+        caption={() =>
+          this.state.checkEmailCaption ? (
+            <Text category="s2" style={{color: '#ef8b98', paddingLeft: 10}}>
+              {this.state.checkEmailCaption}
+            </Text>
+          ) : (
+            <Text> </Text>
+          )
+        }
       />
     );
   };
