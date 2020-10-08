@@ -195,51 +195,8 @@ class Search extends CB_Controller
 		$view['view']['paging'] = $this->pagination->create_links();
 		$view['view']['page'] = $page;
 
-		// 이벤트가 존재하면 실행합니다
-		$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
-
-		/**
-		 * 레이아웃을 정의합니다
-		 */
-		$page_title = $this->cbconfig->item('site_meta_title_search');
-		$meta_description = $this->cbconfig->item('site_meta_description_search');
-		$meta_keywords = $this->cbconfig->item('site_meta_keywords_search');
-		$meta_author = $this->cbconfig->item('site_meta_author_search');
-		$page_name = $this->cbconfig->item('site_page_name_search');
-
-		$searchconfig = array(
-			'{검색어}',
-		);
-		$replaceconfig = array(
-			$skeyword,
-		);
 		//json api output
 		response_result($view);
-		/* $page_title = str_replace($searchconfig, $replaceconfig, $page_title);
-		$meta_description = str_replace($searchconfig, $replaceconfig, $meta_description);
-		$meta_keywords = str_replace($searchconfig, $replaceconfig, $meta_keywords);
-		$meta_author = str_replace($searchconfig, $replaceconfig, $meta_author);
-		$page_name = str_replace($searchconfig, $replaceconfig, $page_name);
-
-		$layoutconfig = array(
-			'path' => 'search',
-			'layout' => 'layout',
-			'skin' => 'search',
-			'layout_dir' => $this->cbconfig->item('layout_search'),
-			'mobile_layout_dir' => $this->cbconfig->item('mobile_layout_search'),
-			'use_sidebar' => $this->cbconfig->item('sidebar_search'),
-			'use_mobile_sidebar' => $this->cbconfig->item('mobile_sidebar_search'),
-			'skin_dir' => $this->cbconfig->item('skin_search'),
-			'mobile_skin_dir' => $this->cbconfig->item('mobile_skin_search'),
-			'page_title' => $page_title,
-			'meta_description' => $meta_description,
-			'meta_keywords' => $meta_keywords,
-			'meta_author' => $meta_author,
-			'page_name' => $page_name,
-		);
-		$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
-		$this->data = $view;
-		$this->layout = element('layout_skin_file', element('layout', $view));
-		$this->view = element('view_skin_file', element('layout', $view)); */
+		
 	}
 }
