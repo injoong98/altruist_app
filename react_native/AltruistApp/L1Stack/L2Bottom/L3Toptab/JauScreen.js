@@ -275,7 +275,7 @@ class JauScreen extends React.Component {
 						refreshing={this.state.refreshing}
 						onRefresh={this.onRefresh}
 						onEndReached={this.load_more_data}
-                		onEndReachedThreshold = {0.1}
+                		onEndReachedThreshold = {0.9}
 						ListFooterComponent={this.renderFooter}/>
 				</View>
 				<TouchableOpacity

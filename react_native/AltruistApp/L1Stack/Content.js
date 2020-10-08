@@ -1436,7 +1436,7 @@ class AlbaContent extends React.Component {
                     <Card disabled={true} style={styles.item}>
                         <HTML
                             html = {post.post_content}
-                            imagesMaxWidth={Dimensions.get('window').width}
+                            imagesMaxWidth={Dimensions.get('window').width-20}
                             onLinkPress={(event, href)=>{
                                 Linking.openURL(href)
                             }}/>

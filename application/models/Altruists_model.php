@@ -86,6 +86,24 @@ class Altruists_model extends CB_Model
 		$this->db->where_in('alt_id', $alt_id);
 		return $this->get('', $select, $where);
 	}
+	public function get_by_keyword($keyword = '', $select = '')
+	{
+		if (empty($keyword)) {
+			return false;
+		}
+
+		$sql =<<<EOT
+		SELECT DISTINCT p.*
+		FROM cb_alt_profile p
+		LEFT JOIN cb_alt_cv c ON c.alt_id = p.alt_id
+		LEFT JOIN cb_member m ON p.mem_id = m.mem_id
+		WHERE alt_status = 'Y' and alt_content LIKE '%$keyword%' OR acv_content LIKE '%$keyword%' OR mem_username LIKE '%$keyword%'
+EOT;
+		$query = $this->db->query($sql);
+		$target_members =   $query->result_array();
+	
+		return $target_members;
+	}
 	
 	public function get_by_memid($memid = 0, $select = '')
 	{
