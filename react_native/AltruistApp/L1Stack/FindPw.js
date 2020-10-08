@@ -167,28 +167,6 @@ class FindPwScreen extends Component {
     );
   };
 
-  toggleOnChangeHandler = (e) => {
-    console.log(e);
-    console.log(e.type);
-    // Deriving the filter that a checkbox is associated too, and getting its value on change
-    // const property = e.target.label;
-    // const val = e.target.value;
-    // this.setState(
-    //   (prevState) => {
-    //     // Taking a copy of the initial filters obj
-    //     const {filters} = prevState;
-    //     // Updating it's property as per the key, value pair retrieved (key being the filter, value being "on" or "off")
-    //     filters[property] = val;
-    //     // Returning the updated object
-    //     return {filters};
-    //   },
-    //   // Since setState is async, all operations that require the updated state, should be done here
-    //   () => {
-    //     console.log(this.state);
-    //   },
-    // );
-  };
-
   inputChangeHandler = (inputName, inputValue) => {
     this.setState((state) => ({
       [inputName]: inputValue, // <-- Put square brackets
@@ -202,13 +180,11 @@ class FindPwScreen extends Component {
     console.log(formname);
     return (
       <Input
-        label={formName[indexClick]}
         style={styles.inputs}
         placeholder={`* ${title[indexClick]}`}
         onChangeText={(text) =>
           this.inputChangeHandler(formName[indexClick], text)
         }
-
         // onChangeText={this.toggleOnChangeHandler}
         // onEndEditing={() => {
         //   this.checkEmail(this.state.mem_email);
