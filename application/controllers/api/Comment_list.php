@@ -327,7 +327,7 @@ class Comment_list extends CB_Controller
 					= member_photo_url(element('mem_photo', $val), 64, 64)
 					? member_photo_url(element('mem_photo', $val), 64, 64)
 					: site_url('assets/images/member_default.gif');
-
+				if($board['brd_key'] == 'b-a-1')  $result['list'][$key]['member_photo_url'] = site_url('assets/images/member_default.gif');
 				$result['list'][$key]['cmt_depth'] = strlen($result['list'][$key]['cmt_reply']) * 30;
 
 				$result['list'][$key]['can_update'] = false;
