@@ -44,7 +44,20 @@ class ResendAuthmailScreen extends Component {
     await axios
       .post(`http://dev.unyict.org/api/findaccount/verifyemail`, formdata)
       .then((res) => {
-        console.log(res);
+        if (res.data.status == 500) {
+          Alert.alert(
+            '메일 전송 실패',
+            JSON.stringify(res.data.view.message),
+            [
+              {
+                text: 'OK',
+              },
+            ],
+            {cancelable: false},
+          );
+        } else if (res.data.status == 200) {
+          this.props.navigation.navigate('ResendAuthmailSuccessScreen');
+        }
       })
       .catch((error) => {
         console.log('ERROR', error);

@@ -46,12 +46,10 @@ class FindPwScreen extends Component {
       .then((res) => {
         if (res.data.status == 500) {
           //실패 모달
-          console.log('status500', res);
-          console.log('status', res.status);
           console.log('실패');
           Alert.alert(
-            '실패',
-            '관리자에게 문의하세요',
+            '메일 전송 실패',
+            JSON.stringify(res.data.view.message),
             [
               {
                 text: 'OK',
@@ -60,10 +58,7 @@ class FindPwScreen extends Component {
             {cancelable: false},
           );
         } else if (res.data.status == 200) {
-          console.log('status200', res);
-          console.log('status', res.status);
           this.props.navigation.navigate('FindRwSuccessScreen');
-        } else {
         }
       })
       .catch((error) => {
