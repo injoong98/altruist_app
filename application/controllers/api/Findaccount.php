@@ -725,17 +725,17 @@ class Findaccount extends CB_Controller
 				'label' => '이메일',
 				'rules' => 'trim|required|valid_email|callback__existemail',
 			);
+			$this->form_validation->set_rules($config);
+			if ($this->form_validation->run() === false) {
+
+				response_result($view, 'Err', validation_errors('', ''));
+			}
 		}
 
-		$this->form_validation->set_rules($config);
 		/**
 		 * 유효성 검사를 하지 않는 경우, 또는 유효성 검사에 실패한 경우입니다.
 		 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
 		 */
-		if ($this->form_validation->run() === false) {
-
-			response_result($view, 'Err', validation_errors('', ''));
-		} else {
 
 		
 			// findtype 값 정의 
@@ -871,7 +871,6 @@ class Findaccount extends CB_Controller
 				// 이벤트가 존재하면 실행합니다
 				$view['view']['event']['findidpw_after'] = Events::trigger('findidpw_after', $eventname);
 			}
-		}
 
 		// $view['view']['canonical'] = site_url('findaccount');
 
