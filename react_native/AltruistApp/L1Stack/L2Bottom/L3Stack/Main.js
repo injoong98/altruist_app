@@ -157,7 +157,7 @@ class AltMainScreen extends React.Component{
                                 style={styles.mainbtn}
                                 text='지원하기'
                                 icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'http://dev.unyict.org/uploads/icons/apply_btn.png'}}/>}
-                                onPress={()=>navigation.navigate(this.context.is_altruist =='R'?'AltApplyStatus':this.context.is_altruist =='Y'?null:'AltApply')}
+                                onPress={()=>this.context.is_altruist =='Y'?null:navigation.navigate(this.context.is_altruist =='R'?'AltApplyStatus':'AltApply')}
                             />
                         </View>    
                         

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,StyleSheet,TouchableOpacity, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {View,StyleSheet,TouchableOpacity, TouchableWithoutFeedback, Keyboard,Platform} from 'react-native';
 import {Text,Icon,Button} from '@ui-kitten/components'
 import BellLargesvg from '../assets/icons/bell-large.svg'
 import Uploadsvg from '../assets/icons/upload.svg'
@@ -94,7 +94,8 @@ const styles = StyleSheet.create({
         backgroundColor:"#B09BDE",
         width:"100%",
         height:"100%",
-        position:'absolute'
+        position:'absolute',
+        justifyContent:'center'
     },  
     rightside:{
         backgroundColor:"#B09BDE",
@@ -111,11 +112,7 @@ const styles = StyleSheet.create({
     toptext:{
         textAlignVertical:'center',
         textAlign:'center',
-        height:"100%",
         color:"#ffffff",
-        // borderColor:'blue',
-        // borderStyle:'solid',
-        // borderWidth:1
     },
     topicon:{
         height:35,

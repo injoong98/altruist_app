@@ -121,8 +121,10 @@ class AltReplying extends React.Component{
         this.setState({confirmModalVisible:true,modalType:3});
     }
     componentDidMount(){
-        StatusBar.setBackgroundColor('#F4F4F4');
-        StatusBar.setBarStyle('dark-content');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#F4F4F4');
+            StatusBar.setBarStyle('dark-content');
+        }
         const {navigation} =this.props
         navigation.addListener('beforeRemove',(e)=>{
             console.log(this.state.goBackOk)
@@ -139,8 +141,10 @@ class AltReplying extends React.Component{
         })
     }
     componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+        }
     }
     render(){
         const {post,title,comment,confirmModalVisible,resultModalVisible,spinnerModalVisible,modalType} = this.state
@@ -1138,14 +1142,18 @@ class AltQuestionWrite extends React.Component
         })
     }
     componentDidMount(){
-        StatusBar.setBackgroundColor('#F4F4F4');
-        StatusBar.setBarStyle('dark-content');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#F4F4F4');
+            StatusBar.setBarStyle('dark-content');
+        }
         this.getAreaCategory()
     }
 
     componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+        }
     }
     render(){
         const {title,content,filterModalVisible,actSelected} = this.state;
