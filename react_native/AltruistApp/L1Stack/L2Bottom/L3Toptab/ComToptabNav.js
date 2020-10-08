@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet,SafeAreaView} from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { TabBar, Tab, Layout, Text,TopNavigation,Button } from '@ui-kitten/components';
 
@@ -39,11 +39,11 @@ const TabNavigator = () => (
 );
 
 export const ComToptabNav= () => (
-  <>
+  <SafeAreaView style={{flex:1}}>
     {/* <TopNavigation title ="Community" alignment ='center' style={{backgroundColor : '#B09BDE'}}/> */}
     <TopBarTune text="COMMUNITY" func={()=>navigation.navigate('Meet')} />
     <TabNavigator/>
-  </>
+  </SafeAreaView>
 );
 
 const styles = StyleSheet.create({

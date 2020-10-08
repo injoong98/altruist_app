@@ -8,11 +8,11 @@
 
 
 import React,{useEffect} from "react";
-import {StatusBar,Alert,} from "react-native";
+import {StatusBar,Alert,Platform} from "react-native";
 import AsyncStorage from '@react-native-community/async-storage';
 
 import * as eva from '@eva-design/eva';
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer,} from "@react-navigation/native";
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {StackNav} from "./L1Stack/StackNav";
@@ -23,7 +23,9 @@ import {AltIconsPack} from './alt-icons';
 import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';
 const App = () => {
-  StatusBar.setBackgroundColor('#B09BDE');
+  if(Platform.OS!=='ios'){
+    StatusBar.setBackgroundColor('#B09BDE');
+  }
 
   useEffect(() => {
     messaging().onTokenRefresh(async(token)=>{
