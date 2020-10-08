@@ -7,6 +7,8 @@ import {
   TopNavigation,
   TopNavigationAction,
   Icon,
+  Tab,
+  TabBar,
 } from '@ui-kitten/components';
 import axios from 'axios';
 
@@ -18,10 +20,42 @@ const BackIcon = (props) => (
     pack="alticons"
   />
 );
+
+const TitleContent = ({title}) => {
+  return (
+    <View style={{paddingBottom: 30}}>
+      <Text
+        category="h2"
+        style={{
+          alignSelf: 'center',
+          paddingTop: 40,
+          paddingBottom: 20,
+        }}>
+        {title}로 찾기
+      </Text>
+      <Text style={{alignSelf: 'center', color: '#A897C2'}}>
+        가입하신 {title}로 {title != `이메일` && '메일을 찾아 '}알려드립니다.
+      </Text>
+      <Text style={{alignSelf: 'center', color: '#A897C2'}}>
+        가입할 때 등록한 {title}를 입력하고
+      </Text>
+      <Text style={{alignSelf: 'center', color: '#A897C2'}}>
+        "PW 재설정" 버튼을 클릭해주세요.
+      </Text>
+    </View>
+  );
+};
 class FindPwScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      // findtype : //아이디로...
+      formName: ['idpw_id', 'idpw_hp', 'idpw_email'],
+      formType: ['findbyid', 'findbyhp', 'findidpw'],
+      title: ['아이디', '휴대폰번호', '이메일'],
+      indexClick: 0,
+      findtype: 'findbyid',
+    };
   }
 
   BackAction = () => (
@@ -35,15 +69,35 @@ class FindPwScreen extends Component {
 
   SubmitForm = async () => {
     let formdata = new FormData();
-    const {mem_email} = this.state;
+    const {idpw_hp, idpw_id, findtype, idpw_email} = this.state;
 
-    formdata.append('findtype', 'findidpw');
-    formdata.append('idpw_email', mem_email);
+    console.log(this.state);
+    formdata.append('findtype', findtype);
+
+    if (findtype == 'findidpw') {
+      formdata.append('idpw_email', idpw_email);
+    } else if (findtype == 'findbyhp') {
+      formdata.append('idpw_hp', idpw_hp);
+    } else if (findtype == 'findbyid') {
+      formdata.append('idpw_id', idpw_id);
+    } else {
+      return Alert.alert(
+        '접근 실패',
+        '{`올바른 접근 방법이 아닙니다. \n 다시 시도해주세요.`}',
+        [
+          {
+            text: 'OK',
+          },
+        ],
+        {cancelable: false},
+      );
+    }
     console.info('form', this.state);
 
     await axios
       .post(`http://dev.unyict.org/api/findaccount/findpw`, formdata)
       .then((res) => {
+        console.log(res);
         if (res.data.status == 500) {
           //실패 모달
           console.log('실패');
@@ -95,58 +149,76 @@ class FindPwScreen extends Component {
       });
   };
 
+  FindPwTab = () => {
+    const [selectedIndex, setSelectedIndex] = React.useState(0);
+    const {formType} = this.state;
+    return (
+      <TabBar
+        selectedIndex={selectedIndex}
+        onSelect={(index) => {
+          setSelectedIndex(index);
+          this.setState({indexClick: index});
+          this.setState({findtype: formType[selectedIndex]});
+        }}>
+        <Tab title="아이디" />
+        <Tab title="휴대전화" />
+        <Tab title="이메일" />
+      </TabBar>
+    );
+  };
+
+  inputChangeHandler = (inputName, inputValue) => {
+    this.setState((state) => ({
+      [inputName]: inputValue, // <-- Put square brackets
+    }));
+  };
+
+  FindPwInput = () => {
+    const {indexClick, title, formName} = this.state;
+    console.log('formName[indexClick]', formName[indexClick]);
+    let formname = [...formName];
+    console.log(formname);
+    return (
+      <Input
+        style={styles.inputs}
+        placeholder={`* ${title[indexClick]}`}
+        onChangeText={(text) =>
+          this.inputChangeHandler(formName[indexClick], text)
+        }
+        // onChangeText={this.toggleOnChangeHandler}
+        // onEndEditing={() => {
+        //   this.checkEmail(this.state.mem_email);
+        // }}
+        // caption={() =>
+        //   this.state.checkEmailCaption ? (
+        //     <Text category="s2" style={{color: '#ACACAC', paddingLeft: 10}}>
+        //       {this.state.checkEmailCaption}
+        //     </Text>
+        //   ) : (
+        //     <Text> </Text>
+        //   )
+        // }
+      />
+    );
+  };
+
   render() {
+    const {title, indexClick} = this.state;
+    // const title = this.state;
     console.log(this.state);
+    // console.log('title -  ', title);
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
         <TopNavigation
-          title={() => <Text category="h2"></Text>}
+          title={() => <Text category="h2">비밀번호 재설정</Text>}
           alignment="center"
           accessoryLeft={this.BackAction}
           style={{}}
         />
+        <this.FindPwTab />
         <View style={{flex: 1, justifyContent: 'center'}}>
-          <View style={{paddingBottom: 30}}>
-            <Text
-              category="h2"
-              style={{
-                alignSelf: 'center',
-                paddingTop: 40,
-                paddingBottom: 20,
-              }}>
-              비밀번호 재설정
-            </Text>
-            <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              가입하신 메일 주소로 알려드립니다.
-            </Text>
-            <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              가입할 때 등록한 메일 주소를 입력하고
-            </Text>
-            <Text style={{alignSelf: 'center', color: '#A897C2'}}>
-              "PW 재설정" 버튼을 클릭해주세요.
-            </Text>
-          </View>
-          <Input
-            style={styles.inputs}
-            textContentType="emailAddress" //ios
-            placeholder="* 이메일"
-            onChangeText={(mem_email) => {
-              this.setState({mem_email});
-            }}
-            onEndEditing={() => {
-              // this.checkNotNull();
-              this.checkEmail(this.state.mem_email);
-            }}
-            caption={() =>
-              this.state.checkEmailCaption ? (
-                <Text category="s2" style={{color: '#ACACAC', paddingLeft: 10}}>
-                  {this.state.checkEmailCaption}
-                </Text>
-              ) : (
-                <Text> </Text>
-              )
-            }
-          />
+          <TitleContent title={title[indexClick]} />
+          <this.FindPwInput titile={title[indexClick]} />
           <Button
             style={{
               alignSelf: 'center',
@@ -158,8 +230,7 @@ class FindPwScreen extends Component {
               !this.state.checkEmailCaption
                 ? this.SubmitForm()
                 : this.setState({
-                    checkEmailCaption:
-                      '입력한 이메일을 다시 한번 확인해주세요.',
+                    checkEmailCaption: '입력한 정보를 다시 한번 확인해주세요.',
                   })
             }>
             PW 재설정
