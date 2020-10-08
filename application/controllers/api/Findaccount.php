@@ -701,22 +701,13 @@ class Findaccount extends CB_Controller
 	 */
 	public function findpw()
 	{
-		// 이벤트 라이브러리를 로딩합니다
-		$eventname = 'event_findaccount_index';
 		$this->load->event($eventname);
-
-		if (
-			$this->member->is_member() !== false
-			&& !($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))
-		) {
+		if ($this->member->is_member() !== false && !($this->member->is_admin() === 'super' && $this->uri->segment(1) === config_item('uri_segment_admin'))) {
 			redirect();
 		}
 
 		$view = array();
 		$view['view'] = array();
-
-		// 이벤트가 존재하면 실행합니다
-		$view['view']['event']['before'] = Events::trigger('before', $eventname);
 
 		$this->load->library(array('form_validation'));
 
@@ -746,16 +737,41 @@ class Findaccount extends CB_Controller
 			response_result($view, 'Err', validation_errors('', ''));
 		} else {
 
-			// 이벤트가 존재하면 실행합니다
-			$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
-			if ($this->input->post('findtype') === 'findidpw') {
+		
+			// findtype 값 정의 
+			// findidpw : 기존
+			// findbyid : 아이디로
+			// findbyhp : 전화번호로
 
+			if( !array_key_exists( 'findtype', $_POST ) ){
+				response_error('Error','필수 요청 값 findtype 이 없습니다.');
+			}
+			$findtype = $this->input->post('findtype');
+			$email = $this->input->post('idpw_email');
+			log_message('Error','findbyid : '.$findtype." email: ".$email);
+
+            if ($findtype=== 'findbyid') {
+				$r_byid =	$this->Member_model->get_by_userid($this->input->post('idpw_id'));
+				if(!array_key_exists('mem_email', $r_byid)) response_error('Error','아이디 '.$this->input->post('idpw_id').'로 회원 정보를 찾을수 없습니다.');
+				log_message('Error','findbyid : '.$findtype." email:".element('mem_email', $r_byid));
+				$email = element('mem_email', $r_byid);
+			}else if($findtype=== 'findbyhp'){
+				$r_byhp =	$this->Member_model->get_by_hp($this->input->post('idpw_hp'));
+				log_message('Error','findbyhpl : '.$findtype." email:".element('mem_email', $r_byhp));
+				if(!array_key_exists('mem_email', $r_byhp)) response_error('Error','전화번호 '.$this->input->post('idpw_hp').'로 회원 정보를 찾을수 없습니다.');
+				$email = element('mem_email', $r_byhp);
+			}
+
+
+
+			if ($email) {
+				
 				// 이벤트가 존재하면 실행합니다
 				$view['view']['event']['findidpw_before'] = Events::trigger('findidpw_before', $eventname);
-				$mb = $this->Member_model->get_by_email($this->input->post('idpw_email'));
+				$mb = $this->Member_model->get_by_email($email);
 				if (!$mb) {
 					$this->load->model('Member_dormant_model');
-					$mb = $this->Member_dormant_model->get_by_email($this->input->post('idpw_email'));
+					$mb = $this->Member_dormant_model->get_by_email($email);
 				}
 				$mem_id = (int) element('mem_id', $mb);
 				$mae_type = 3;
@@ -764,7 +780,7 @@ class Findaccount extends CB_Controller
 				$verificationcode = str_replace(
 					$vericode,
 					'',
-					password_hash($mem_id . '-' . $this->input->post('idpw_email') . '-' . random_string('alnum', 10), PASSWORD_BCRYPT)
+					password_hash($mem_id . '-' . $email . '-' . random_string('alnum', 10), PASSWORD_BCRYPT)
 				);
 
 				$beforeauthdata = array(
@@ -842,7 +858,7 @@ class Findaccount extends CB_Controller
 				//log_message('Error','before send email');
 				$this->email->clear(true);
 				$this->email->from($this->cbconfig->item('webmaster_email'), $this->cbconfig->item('webmaster_name'));
-				$this->email->to($this->input->post('idpw_email'));
+				$this->email->to($email);
 				$this->email->subject($title);
 				$this->email->message($content);
 				$this->email->send();
@@ -850,7 +866,7 @@ class Findaccount extends CB_Controller
 
 				// 메일이 안보내졌을때...
 
-				$view['view']['message'] = $this->input->post('idpw_email') . '로 인증메일이 발송되었습니다. <br />발송된 인증메일을 확인하신 후에 회원님의 정보 확인이 가능합니다';
+				$view['view']['message'] = $email . '로 인증메일이 발송되었습니다. <br />발송된 인증메일을 확인하신 후에 회원님의 정보 확인이 가능합니다';
 
 				// 이벤트가 존재하면 실행합니다
 				$view['view']['event']['findidpw_after'] = Events::trigger('findidpw_after', $eventname);
@@ -862,37 +878,12 @@ class Findaccount extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
 
-		/**
-		 * 레이아웃을 정의합니다
-		 */
-		// $page_title = $this->cbconfig->item('site_meta_title_findaccount');
-		// $meta_description = $this->cbconfig->item('site_meta_description_findaccount');
-		// $meta_keywords = $this->cbconfig->item('site_meta_keywords_findaccount');
-		// $meta_author = $this->cbconfig->item('site_meta_author_findaccount');
-		// $page_name = $this->cbconfig->item('site_page_name_findaccount');
-
-		// $layoutconfig = array(
-		// 	'path' => 'findaccount',
-		// 	'layout' => 'layout',
-		// 	'skin' => 'findaccount',
-		// 	'layout_dir' => $this->cbconfig->item('layout_findaccount'),
-		// 	'mobile_layout_dir' => $this->cbconfig->item('mobile_layout_findaccount'),
-		// 	'use_sidebar' => $this->cbconfig->item('sidebar_findaccount'),
-		// 	'use_mobile_sidebar' => $this->cbconfig->item('mobile_sidebar_findaccount'),
-		// 	'skin_dir' => $this->cbconfig->item('skin_findaccount'),
-		// 	'mobile_skin_dir' => $this->cbconfig->item('mobile_skin_findaccount'),
-		// 	'page_title' => $page_title,
-		// 	'meta_description' => $meta_description,
-		// 	'meta_keywords' => $meta_keywords,
-		// 	'meta_author' => $meta_author,
-		// 	'page_name' => $page_name,
-		// );
-		// $view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
+		
 		$this->data = $view;
 		// $this->layout = element('layout_skin_file', element('layout', $view));
 		$this->view = element('view_skin_file', element('layout', $view));
 		if (!$view['view']['message']) {
-			response_result($view, 'Err', "find_type :" . $this->input->post('findtype') . " email posted : " . $this->input->post('idpw_email') . "이메일 부분에 오류가 있습니다. 문제가 계속 되면 관리자에게 요청하세요.");
+			response_result($view, 'Err', "find_type :" . $this->input->post('findtype') . " email posted : " . $email . "이메일 부분에 오류가 있습니다. 문제가 계속 되면 관리자에게 요청하세요.");
 		} else {
 			response_result($view, 'success', '정상');
 		}
