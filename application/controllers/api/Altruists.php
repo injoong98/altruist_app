@@ -1239,9 +1239,14 @@ class Altruists extends CB_Controller
 			foreach ($alt_area as $key => $val) {
 				$alt_ids[] = $val['alt_id'];
 			}
-
 			// 전문영역에 속하는 
 			$alt_profile['list']  = $this->Altruists_model->get_by_are_ids($alt_ids);
+
+		}else if ($this->input->post('alt_keyword')) { // 키워드 검색
+			// 키워드 : 경력사항, 이름, 자기 소개 
+			// 전문영역에 속하는 
+			$alt_profile['list']  = $this->Altruists_model->get_by_keyword($this->input->post('alt_keyword'));
+		
 		
 		}else {
 			$where_alt = 'alt_status="Y"';
@@ -1657,7 +1662,7 @@ class Altruists extends CB_Controller
 					$mem_username = $this->session->userdata('mem_username');
 					$not_message = $mem_username . '님이 이타주의자에 지원하셨습니다.';
 					$not_url = '/';
-
+ 
 					//관리자 리스트 가져오기
 					$sql =<<<EOT
 					SELECT * FROM cb_member WHERE mem_is_admin =1
