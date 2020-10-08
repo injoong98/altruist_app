@@ -246,9 +246,13 @@ export class AlarmScreen extends React.Component{
         axios.get(`http://dev.unyict.org/api/notification/read?not_id=${item.not_id}`)
         .then(res=>{
             console.log(item.not_type=='comment')
-            if(item.not_type=='comment'){
+            if(item.not_type=='comment'||item.not_type=='comment_comment'){
                 console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
                 this.navigateToPost(item.post_id,item.brd_id)
+            }else if(item.not_type=='이타주의자들'&&item.not_message.includes("질문")){
+                console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
+                this.navigateToPost(item.not_content_id,'10')
+
             }
             this.context.reloadUnreadCount();
             this.getNotiList()
@@ -298,7 +302,7 @@ export class AlarmScreen extends React.Component{
     }
 
     render(){
-        const {isLoading} = this.state
+        const {isLoading,noti} = this.state
         return(
             <View  style={styles.container} style={{flex:1}}>
                 {
@@ -307,6 +311,7 @@ export class AlarmScreen extends React.Component{
                     <Spinner size='giant'/>
                 </View>
                      :
+                     noti.length>0?
                 <View style={{flex:1,paddingTop:10,backgroundColor:'#ffffff'}}>
                     <FlatList 
                         data={this.state.noti}
@@ -320,6 +325,13 @@ export class AlarmScreen extends React.Component{
                         ListFooterComponent={this.renderFooter}
                     />
                 </View>
+                :
+                <View style={{flex:1,paddingTop:10,backgroundColor:'#ffffff',alignItems:'center'}}>
+                    <Text>
+                        알림 내역이 없습니다.
+                    </Text>
+                </View>
+
                 }
             </View>
         )
@@ -361,7 +373,7 @@ export class AlarmToptab extends React.Component{
     render(){
         return (
             <SafeAreaView style={{flex:1,}}>
-                <TopBarTune text="알람" 
+                <TopBarTune text="알림" 
                     func={()=>this.readall()}
                     right='alarm'
                 />
