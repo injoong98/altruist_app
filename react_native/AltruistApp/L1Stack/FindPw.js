@@ -49,7 +49,6 @@ class FindPwScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // findtype : //아이디로...
       formName: ['idpw_id', 'idpw_hp', 'idpw_email'],
       formType: ['findbyid', 'findbyhp', 'findidpw'],
       title: ['아이디', '휴대폰번호', '이메일'],
@@ -99,18 +98,29 @@ class FindPwScreen extends Component {
       .then((res) => {
         console.log(res);
         if (res.data.status == 500) {
-          //실패 모달
-          console.log('실패');
-          Alert.alert(
-            '메일 전송 실패',
-            JSON.stringify(res.data.view.message),
-            [
-              {
-                text: 'OK',
-              },
-            ],
-            {cancelable: false},
-          );
+          if (findtype == 'findbyhp') {
+            Alert.alert(
+              '메일 전송 실패',
+              '해당하는 번호에 이메일이 없습니다. 회원가입을 진행해주세요.',
+              [
+                {
+                  text: 'OK',
+                },
+              ],
+              {cancelable: false},
+            );
+          } else {
+            Alert.alert(
+              '메일 전송 실패',
+              JSON.stringify(res.data.view.message),
+              [
+                {
+                  text: 'OK',
+                },
+              ],
+              {cancelable: false},
+            );
+          }
         } else if (res.data.status == 200) {
           this.props.navigation.navigate('FindRwSuccessScreen');
         }
@@ -122,9 +132,8 @@ class FindPwScreen extends Component {
       });
   };
 
-  //TODO : 이메일 확인
   checkExists = async (type, value) => {
-    console.log(type);
+    console.log('check', type);
     console.log(value);
 
     let formdata = new FormData();
@@ -143,7 +152,7 @@ class FindPwScreen extends Component {
             });
           } else {
             this.setState({
-              checkEmailCaption: 'hi',
+              checkEmailCaption: '',
             });
           }
           console.log('emailCaption', this.state.checkEmailCaption);
@@ -154,10 +163,6 @@ class FindPwScreen extends Component {
           console.log('ERROR', error);
           console.error();
         });
-    }
-    //휴대폰
-    else if (type == 'idpw_hp') {
-      formdata.append('hp', value);
     }
     //이메일
     else if (type == 'idpw_email') {
@@ -184,19 +189,23 @@ class FindPwScreen extends Component {
           console.error();
         });
     } else {
+      console.log('this.state.idpw_hp', this.state.idpw_hp);
     }
   };
 
   FindPwTab = () => {
     const [selectedIndex, setSelectedIndex] = React.useState(0);
     const {formType} = this.state;
+
+    console.log(selectedIndex, this.state.findtype);
     return (
       <TabBar
         selectedIndex={selectedIndex}
         onSelect={(index) => {
           setSelectedIndex(index);
           this.setState({indexClick: index});
-          this.setState({findtype: formType[selectedIndex]});
+          this.setState({findtype: formType[index]});
+          this.setState({checkEmailCaption: ''});
         }}>
         <Tab title="아이디" />
         <Tab title="휴대전화" />
@@ -206,14 +215,47 @@ class FindPwScreen extends Component {
   };
 
   inputChangeHandler = (inputName, inputValue) => {
-    this.setState((state) => ({
-      [inputName]: inputValue, // <-- Put square brackets
-    }));
+    console.log('inputName', inputName);
+    if (inputName == 'idpw_hp') {
+      console.log('inputValue1', inputValue);
+
+      var number = inputValue.replace(/[^0-9]/g, '');
+      var phone = '';
+
+      if (number.length < 4) {
+        return number;
+      } else if (number.length < 7) {
+        phone += number.substr(0, 3);
+        phone += '-';
+        phone += number.substr(3);
+      } else if (number.length < 11) {
+        phone += number.substr(0, 3);
+        phone += '-';
+        phone += number.substr(3, 3);
+        phone += '-';
+        phone += number.substr(6);
+      } else {
+        phone += number.substr(0, 3);
+        phone += '-';
+        phone += number.substr(3, 4);
+        phone += '-';
+        phone += number.substr(7);
+      }
+      var value = phone;
+
+      console.log('inputValue2', inputValue);
+      console.log('value:', value);
+      this.setState(() => ({idpw_hp: value}));
+    } else {
+      this.setState(() => ({
+        [inputName]: inputValue, // <-- Put square brackets
+      }));
+    }
   };
 
   FindPwInput = () => {
     const {indexClick, title, formName} = this.state;
-    console.log('formName[indexClick]', formName[indexClick]);
+    console.log('return formName[indexClick]', formName[indexClick]);
     return (
       <Input
         style={styles.inputs}
@@ -238,7 +280,7 @@ class FindPwScreen extends Component {
   };
 
   render() {
-    const {title, indexClick} = this.state;
+    const {title, indexClick, findtype} = this.state;
     // const title = this.state;
     console.log(this.state);
     // console.log('title -  ', title);
@@ -263,6 +305,8 @@ class FindPwScreen extends Component {
             }}
             onPress={() =>
               !this.state.checkEmailCaption
+                ? this.SubmitForm()
+                : findtype == 'findbyhp'
                 ? this.SubmitForm()
                 : this.setState({
                     checkEmailCaption: '입력한 정보를 다시 한번 확인해주세요.',
