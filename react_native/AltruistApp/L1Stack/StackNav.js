@@ -182,6 +182,9 @@ export class StackNav extends React.Component{
         .then(async res=>{
             console.log('session_checking')
             if(res.data.status == 200){
+                this.getNotiList();
+                this.getFirstNotiList();
+        
                 const {mem_id,is_altruist} =res.data.session
                 
                 this.setState({isSignedIn:true});
@@ -256,8 +259,6 @@ export class StackNav extends React.Component{
     }
     componentDidMount(){
         setTimeout(this.session_chk,600);
-        this.getNotiList();
-        this.getFirstNotiList();
         messaging()
             .getInitialNotification()
             .then(async remoteMessage=>{
