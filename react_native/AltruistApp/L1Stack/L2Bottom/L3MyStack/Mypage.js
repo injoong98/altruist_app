@@ -198,17 +198,17 @@ const styles = StyleSheet.create({
     color:'#63579D'
   },
   menuContainer:{
-    paddingLeft:14,
+    paddingLeft:20,
     borderBottomWidth:1,
     borderBottomColor:'#f4f4f4',
-    marginTop:10,
+    marginTop:12,
     marginBottom:5
   },
   menuItem:{
-    fontSize:12,
-    lineHeight:13,
+    fontSize:14,
+    lineHeight:14,
     color:'#63579D',
-    marginBottom:2
+    marginBottom:1
   }
 
 })
