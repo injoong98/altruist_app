@@ -363,6 +363,7 @@
 		89F3FC18506641848D29312F /* image-layout-settings.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-settings.jpg"; path = "../assets/images/image-layout-settings.jpg"; sourceTree = "<group>"; };
 		89F71C3E1F6C49E2AB6FCC19 /* image-layout-product-details-4.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-product-details-4.jpg"; path = "../assets/images/image-layout-product-details-4.jpg"; sourceTree = "<group>"; };
 		8B278ABAD9EA4E3890BEEA0E /* icon-button.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-button.png"; path = "../assets/images/icon-button.png"; sourceTree = "<group>"; };
+		8BA97E0D2530456400C8FE1A /* testAltruistApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = testAltruistApp.entitlements; path = testAltruistApp/testAltruistApp.entitlements; sourceTree = "<group>"; };
 		8BDE02B2252EB84F00E0D0F6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "testAltruistApp/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8BF5C40B252E95CD0025B147 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../uploads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8C70015BA86D4BD3BE5CE7CA /* view-filled.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "view-filled.png"; path = "../assets/icons/view-filled.png"; sourceTree = "<group>"; };
@@ -521,6 +522,7 @@
 		13B07FAE1A68108700A75B9A /* testAltruistApp */ = {
 			isa = PBXGroup;
 			children = (
+				8BA97E0D2530456400C8FE1A /* testAltruistApp.entitlements */,
 				8BF5C40B252E95CD0025B147 /* GoogleService-Info.plist */,
 				8BDE02B2252EB84F00E0D0F6 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -898,6 +900,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = L8R596B9F3;
 						LastSwiftMigration = 1120;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -1118,7 +1121,6 @@
 				4F98CE9C3A8B405DA4594829 /* noimage.png in Resources */,
 				FD947C1103BE489A87175833 /* logo.svg in Resources */,
 				1AE4B761D4FC450DBC7EF0F1 /* call-message.svg in Resources */,
-				8BF5C40C252E95CD0025B147 /* GoogleService-Info.plist in Resources */,
 				DFF6C5D18616424B835F0F72 /* call.svg in Resources */,
 				6DBF6F168681476C9E70CDA4 /* Email.svg in Resources */,
 				BECA4F1D87124B49831C0D4D /* paper-plane.svg in Resources */,
@@ -1474,7 +1476,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = testAltruistApp/testAltruistApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L8R596B9F3;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = testAltruistApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1497,7 +1501,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = testAltruistApp/testAltruistApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L8R596B9F3;
 				INFOPLIST_FILE = testAltruistApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
