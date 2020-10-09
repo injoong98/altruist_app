@@ -122,7 +122,9 @@ class FindPwScreen extends Component {
             );
           }
         } else if (res.data.status == 200) {
-          this.props.navigation.navigate('FindRwSuccessScreen');
+          this.props.navigation.navigate('FindRwSuccessScreen', {
+            email: res.data.view.email,
+          });
         }
       })
       .catch((error) => {
@@ -174,7 +176,7 @@ class FindPwScreen extends Component {
           if (!res.data.message.includes('이미 사용중')) {
             this.setState({
               checkEmailCaption: `등록되지 않은 이메일 입니다.
-              입력한 이메일을 다시 한번 확인해주세요.`,
+입력한 이메일을 다시 한번 확인해주세요.`,
             });
           } else {
             this.setState({
