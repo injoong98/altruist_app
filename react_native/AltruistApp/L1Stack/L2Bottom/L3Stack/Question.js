@@ -920,11 +920,13 @@ class AltQueList extends React.Component{
                 <Spinner size='giant'/>
             </View>
             :
-            <List
-                data={list}
-                renderItem={this.renderQueList }
-                style={{backgroundColor:'#ffffff',}}
-            />
+            <View style={{flex:1}}>
+                <List
+                    data={list}
+                    renderItem={this.renderQueList }
+                    style={{backgroundColor:'#ffffff',}}
+                />
+            </View>
             )
     }
 
