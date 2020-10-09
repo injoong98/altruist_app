@@ -8,12 +8,17 @@ import App from './App';
 import {name as appName} from './app.json';
 
 
-const authStatus = Platform.OS=='ios'? await messaging().requestPermission() : null
+async function requestUserPermission() {
+  const authorizationStatus = await messaging().requestPermission();
 
-messaging()
-    .subscribeToTopic('weather')
-    .then(() => console.log('Subscribed to topic!'));
-  
+  if (authorizationStatus) {
+    console.log('Permission status:', authorizationStatus);
+  }
+}
+Platform.OS==='ios' ? 
+requestUserPermission()
+:
+null  
 messaging().setBackgroundMessageHandler(async remoteMessage => {
     
     console.log('Message handled in the background!', remoteMessage);
