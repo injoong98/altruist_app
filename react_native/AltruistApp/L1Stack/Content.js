@@ -1435,6 +1435,8 @@ class AlbaContent extends React.Component {
                     </Card>
                     <Card disabled={true} style={styles.item}>
                         <HTML
+                            baseFontStyle={{ fontFamily: "Roboto" }}
+                            ignoredStyles={["font-family", "letter-spacing"]}
                             html = {post.post_content}
                             imagesMaxWidth={Dimensions.get('window').width-20}
                             onLinkPress={(event, href)=>{
@@ -1869,6 +1871,8 @@ class IlbanContent extends Component {
                         {post_remove_tags}
                     </Text> */}
                     <HTML 
+                        baseFontStyle={{ fontFamily: "Roboto" }}
+                        ignoredStyles={["font-family"]}
                         html={post.post_content} 
                         imagesMaxWidth={Dimensions.get('window').width}
                         onLinkPress={(event, href)=>{
