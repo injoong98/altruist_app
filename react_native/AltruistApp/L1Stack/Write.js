@@ -96,10 +96,10 @@ class GominWrite extends React.Component {
         this.props.route.params.mode == 'edit'
           ? this.props.route.params.content
           : '',
-      post_anoymous_yn:
-        this.props.route.params.mode == 'edit'
-          ? this.props.route.params.post.post_anoymous_yn
-          : 1,
+      post_anoymous_yn: 1,
+        // this.props.route.params.mode == 'edit'
+        //   ? this.props.route.params.post.post_anoymous_yn
+        //   : 1,
       post_category: 1,
       checked:
         this.props.route.params.mode == 'edit'
@@ -255,8 +255,8 @@ class GominWrite extends React.Component {
             textStyle={{minHeight: 100}}
             placeholderTextColor="#A897C2"
           />
-          <View style={{alignItems: 'flex-end', paddingRight: 12}}>
-            <CheckBox
+          {/* <View style={{alignItems: 'flex-end', paddingRight: 12}}>     ------ 익명여부 체크박스
+             <CheckBox
               checked={checked}
               onChange={(nextChecked) =>
                 this.setState({
@@ -266,7 +266,7 @@ class GominWrite extends React.Component {
               }>
               {() => <Text category="h3">익명</Text>}
             </CheckBox>
-          </View>
+          </View> */}
         </Pressable>
 
         <Modal
