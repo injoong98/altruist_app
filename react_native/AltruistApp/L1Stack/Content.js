@@ -1789,6 +1789,8 @@ class IlbanContent extends Component {
                     var image_info = {};
                     image_info['props'] = {};
                     image_info['url'] = item.origin_image_url;
+                    image_info['props']['path'] = item.origin_image_url;
+                    image_info['props']['mime'] = "image/jpeg";
                     image_info['props']['id'] = item.pfi_id;
                     image_info['props']['title'] = item.pfi_originname;
                     image_info['props']['index'] = index;

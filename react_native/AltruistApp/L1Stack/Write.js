@@ -966,6 +966,8 @@ class AlbaWrite extends React.Component {
       ? formdata.append('post_id', this.props.route.params.post.post_id)
       : null;
 
+    console.log(formdata);
+
     await axios
       .post(url, formdata)
       .then((response) => {
@@ -1364,8 +1366,8 @@ class IlbanWrite extends React.Component {
     formdata.append('post_content', post_content);
     images.map((item) => {
       formdata.append('post_file[]', {
-        uri: item.path,
-        type: item.mime,
+        uri: item.props.path,
+        type: item.props.mime,
         name: 'image.jpg',
       });
     });
@@ -1491,13 +1493,13 @@ class IlbanWrite extends React.Component {
     const source = {uri: image.path};
     let item = {
       url: source,
-      mime: image.mime,
-      path: image.path,
-      content: image.data,
       props : {
         id: Date.now(),
         edit : false, 
-        index: this.state.Image_index
+        index: this.state.Image_index,
+        mime: image.mime,
+        path: image.path,
+        content: image.data,
       },
     };
     console.log(item);
