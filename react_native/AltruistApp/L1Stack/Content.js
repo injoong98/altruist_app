@@ -398,8 +398,8 @@ class GominContent extends React.Component{
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
-                        <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/>
-                        <View>
+                        {/* <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/> */}
+                        <View style={{marginLeft:5}}>
                             <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
                             <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
                         </View>
