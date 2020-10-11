@@ -26,8 +26,8 @@ class Mypage extends React.Component{
 
     static contextType = Signing;
     
-    loadMemInfo = () => {
-      axios.get('http://dev.unyict.org/api/mypage')
+    loadMemInfo = async() => {
+      await axios.get('http://dev.unyict.org/api/mypage')
       .then(res=>{
         this.setState({mem_info:res.data.myinfo,isLoading:false})
         
@@ -155,7 +155,7 @@ class Mypage extends React.Component{
                       <Text category='h2' style={styles.menuTitle}>계정</Text>
                     </View>
                     <View>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>navigate('MyProfEdit',{mem_info:this.state.mem_info,onGoback:this.onRefresh})} >
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyProfEdit', { mem_info:this.state.mem_info, onGoback: () => this.onRefresh() })}}>
                         <Text style={styles.menuItem}>프로필 수정</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{this.setState({logOutModalVisible:true})}} >
