@@ -1490,12 +1490,12 @@ class IlbanWrite extends React.Component {
     let newImages = this.state.images;
     const source = {uri: image.path};
     let item = {
-      id: Date.now(),
       url: source,
       mime: image.mime,
       path: image.path,
       content: image.data,
       props : {
+        id: Date.now(),
         edit : false, 
         index: this.state.Image_index
       },
@@ -1521,7 +1521,7 @@ class IlbanWrite extends React.Component {
     //console.log(image);
     // console.log(index);
     return (
-      <View key={image.id}>
+      <View key={image.props.id}>
         <Image
           style={styles.market_RenderImage}
           source={
