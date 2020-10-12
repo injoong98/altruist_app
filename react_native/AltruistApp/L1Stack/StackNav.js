@@ -294,7 +294,7 @@ export class StackNav extends React.Component{
     render(){
         const {context,isLoading,isSignedIn,noticeContext} = this.state
         return(
-            isLoading? 
+            isLoading && Platform.OS === 'android'? 
             <LoadingScreen />
             :
             <Signing.Provider value={context}>
