@@ -11,7 +11,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
-const renderNotis =(item,index,navigation,onRefresh) => {
+const RenderNotis =({item,index,navigation,onRefresh}) => {
     return(
         <TouchableOpacity 
             key={index} 
@@ -35,7 +35,7 @@ export class AlarmFaq extends React.Component{
     }
     render(){
         return(
-            <AlarmNotices type='faq'/>
+            <AlarmNotices {...this.props} type='faq'/>
         )
     }
 }
@@ -45,7 +45,7 @@ export class AlarmOfficial extends React.Component{
     }
     render(){
         return(
-            <AlarmNotices type='notice'/>
+            <AlarmNotices {...this.props} type='notice'/>
         )
     }
 }
@@ -128,7 +128,7 @@ export class AlarmNotices extends React.Component{
                      <View style={{flex:1,paddingTop:10,backgroundColor:'#ffffff'}}>
                         <FlatList 
                         data={noti}
-                        renderItem={({item,index})=>renderNotis(item,index,this.props.navigation,this.onRefresh)}
+                        renderItem={({item,index})=><RenderNotis item={item} index={index} navigation= {this.props.navigation} onRefresh ={this.onRefresh}/> }
                         keyExtractor={(item,index)=>index.toString()}
                         style={{backgroundColor:'#ffffff'}}
                         onRefresh={this.onRefresh}
