@@ -485,7 +485,10 @@ class GominContent extends React.Component{
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                 />
                 <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
-                    <UploadCirclesvg width={50} height={50}/>
+                    <Image 
+                        style={{width:50,height:50}}
+                        source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                    />
                 </TouchableOpacity>
             </View>
             <Modal
@@ -1100,7 +1103,10 @@ class MarketContent extends React.Component {
                         onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                     />
                     <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
-                        <UploadCirclesvg width={50} height={50}/>
+                        <Image 
+                            style={{width:50,height:50}}
+                            source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                        />
                     </TouchableOpacity>
                 </View>
                 <Modal
@@ -2058,7 +2064,10 @@ class IlbanContent extends Component {
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                 />
                 <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
-                    <UploadCirclesvg width={50} height={50}/>
+                    <Image 
+                        style={{width:50,height:50}}
+                        source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                     />
                 </TouchableOpacity>
             </View>
             <Modal

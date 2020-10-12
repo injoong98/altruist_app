@@ -11,11 +11,14 @@ export default class Confirm extends React.Component {
     }
 
     render(){
+        const regex = /(<([^>]+)>)|&nbsp;/ig;
+        const confirmText_remove_tags =this.props.confirmText.replace(regex, '\n');
+        
         return(
                 <View style ={{width:200,height:175,borderRadius:23,backgroundColor:'#ffffff'}}>
                     <View style={{flex:3 ,justifyContent:'center',alignItems:'center'}}>
                         <Text category='h1' style={{color:'#63579D',fontSize:13, margin:5}}>
-                            {this.props.confirmText}
+                            {confirmText_remove_tags}
                         </Text>   
                     </View>
                     <View style={{flex:1,display:'flex',flexDirection:'row',alignItems:'center'}}>
