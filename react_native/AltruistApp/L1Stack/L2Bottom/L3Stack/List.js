@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {StyleSheet, SafeAreaView, Image, View, ScrollView, TouchableOpacity,TextInput,TouchableHighlight,Dimensions,LogBox} from 'react-native'
+import {StyleSheet, SafeAreaView, Image, View, ScrollView, TouchableOpacity,TextInput,TouchableHighlight,Dimensions,LogBox, Keyboard} from 'react-native'
 import {Text,TopNavigation,Button,Icon, TopNavigationAction, List, Card, Modal, Spinner} from '@ui-kitten/components'
 import axios from 'axios';
 import Tag from '../../../components/tag.component';
@@ -9,11 +9,26 @@ import Rightsvg from '../../../assets/icons/right-arrow.svg';
 import Searchsvg from '../../../assets/icons/search-outline.svg';
 import Honorsvg from '../../../assets/icons/honor.svg';
 import Heartsvg from '../../../assets/icons/heart.svg';
+import Reloadsvg from '../../../assets/icons/reload.svg'
+
 const deviceWidth = Dimensions.get('window').width
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
 
+export const NoListRes = ({text,onPress}) =>{
+    return(
+        <View style={{justifyContent:'center',flex:1,alignItems:'center'}}>
+            <Text>
+                {text}
+            </Text>
+            <TouchableOpacity onPress={onPress}>
+                <Reloadsvg height={25} width={25} fill="#A9C"/>
+            </TouchableOpacity>
+        </View>
+
+    )
+}
 export class RenderAltList extends React.Component{
     componentDidMount(){
     }
@@ -109,17 +124,19 @@ class AltListScreen extends React.Component{
             isLoading : true,
             filterModalVisible : false,
             filterTag : [],
-            name:'',
+            keyword:'',
             act_array:[],
-            actSelected:[]
+            actSelected:[],
+            no_result:false,
+            no_result_text:'',
         }
     }
-    applyFilter=()=>{
-    }
+
     actUnSelect = (index) =>{
         const{actSelected} =this.state
         actSelected.splice(index,1);this.setState({actSelected});
     }
+
     actSelect = (act) =>{
         const {actSelected} =this.state
         if(actSelected.includes(act)){
@@ -129,37 +146,47 @@ class AltListScreen extends React.Component{
             this.setState({actSelected:actSelected.concat(act)})
         }
     }
-    getAltruistsFilteredList =async() => {
+
+    getAltruistsFilteredList =async(type) => {
         this.setState({isLoading:true})
 
-        const {actSelected} = this.state
+        const {actSelected,keyword} = this.state
         var formdata = new FormData()
-        if(actSelected.length>0){
+
+        if(type=='act'&&actSelected.length>0){
             actSelected.map((item,index)=>{
                 formdata.append("alt_area[]", item.act_id);
             })
-            console.log(formdata)
-              await axios.post('http://dev.unyict.org/api/altruists/lists',formdata)
-              .then((response) => {
-                  this.setState({alt_list_showing:response.data.view.data.list})
-                  this.setState({isLoading:false})
-              })
-              .catch((error)=>{
-                  alert(error);
-                  console.log(error);
-                  this.setState({isLoading:false})
-              })
-        }else{
-            this.getAltruistsList()
+           this.setState({keyword:""})
+        }else if(type=="keyword"){
+            formdata.append('alt_keyword',keyword);
+            this.setState({actSelected:[]})
         }
+        else{
+            formdata.append('alt_keyword','')
+        }
+
+        await axios.post('http://dev.unyict.org/api/altruists/lists',formdata)
+        .then(res=>{
+                this.setState({alt_list_showing:res.data.view.data.list ? res.data.view.data.list : [],isLoading:false})
+                this.setState({no_result_text: type=='keyword'? `"${keyword}" 검색 결과가 없습니다`:"검색 결과가 없습니다"})
+                this.setState({no_result : !res.data.view.data.list ?true :false })
+            }
+        )
+        .catch(err=>{
+            console.log(JSON.stringify(err.data.view))
+            this.setState({isLoading:false})
+        })
 
     }
     getAltruistsList = async() => {
         this.setState({isLoading:true})
         await axios.get('http://dev.unyict.org/api/altruists/lists?rand=Y')
         .then((response) => {
-            this.setState({lists:response.data.view.data.list,alt_list_showing:response.data.view.data.list})
+            this.setState({alt_list_showing:response.data.view.data.list,lists:response.data.view.data.list,})
             this.setState({isLoading:false})
+            this.setState({no_result : !response.data.view.data.list ?true :false })
+
         })
         .catch((error)=>{
             alert(error);
@@ -197,7 +224,7 @@ class AltListScreen extends React.Component{
                         <ScrollView horizontal={true} style={{}} >
                                 {actSelected.map((act,index) => (
                                     <TouchableHighlight
-                                        onPress ={()=>{this.actUnSelect(index); this.getAltruistsFilteredList()}}
+                                        onPress ={()=>{this.actUnSelect(index); this.getAltruistsFilteredList('act')}}
                                         key = {act.act_content}
                                     >
                                         <View 
@@ -230,7 +257,7 @@ class AltListScreen extends React.Component{
             <Modal
                     visible={filterModalVisible}
                     backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                    onBackdropPress={() => {this.setState({filterModalVisible:false});this.getAltruistsFilteredList()}}
+                    onBackdropPress={() => {this.setState({filterModalVisible:false});this.getAltruistsFilteredList('act')}}
                     style={{justifyContent:'center'}}
                 >
                 <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
@@ -261,7 +288,7 @@ class AltListScreen extends React.Component{
                     </ScrollView>
                     <View style={{alignItems:'center',justifyContent:'center',marginVertical:20}}>
                         <TouchableHighlight 
-                            onPress={()=>{this.setState({filterModalVisible:false});this.getAltruistsFilteredList()}} 
+                            onPress={()=>{this.setState({filterModalVisible:false});this.getAltruistsFilteredList('act')}} 
                             style={{backgroundColor:'#63579D', paddingVertical:4,paddingHorizontal:20,borderRadius:8.5}}>
                             <Text style={{fontSize:18,fontWeight:'700',color:'#ffffff'}}>적용</Text>
                         </TouchableHighlight>
@@ -307,7 +334,7 @@ class AltListScreen extends React.Component{
     );
     
     render(){
-        const {name,isLoading}= this.state
+        const {keyword,isLoading,alt_list_showing,no_result,no_result_text}= this.state
         // const title =this.props.route.params ? this.props.route.params.title:null
         return (
 
@@ -323,12 +350,16 @@ class AltListScreen extends React.Component{
                     <View>
                         <TextInput 
                             style={styles.titleInput} 
-                            value={name} 
-                            onChangeText={(text) =>{this.setState({name:text})}}
-                            placeholder="이타주의자들의 이름을 입력해보세요"
+                            value={keyword} 
+                            onChangeText={(text) =>{this.setState({keyword:text})}}
+                            placeholder="이름/자기소개/경력으로 검색해보세요"
                             placeholderTextColor='#A897C2'
                         />
-                        <TouchableOpacity style={{position:"absolute",right:5,top:6}}>
+                        <TouchableOpacity 
+                            style={{position:"absolute",right:5,top:6}}
+                            onPress={()=>{Keyboard.dismiss(),this.getAltruistsFilteredList('keyword')}}
+                        >
+                            
                             <Searchsvg height={25} width={25} fill='#A9C' />
                         </TouchableOpacity>
                     </View>
@@ -345,14 +376,17 @@ class AltListScreen extends React.Component{
                         <Spinner size="giant"/>
                     </View>
                     :
-                    <View style={{flex: 25,marginTop:15}}>
-                        <List
-                        contentContainerStyle={styles.contentContainer}
-                        data={this.state.alt_list_showing}
-                        renderItem={(arg)=>(<RenderAltList {...this.props} arg={arg} />)}
-                        style={{backgroundColor:'#ffffff'}}
-                        />
-                    </View> 
+                        !no_result ?
+                        <View style={{flex: 25,marginTop:15}}>
+                            <List
+                            contentContainerStyle={styles.contentContainer}
+                            data={alt_list_showing}
+                            renderItem={(arg)=>(<RenderAltList {...this.props} arg={arg} />)}
+                            style={{backgroundColor:'#ffffff'}}
+                            />
+                        </View> 
+                        :
+                        <NoListRes text= {no_result_text} onPress={()=>{this.setState({keyword:null});this.getAltruistsList()}} />
                 }
                 <this.Filter />
             </SafeAreaView>
