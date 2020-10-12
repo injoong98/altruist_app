@@ -616,6 +616,8 @@ class MarketContent extends React.Component {
             confirmModalVisible:false,
             spinnerModalVisible:false,
             // dealStatusVisible:false
+            commentSession : 0,
+            revise : false,
         }
     }
 
@@ -757,12 +759,13 @@ class MarketContent extends React.Component {
     }
     
     commentUpload= async()=>{
-        const {cmt_content,post,cmt_id}=this.state;
+        const {cmt_content,post,cmt_id, revise}=this.state;
         var formdata = new FormData();
         formdata.append("post_id",post.post_id);
         formdata.append("cmt_content",cmt_content);
         cmt_id==''? null : formdata.append("cmt_id",cmt_id);
-        
+        revise? formdata.append("cmt_id",cmt_id):null;
+        revise? formdata.append("mode",'cu'):null;
         // this.commentWrite()
         
         await Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
@@ -951,7 +954,7 @@ class MarketContent extends React.Component {
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
+                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} style={{width:10,alignItems:'flex-end'}}>
                             <MoreSsvg/>
                         </TouchableOpacity>
                     </View>
@@ -1155,6 +1158,16 @@ class MarketContent extends React.Component {
                     backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                     onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}>
                     <View style={{borderRadius:15, backgroundColor:'white'}}>
+                        {this.context.session_mem_id==this.state.commentSession?
+                            <>
+                            <TouchableOpacity 
+                                onPress={()=>{this.setState({modalVisible:false, revise:true}, this.refs.commentInput.focus())}}
+                                style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                                <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
+                            </TouchableOpacity>
+                            <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                            </>
+                        :null}
                         <TouchableOpacity 
                             onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
                             style={{padding : 10, paddingHorizontal:20, margin:5}}>
@@ -1596,6 +1609,7 @@ class IlbanContent extends Component {
             imageIndex: 0,
             modalType : 0,
             commentSession : 0,
+            revise : false,
         }
     }
 
@@ -1637,11 +1651,13 @@ class IlbanContent extends Component {
     }
     
     commentUpload= async()=>{
-        const {cmt_content,post,cmt_id}=this.state;
+        const {cmt_content,post,cmt_id, revise}=this.state;
         var formdata = new FormData();
         formdata.append("post_id",post.post_id);
         formdata.append("cmt_content",cmt_content);
         cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+        revise? formdata.append("cmt_id",cmt_id):null;
+        revise? formdata.append("mode",'cu'):null;
         
         // this.commentWrite()
         
@@ -1651,7 +1667,7 @@ class IlbanContent extends Component {
             if(status=='200'){
                 Keyboard.dismiss();
                 this.getCommentData(post.post_id);
-                this.setState({cmt_id:'', cmt_content:'', replying:false});
+                this.setState({cmt_id:'', cmt_content:'', replying:false, revise:false});
 
                 this.refs.pstcmtlist.scrollToEnd();
             }else if(status=='500'){
@@ -1662,7 +1678,7 @@ class IlbanContent extends Component {
             alert(error);
         })
     }
-    
+
     commentValid =async() =>{
         const {cmt_content} =this.state;
         var formdata = new FormData();
@@ -2097,7 +2113,7 @@ class IlbanContent extends Component {
                     {this.context.session_mem_id==this.state.commentSession?
                         <>
                         <TouchableOpacity 
-                            onPress={()=>{this.setState({modalVisible:false}, alert('댓글 수정 준비중입니다.'))}}
+                            onPress={()=>{this.setState({modalVisible:false, revise:true}, this.refs.commentInput.focus())}}
                             style={{padding : 10, paddingHorizontal:20, margin:5}}>
                             <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
                         </TouchableOpacity>
