@@ -64,7 +64,7 @@ class Mypage extends React.Component{
                       <View style={{marginVertical:20,marginLeft:30,borderRadius:62.5,width:125, height : 125,overflow:'hidden'}}>
                         <Image 
                             source = {{uri : 'http://dev.unyict.org/'+ (mem_photo ?'uploads/member_photo/'+mem_photo: 'uploads/altwink-rect.png')}} 
-                            style = {{ width : '100%', height : '100%', resizeMode:'contain',borderWidth:1}}
+                            style = {{ width : '100%', height : '100%', resizeMode:'contain'}}
                         />
                       </View>
                       <View style={{maxWidth:'40%',marginHorizontal:16,marginTop:13,marginBottom:24,justifyContent:'space-between'}}>

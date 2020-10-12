@@ -44,7 +44,7 @@ export class RenderAltList extends React.Component{
                 <View style={{flex:9,}}>
                     <Image 
                         source = {{uri : 'http://dev.unyict.org/'+ (arg.item.alt_profile.alt_photo !=null ? arg.item.alt_profile.alt_photo: 'uploads/altwink-rect.png')}} 
-                        style = {{flex : 1, width : '100%', height : '100%', resizeMode:'cover',borderWidth:1}}
+                        style = {{flex : 1, width : '100%', height : '100%', resizeMode:'cover'}}
                     />
                 </View>
                 <View style={{flex:22,height:'100%'}}>
