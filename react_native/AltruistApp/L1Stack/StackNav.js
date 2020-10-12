@@ -59,13 +59,13 @@ class LoadingScreen extends React.Component{
    
     componentDidMount(){
         // console.log(this.state.opacity)
-        console.log(DeviceInfo.isEmulator())
+        // console.log(DeviceInfo.isEmulator())
         Platform.OS === 'ios' ?  null : this.fadeIn();
         // console.log('didMount',this.state.opacity)
     }
 
     componentWillUnmount(){
-        console.log(DeviceInfo.isEmulator())
+        // console.log(DeviceInfo.isEmulator())
         Platform.OS === 'ios' ?  null : this.fadeOut();
         // console.log('componentWillUnm',this.state.opacity)
         this.fadeOut();

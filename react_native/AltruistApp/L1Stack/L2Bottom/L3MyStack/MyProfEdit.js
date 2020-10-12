@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,Image,TextInput, SafeAreaView,StyleSheet,KeyboardAvoidingView,ScrollView,TouchableHighlight,Keyboard} from 'react-native';
+import {View,Image,TextInput, SafeAreaView,StyleSheet,KeyboardAvoidingView,ScrollView,TouchableHighlight,Keyboard,TouchableWithoutFeedback} from 'react-native';
 import {Text, Modal} from '@ui-kitten/components'
 import axios from 'axios'
 import Camsvg from '../../../assets/icons/Icon_Cam.svg';
@@ -26,6 +26,7 @@ export class MyProfEdit extends React.Component{
             new_mem_photo:{},
             resultText:'',
             resultModalVisible:false,
+            mem_photo_del:false,
         }
     }
     
@@ -86,9 +87,14 @@ export class MyProfEdit extends React.Component{
           },
         );
       }
+  // 원래 이미지로 재설정
+  resetPhoto(){
+      this.setState({new_mem_photo:{},mem_photo_del:false})
+  }
   // 기본이미지로 변경
   chooseDefaultPhoto(){
-      this.setState({new_mem_photo:{uri:'http://dev.unyict.org/uploads/altwink.png'}})
+      this.setState({new_mem_photo:{uri:'http://dev.unyict.org/uploads/altwink-rect.png'}});
+      this.setState({mem_photo_del:true})
   }
   //갤러리에서 사진 가져오기
   choosePhotoFromGallery() {
@@ -98,6 +104,7 @@ export class MyProfEdit extends React.Component{
         cropping: true,
     }).then((image) => {
       this.onSelectedImage(image);
+      this.setState({mem_photo_del:false})
       //console.log(image);
     });
   }
@@ -142,7 +149,7 @@ export class MyProfEdit extends React.Component{
         }
     }
     modify= async ()=>{
-        const {mem_nickname,mem_profile_content,mem_username,mem_email,mem_phone,new_mem_photo,mem_sex} = this.state
+        const {mem_nickname,mem_profile_content,mem_username,mem_email,mem_phone,new_mem_photo,mem_sex,mem_photo_del} = this.state
         var formdata = new FormData();
         formdata.append('mem_username',mem_username)
         formdata.append('mem_nickname',mem_nickname)
@@ -151,6 +158,9 @@ export class MyProfEdit extends React.Component{
         formdata.append('mem_sex', mem_sex);
         formdata.append('mem_profile_content',mem_profile_content)
 
+        mem_photo_del?
+        formdata.append("mem_photo_del",1)
+        :
         new_mem_photo.uri ?
         formdata.append("mem_photo", {
             uri: new_mem_photo.uri,
@@ -210,21 +220,34 @@ export class MyProfEdit extends React.Component{
                     />
                     <ScrollView style={{paddingHorizontal:'5%'}}>
                         <View style={{alignItems:'center'}}>
-                            
-                            <TouchableHighlight 
-                                onPress={()=>this.onClickProfImage()} 
-                                style={{marginVertical:20,}}
-                                >
-                                <>
-                                <View style={{borderRadius:62.5,width:125, height : 125,overflow:'hidden'}} >
-                                <Image 
-                                    source = {{uri : new_mem_photo.uri ? new_mem_photo.uri: 'http://dev.unyict.org/'+ (old_mem_photo.uri ?'uploads/member_photo/'+ old_mem_photo.uri: 'uploads/altwink-rect.png')}} 
-                                    style = {{ width : '100%', height : '100%', resizeMode:'contain'}}
-                                />
+                            <View>
+                                <TouchableHighlight 
+                                    onPress={()=>this.onClickProfImage()} 
+                                    style={{}}
+                                    >
+                                    <>
+                                    <View style={{borderRadius:62.5,width:125, height : 125,overflow:'hidden'}} >
+                                    <Image 
+                                        source = {{uri : new_mem_photo.uri ? new_mem_photo.uri: 'http://dev.unyict.org/'+ (old_mem_photo.uri ?'uploads/member_photo/'+ old_mem_photo.uri: 'uploads/altwink-rect.png')}} 
+                                        style = {{ width : '100%', height : '100%', resizeMode:'cover'}}
+                                    />
+                                    </View>
+                                    <Camsvg style={{position:'absolute',bottom:0,right:0}}/>
+                                    </>
+                                </TouchableHighlight>
+                                {
+                                new_mem_photo.uri ?
+                                <View style={{position:'absolute',right:0}}>
+                                    <TouchableWithoutFeedback 
+                                        style={{backgroundColor:'#c4c4c4',borderRadius:15}}
+                                        onPress={()=>{this.resetPhoto()}}
+                                    >
+                                        <Text style={{color:'#ffffff',fontWeight:'bold',fontSize:14}}> X </Text>
+                                    </TouchableWithoutFeedback>
                                 </View>
-                                <Camsvg style={{position:'absolute',bottom:0,right:0}}/>
-                                </>
-                            </TouchableHighlight>
+                                :null
+                                }
+                            </View>
                             <KeyboardAvoidingView 
                                 behavior='height'
                                 style={{width:'100%',marginBottom:24,paddingTop:20}}
