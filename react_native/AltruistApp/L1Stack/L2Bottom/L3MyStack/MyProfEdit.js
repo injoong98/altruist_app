@@ -69,12 +69,15 @@ export class MyProfEdit extends React.Component{
         this.setState({mem_phone: value});
     };
     onClickProfImage() {
-        const buttons = ['갤러리에서 선택', '취소'];
+        const buttons = ['기본이미지','갤러리에서 선택', '취소'];
         ActionSheet.show(
-          {options: buttons, cancelButtonIndex: 1, title: 'Select a photo'},
+          {options: buttons, cancelButtonIndex: 2, title: 'Select a photo'},
           (buttonIndex) => {
             switch (buttonIndex) {
               case 0:
+                this.chooseDefaultPhoto();
+                break;
+              case 1:
                 this.choosePhotoFromGallery();
                 break;
               default:
@@ -83,7 +86,10 @@ export class MyProfEdit extends React.Component{
           },
         );
       }
-
+  // 기본이미지로 변경
+  chooseDefaultPhoto(){
+      this.setState({new_mem_photo:{uri:'http://dev.unyict.org/uploads/altwink.png'}})
+  }
   //갤러리에서 사진 가져오기
   choosePhotoFromGallery() {
     ImagePicker.openPicker({
@@ -213,7 +219,7 @@ export class MyProfEdit extends React.Component{
                                 <View style={{borderRadius:62.5,width:125, height : 125,overflow:'hidden'}} >
                                 <Image 
                                     source = {{uri : new_mem_photo.uri ? new_mem_photo.uri: 'http://dev.unyict.org/'+ (old_mem_photo.uri ?'uploads/member_photo/'+ old_mem_photo.uri: 'uploads/altwink-rect.png')}} 
-                                    style = {{ width : '100%', height : '100%', resizeMode:'contain',borderWidth:1}}
+                                    style = {{ width : '100%', height : '100%', resizeMode:'contain'}}
                                 />
                                 </View>
                                 <Camsvg style={{position:'absolute',bottom:0,right:0}}/>
