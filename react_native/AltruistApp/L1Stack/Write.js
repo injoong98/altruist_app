@@ -1349,7 +1349,7 @@ class IlbanWrite extends React.Component {
     };
   }
 
-  categoryList = ['아무말있어요', '게임있어요', '소식있어요', '정보있어요'];
+  categoryList = ['자유', '게임', '소식', '정보'];
 
   submitPost = async () => {
     
@@ -1552,7 +1552,7 @@ class IlbanWrite extends React.Component {
 
   renderSelectItems = () => (
     <View style = {{marginLeft : 12, marginVertical : 10, alignItems:'center', justifyContent:'center'}}>
-        <TouchableOpacity style={{flexDirection:'row', borderRadius:10, backgroundColor:'#978DC7', padding:15, width:130, justifyContent:'space-between'}} onPress={()=>this.setState({popoverVisible:true})}>    
+        <TouchableOpacity style={{flexDirection:'row', borderRadius:10, backgroundColor:'#978DC7', padding:15, width:80, justifyContent:'space-between'}} onPress={()=>this.setState({popoverVisible:true})}>    
           <Text category='h5' style={{color:'white'}}>
             {this.categoryList[this.state.post_category]}</Text>
           <Text style={{color:'white'}}>▼</Text>

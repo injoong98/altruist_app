@@ -16,6 +16,7 @@ import MoreLsvg from '../assets/icons/dotdotdot-large.svg'
 import MoreSsvg from '../assets/icons/dotdotdot-small.svg'
 import Backsvg from '../assets/icons/back-arrow-color.svg'
 import Thumbsvg from '../assets/icons/thumb-up.svg'
+import Thumbfillsvg from '../assets/icons/thumb-up-filled.svg';
 import UploadCirclesvg from '../assets/icons/upload-circle.svg'
 import PaperPlanesvg from '../assets/icons/paper-plane.svg'
 import Callsvg from '../assets/icons/call.svg'
@@ -319,6 +320,10 @@ class GominContent extends React.Component{
             text : '이 댓글을 삭제하시겠습니까?',
             func : this.cmtDelete,
         },
+        {
+            text : '이 댓글을 수정하시겠습니까?',
+
+        }
     ]
 
     renderPostBody = (post)=>{
@@ -529,7 +534,17 @@ class GominContent extends React.Component{
                 visible={modalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                 onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})} >
-                <View>
+                <View style={{borderRadius:15, backgroundColor:'white'}}>
+                    {this.context.session_mem_id==comment.mem_id?
+                    <>
+                    <TouchableOpacity 
+                        onPress={()=>{this.setState({modalVisible:false}, [alert('댓글수정 준비중입니다'),Keyboard.dismiss()])}}
+                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
+                    </TouchableOpacity>
+                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                    </>
+                    :null}
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding : 10, paddingHorizontal:20, margin:5}}>
@@ -1580,6 +1595,7 @@ class IlbanContent extends Component {
             imageModalVisible:false,
             imageIndex: 0,
             modalType : 0,
+            commentSession : 0,
         }
     }
 
@@ -1901,7 +1917,7 @@ class IlbanContent extends Component {
                 <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
                         <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
-                            <Thumbsvg width='18' height='18'/>
+                            {this.state.post.post_like?<Thumbsvg width='18' height='18'/>:<Thumbfillsvg width='18' height='18'/>}
                         </TouchableOpacity>
                         <Text category="s1" style={{color:'#A897C2', fontSize:15}}>{post.post_like}</Text>
                         {/* <TouchableOpacity onPress={()=>alert("저장!")}>
@@ -1951,7 +1967,7 @@ class IlbanContent extends Component {
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
+                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} style={{width:10,alignItems:'flex-end'}}>
                             <MoreSsvg/>
                         </TouchableOpacity>
                     </View>
@@ -1969,7 +1985,7 @@ class IlbanContent extends Component {
                     <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
                         <Thumbsvg width='12' height='12'/>
                     </TouchableOpacity>
-                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
+                    <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
             </View>
         </View>
@@ -1978,7 +1994,7 @@ class IlbanContent extends Component {
 
         const {navigation,route} =this.props
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image} = this.state
-
+        
         return(
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
@@ -2078,6 +2094,16 @@ class IlbanContent extends Component {
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                 onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}>
                 <View style={{borderRadius:15, backgroundColor:'white'}}>
+                    {this.context.session_mem_id==this.state.commentSession?
+                        <>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({modalVisible:false}, alert('댓글 수정 준비중입니다.'))}}
+                            style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        </>
+                    :null}
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding : 10, paddingHorizontal:20, margin:5}}>
