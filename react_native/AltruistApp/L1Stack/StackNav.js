@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions,Animated,View,SafeAreaView,Alert,Image} from 'react-native';
+import {Platform, Dimensions,Animated,View,SafeAreaView,Alert,Image} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
@@ -39,6 +39,8 @@ class LoadingScreen extends React.Component{
         }
     }
 
+    
+    
     fadeIn = () => {
         Animated.timing(this.state.opacity,{
             toValue:1,
@@ -47,20 +49,30 @@ class LoadingScreen extends React.Component{
         }).start();
     }
     
-    fadeOut = () => {
+    fadeOut = () =>{
         Animated.timing(this.state.opacity,{
-            toValue:1,
-            duration: 0,
-            useNativeDriver: false
-        }).start();
+            toValue:0, 
+            delay:10000
+        }).reset()
     }
     
+   
     componentDidMount(){
-        this.fadeIn();
+        // console.log(this.state.opacity)
+        console.log(DeviceInfo.isEmulator())
+        Platform.OS === 'ios' ?  null : this.fadeIn();
+        // console.log('didMount',this.state.opacity)
     }
+
     componentWillUnmount(){
+        console.log(DeviceInfo.isEmulator())
+        Platform.OS === 'ios' ?  null : this.fadeOut();
+        // console.log('componentWillUnm',this.state.opacity)
         this.fadeOut();
+        // console.log('componentWillUnmEnd',this.state.opacity)
     }
+
+
 
     render(){
         
@@ -282,7 +294,7 @@ export class StackNav extends React.Component{
     render(){
         const {context,isLoading,isSignedIn,noticeContext} = this.state
         return(
-            isLoading? 
+            isLoading && Platform.OS === 'android'? 
             <LoadingScreen />
             :
             <Signing.Provider value={context}>
