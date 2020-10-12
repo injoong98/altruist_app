@@ -252,6 +252,9 @@ export class AlarmScreen extends React.Component{
             }else if(item.not_type=='이타주의자들'&&item.not_message.includes("질문")){
                 console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
                 this.navigateToPost(item.not_content_id,'10')
+            }else if(item.not_type=='이타주의자들'&&item.not_message.includes("좋아")){
+                console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
+                this.navigateToPost(item.not_content_id,item.brd_id)
 
             }
             this.context.reloadUnreadCount();

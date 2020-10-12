@@ -109,6 +109,12 @@ class Notification extends CB_Controller
 					$result['list'][$key]['post_id'] = element('post_id',$comment_info);
 					$result['list'][$key]['brd_id'] = element('brd_id',$comment_info);
 				}
+				if (element('not_type', $val) === '이타주의자들'){
+					$this->db->select('post_id,brd_id');
+					$comment_info = $this->db->get_where('cb_post',array('post_id'=>element('not_content_id', $val)))->row_array() ; 
+					$result['list'][$key]['post_id'] = element('post_id',$comment_info);
+					$result['list'][$key]['brd_id'] = element('brd_id',$comment_info);
+				}
 			}
 		}
 		$view['view']['data'] = $result;

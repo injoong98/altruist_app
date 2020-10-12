@@ -963,6 +963,24 @@ class Postact extends CB_Controller
 		//추천일경우 푸시
 		if ($like_type == 1) {
 			$this->session->userdata('mem_nickname');
+			
+			$not_message = $this->session->userdata('mem_nickname'). '님께서 당신의 댓글을 좋아합니다.';
+			//알림 
+			if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
+				$this->load->library('notificationlib');
+				
+				$not_url = post_url(element('brd_key', $board), $post_id);
+				$this->notificationlib->set_noti(
+					abs(element('mem_id', $comment)),
+					$mem_id,
+					'이타주의자들',
+					abs(element('post_id', $comment)),
+					$not_message,
+					$not_url.abs(element('post_id', $comment))
+				);
+				//log_message('Error','알림 : '.$not_message );
+			}
+
 			$push_type = 'token';
 			$topic_name = '';
 			if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_like_post')) {
@@ -970,10 +988,10 @@ class Postact extends CB_Controller
 				$not_message = $this->session->userdata('mem_nickname'). '님께서 당신의 댓글을 좋아합니다.';
 				$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
 				$this->pushlib->set_push(
-					abs(element('mem_id', $post)),
+					abs(element('mem_id', $comment)),
 					$mem_id,
 					'이타주의자들',
-					$cmt_id,
+					abs(element('post_id', $comment)),
 					$not_message,
 					$not_url,
 					$push_type,
