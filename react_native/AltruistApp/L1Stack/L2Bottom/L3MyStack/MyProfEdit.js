@@ -1,11 +1,12 @@
 import React from 'react';
 import {View,Image,TextInput, SafeAreaView,StyleSheet,KeyboardAvoidingView,ScrollView,TouchableHighlight,Keyboard} from 'react-native';
-import {Text} from '@ui-kitten/components'
+import {Text, Modal} from '@ui-kitten/components'
 import axios from 'axios'
 import Camsvg from '../../../assets/icons/Icon_Cam.svg';
 import {WriteContentToptab} from '../../../components/WriteContentTopBar'
 import DocumentPicker from 'react-native-document-picker';
 import ImagePicker from 'react-native-image-crop-picker';
+import Confirm from '../../../components/confirm.component';
 import {ActionSheet, Root} from 'native-base';
 
 
@@ -23,6 +24,8 @@ export class MyProfEdit extends React.Component{
             mem_profile_content:'',
             old_mem_photo:{},
             new_mem_photo:{},
+            resultText:'',
+            resultModalVisible:false,
         }
     }
     
@@ -38,7 +41,7 @@ export class MyProfEdit extends React.Component{
           this.setState({mem_phone: phonefinal});
         }
         console.log('phonefinal', phonefinal);
-      };
+    };
     PhoneHyphen = (phonenum) => {
         var number = phonenum.replace(/[^0-9]/g, '');
         var phone = '';
@@ -132,7 +135,7 @@ export class MyProfEdit extends React.Component{
         }
         }
     }
-    modify=()=>{
+    modify= async ()=>{
         const {mem_nickname,mem_profile_content,mem_username,mem_email,mem_phone,new_mem_photo,mem_sex} = this.state
         var formdata = new FormData();
         formdata.append('mem_username',mem_username)
@@ -151,12 +154,11 @@ export class MyProfEdit extends React.Component{
         :
         null
     
-        axios.post('http://dev.unyict.org/api/membermodify/modify',formdata)
+        await axios.post('http://dev.unyict.org/api/membermodify/modify',formdata)
         .then(res=>{    
             const regex = /(<([^>]+)>)|&nbsp;/ig;
             const result_message = res.data.view.result_message.replace(regex, '\n');
-            alert(result_message)
-            this.props.route.params.onGoback()
+            this.setState({resultModalVisible:true,resultText:result_message});
         })
         .catch(err=>{
             console.log('err : '+err )
@@ -184,7 +186,7 @@ export class MyProfEdit extends React.Component{
     }
 
     render(){
-      const {mem_username,mem_nickname,mem_email,mem_phone,mem_profile_content,old_mem_photo,new_mem_photo} = this.state
+      const {mem_username,mem_nickname,mem_email,mem_phone,mem_profile_content,old_mem_photo,new_mem_photo, resultModalVisible} = this.state
         return(
             <Root>
                 <SafeAreaView style={{flex:1,backgroundColor:'#f4f4f4'}}>
@@ -206,7 +208,7 @@ export class MyProfEdit extends React.Component{
                             <TouchableHighlight 
                                 onPress={()=>this.onClickProfImage()} 
                                 style={{marginVertical:20,}}
-                            >
+                                >
                                 <>
                                 <View style={{borderRadius:62.5,width:125, height : 125,overflow:'hidden'}} >
                                 <Image 
@@ -288,6 +290,22 @@ export class MyProfEdit extends React.Component{
                             </KeyboardAvoidingView>
                         </View>
                     </ScrollView>
+                    <Modal
+                        visible={resultModalVisible}
+                        backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                        onBackdropPress={() => this.setState({resultModalVisible:false})}
+                        >
+                        <Confirm 
+                            type = 'result'
+                            confirmText={this.state.resultText}
+                            frstText="닫기"
+                            OnFrstPress={() => {
+                                this.setState({resultModalVisible:false})
+                                this.props.route.params.onGoback();
+                                this.props.navigation.goBack();
+                            }}
+                        />
+                    </Modal>
                 </SafeAreaView>
             </Root>
         )

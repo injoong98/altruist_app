@@ -96,10 +96,10 @@ class GominWrite extends React.Component {
         this.props.route.params.mode == 'edit'
           ? this.props.route.params.content
           : '',
-      post_anoymous_yn:
-        this.props.route.params.mode == 'edit'
-          ? this.props.route.params.post.post_anoymous_yn
-          : 1,
+      post_anoymous_yn: 1,
+        // this.props.route.params.mode == 'edit'
+        //   ? this.props.route.params.post.post_anoymous_yn
+        //   : 1,
       post_category: 1,
       checked:
         this.props.route.params.mode == 'edit'
@@ -255,8 +255,8 @@ class GominWrite extends React.Component {
             textStyle={{minHeight: 100}}
             placeholderTextColor="#A897C2"
           />
-          <View style={{alignItems: 'flex-end', paddingRight: 12}}>
-            <CheckBox
+          {/* <View style={{alignItems: 'flex-end', paddingRight: 12}}>     ------ 익명여부 체크박스
+             <CheckBox
               checked={checked}
               onChange={(nextChecked) =>
                 this.setState({
@@ -266,7 +266,7 @@ class GominWrite extends React.Component {
               }>
               {() => <Text category="h3">익명</Text>}
             </CheckBox>
-          </View>
+          </View> */}
         </Pressable>
 
         <Modal
@@ -966,6 +966,8 @@ class AlbaWrite extends React.Component {
       ? formdata.append('post_id', this.props.route.params.post.post_id)
       : null;
 
+    console.log(formdata);
+
     await axios
       .post(url, formdata)
       .then((response) => {
@@ -1364,8 +1366,8 @@ class IlbanWrite extends React.Component {
     formdata.append('post_content', post_content);
     images.map((item) => {
       formdata.append('post_file[]', {
-        uri: item.path,
-        type: item.mime,
+        uri: item.props.path,
+        type: item.props.mime,
         name: 'image.jpg',
       });
     });
@@ -1490,14 +1492,14 @@ class IlbanWrite extends React.Component {
     let newImages = this.state.images;
     const source = {uri: image.path};
     let item = {
-      id: Date.now(),
       url: source,
-      mime: image.mime,
-      path: image.path,
-      content: image.data,
       props : {
+        id: Date.now(),
         edit : false, 
-        index: this.state.Image_index
+        index: this.state.Image_index,
+        mime: image.mime,
+        path: image.path,
+        content: image.data,
       },
     };
     console.log(item);
@@ -1521,7 +1523,7 @@ class IlbanWrite extends React.Component {
     //console.log(image);
     // console.log(index);
     return (
-      <View key={image.id}>
+      <View key={image.props.id}>
         <Image
           style={styles.market_RenderImage}
           source={

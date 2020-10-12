@@ -398,8 +398,8 @@ class GominContent extends React.Component{
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
-                        <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/>
-                        <View>
+                        {/* <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/> */}
+                        <View style={{marginLeft:5}}>
                             <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
                             <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
                         </View>
@@ -1789,6 +1789,8 @@ class IlbanContent extends Component {
                     var image_info = {};
                     image_info['props'] = {};
                     image_info['url'] = item.origin_image_url;
+                    image_info['props']['path'] = item.origin_image_url;
+                    image_info['props']['mime'] = "image/jpeg";
                     image_info['props']['id'] = item.pfi_id;
                     image_info['props']['title'] = item.pfi_originname;
                     image_info['props']['index'] = index;
