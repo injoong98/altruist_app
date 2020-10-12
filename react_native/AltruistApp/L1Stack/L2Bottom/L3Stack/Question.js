@@ -22,6 +22,7 @@ import Heartsvg from '../../../assets/icons/heart.svg'
 import Viewsvg from '../../../assets/icons/view.svg'
 import Commentsvg from '../../../assets/icons/comment.svg'
 import Writesvg from '../../../assets/icons/write.svg'
+import {NoListRes} from './List'
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -821,8 +822,6 @@ class AltQueList extends React.Component{
         this.getQuestions();    
     }
     renderQueList = ({item}) =>{
-        
-        console.log(item.area)
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = item.post_content.replace(regex, '');
         return(
@@ -920,13 +919,16 @@ class AltQueList extends React.Component{
                 <Spinner size='giant'/>
             </View>
             :
-            <View style={{flex:1}}>
-                <List
-                    data={list}
-                    renderItem={this.renderQueList }
-                    style={{backgroundColor:'#ffffff',}}
-                />
-            </View>
+            list.length > 0 ?
+                <View style={{flex:1}}>
+                        <List
+                            data={list}
+                            renderItem={this.renderQueList }
+                            style={{backgroundColor:'#ffffff',}}
+                        />
+                </View>
+            :
+                <NoListRes text='아직 질문이 없습니다.' onPress={()=>{this.getQuestions();}}/>
             )
     }
 
