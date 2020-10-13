@@ -1,5 +1,5 @@
 import React from 'react';
-import {Platform, Dimensions,Animated,View,SafeAreaView,Alert,Image} from 'react-native';
+import {Platform, Dimensions,Animated,View,SafeAreaView,Alert,Image, Linking } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
@@ -24,6 +24,10 @@ import {Signing,Notice} from './Context'
 import {AltQueContent} from './L2Bottom/L3Stack/Question'
 import LogoSvg from '../assets/icons/logo.svg'
 import MainImg from '../assets/images/main-logo-img.png'
+import VersionCheck from "react-native-version-check";
+import { version } from '../package.json';
+
+
 
 const {width} = Dimensions.get('window')
 const wdithLogo = (width*0.67);
@@ -36,6 +40,7 @@ class LoadingScreen extends React.Component{
         super(props)
         this.state={
             opacity:new Animated.Value(0),
+            yourCurrentVersion : '',
         }
     }
 
@@ -55,21 +60,34 @@ class LoadingScreen extends React.Component{
             delay:10000
         }).reset()
     }
+
+    VersionChkAndroid = () => {
+        const yourCurrentVersion = VersionCheck.getCurrentVersion();        
+        this.setState({yourCurrentVersion : yourCurrentVersion});
+    }
+    
     
    
     componentDidMount(){
-        // console.log(this.state.opacity)
-        // console.log(DeviceInfo.isEmulator())
-        Platform.OS === 'ios' ?  null : this.fadeIn();
-        // console.log('didMount',this.state.opacity)
+        
+
+        // // Platform.OS === 'ios' ?  
+        // // null
+        // //     // VersionCheck.setAppID(APP_ID);
+        // //     // VersionCheck.setAppName(APP_NAME);
+        // // : 
+        // //     console.log('            this.fadeIn();')
+        // //     this.fadeIn();
+        // //     VersionCheck.getLatestVersion()
+        // //     .then(latestVersion => {
+        // //       console.log('latestVersion : ', latestVersion);
+        // //       // 2.0.0
+        // //     })
+        Platform.OS === 'android' ? null : this.fadeIn(); this.VersionChkAndroid(); 
     }
 
     componentWillUnmount(){
-        // console.log(DeviceInfo.isEmulator())
-        Platform.OS === 'ios' ?  null : this.fadeOut();
-        // console.log('componentWillUnm',this.state.opacity)
-        this.fadeOut();
-        // console.log('componentWillUnmEnd',this.state.opacity)
+        Platform.OS === 'ios' ?  null : this.fadeOut()
     }
 
 
@@ -79,10 +97,13 @@ class LoadingScreen extends React.Component{
         return(
             <SafeAreaView style={{flex:1}}>
                 <Animated.View 
-                    style={{flex:1,justifyContent:"center", alignItems:"center",backgroundColor:"#ffffff",opacity:this.state.opacity}}>
+                    style={{flex:1, justifyContent:"center", alignItems:"center",backgroundColor:"#ffffff",opacity:this.state.opacity}}>
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
                     <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
-                </Animated.View>   
+                </Animated.View> 
+                {Platform.OS === 'android'?  
+                <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true, padding:20}}>BETA ver. {this.state.yourCurrentVersion}</Text>
+            : null }
             </SafeAreaView>
     )}
 }
@@ -90,6 +111,7 @@ export class StackNav extends React.Component{
     constructor(props){
         super(props)
         this.state={
+            versionOk : true,
             isLoading:true,
             isSignedIn:false,
             isSignedOut:false,
@@ -164,6 +186,60 @@ export class StackNav extends React.Component{
         }
         
     }
+
+    VersionUpdateChk = () => {
+        //ios는 등록 후 가능
+        const yourCurrentVersion = () => VersionCheck.getCurrentVersion();
+        const AndroidStoreUrl = 'https://play.google.com/store/apps/details?id=com.testaltruistapp&hl=ko&ah=wbVuJvSE4DeQClkf1M_1vxgX1f4';
+        const IosStoreUrl = '';
+        this.setState({yourCurrentVersion : yourCurrentVersion});
+        
+        Platform.OS != 'ios'
+        ? 
+        () => {
+            VersionCheck.needUpdate({
+            currentVersion: yourCurrentVersion,
+            latestVersion: "0.14"
+        }).then(res => {
+            console.log('res.isNeeded : ', res.isNeeded);  // true
+            if (res.isNeeded){
+                this.setState({ versionOk : false})
+                Alert.alert(
+                    '업데이트 요청',
+                    '최신버전이 아닙니다. 업데이트를 위해 PLAY STORE로 전환됩니다.',
+                    [
+                      {text: 'OK', onPress: () =>  Linking.openURL(AndroidStoreUrl)},
+                    ],
+                    {cancelable: false},
+                  );
+                // open store if update is needed.
+              }
+          })
+        }
+          : 
+        ()=>{
+            VersionCheck.needUpdate({
+              // currentVersion: yourCurrentVersion,
+              // latestVersion: "0.14"
+          }).then(res => {
+              console.log('ios on !');  // true
+              console.log('res.isNeeded : ', res.isNeeded);  // true
+              // if (res.isNeeded){
+              //     this.setState({ versionOk : false})
+              //     Alert.alert(
+              //         '업데이트 요청',
+              //         '최신버전이 아닙니다. 업데이트 화면으로 넘어갑니다.',
+              //         [
+              //           {text: 'OK', onPress: () =>  Linking.openURL(AndroidStoreUrl)},
+              //         ],
+              //         {cancelable: false},
+              //       );
+              //     // open store if update is needed.
+              //   }
+            })
+        }
+    }
+
     static contextType = Signing
     syncPushToken = async (token,mem_id) =>{
         console.log('synchPushToken token :'+token)
@@ -270,7 +346,11 @@ export class StackNav extends React.Component{
         })
     }
     componentDidMount(){
-        setTimeout(this.session_chk,600);
+        setTimeout(
+            ()=>
+            {this.VersionUpdateChk();
+            this.session_chk();}
+            ,600);
         messaging()
             .getInitialNotification()
             .then(async remoteMessage=>{
@@ -292,11 +372,13 @@ export class StackNav extends React.Component{
             
     }
     render(){
-        const {context,isLoading,isSignedIn,noticeContext} = this.state
+        const {context,isLoading,isSignedIn,noticeContext, versionOk} = this.state
         return(
-            isLoading && Platform.OS === 'android'? 
+            Platform.OS === 'android' && isLoading ? 
             <LoadingScreen />
             :
+            !versionOk ? 
+            null : 
             <Signing.Provider value={context}>
                 <Notice.Provider value={noticeContext}>
                     <Navigator headerMode="none">

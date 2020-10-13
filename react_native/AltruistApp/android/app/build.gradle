@@ -194,6 +194,9 @@ android {
 }
 
 dependencies {
+    //버전체크
+    compile project(':react-native-version-check')
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "androidx.appcompat:appcompat:1.0.0"
