@@ -161,6 +161,9 @@ class Mypage extends React.Component{
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{this.setState({logOutModalVisible:true})}} >
                         <Text style={styles.menuItem}>로그아웃</Text>
                       </TouchableOpacity>
+                      <View>
+                        <Text></Text>
+                      </View>
                       {/* <TouchableOpacity style={styles.menuContainer} onPress={()=>{()=>{this.sessionChk();}}}>
                         <Text style={styles.menuItem}>세션체크</Text>
                       </TouchableOpacity>
@@ -193,22 +196,22 @@ export  {Mypage};
 
 const styles = StyleSheet.create({
   menuTitle :{
-    fontSize:12,
-    lineHeight:13,
+    fontSize:14,
+    lineHeight:15,
     color:'#63579D'
   },
   menuContainer:{
-    paddingLeft:20,
+    paddingLeft:18,
     borderBottomWidth:1,
     borderBottomColor:'#f4f4f4',
-    marginTop:12,
-    marginBottom:5
+    marginTop:10,
+    
   },
   menuItem:{
     fontSize:14,
     lineHeight:14,
     color:'#63579D',
-    marginBottom:1
+    marginBottom:10
   }
 
 })
