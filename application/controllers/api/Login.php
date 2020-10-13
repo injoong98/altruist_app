@@ -32,9 +32,9 @@ class Login extends CB_Controller
 	}
 	//이타주의자 여부 확인 
 	public	function is_altruist($mem_id=''){
-		$this->db->select('alt_status');
+		$this->db->select(['alt_status','alt_id']);
 		$res = $this->db->get_where('cb_alt_profile',array('mem_id'=>$mem_id))->row_array();
-		return $res['alt_status'];
+		return $res;
 	}
 	//세션 클리어
 	public	function sync_push_token()
@@ -83,7 +83,13 @@ class Login extends CB_Controller
 				response_result($view,'Err','로그인 정보가 없습니다.');
 			}
 			else{
-				$_SESSION['is_altruist'] = $this->is_altruist($_SESSION['mem_id']) ? $this->is_altruist($_SESSION['mem_id']): false ;
+				$alt_prof =$this->is_altruist($_SESSION['mem_id']);
+				if($alt_prof){
+					$_SESSION['alt_id'] = $alt_prof['alt_id'];
+					$_SESSION['is_altruist'] = $alt_prof['alt_status'] ? $alt_prof['alt_status']: false ;
+				}else{
+					$_SESSION['is_altruist']=false;
+				}
 				
 				$view['session'] = $_SESSION;
 				response_result($view,'success','로그인 상태 입니다.');
