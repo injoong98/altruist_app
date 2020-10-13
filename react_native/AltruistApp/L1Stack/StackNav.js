@@ -1,5 +1,5 @@
 import React from 'react';
-import {Platform, Dimensions,Animated,View,SafeAreaView,Alert,Image} from 'react-native';
+import {Platform, Dimensions,Animated,View,SafeAreaView,Alert,Image, Linking } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
@@ -24,6 +24,10 @@ import {Signing,Notice} from './Context'
 import {AltQueContent} from './L2Bottom/L3Stack/Question'
 import LogoSvg from '../assets/icons/logo.svg'
 import MainImg from '../assets/images/main-logo-img.png'
+import VersionCheck from "react-native-version-check";
+import { version } from '../package.json';
+
+
 
 const {width} = Dimensions.get('window')
 const wdithLogo = (width*0.67);
@@ -36,6 +40,7 @@ class LoadingScreen extends React.Component{
         super(props)
         this.state={
             opacity:new Animated.Value(0),
+            yourCurrentVersion : '',
         }
     }
 
@@ -55,21 +60,58 @@ class LoadingScreen extends React.Component{
             delay:10000
         }).reset()
     }
+
+    VersionChkAndroid = () => {
+        const yourCurrentVersion = VersionCheck.getCurrentVersion();
+        const storeUrl = 'https://play.google.com/store/apps/details?id=com.testaltruistapp&hl=ko&ah=wbVuJvSE4DeQClkf1M_1vxgX1f4';
+        this.setState({yourCurrentVersion : yourCurrentVersion});
+
+        VersionCheck.needUpdate({
+            currentVersion: yourCurrentVersion,
+            latestVersion: "0.13"
+        }).then(res => {
+            console.log('res.isNeeded : ', res.isNeeded);  // true
+            if (res.isNeeded){
+                  
+                // open store if update is needed.
+              }
+          });
+        // console.log('VersionCheck.getAppStoreUrl(): ', VersionCheck.getAppStoreUrl());
+
+        
+        // const storeUrl = 'https://play.google.com/apps/testing/com.testaltruistapp';
+
+        // VersionCheck.needUpdate()
+        // .then(async res => {
+        //   console.log('res.isNeeded : ', res.isNeeded);    // true
+        //   if (res.isNeeded) {
+        //     Linking.openURL(res.storeUrl);  // open store if update is needed.
+        //     }
+        // })
+    }
+    
     
    
     componentDidMount(){
-        // console.log(this.state.opacity)
-        // console.log(DeviceInfo.isEmulator())
-        Platform.OS === 'ios' ?  null : this.fadeIn();
-        // console.log('didMount',this.state.opacity)
+        
+
+        // // Platform.OS === 'ios' ?  
+        // // null
+        // //     // VersionCheck.setAppID(APP_ID);
+        // //     // VersionCheck.setAppName(APP_NAME);
+        // // : 
+        // //     console.log('            this.fadeIn();')
+        // //     this.fadeIn();
+        // //     VersionCheck.getLatestVersion()
+        // //     .then(latestVersion => {
+        // //       console.log('latestVersion : ', latestVersion);
+        // //       // 2.0.0
+        // //     })
+        Platform.OS === 'ios' ? null : this.VersionChkAndroid(); this.fadeIn(); 
     }
 
     componentWillUnmount(){
-        // console.log(DeviceInfo.isEmulator())
-        Platform.OS === 'ios' ?  null : this.fadeOut();
-        // console.log('componentWillUnm',this.state.opacity)
-        this.fadeOut();
-        // console.log('componentWillUnmEnd',this.state.opacity)
+        Platform.OS === 'ios' ?  null : this.fadeOut()
     }
 
 
@@ -83,6 +125,7 @@ class LoadingScreen extends React.Component{
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
                     <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
                 </Animated.View>   
+                <Text category="s2" style={{textAlign:'center', paddingBottom:20}}>BETA ver. {this.state.yourCurrentVersion}</Text>
             </SafeAreaView>
     )}
 }
@@ -294,7 +337,7 @@ export class StackNav extends React.Component{
     render(){
         const {context,isLoading,isSignedIn,noticeContext} = this.state
         return(
-            isLoading && Platform.OS === 'android'? 
+            Platform.OS === 'android' && isLoading ? 
             <LoadingScreen />
             :
             <Signing.Provider value={context}>
