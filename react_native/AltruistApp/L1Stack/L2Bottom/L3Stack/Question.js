@@ -20,7 +20,7 @@ import {TopBarTune} from '../../../components/TopBarTune'
 import {WriteContentToptab} from '../../../components/WriteContentTopBar'
 import Heartsvg from '../../../assets/icons/heart.svg'
 import Viewsvg from '../../../assets/icons/view.svg'
-import Commentsvg from '../../../assets/icons/comment.svg'
+import Commentsvg from '../../../assets/icons/comment-square.svg'
 import Writesvg from '../../../assets/icons/write.svg'
 import {NoListRes} from './List'
 
@@ -895,10 +895,12 @@ class AltQueList extends React.Component{
                             <Text style={styles.infotext} category="s1">{item.post_like}</Text>
                         </View>
                         <View style={{alignItems:'center',}}>
-                            <Commentsvg width={20} height={20}/>
+                            <Commentsvg 
+                             width={15} height={20}
+                            />
                             <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
                         </View>
-                        <View style={{alignItems:'center',}}>
+                        <View style={{alignItems:'center'}}>
                             <Viewsvg width={20} height={20}/>
                             <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                         </View>

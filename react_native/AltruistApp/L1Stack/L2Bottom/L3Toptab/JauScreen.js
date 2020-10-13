@@ -14,7 +14,7 @@ import {Contrast, Grayscale} from 'react-native-color-matrix-image-filters';
 //icon
 import Heartsvg from '../../../assets/icons/heart.svg';
 import Viewsvg from '../../../assets/icons/view.svg';
-import Commentsvg from '../../../assets/icons/comment.svg';
+import Commentsvg from '../../../assets/icons/comment-square.svg';
 import Writesvg from '../../../assets/icons/write.svg';
 import Sharesvg from '../../../assets/icons/share.svg';
 import Thumbsvg from '../../../assets/icons/thumb-up.svg';
@@ -222,7 +222,7 @@ class JauScreen extends React.Component {
 							<Text style={styles.infotext} category="s2">{item.post_like}</Text>
 						</View>
 						<View style={{alignItems:'center', marginHorizontal:10}}>
-							<Commentsvg width = {20} height={20}/>
+							<Commentsvg width = {15} height={20}/>
 							<Text style={styles.infotext} category="s2">{item.post_comment_count}</Text>
 						</View>
 						<View style={{alignItems:'center', marginHorizontal:10}}>
@@ -279,9 +279,10 @@ class JauScreen extends React.Component {
 						ListFooterComponent={this.renderFooter}/>
 				</View>
 				<TouchableOpacity
-						style={{position: 'absolute', right: 20, bottom: 14}}
+						style={{position: 'absolute', right: 30, bottom: 14}}
 						onPress={() => {this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})}}>
-						<Writesvg />
+						{/* <Writesvg /> */}
+						<Image source={{uri:"http://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
 				</TouchableOpacity>
 			</View>
 		);

@@ -182,7 +182,9 @@ class AlbaScreen extends React.Component {
           style={styles.bottomButton}
           onPress={()=>{this.props.navigation.navigate('AlbaWrite',{statefunction:this.statefunction});}}
           >
-          <Writesvg />
+          {/* <Writesvg /> */}
+          <Image source={{uri:"http://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
+
         </TouchableOpacity>
       </>
     );
@@ -221,8 +223,8 @@ const styles = StyleSheet.create({
   },
   bottomButton: {
     position:'absolute',
-    right : 10,
-    bottom : 10,
+    right : 30,
+    bottom : 14,
   },
   tagstyle:{
     borderRadius : 20,
