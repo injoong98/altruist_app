@@ -139,7 +139,7 @@ class GominScreen extends React.Component {
                         <Text style={{...styles.infotext, marginTop:2}} category="s1">{item.post_like}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
-                        <Commentsvg width='20' height='20'/>
+                        <Commentsvg width='15' height='20'/>
                         <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
