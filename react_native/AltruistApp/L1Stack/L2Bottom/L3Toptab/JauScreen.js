@@ -279,9 +279,10 @@ class JauScreen extends React.Component {
 						ListFooterComponent={this.renderFooter}/>
 				</View>
 				<TouchableOpacity
-						style={{position: 'absolute', right: 20, bottom: 14}}
+						style={{position: 'absolute', right: 30, bottom: 14}}
 						onPress={() => {this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})}}>
-						<Writesvg />
+						{/* <Writesvg /> */}
+						<Image source={{uri:"http://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
 				</TouchableOpacity>
 			</View>
 		);

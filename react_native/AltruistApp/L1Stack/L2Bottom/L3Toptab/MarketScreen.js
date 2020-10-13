@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Image, ActivityIndicator, SafeAreaView, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Image, ActivityIndicator, SafeAreaView, View, StyleSheet, TouchableOpacity,} from 'react-native';
 import {Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction, Button, List, Card, Spinner} from '@ui-kitten/components';
 import axios from 'axios'
 import {PostTime} from '../../../components/PostTime'
@@ -166,10 +166,12 @@ class MarketScreen extends React.Component {
             onRefresh={this.onRefresh}
         />
         <TouchableOpacity 
-          style={{position:'absolute', right:20,bottom:14}} 
+          style={{position:'absolute', right:30,bottom:14}} 
           onPress={()=>{this.props.navigation.navigate('MarketWrite',{statefunction:this.statefunction})}} 
         >
-          <Writesvg />
+          {/* <Writesvg /> */}
+          <Image source={{uri:"http://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
+
         </TouchableOpacity>
         {/* <Button style={{position:'absolute', width:'20%', left:'40%', bottom:10}} 
         onPress={()=>this.props.navigation.navigate('MarketWrite')}>

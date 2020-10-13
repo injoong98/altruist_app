@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity,Animated,LogBox} from 'react-native';
+import {SafeAreaView,View,StyleSheet,ActivityIndicator,TouchableOpacity,Animated,LogBox,Image} from 'react-native';
 import { Icon,Layout,Button,Text,ListItem,List, Divider,Card,Spinner} from '@ui-kitten/components';
 import axios from 'axios';
 import {PostTime} from '../../../components/PostTime'
@@ -176,10 +176,12 @@ class GominScreen extends React.Component {
                 style={{backgroundColor:'#ffffff'}}
             />
                 <TouchableOpacity 
-                    style={{position:'absolute', right:20,bottom:14}} 
+                    style={{position:'absolute', right:30,bottom:14}} 
                     onPress={()=>{this.props.navigation.navigate('GominWrite',{statefunction:this.statefunction})}} 
                 >
-                    <Writesvg />
+                    {/* <Writesvg /> */}
+					<Image source={{uri:"http://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
+
                 </TouchableOpacity>
                 {/* <Button onPress={searchOpenClose ? this.searchClose : this.searchOpen}>
                     검색
