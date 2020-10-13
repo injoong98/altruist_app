@@ -1818,7 +1818,7 @@ class IlbanContent extends Component {
     getPostData = async (post_id)=>{
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_icon});
+            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_photo});
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
             this.setState({content:post_remove_tagsf})
