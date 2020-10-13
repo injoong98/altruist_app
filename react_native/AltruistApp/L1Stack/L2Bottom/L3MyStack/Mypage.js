@@ -54,8 +54,8 @@ class Mypage extends React.Component{
     }
     render(){
       const {signOut} = this.context
-      const {logOutModalVisible} = this.state
-      const {mem_point,mem_nickname,mem_photo,mem_profile_content} = this.state.mem_info
+      const {logOutModalVisible,mem_info} = this.state
+      const {mem_point,mem_nickname,mem_photo,mem_profile_content} = mem_info
       const {navigate} =this.props.navigation
         return(
           <SafeAreaView style={{flex:1}}>
@@ -146,6 +146,16 @@ class Mypage extends React.Component{
                         <Text style={styles.menuItem}>질문함</Text>
                       </TouchableOpacity>
                     </View>
+                    <View>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAltProf',{mem_info})}} >
+                        <Text style={styles.menuItem}>멘토 프로필</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAltCareer')}} >
+                        <Text style={styles.menuItem}>경력사항</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                   <View style={{ marginHorizontal:40,marginBottom:20}}>
                     <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
@@ -161,6 +171,9 @@ class Mypage extends React.Component{
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{this.setState({logOutModalVisible:true})}} >
                         <Text style={styles.menuItem}>로그아웃</Text>
                       </TouchableOpacity>
+                      <View>
+                        <Text></Text>
+                      </View>
                       {/* <TouchableOpacity style={styles.menuContainer} onPress={()=>{()=>{this.sessionChk();}}}>
                         <Text style={styles.menuItem}>세션체크</Text>
                       </TouchableOpacity>
@@ -193,22 +206,22 @@ export  {Mypage};
 
 const styles = StyleSheet.create({
   menuTitle :{
-    fontSize:12,
-    lineHeight:13,
+    fontSize:14,
+    lineHeight:15,
     color:'#63579D'
   },
   menuContainer:{
-    paddingLeft:20,
+    paddingLeft:18,
     borderBottomWidth:1,
     borderBottomColor:'#f4f4f4',
-    marginTop:12,
-    marginBottom:5
+    marginTop:10,
+    
   },
   menuItem:{
     fontSize:14,
     lineHeight:14,
     color:'#63579D',
-    marginBottom:1
+    marginBottom:10
   }
 
 })

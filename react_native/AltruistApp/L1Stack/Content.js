@@ -1026,6 +1026,14 @@ class MarketContent extends React.Component {
                 </Layout>
                 <Layout style={styles.container}>
                     <Text style={{marginBottom:5}} category='h2'>상품설명</Text>
+                    {/* <HTML
+                            baseFontStyle={{ fontFamily: "Roboto" }}
+                            ignoredStyles={["font-family", "letter-spacing"]}
+                            html = {post.post_content}
+                            imagesMaxWidth={Dimensions.get('screen').width-20}
+                            onLinkPress={(event, href)=>{
+                                Linking.openURL(href)
+                            }}/> */}
                     <Text style={styles.marketText} category='s1'>{post.post_content}</Text>
                 </Layout>
                 <Layout style={styles.container}>

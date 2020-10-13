@@ -151,7 +151,7 @@ class JauScreen extends React.Component {
 			style={styles.itembox}
 			onPress={() => {this.props.navigation.navigate('IlbanContent', {OnGoback: () => this.onRefresh(),post_id: item.post_id});}}
 			>
-			<View style={{flex:1, backgroundColor:'white', width:90, borderBottomRightRadius:15}}>
+			<View style={{flex:1, backgroundColor:'white', width:50, borderBottomRightRadius:15}}>
 				<Text category='s2' style={{fontSize:12, color:'#63579D', padding:5, flex:1}}>{'#'+this.category[item.post_category]}</Text>
 			</View>
 			<View style={{marginHorizontal:20, marginTop:5}}>
