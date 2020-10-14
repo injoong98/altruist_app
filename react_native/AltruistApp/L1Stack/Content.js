@@ -336,9 +336,17 @@ class GominContent extends React.Component{
                     <Text style={{fontSize:18}} category='h3'>{post.post_title}</Text>
                 </View>
                 <View style={{marginBottom:16}}>
-                    <Text style={{fontSize:12,fontWeight:'800'}} category='s1'>
-                    {post_remove_tags}
-                    </Text>
+                    {/* <Text style={{fontSize:12,fontWeight:'800'}} category='s1'>
+                        {post_remove_tags}
+                    </Text> */}
+                    <HTML 
+                        baseFontStyle={{ fontFamily: "Roboto" }}
+                        ignoredStyles={["font-family"]}
+                        html={post.content} 
+                        imagesMaxWidth={Dimensions.get('window').width}
+                        onLinkPress={(event, href)=>{
+                            Linking.openURL(href)
+                        }}/>
                 </View>
                 <View style={{display:"flex",flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
                     <View style={{flexDirection:'row'}}>
@@ -1025,14 +1033,14 @@ class MarketContent extends React.Component {
                 </Layout>
                 <Layout style={styles.container}>
                     <Text style={{marginBottom:5}} category='h2'>상품설명</Text>
-                    {/* <HTML
-                            baseFontStyle={{ fontFamily: "Roboto" }}
-                            ignoredStyles={["font-family", "letter-spacing"]}
-                            html = {post.post_content}
-                            imagesMaxWidth={Dimensions.get('screen').width-20}
-                            onLinkPress={(event, href)=>{
-                                Linking.openURL(href)
-                            }}/> */}
+                    {/* <HTML 
+                        baseFontStyle={{ fontFamily: "Roboto" }}
+                        ignoredStyles={["font-family"]}
+                        html={post.post_content} 
+                        imagesMaxWidth={Dimensions.get('screen').width}
+                        onLinkPress={(event, href)=>{
+                            Linking.openURL(href)
+                    }}/> */}
                     <Text style={styles.marketText} category='s1'>{post.post_content}</Text>
                 </Layout>
                 <Layout style={styles.container}>
@@ -1473,14 +1481,14 @@ class AlbaContent extends React.Component {
                         </Layout>
                     </Card>
                     <Card disabled={true} style={styles.item}>
-                        <HTML
+                        <HTML 
                             baseFontStyle={{ fontFamily: "Roboto" }}
-                            ignoredStyles={["font-family", "letter-spacing"]}
-                            html = {post.post_content}
-                            imagesMaxWidth={Dimensions.get('window').width-20}
+                            ignoredStyles={["font-family"]}
+                            html={post.post_content} 
+                            imagesMaxWidth={Dimensions.get('window').width}
                             onLinkPress={(event, href)=>{
                                 Linking.openURL(href)
-                            }}/>
+                        }}/>
                         {this.state.file_images ? this.state.file_images.map((i,index) => <View key={i.uri}>{this.renderImage(i,index)}</View>) : null} 
                     </Card>
                 </ScrollView>}
@@ -1918,7 +1926,7 @@ class IlbanContent extends Component {
                     <HTML 
                         baseFontStyle={{ fontFamily: "Roboto" }}
                         ignoredStyles={["font-family"]}
-                        html={post.post_content} 
+                        html={post.content} 
                         imagesMaxWidth={Dimensions.get('window').width}
                         onLinkPress={(event, href)=>{
                             Linking.openURL(href)
@@ -1945,8 +1953,8 @@ class IlbanContent extends Component {
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
                         <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
                             {post.is_liked?<Thumbfillsvg width = {18} height={18}/>:<Thumbsvg width='18' height='18'/>}
+                            <Text category="s1" style={{color:'#A897C2', fontSize:15}}>{post.post_like}</Text>
                         </TouchableOpacity>
-                        <Text category="s1" style={{color:'#A897C2', fontSize:15}}>{post.post_like}</Text>
                         {/* <TouchableOpacity onPress={()=>alert("저장!")}>
                             <PlusIcon />
                             <Text>{post.scrap_count}</Text>
