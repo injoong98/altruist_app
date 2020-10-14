@@ -366,7 +366,7 @@ class Comment_list extends CB_Controller
 					if($mem_id) {
 						$select = 'lik_id, lik_type';
 						$where = array(
-							'target_id' => element('post_id', $post),
+							'target_id' => element('cmt_id', $val),
 							'target_type' => 1,
 							'mem_id' => $mem_id,
 						);
