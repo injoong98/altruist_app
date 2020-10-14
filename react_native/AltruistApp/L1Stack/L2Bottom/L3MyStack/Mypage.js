@@ -146,16 +146,23 @@ class Mypage extends React.Component{
                         <Text style={styles.menuItem}>질문함</Text>
                       </TouchableOpacity>
                     </View>
-                    <View>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAltProf',{mem_info})}} >
-                        <Text style={styles.menuItem}>멘토 프로필</Text>
-                      </TouchableOpacity>
-                    </View>
-                    <View>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAltCareer')}} >
-                        <Text style={styles.menuItem}>경력사항</Text>
-                      </TouchableOpacity>
-                    </View>
+                    {
+                      this.context.is_altruist ?
+                      <>
+                        <View>
+                          <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAltProf',{mem_info})}} >
+                            <Text style={styles.menuItem}>멘토 프로필</Text>
+                          </TouchableOpacity>
+                        </View>
+                        <View>
+                          <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAltCareer')}} >
+                            <Text style={styles.menuItem}>경력사항</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </>
+                      :
+                      null
+                    }
                   </View>
                   <View style={{ marginHorizontal:40,marginBottom:20}}>
                     <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
