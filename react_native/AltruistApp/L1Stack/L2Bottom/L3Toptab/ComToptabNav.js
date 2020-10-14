@@ -41,7 +41,7 @@ const TabNavigator = () => (
 export const ComToptabNav= () => (
   <SafeAreaView style={{flex:1}}>
     {/* <TopNavigation title ="Community" alignment ='center' style={{backgroundColor : '#B09BDE'}}/> */}
-    <TopBarTune text="COMMUNITY" func={()=>navigation.navigate('Meet')} />
+    <TopBarTune text="COMMUNITY" right='community' func={()=>navigation.navigate('Meet')} />
     <TabNavigator/>
   </SafeAreaView>
 );
