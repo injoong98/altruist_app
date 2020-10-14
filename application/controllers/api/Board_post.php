@@ -18,7 +18,7 @@ class Board_post extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Post', 'Post_meta', 'Post_extra_vars','Member','Banner');
+	protected $models = array('Post', 'Post_meta', 'Post_extra_vars','Member','Banner','Like');
 
 	/**
 	 * 헬퍼를 로딩합니다
@@ -125,8 +125,6 @@ class Board_post extends CB_Controller
 		// $this->view = element('view_skin_file', element('layout', $view));
 		//json api output
 		response_result($view);
-
-		
 	}
 	/**
 	 * 게시판 목록입니다.
@@ -185,6 +183,23 @@ class Board_post extends CB_Controller
 		$view['view']['post'] = $post;
 
 		$mem_id = (int) $this->member->item('mem_id');
+	
+		//글을 조회하는 사람이 해당 글의 추천 여부 값 추가 
+		$view['view']['post']['is_liked'] = 0;
+		if($mem_id) {
+			$select = 'lik_id, lik_type';
+			$where = array(
+				'target_id' => element('post_id', $post),
+				'target_type' => 1,
+				'mem_id' => $mem_id,
+			);
+			$exist = $this->Like_model->get_one('', $select, $where);
+
+			if (element('lik_id', $exist)) {
+				$view['view']['post']['is_liked'] = 1;
+			}
+		}
+
 
 		if ( ! element('post_id', $post)) {
 			show_404();
@@ -1138,6 +1153,28 @@ class Board_post extends CB_Controller
 					$result['list'][$key]['display_name'] = '익명';
 				}
 
+				//글을 조회하는 사람이 해당 글의 추천 여부 값 추가 
+				$result['list'][$key]['is_liked'] = 0;
+				if($mem_id) {
+					$select = 'lik_id, lik_type';
+					$where = array(
+						'target_id' => element('post_id', $val),
+						'target_type' => 1,
+						'mem_id' => $mem_id,
+					);
+					$exist = $this->Like_model->get_one('', $select, $where);
+			
+					if (element('lik_id', $exist)) {
+						$result['list'][$key]['is_liked'] = 1;
+					}
+				}
+
+				$result['list'][$key]['display_datetime'] = display_datetime(
+					element('post_datetime', $val),
+					$list_date_style,
+					$list_date_style_manual
+				);
+				
 				$result['list'][$key]['display_datetime'] = display_datetime(
 					element('post_datetime', $val),
 					$list_date_style,

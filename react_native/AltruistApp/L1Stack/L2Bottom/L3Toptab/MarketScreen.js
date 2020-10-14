@@ -5,6 +5,8 @@ import axios from 'axios'
 import {PostTime} from '../../../components/PostTime'
 
 import Writesvg from '../../../assets/icons/write.svg'
+import Viewsvg from '../../../assets/icons/view.svg'
+import Timesvg from '../../../assets/icons/Time.svg'
 
 
 class MarketScreen extends React.Component {
@@ -108,12 +110,17 @@ class MarketScreen extends React.Component {
                     </View>
                 </View>
             </View>
-            <View style={{flexDirection: 'row-reverse', position:'absolute', bottom:18, right:13}}>
-                <Text category='h4' style={{fontSize:9}}>
+            <View style={{flexDirection: 'row', position:'absolute', bottom:5, right:15}}>
+                {/* <Text category='h4' style={{fontSize:9}}>
                     {item.post_nickname}
-                </Text>
-                <View style={{position:'absolute', top:14}}>
-                    <PostTime style={{color:'#878787', fontSize:8}} category='p1' datetime={item.post_datetime}/>
+                </Text> */}
+                <View style={{justifyContent:'center', alignItems:'center', marginRight:10}}>
+                    <Viewsvg width='15' height='15'/>
+                    <Text style={{color:'#878787', fontSize:8}} category='p1'>{item.post_hit}</Text>
+                </View>
+                <View style={{justifyContent:'center', alignItems:'center', paddingTop:3}}>
+                    <Timesvg width='10' height='10'/>
+                    <PostTime style={{color:'#878787', fontSize:8, marginTop:2}} category='p1' datetime={item.post_datetime}/>
                 </View>
             </View>
         </View>
@@ -209,7 +216,10 @@ const styles = StyleSheet.create({
     },
     textTop: {
         flex:1,
-        justifyContent: 'center'
+        backgroundColor:'#FFFFFF',
+        borderRadius:10,
+        justifyContent: 'center',
+        marginTop:5
     },
     textBottom: {
     },
