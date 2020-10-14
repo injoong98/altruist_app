@@ -183,6 +183,23 @@ class Board_post extends CB_Controller
 		$view['view']['post'] = $post;
 
 		$mem_id = (int) $this->member->item('mem_id');
+	
+		//글을 조회하는 사람이 해당 글의 추천 여부 값 추가 
+		$view['view']['post']['is_liked'] = 0;
+		if($mem_id) {
+			$select = 'lik_id, lik_type';
+			$where = array(
+				'target_id' => element('post_id', $post),
+				'target_type' => 1,
+				'mem_id' => $mem_id,
+			);
+			$exist = $this->Like_model->get_one('', $select, $where);
+
+			if (element('lik_id', $exist)) {
+				$view['view']['post']['is_liked'] = 1;
+			}
+		}
+
 
 		if ( ! element('post_id', $post)) {
 			show_404();
@@ -1137,7 +1154,7 @@ class Board_post extends CB_Controller
 				}
 
 				//글을 조회하는 사람이 해당 글의 추천 여부 값 추가 
-				$result['list'][$key]['like_exist'] = 0;
+				$result['list'][$key]['is_liked'] = 0;
 				if($mem_id) {
 					$select = 'lik_id, lik_type';
 					$where = array(
@@ -1148,7 +1165,7 @@ class Board_post extends CB_Controller
 					$exist = $this->Like_model->get_one('', $select, $where);
 			
 					if (element('lik_id', $exist)) {
-						$result['list'][$key]['like_exist'] = 1;
+						$result['list'][$key]['is_liked'] = 1;
 					}
 				}
 
