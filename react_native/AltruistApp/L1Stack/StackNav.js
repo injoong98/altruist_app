@@ -167,7 +167,8 @@ export class StackNav extends React.Component{
                     this.session_chk()
                 },
                 session_mem_id:'',
-                is_altruist:false
+                is_altruist:false,
+                alt_id:'',
             },
             noticeContext:{
                 noti:[],
@@ -272,13 +273,17 @@ export class StackNav extends React.Component{
             if(res.data.status == 200){
                 this.getNotiList();
                 this.getFirstNotiList();
-        
-                const {mem_id,is_altruist} =res.data.session
                 
+                const {mem_id,is_altruist,alt_id} =res.data.session
+                console.log(`mem_id : ${mem_id} is_altruist : ${is_altruist} alt_id : ${alt_id}`)
                 this.setState({isSignedIn:true});
                 this.state.context.session_mem_id = mem_id;
                 this.state.context.is_altruist = is_altruist;
-                
+                is_altruist ?
+                this.state.context.alt_id =alt_id
+                :
+                null
+
                 this.syncPushToken(token,mem_id)
                 
                 try {

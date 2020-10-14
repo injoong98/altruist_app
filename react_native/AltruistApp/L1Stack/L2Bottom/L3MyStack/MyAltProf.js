@@ -13,13 +13,17 @@ import {
 import {
     Text,
     RadioGroup,
-    Radio
+    Radio,
+    Spinner
 } from '@ui-kitten/components'
 import Tag from '../../../components/tag.component'
 import {WriteContentToptab} from '../../../components/WriteContentTopBar'
 import Camsvg from '../../../assets/icons/Icon_Cam.svg'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import {ActionSheet, Root} from 'native-base';
+import { Signing } from '../../Context';
+import Axios from 'axios';
+import { ToggleSimpleUsageShowcase } from '../L3Toptab/CommunityScreen';
 
  //   TODO : 명예 여부 라디오 선택
 export const RadioHonorSelection = ({setAltHonor,initial}) => {
@@ -31,7 +35,7 @@ export const RadioHonorSelection = ({setAltHonor,initial}) => {
             selectedIndex={selectedIndex}
             onChange={(index) => {
                 setSelectedIndex(index);
-                setAltHonor(index)
+                setAltHonor(index==0? true:false)
             }}>
             <Radio>
                 <Text style={{color: '#63579D'}} category="p1">
@@ -51,6 +55,8 @@ class MyAltProf extends React.Component{
     constructor(props){
         super(props)
         this.state={
+            isLoading:true,
+            altInfo:{},
             mem_info:{},
             alt_photo:{},
             new_alt_photo:{},
@@ -62,7 +68,8 @@ class MyAltProf extends React.Component{
             radioSelectedIndex:2,
         }
     }
-    
+    static contextType = Signing
+
     setAltHonor = (index)=>{
         this.setState({alt_honor:index})
     }
@@ -108,32 +115,59 @@ class MyAltProf extends React.Component{
     };
     this.setState({new_alt_photo: item});
     }
-
+    getAltProf = async() =>{
+        this.setState({isLoading:true})
+        var formdata = new FormData();
+        formdata.append('alt_id',this.context.alt_id)
+        await Axios.post('http://dev.unyict.org/api/altruists/profile',formdata)
+        .then(res=>{
+            console.log(res.data.view.list)
+            const result =res.data.view.data.list[0]
+            const {alt_content,alt_aboutme,alt_honor,alt_photo} =result.alt_profile;
+            this.setState({altInfo:result.alt_profile,actSelected:result.alt_area,alt_content,alt_aboutme,alt_honor,alt_photo})
+            console.log(alt_photo)
+            this.setState({isLoading:false})
+        })
+        .catch(err=>{
+            alert('오류 발생');
+            console.log(err)
+            this.props.navigation.goBack();
+        })
+    }
     componentDidMount(){
+        console.log(JSON.stringify(this.context.alt_id))
+        this.getAltProf()
         this.setState({mem_info:this.props.route.params.mem_info})
     }
 
     render(){  
     const {width,height} =Dimensions.get('window')
-    const {isLoading,mem_info,new_alt_photo,radio,radioSelectedIndex,spinnerModalVisible,filterModalVisible,actSelected,alt_content,alt_aboutme,alt_honor,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,alt_photo} = this.state;
-        return(
-            <Root>
+    const {alt_content,alt_aboutme,alt_honor,alt_photo,isLoading,mem_info,new_alt_photo,radio,radioSelectedIndex,altInfo,actSelected,spinnerModalVisible,filterModalVisible,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,} = this.state;
+     
+    return(
+        <Root>
                 <SafeAreaView style={{flex:1}}>
-                    <WriteContentToptab
-                        text='멘토 프로필 수정'
-                        gbckfunc={() => {
-                            this.props.navigation.goBack();
-                        }}
-                        gbckuse={true}
-                        style={{backgroundColor:'#f4f4f4'}}
-                    />
+                <WriteContentToptab
+                    text='멘토 프로필 수정'
+                    gbckfunc={() => {
+                        this.props.navigation.goBack();
+                    }}
+                    gbckuse={true}
+                    style={{backgroundColor:'#f4f4f4'}}
+                />
+                {
+                isLoading ? 
+                    <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+                        <Spinner size='giant'/>
+                    </View>
+                :
                     <ScrollView style={{flex:1,padding:'5%'}}>
                         <View style={{flexDirection:'row'}}>
                             <TouchableHighlight onPress={()=>this.onClickProfImage()} >
                                 <View >
                                     <Image 
                                     style={{width:100,height:100}}
-                                    source={{uri:!alt_photo.uri? 'http://dev.unyict.org/uploads/altwink.png':alt_photo.uri}}/>
+                                    source={{uri:!alt_photo? !new_alt_photo.uri? new_alt_photo.uri :'http://dev.unyict.org/uploads/altwink.png':`http://dev.unyict.org/${alt_photo}`}}/>
                                     <View style={{position:'absolute',bottom:0,right:0,backgroundColor:'#ffffff',borderRadius:15}}>
                                         <Camsvg width={30} height={30}/>
                                     </View>
@@ -144,14 +178,14 @@ class MyAltProf extends React.Component{
                                 {isLoading ? null : mem_info.mem_username !='' ? mem_info.mem_username : mem_info.mem_nickname}
                                 </Text>
                                 <TextInput
-                                value={alt_aboutme}
-                                onChangeText={(text) => this.setState({alt_aboutme:text})}
-                                placeholder='자기PR (50자 이내)'
-                                style={[styles.contentInput,{borderWidth: this.state.aboutmeIsNull ? 1:0,borderColor :this.state.aboutmeIsNull ? '#DB2434':'#ffffff'}]}
-                                multiline={true}
-                                placeholderTextColor='#A897C2'
-                                textAlignVertical="top"
-                                onBackdropPress={()=>Keyboard.dismiss()}
+                                    value={alt_aboutme}
+                                    onChangeText={(text) => this.setState({alt_aboutme:text})}
+                                    placeholder='자기PR (50자 이내)'
+                                    style={[styles.contentInput,{borderWidth: this.state.aboutmeIsNull ? 1:0,borderColor :this.state.aboutmeIsNull ? '#DB2434':'#ffffff'}]}
+                                    multiline={true}
+                                    placeholderTextColor='#A897C2'
+                                    textAlignVertical="top"
+                                    onBackdropPress={()=>Keyboard.dismiss()}
                                 />
                                 {
                                     this.state.aboutmeIsNull ? 
@@ -248,10 +282,10 @@ class MyAltProf extends React.Component{
                             <Text style={styles.fieldTitle}>명예 여부 </Text>
                         </View>
                         <View>
-                            <RadioHonorSelection initial={alt_honor} setAltHonor={this.setAltHonor} />
+                            <RadioHonorSelection initial={alt_honor? 0:1} setAltHonor={this.setAltHonor} />
                         </View>
                     </ScrollView>
-                </SafeAreaView>
+                }</SafeAreaView>
             </Root>
         )
     }
