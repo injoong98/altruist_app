@@ -54,8 +54,8 @@ class Mypage extends React.Component{
     }
     render(){
       const {signOut} = this.context
-      const {logOutModalVisible} = this.state
-      const {mem_point,mem_nickname,mem_photo,mem_profile_content} = this.state.mem_info
+      const {logOutModalVisible,mem_info} = this.state
+      const {mem_point,mem_nickname,mem_photo,mem_profile_content} = mem_info
       const {navigate} =this.props.navigation
         return(
           <SafeAreaView style={{flex:1}}>
@@ -144,6 +144,16 @@ class Mypage extends React.Component{
                     <View>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyQueList')}} >
                         <Text style={styles.menuItem}>질문함</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAltProf',{mem_info})}} >
+                        <Text style={styles.menuItem}>멘토 프로필</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAltCareer')}} >
+                        <Text style={styles.menuItem}>경력사항</Text>
                       </TouchableOpacity>
                     </View>
                   </View>

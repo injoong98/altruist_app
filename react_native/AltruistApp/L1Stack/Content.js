@@ -1026,6 +1026,14 @@ class MarketContent extends React.Component {
                 </Layout>
                 <Layout style={styles.container}>
                     <Text style={{marginBottom:5}} category='h2'>상품설명</Text>
+                    {/* <HTML
+                            baseFontStyle={{ fontFamily: "Roboto" }}
+                            ignoredStyles={["font-family", "letter-spacing"]}
+                            html = {post.post_content}
+                            imagesMaxWidth={Dimensions.get('screen').width-20}
+                            onLinkPress={(event, href)=>{
+                                Linking.openURL(href)
+                            }}/> */}
                     <Text style={styles.marketText} category='s1'>{post.post_content}</Text>
                 </Layout>
                 <Layout style={styles.container}>
@@ -1818,7 +1826,7 @@ class IlbanContent extends Component {
     getPostData = async (post_id)=>{
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_icon});
+            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_photo});
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
             this.setState({content:post_remove_tagsf})
