@@ -83,7 +83,7 @@ class LoadingScreen extends React.Component{
         // //       console.log('latestVersion : ', latestVersion);
         // //       // 2.0.0
         // //     })
-        Platform.OS === 'android' ? null : this.fadeIn(); this.VersionChkAndroid(); 
+        Platform.OS === 'ios' ? null : this.fadeIn(); this.VersionChkAndroid();
     }
 
     componentWillUnmount(){
@@ -95,14 +95,14 @@ class LoadingScreen extends React.Component{
     render(){
         
         return(
-            <SafeAreaView style={{flex:1}}>
+            <SafeAreaView style={{flex:1, justifyContent:"space-between",}}>
                 <Animated.View 
                     style={{flex:1, justifyContent:"center", alignItems:"center",backgroundColor:"#ffffff",opacity:this.state.opacity}}>
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
                     <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
                 </Animated.View> 
                 {Platform.OS === 'android'?  
-                <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true, padding:20}}>BETA ver. {this.state.yourCurrentVersion}</Text>
+                <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true, padding:20}}>{`BETA ver. ${this.state.yourCurrentVersion}`}</Text>
             : null }
             </SafeAreaView>
     )}
@@ -188,57 +188,42 @@ export class StackNav extends React.Component{
         
     }
 
+    latestVersionChk = () =>{
+       
+
+    }
+
     VersionUpdateChk = () => {
-        //ios는 등록 후 가능
-        const yourCurrentVersion = () => VersionCheck.getCurrentVersion();
-        const AndroidStoreUrl = 'https://play.google.com/store/apps/details?id=com.testaltruistapp&hl=ko&ah=wbVuJvSE4DeQClkf1M_1vxgX1f4';
-        const IosStoreUrl = '';
-        this.setState({yourCurrentVersion : yourCurrentVersion});
+        VersionCheck.getLatestVersion().then(latestVersion => {
+            console.log(latestVersion);
+            });
+
+
+        VersionCheck.getLatestVersion({
+            forceUpdate: true,
+            provider: () => fetch(`https://play.google.com/store/apps/details?id=com.everytime.v2`)
+            .then(r =>{ r.json();
+            console.log('r',r)}
+            )
+            .then(({version}) => 
+                console.log('version:', version))
+            }).then(latestVersion =>{
+            console.log(latestVersion);
+            });
+
+
+            // VersionCheck.getLatestVersion({
+            //     forceUpdate: true,
+            //     provider: () => fetch('')
+            //       .then(r => r.json())
+            //       .then(({version}) => version),   // You can get latest version from your own api.
+            //   }).then(latestVersion =>{
+            //     console.log(latestVersion);
+            //   });
+
+
+
         
-        Platform.OS != 'ios'
-        ? 
-        () => {
-            VersionCheck.needUpdate({
-            currentVersion: yourCurrentVersion,
-            latestVersion: "0.14"
-        }).then(res => {
-            console.log('res.isNeeded : ', res.isNeeded);  // true
-            if (res.isNeeded){
-                this.setState({ versionOk : false})
-                Alert.alert(
-                    '업데이트 요청',
-                    '최신버전이 아닙니다. 업데이트를 위해 PLAY STORE로 전환됩니다.',
-                    [
-                      {text: 'OK', onPress: () =>  Linking.openURL(AndroidStoreUrl)},
-                    ],
-                    {cancelable: false},
-                  );
-                // open store if update is needed.
-              }
-          })
-        }
-          : 
-        ()=>{
-            VersionCheck.needUpdate({
-              // currentVersion: yourCurrentVersion,
-              // latestVersion: "0.14"
-          }).then(res => {
-              console.log('ios on !');  // true
-              console.log('res.isNeeded : ', res.isNeeded);  // true
-              // if (res.isNeeded){
-              //     this.setState({ versionOk : false})
-              //     Alert.alert(
-              //         '업데이트 요청',
-              //         '최신버전이 아닙니다. 업데이트 화면으로 넘어갑니다.',
-              //         [
-              //           {text: 'OK', onPress: () =>  Linking.openURL(AndroidStoreUrl)},
-              //         ],
-              //         {cancelable: false},
-              //       );
-              //     // open store if update is needed.
-              //   }
-            })
-        }
     }
 
     static contextType = Signing
@@ -353,8 +338,10 @@ export class StackNav extends React.Component{
     componentDidMount(){
         setTimeout(
             ()=>
-            {this.VersionUpdateChk();
-            this.session_chk();}
+            {
+                // this.VersionUpdateChk();
+            this.session_chk();
+        }
             ,600);
         messaging()
             .getInitialNotification()
