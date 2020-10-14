@@ -724,7 +724,6 @@ class MarketContent extends React.Component {
     postDelete = async () => {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
-        console.log(formdata);
         await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
         .then(res=>{
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
@@ -1276,7 +1275,6 @@ class AlbaContent extends React.Component {
                     this.setState({thumb_image: response.data.view.file_image[0]});
                 this.setState({
                     file_images : response.data.view.file_image.map((i, index) => {
-                        // console.log('received image', i);
                         return {
                             id : i.pfi_id,
                             edit : true,
@@ -1286,7 +1284,6 @@ class AlbaContent extends React.Component {
                         };
                     })
                 })
-                // console.log(this.state.file_images);
             }
         })
         .catch((error)=>{
@@ -1786,10 +1783,8 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         formdata.append('like_type',1)
-        console.log(this.state.post.is_liked);
         Axios.post(this.state.post.is_liked?'http://dev.unyict.org/api/postact/cancel_post_like':'http://dev.unyict.org/api/postact/post_like',formdata)
         .then(response=>{
-            console.log(response)
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
             }else{
@@ -2014,7 +2009,7 @@ class IlbanContent extends Component {
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>{this.cmtLike(item.cmt_id); console.log(item.is_liked)}}>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
                         {item.is_liked?<Thumbfillsvg width='12' height='12'/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                     <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
