@@ -1786,8 +1786,10 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/post_like',formdata)
+        console.log(this.state.post.is_liked);
+        Axios.post(this.state.post.is_liked?'http://dev.unyict.org/api/postact/cancel_post_like':'http://dev.unyict.org/api/postact/post_like',formdata)
         .then(response=>{
+            console.log(response)
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
             }else{
@@ -1802,7 +1804,7 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        Axios.post(this.state.comment.is_liked?'http://dev.unyict.org/api/postact/cancel_comment_like':'http://dev.unyict.org/api/postact/comment_like',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -1947,7 +1949,7 @@ class IlbanContent extends Component {
                 <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
                         <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
-                            {this.state.post.post_like?<Thumbsvg width='18' height='18'/>:<Thumbfillsvg width='18' height='18'/>}
+                            {post.is_liked?<Thumbfillsvg width = {18} height={18}/>:<Thumbsvg width='18' height='18'/>}
                         </TouchableOpacity>
                         <Text category="s1" style={{color:'#A897C2', fontSize:15}}>{post.post_like}</Text>
                         {/* <TouchableOpacity onPress={()=>alert("저장!")}>
@@ -2012,8 +2014,8 @@ class IlbanContent extends Component {
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg width='12' height='12'/>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>{this.cmtLike(item.cmt_id); console.log(item.is_liked)}}>
+                        {item.is_liked?<Thumbfillsvg width='12' height='12'/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                     <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
