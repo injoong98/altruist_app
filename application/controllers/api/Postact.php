@@ -658,8 +658,6 @@ class Postact extends CB_Controller
 		if (element('lik_id', $exist)) {
 			$status = element('lik_type', $exist) === '1' ? '추천' : '비추천';
 			response_result($view,'Err', '이미 이 글을 ' . $status . '하셨습니다');
-	/* 		$result = array('error' => '이미 이 글을 ' . $status . '하셨습니다');
-			exit(json_encode($result)); */
 		}
 
 		$insertdata = array(
