@@ -98,9 +98,9 @@ class LoadingScreen extends React.Component{
         return(
             <SafeAreaView style={{flex:1,}}>
                 <Animated.View 
-                    style={{flex:1, justifyContent:"space-around", alignItems:"center", color: '#ffffff', backgroundColor:"#ffffff",opacity:this.state.opacity}}>
+                    style={{flex:1, justifyContent:"space-between", alignItems:"center", backgroundColor:"#ffffff",opacity:this.state.opacity}}>
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
-                    <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>CARP x UNYICT</Text>
+                    <Text category="s2" style={{backgroundColor: 'white', color: '#ffffff', textAlign:'center', includeFontPadding:true}}>CARP x UNYICT</Text>
                     <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
                 {Platform.OS === 'android'?  
                 <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`BETA ver. ${this.state.yourCurrentVersion}`}</Text>
