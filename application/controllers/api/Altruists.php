@@ -1659,7 +1659,8 @@ class Altruists extends CB_Controller
 				//관리자에게 푸시 / 알림 저장.
 					//알림 저장
 					$mem_nickname = $this->session->userdata('mem_nickname');
-					$mem_username = $this->session->userdata('mem_username');
+					//$mem_username = $this->session->userdata('mem_username');
+					$mem_username = $this->member->item('mem_username');
 					$not_message = $mem_username . '님이 이타주의자에 지원하셨습니다.';
 					$not_url = '/';
  

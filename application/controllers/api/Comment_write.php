@@ -428,6 +428,8 @@ class Comment_write extends CB_Controller
 					$cmt_num = $this->Comment_model->next_comment_num();
 					$cmt_reply = '';
 				}
+			
+
 				$updatedata = array(
 					'cmt_num' => $cmt_num,
 					'cmt_reply' => $cmt_reply,

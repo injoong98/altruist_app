@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>538036140176-4q8dknj4q2dt7mghrpsivtlj83ltah44.apps.googleusercontent.com</string>
+	<string>538036140176-iuog49hnquo3hraa1soajgtudjh4h7jr.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.538036140176-4q8dknj4q2dt7mghrpsivtlj83ltah44</string>
+	<string>com.googleusercontent.apps.538036140176-iuog49hnquo3hraa1soajgtudjh4h7jr</string>
 	<key>API_KEY</key>
 	<string>AIzaSyB_HtTcbSPHQAEOqmaHnvkPQ_E3x4D3Eoc</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,23 +13,23 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.reactjs.native.example.testAltruistApp</string>
+	<string>org.carp.altruists</string>
 	<key>PROJECT_ID</key>
 	<string>altruist-push</string>
 	<key>STORAGE_BUCKET</key>
 	<string>altruist-push.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:538036140176:ios:b7ab70a6e884602dc48015</string>
+	<string>1:538036140176:ios:beaa406207882b82c48015</string>
 	<key>DATABASE_URL</key>
 	<string>https://altruist-push.firebaseio.com</string>
 </dict>
