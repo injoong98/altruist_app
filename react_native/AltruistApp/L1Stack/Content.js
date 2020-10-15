@@ -308,6 +308,7 @@ class GominContent extends React.Component{
     componentWillUnmount(){
         StatusBar.setBackgroundColor('#B09BDE');
         StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
     }
     modalList = [
         {
@@ -664,6 +665,7 @@ class MarketContent extends React.Component {
     componentWillUnmount(){
         StatusBar.setBackgroundColor('#B09BDE');
         StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
     }
 
     getPostData = async(post_id)=>{
@@ -1288,6 +1290,7 @@ class AlbaContent extends React.Component {
     componentWillUnmount(){
         StatusBar.setBackgroundColor('#B09BDE');
         StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
     }
 
     getPostData = async(post_id)=>{
@@ -1893,6 +1896,7 @@ class IlbanContent extends Component {
     componentWillUnmount(){
         StatusBar.setBackgroundColor('#B09BDE');
         StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
     }
     
     modalList = [
