@@ -303,6 +303,10 @@ class GominContent extends React.Component{
         .then(()=>{this.setState({isLoading:false})})
     }
     
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+    }
     modalList = [
         {
             text : '이 게시글을 신고하시겠습니까?',
@@ -654,6 +658,10 @@ class MarketContent extends React.Component {
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
+    }
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
     }
 
     getPostData = async(post_id)=>{
@@ -1275,6 +1283,11 @@ class AlbaContent extends React.Component {
         .then(()=>{this.setState({isLoading:false})})
     }
 
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+    }
+
     getPostData = async(post_id)=>{
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
@@ -1873,6 +1886,11 @@ class IlbanContent extends Component {
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
+    }
+
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
     }
     
     modalList = [
