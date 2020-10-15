@@ -250,11 +250,11 @@ class GominContent extends React.Component{
             this.setState({resultModalVisible:true, resultText : error.message});
         })
     }
-    cmtLike = (cmt_id) =>{
+    cmtLike = (cmt_id, is_liked) =>{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 alert(`${JSON.stringify(response.data.message)}`)
@@ -436,8 +436,8 @@ class GominContent extends React.Component{
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg width='12' height='12'/>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                        {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
@@ -855,11 +855,12 @@ class MarketContent extends React.Component {
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
         })
     }
-    cmtLike = (cmt_id) =>{
+    cmtLike = (cmt_id, is_liked) =>{
+
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -979,8 +980,8 @@ class MarketContent extends React.Component {
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg width='12' height='12'/>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                        {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
@@ -1803,11 +1804,11 @@ class IlbanContent extends Component {
             this.setState({resultModalVisible:true, resultText : error.message});
         })
     }
-    cmtLike = (cmt_id) =>{
+    cmtLike = (cmt_id, is_liked) =>{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post(this.state.comment.is_liked?'http://dev.unyict.org/api/postact/cancel_comment_like':'http://dev.unyict.org/api/postact/comment_like',formdata)
+        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -1953,8 +1954,8 @@ class IlbanContent extends Component {
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
                         <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
                             {post.is_liked?<Thumbfillsvg width = {18} height={18}/>:<Thumbsvg width='18' height='18'/>}
-                            <Text category="s1" style={{color:'#A897C2', fontSize:15}}>{post.post_like}</Text>
                         </TouchableOpacity>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:15}}>{post.post_like}</Text>
                         {/* <TouchableOpacity onPress={()=>alert("저장!")}>
                             <PlusIcon />
                             <Text>{post.scrap_count}</Text>
@@ -2017,7 +2018,7 @@ class IlbanContent extends Component {
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
                         {item.is_liked?<Thumbfillsvg width='12' height='12'/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                     <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
