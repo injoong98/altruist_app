@@ -122,7 +122,7 @@
 		890AD9E2704C4CA281CD24A2 /* icon-messaging-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC9737054304345B8CDB463 /* icon-messaging-dark.png */; };
 		8A3D82689BB14924BD53F53C /* image-layout-article-list-1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CFD0F9682E0A45179DCDA2AF /* image-layout-article-list-1.jpg */; };
 		8BAB52726EFE4140B667674A /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 945FA49C4CBC40FDBF64B1CF /* Feather.ttf */; };
-		8BDE02B3252EB84F00E0D0F6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8BDE02B2252EB84F00E0D0F6 /* GoogleService-Info.plist */; };
+		8BFA7B912537104800B18170 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8BFA7B902537104800B18170 /* GoogleService-Info.plist */; };
 		8BFC3745104647F38B9B5920 /* image-layout-sign-in-1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CC19C6ED4970477CA143404C /* image-layout-sign-in-1.jpg */; };
 		90B895E004954C499980E45C /* icon-select.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B12325111144DCCBD0A04E6 /* icon-select.png */; };
 		9179AF702495C0E8710126C5 /* libPods-testAltruistApp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98BE75666C6B3A3C653227E2 /* libPods-testAltruistApp-tvOSTests.a */; };
@@ -365,8 +365,7 @@
 		8B278ABAD9EA4E3890BEEA0E /* icon-button.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-button.png"; path = "../assets/images/icon-button.png"; sourceTree = "<group>"; };
 		8BA97DF8253038D500C8FE1A /* testAltruistApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = testAltruistApp.entitlements; path = testAltruistApp/testAltruistApp.entitlements; sourceTree = "<group>"; };
 		8BA97E0D2530456400C8FE1A /* testAltruistApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = testAltruistApp.entitlements; path = testAltruistApp/testAltruistApp.entitlements; sourceTree = "<group>"; };
-		8BDE02B2252EB84F00E0D0F6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "testAltruistApp/GoogleService-Info.plist"; sourceTree = "<group>"; };
-		8BF5C40B252E95CD0025B147 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../uploads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8BFA7B902537104800B18170 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8C70015BA86D4BD3BE5CE7CA /* view-filled.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "view-filled.png"; path = "../assets/icons/view-filled.png"; sourceTree = "<group>"; };
 		91EC2C4373214559B84B0598 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		92F78A2BA36945B2959379F2 /* write.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = write.svg; path = ../assets/icons/write.svg; sourceTree = "<group>"; };
@@ -525,14 +524,13 @@
 			children = (
 				8BA97E0D2530456400C8FE1A /* testAltruistApp.entitlements */,
 				8BA97DF8253038D500C8FE1A /* testAltruistApp.entitlements */,
-				8BF5C40B252E95CD0025B147 /* GoogleService-Info.plist */,
-				8BDE02B2252EB84F00E0D0F6 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+				8BFA7B902537104800B18170 /* GoogleService-Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
 			name = testAltruistApp;
@@ -991,7 +989,6 @@
 				9CF9E90EB8E24915AFEB70BC /* icon-button-dark.png in Resources */,
 				3D721DDB27344953A6089737 /* icon-button-group-dark.png in Resources */,
 				F6A1FF95F95045828A499011 /* icon-button-group.png in Resources */,
-				8BDE02B3252EB84F00E0D0F6 /* GoogleService-Info.plist in Resources */,
 				7B995719737E449180D3BEED /* icon-button.png in Resources */,
 				D28309300758492E90884C0A /* icon-calendar-dark.png in Resources */,
 				D216D1E0BCCD4AB885BC5498 /* icon-calendar.png in Resources */,
@@ -1049,6 +1046,7 @@
 				0E5C56684272423CAC9312E1 /* image-layout-article-list-2.jpg in Resources */,
 				D2BDA8CDE5724D92B68891E2 /* image-layout-article-list-3.jpg in Resources */,
 				629C278554FB4D31B2255CBE /* image-layout-article-list-4.jpg in Resources */,
+				8BFA7B912537104800B18170 /* GoogleService-Info.plist in Resources */,
 				C8F982DD58924F668F36A139 /* image-layout-chat-1.jpg in Resources */,
 				6E181262C2A54C078329111B /* image-layout-chat-2.jpg in Resources */,
 				9FDE2996E0434C72B8374891 /* image-layout-conversation-list.jpg in Resources */,
@@ -1489,7 +1487,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.carp.altruists;
 				PRODUCT_NAME = testAltruistApp;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1513,7 +1511,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.carp.altruists;
 				PRODUCT_NAME = testAltruistApp;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

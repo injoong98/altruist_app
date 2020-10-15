@@ -18,6 +18,7 @@ import Commentsvg from '../../../assets/icons/comment-square.svg';
 import Writesvg from '../../../assets/icons/write.svg';
 import Sharesvg from '../../../assets/icons/share.svg';
 import Thumbsvg from '../../../assets/icons/thumb-up.svg';
+import Thumbfillsvg from '../../../assets/icons/thumb-up-filled.svg';
 
 class JauScreen extends React.Component {
 	constructor(props) {
@@ -218,7 +219,7 @@ class JauScreen extends React.Component {
 					</View>
 					<View style={styles.subtitle}>
 						<View style={{alignItems:'center', marginHorizontal:10}}>
-							<Thumbsvg width = {20} height={20}/>
+							{item.is_liked?<Thumbfillsvg width = {20} height={20}/>:<Thumbsvg width = {20} height={20}/>}
 							<Text style={styles.infotext} category="s2">{item.post_like}</Text>
 						</View>
 						<View style={{alignItems:'center', marginHorizontal:10}}>

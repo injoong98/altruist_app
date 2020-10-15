@@ -362,12 +362,12 @@ class Comment_list extends CB_Controller
 						$result['list'][$key]['can_reply'] = true;
 					}
 					//글을 조회하는 사람이 해당 글의 추천 여부 값 추가 
-					$result['list'][$key]['is_liked'] = 0;
+					$result['list'][$key]['is_liked'] =  0;
 					if($mem_id) {
 						$select = 'lik_id, lik_type';
 						$where = array(
 							'target_id' => element('cmt_id', $val),
-							'target_type' => 1,
+							'target_type' => 2,
 							'mem_id' => $mem_id,
 						);
 						$exist = $this->Like_model->get_one('', $select, $where);

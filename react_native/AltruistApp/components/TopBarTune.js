@@ -6,6 +6,7 @@ import Uploadsvg from '../assets/icons/upload.svg'
 import Backsvg from '../assets/icons/back-arrow-white.svg'
 import Pensvg from '../assets/icons/pencil-outline-color.svg'
 import Viewsvg from '../assets/icons/view.svg'
+import Searchsvg from '../assets/icons/search.svg'
 
 export class TopBarTune extends React.Component {
     constructor(props){
@@ -65,6 +66,13 @@ export class TopBarTune extends React.Component {
                                     style={{flexDirection:'row',width:'100%',alignItems:'center',justifyContent:'center',paddingLeft:20}}>
                                     <Text category='h2' style={{fontSize:13,color:'#A897C2'}}>모두읽음처리</Text>
                                     <Viewsvg width={28} height={22}/>
+                                </TouchableOpacity>
+                                :
+                                this.props.right =='community'?
+                                <TouchableOpacity 
+                                    onPress={this.props.func}
+                                    style={{flexDirection:'row',width:'100%',alignItems:'center',justifyContent:'flex-end',paddingLeft:20}}>
+                                    <Searchsvg width={35} height={35}/>
                                 </TouchableOpacity>
                                 :
                                 null}
