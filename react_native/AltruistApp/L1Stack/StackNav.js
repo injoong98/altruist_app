@@ -26,6 +26,7 @@ import LogoSvg from '../assets/icons/logo.svg'
 import MainImg from '../assets/images/main-logo-img.png'
 import VersionCheck from "react-native-version-check";
 import { version } from '../package.json';
+import CommunitySearch from './CommunitySearch'
 
 
 
@@ -404,6 +405,7 @@ export class StackNav extends React.Component{
                                 <Screen name = "ApplyComplete" component={ApplyCompleteScreen}/>
                                 <Screen name = "ApplyFail" component={ApplyFailScreen}/>
                                 <Screen name = "StckQueContent" component={AltQueContent}/>
+                                <Screen name = "CommunitySearch" component={CommunitySearch}/>
                             </>
                         }
 

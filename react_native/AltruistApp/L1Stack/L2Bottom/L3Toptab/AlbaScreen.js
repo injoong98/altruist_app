@@ -116,19 +116,16 @@ class AlbaScreen extends React.Component {
         style={styles.carditem}>
           <View style={{flexDirection : 'row'}}>
               <View style={{flex : 6.5}}>
-                <View style={{flexDirection:'row', marginVertical : 5, padding : 5, flex : 6, height:50}}>
+                <View style={{flexDirection:'row', marginVertical : 5, padding : 5, flex : 6, maxHeight:50}}>
                   <View style={{flex:2.5}}>
-                    <Text category = 'h4' style={{padding:5 , borderRadius : 20}} 
+                    <PostTime category='c1' style={{marginHorizontal:5}} datetime = {item.post_datetime}/>
+                    <Text category = 'h4' style={{margin:5 , borderRadius : 20}} 
                           numberOfLines={2} ellipsizeMode='tail'>{item.title}
                     </Text>
                   </View>
-                  <View style={styles.NameView}>
-                    <Text category='h4' style={{fontSize:12}} numberOfLines={1}>{item.post_nickname}</Text>
-                    <PostTime category='c1' datetime = {item.post_datetime}/>
-                  </View>
                 </View>
                 <View style = {{flexDirection : 'row', flex:1}}>
-                  <View style = {{flexDirection : 'row', backgroundColor:'white', borderTopRightRadius:10, flex:1, width : 220, maxHeight:35}}>
+                  <View style = {{flexDirection : 'row', backgroundColor:'white', borderTopRightRadius:10, flex:1, width : 220, maxHeight:35, marginTop:10}}>
                     <View style={{flexDirection : 'row', alignItems : 'center', flex:0.6, marginLeft : 5}}>
                       <Text style={{color:'#FF6262', fontWeight:'bold'}} category='c1'>
                         {this.Alba_salary_type[item.alba_salary_type].str+' '}
@@ -142,11 +139,11 @@ class AlbaScreen extends React.Component {
                       <Text category='c1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
                     </View>
                   </View>
-                  <View style={{alignItems:'center', marginLeft : 10, width : 30}}>
-                    <Viewsvg width = {20} height={20}/>
-                    <Text style = {{marginHorizontal:5}} category="c1">{item.post_hit}</Text>
-                  </View>
                 </View>
+              </View>
+              <View style={{justifyContent:'flex-end', alignItems:'center', marginLeft : 10, width : 30}}>
+                <Viewsvg width = {20} height={20}/>
+                <Text style = {{marginHorizontal:5}} category="c1">{item.post_hit}</Text>
               </View>
               {(item.post_thumb_use == 0)?
                 <Image source={require('../../../assets/images/noimage.png')} style={styles.image}/>
