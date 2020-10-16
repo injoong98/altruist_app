@@ -128,7 +128,7 @@ class AltApplyFormScreen extends React.Component {
               <View style={{flex:2,alignItems:'center'}}>
                     <CheckBox
                       checked={acv_open[i]}
-                      onChange={nextChk => {acv_open[i]=nextChk;this.setState({acv_open});console.log(acv_open)}}
+                      onChange={nextChk => {acv_open[i]=nextChk? 1:0 ;this.setState({acv_open});console.log(acv_open)}}
                     />
               </View>
               <View style={{flex:3.5}}>
@@ -189,7 +189,7 @@ class AltApplyFormScreen extends React.Component {
               <View style={{flex:4,alignItems:'center',justifyContent:'space-evenly',flexDirection:'row'}}>
                 <CheckBox
                   checked={acv_final[i]}
-                  onChange={nextChk => {acv_final[i]=nextChk;this.setState({acv_final})}}
+                  onChange={nextChk => {acv_final[i]=nextChk? 1:0;this.setState({acv_final})}}
                 />
               <TouchableHighlight style={{width:15,height:15,justifyContent:'center',backgroundColor:'#c4c4c4'}} onPress={()=>this.cancleCareer(i)}>
                 <View style={{borderWidth:1}} />
