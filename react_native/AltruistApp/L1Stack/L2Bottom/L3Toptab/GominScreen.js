@@ -5,6 +5,7 @@ import axios from 'axios';
 import {PostTime} from '../../../components/PostTime'
 
 import Heartsvg from '../../../assets/icons/heart.svg'
+import Heartfillsvg from '../../../assets/icons/heartfill.svg'
 import Viewsvg from '../../../assets/icons/view.svg'
 import Commentsvg from '../../../assets/icons/comment.svg'
 import Writesvg from '../../../assets/icons/write.svg'
@@ -135,7 +136,7 @@ class GominScreen extends React.Component {
                 </View>
                 <View style={styles.infocontainer}>
                     <View style={{alignItems:'center',justifyContent:'center', marginTop:2}}>
-                        <Heartsvg width='15' height='15'/>
+                        {item.is_liked?<Heartfillsvg width='15' height='15'/>:<Heartsvg width='15' height='15'/>}
                         <Text style={{...styles.infotext, marginTop:2}} category="s1">{item.post_like}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
