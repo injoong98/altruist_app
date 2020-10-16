@@ -1984,7 +1984,7 @@ class Membermodify extends CB_Controller
 				'meta_author' => $meta_author,
 				'page_name' => $page_name,
 			);
-			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
+			// $view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
 			$this->data = $view;
 			$this->layout = element('layout_skin_file', element('layout', $view));
 			$this->view = element('view_skin_file', element('layout', $view));
@@ -2219,7 +2219,7 @@ class Membermodify extends CB_Controller
 				'meta_author' => $meta_author,
 				'page_name' => $page_name,
 			);
-			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
+			//$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
 			$this->data = $view;
 			$this->layout = element('layout_skin_file', element('layout', $view));
 			$this->view = element('view_skin_file', element('layout', $view));
