@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Membermodify class
@@ -59,13 +59,13 @@ class Membermodify extends CB_Controller
 
 		$mem_id = (int) $this->member->item('mem_id');
 
-		if ( ! $this->member->item('mem_password')) {
+		if (!$this->member->item('mem_password')) {
 			redirect('membermodify/defaultinfo');
 		}
 
 		$this->load->library(array('form_validation'));
 
-		if ( ! function_exists('password_hash')) {
+		if (!function_exists('password_hash')) {
 			$this->load->helper('password');
 		}
 
@@ -143,7 +143,6 @@ class Membermodify extends CB_Controller
 			);
 			redirect('membermodify/modify');
 		}
-
 	}
 
 
@@ -157,7 +156,7 @@ class Membermodify extends CB_Controller
 		$eventname = 'event_membermodify_modify';
 		$this->load->event($eventname);
 
-		if ( ! $this->session->userdata('membermodify')) {
+		if (!$this->session->userdata('membermodify')) {
 			//redirect('membermodify');
 		}
 
@@ -165,13 +164,13 @@ class Membermodify extends CB_Controller
 		 * 로그인이 필요한 페이지입니다
 		 */
 		if ($this->member->is_member() === false) {
-			response_result($view,'Err','로그인 후 이용해주세요');
+			response_result($view, 'Err', '로그인 후 이용해주세요');
 		}
 
 		$mem_id = (int) $this->member->item('mem_id');
 
 
-		 if ( ! function_exists('password_hash')) {
+		if (!function_exists('password_hash')) {
 			$this->load->helper('password');
 		}
 
@@ -198,7 +197,7 @@ class Membermodify extends CB_Controller
 
 		$when_can_update_nickname
 			= cdate('Y-m-d H:s', strtotime($this->member->item('meta_nickname_datetime'))
-			+ $change_nickname_date * 86400);
+				+ $change_nickname_date * 86400);
 
 		$can_update_open_profile = false;
 		$change_open_profile_date = $this->cbconfig->item('change_open_profile_date');
@@ -210,7 +209,7 @@ class Membermodify extends CB_Controller
 		$view['view']['can_update_open_profile'] = $can_update_open_profile;
 		$when_can_update_open_profile
 			= cdate('Y-m-d H:s', strtotime($this->member->item('meta_open_profile_datetime'))
-			+ $change_open_profile_date * 86400);
+				+ $change_open_profile_date * 86400);
 
 		$can_update_use_note = false;
 		$change_use_note_date = $this->cbconfig->item('change_use_note_date');
@@ -222,7 +221,7 @@ class Membermodify extends CB_Controller
 		$view['view']['can_update_use_note'] = $can_update_use_note;
 		$when_can_update_use_note
 			= cdate('Y-m-d H:s', strtotime($this->member->item('meta_use_note_datetime'))
-			+ $change_use_note_date * 86400);
+				+ $change_use_note_date * 86400);
 
 		$nickname_description = '';
 		if ($this->cbconfig->item('change_nickname_date')) {
@@ -335,10 +334,10 @@ class Membermodify extends CB_Controller
 		$config = array();
 		if ($form && is_array($form)) {
 			foreach ($form as $key => $value) {
-				if ( ! element('use', $value)) {
+				if (!element('use', $value)) {
 					continue;
 				}
-				if ($key === 'mem_userid' OR $key === 'mem_password' OR $key === 'mem_recommend') {
+				if ($key === 'mem_userid' or $key === 'mem_password' or $key === 'mem_recommend') {
 					continue;
 				}
 
@@ -386,9 +385,9 @@ class Membermodify extends CB_Controller
 
 		$this->form_validation->set_rules($config);
 		$form_validation = $this->form_validation->run();
-		if(!$form_validation) {
-			response_result($view,'Err',validation_errors('', ''));
-		//	response_result($view,'Err',"유효성 검사(form_validation) 에 실패하였습니다. ");
+		if (!$form_validation) {
+			response_result($view, 'Err', validation_errors('', ''));
+			//	response_result($view,'Err',"유효성 검사(form_validation) 에 실패하였습니다. ");
 		}
 
 
@@ -402,9 +401,11 @@ class Membermodify extends CB_Controller
 
 		if ($form_validation) {
 			$this->load->library('upload');
-			if ($this->cbconfig->item('use_member_photo')
+			if (
+				$this->cbconfig->item('use_member_photo')
 				&& $this->cbconfig->item('member_photo_width') > 0
-				&& $this->cbconfig->item('member_photo_height') > 0) {
+				&& $this->cbconfig->item('member_photo_height') > 0
+			) {
 				if (isset($_FILES) && isset($_FILES['mem_photo']) && isset($_FILES['mem_photo']['name']) && $_FILES['mem_photo']['name']) {
 					$upload_path = config_item('uploads_dir') . '/member_photo/';
 					if (is_dir($upload_path) === false) {
@@ -437,7 +438,7 @@ class Membermodify extends CB_Controller
 					$uploadconfig = array();
 					$uploadconfig['upload_path'] = $upload_path;
 					$uploadconfig['allowed_types'] = 'jpg|jpeg|png|gif';
-					$uploadconfig['max_size'] = 10*1024;
+					$uploadconfig['max_size'] = 10 * 1024;
 					$uploadconfig['encrypt_name'] = true;
 
 					$this->upload->initialize($uploadconfig);
@@ -447,18 +448,21 @@ class Membermodify extends CB_Controller
 						$updatephoto = cdate('Y') . '/' . cdate('m') . '/' . $img['file_name'];
 					} else {
 						$file_error = $this->upload->display_errors();
-
 					}
 				}
 			}
 
-			if ($this->cbconfig->item('use_member_icon')
+			if (
+				$this->cbconfig->item('use_member_icon')
 				&& $this->cbconfig->item('member_icon_width') > 0
-				&& $this->cbconfig->item('member_icon_height') > 0) {
-				if (isset($_FILES)
+				&& $this->cbconfig->item('member_icon_height') > 0
+			) {
+				if (
+					isset($_FILES)
 					&& isset($_FILES['mem_icon'])
 					&& isset($_FILES['mem_icon']['name'])
-					&& $_FILES['mem_icon']['name']) {
+					&& $_FILES['mem_icon']['name']
+				) {
 					$upload_path = config_item('uploads_dir') . '/member_icon/';
 					if (is_dir($upload_path) === false) {
 						mkdir($upload_path, 0707);
@@ -502,7 +506,6 @@ class Membermodify extends CB_Controller
 						$updateicon = cdate('Y') . '/' . cdate('m') . '/' . $img['file_name'];
 					} else {
 						$file_error2 = $this->upload->display_errors();
-
 					}
 				}
 			}
@@ -512,8 +515,8 @@ class Membermodify extends CB_Controller
 		 * 유효성 검사를 하지 않는 경우, 또는 유효성 검사에 실패한 경우입니다.
 		 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
 		 */
-		if ($form_validation === false OR $file_error !== '' OR $file_error2 !== '') {
-			
+		if ($form_validation === false or $file_error !== '' or $file_error2 !== '') {
+
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formrunfalse'] = Events::trigger('formrunfalse', $eventname);
 
@@ -523,10 +526,10 @@ class Membermodify extends CB_Controller
 			$k = 0;
 			if ($form && is_array($form)) {
 				foreach ($form as $key => $value) {
-					if ( ! element('use', $value)) {
+					if (!element('use', $value)) {
 						continue;
 					}
-					if ($key === 'mem_userid' OR $key === 'mem_password' OR $key === 'mem_recommend') {
+					if ($key === 'mem_userid' or $key === 'mem_password' or $key === 'mem_recommend') {
 						continue;
 					}
 
@@ -539,11 +542,13 @@ class Membermodify extends CB_Controller
 					$html_content[$k]['input'] = '';
 
 					//field_type : text, url, email, phone, textarea, radio, select, checkbox, date
-					if (element('field_type', $value) === 'text'
-						OR element('field_type', $value) === 'url'
-						OR element('field_type', $value) === 'email'
-						OR element('field_type', $value) === 'phone'
-						OR element('field_type', $value) === 'date') {
+					if (
+						element('field_type', $value) === 'text'
+						or element('field_type', $value) === 'url'
+						or element('field_type', $value) === 'email'
+						or element('field_type', $value) === 'phone'
+						or element('field_type', $value) === 'date'
+					) {
 						if (element('field_type', $value) === 'date') {
 							$html_content[$k]['input'] .= '<input type="text" id="' . element('field_name', $value) . '" name="' . element('field_name', $value) . '" class="form-control input datepicker" value="' . set_value(element('field_name', $value), $item) . '" readonly="readonly" ' . $required . ' />';
 						} elseif (element('field_type', $value) === 'phone') {
@@ -567,13 +572,13 @@ class Membermodify extends CB_Controller
 						} else {
 							$options = explode("\n", element('options', $value));
 						}
-						$i =1;
+						$i = 1;
 						if ($options) {
 							foreach ($options as $okey => $oval) {
 								$oval = trim($oval);
 								$radiovalue = (element('field_name', $value) === 'mem_sex') ? $okey : $oval;
 								$html_content[$k]['input'] .= '<label for="' . element('field_name', $value) . '_' . $i . '"><input type="radio" name="' . element('field_name', $value) . '" id="' . element('field_name', $value) . '_' . $i . '" value="' . $radiovalue . '" ' . set_radio(element('field_name', $value), $radiovalue, ($item === $radiovalue ? true : false)) . ' /> ' . $oval . ' </label> ';
-							$i++;
+								$i++;
 							}
 						}
 						$html_content[$k]['input'] .= '</div>';
@@ -581,13 +586,13 @@ class Membermodify extends CB_Controller
 						$html_content[$k]['input'] .= '<div class="checkbox">';
 						$options = explode("\n", element('options', $value));
 						$item = json_decode($item, true);
-						$i =1;
+						$i = 1;
 						if ($options) {
 							foreach ($options as $okey => $oval) {
 								$oval = trim($oval);
 								$chkvalue = is_array($item) && in_array($oval, $item) ? $oval : '';
 								$html_content[$k]['input'] .= '<label for="' . element('field_name', $value) . '_' . $i . '"><input type="checkbox" name="' . element('field_name', $value) . '[]" id="' . element('field_name', $value) . '_' . $i . '" value="' . $oval . '" ' . set_checkbox(element('field_name', $value), $oval, ($chkvalue === $oval ? true : false)) . ' /> ' . $oval . ' </label> ';
-							$i++;
+								$i++;
 							}
 						}
 						$html_content[$k]['input'] .= '</div>';
@@ -690,7 +695,6 @@ class Membermodify extends CB_Controller
 			$this->data = $view;
 			$this->layout = element('layout_skin_file', element('layout', $view));
 			$this->view = element('view_skin_file', element('layout', $view));
-
 		} else {
 			/**
 			 * 유효성 검사를 통과한 경우입니다.
@@ -707,8 +711,10 @@ class Membermodify extends CB_Controller
 				$updatedata['mem_email_cert'] = 0;
 				$metadata['meta_email_cert_datetime'] = '';
 			}
-			if ($can_update_nickname
-				&& $this->member->item('mem_nickname') !== $this->input->post('mem_nickname')) {
+			if (
+				$can_update_nickname
+				&& $this->member->item('mem_nickname') !== $this->input->post('mem_nickname')
+			) {
 				$updatedata['mem_nickname'] = $this->input->post('mem_nickname');
 				$metadata['meta_nickname_datetime'] = cdate('Y-m-d H:i:s');
 
@@ -751,25 +757,25 @@ class Membermodify extends CB_Controller
 				$updatedata['mem_address4'] = $this->input->post('mem_address4', null, '');
 			}
 			$updatedata['mem_receive_email'] = $this->input->post('mem_receive_email') ? 1 : 0;
-			if ($this->cbconfig->item('use_note')
+			if (
+				$this->cbconfig->item('use_note')
 				&& $can_update_use_note
 				&& (
-						($this->member->item('mem_use_note') === '1' && $this->input->post('mem_use_note') !== '1')
-						OR
-						($this->member->item('mem_use_note') !== '1' && $this->input->post('mem_use_note') === '1')
-					)
-				) {
+					($this->member->item('mem_use_note') === '1' && $this->input->post('mem_use_note') !== '1')
+					or
+					($this->member->item('mem_use_note') !== '1' && $this->input->post('mem_use_note') === '1'))
+			) {
 				$updatedata['mem_use_note'] = $this->input->post('mem_use_note') ? 1 : 0;
 				$metadata['meta_use_note_datetime'] = cdate('Y-m-d H:i:s');
 			}
 			$updatedata['mem_receive_sms'] = $this->input->post('mem_receive_sms') ? 1 : 0;
-			if ($can_update_open_profile
+			if (
+				$can_update_open_profile
 				&& (
-						($this->member->item('mem_open_profile') === '1' && $this->input->post('mem_open_profile') !== '1')
-						OR
-						($this->member->item('mem_open_profile') !== '1' && $this->input->post('mem_open_profile') === '1')
-					)
-				) {
+					($this->member->item('mem_open_profile') === '1' && $this->input->post('mem_open_profile') !== '1')
+					or
+					($this->member->item('mem_open_profile') !== '1' && $this->input->post('mem_open_profile') === '1'))
+			) {
 				$updatedata['mem_open_profile'] = $this->input->post('mem_open_profile') ? 1 : 0;
 				$metadata['meta_open_profile_datetime'] = cdate('Y-m-d H:i:s');
 			}
@@ -782,8 +788,10 @@ class Membermodify extends CB_Controller
 			} elseif ($updatephoto) {
 				$updatedata['mem_photo'] = $updatephoto;
 			}
-			if ($this->member->item('mem_photo')
-				&& ($this->input->post('mem_photo_del') OR $updatephoto)) {
+			if (
+				$this->member->item('mem_photo')
+				&& ($this->input->post('mem_photo_del') or $updatephoto)
+			) {
 				// 기존 파일 삭제
 				@unlink(config_item('uploads_dir') . '/member_photo/' . $this->member->item('mem_photo'));
 			}
@@ -792,8 +800,10 @@ class Membermodify extends CB_Controller
 			} elseif ($updateicon) {
 				$updatedata['mem_icon'] = $updateicon;
 			}
-			if ($this->member->item('mem_icon')
-				&& ($this->input->post('mem_icon_del') OR $updateicon)) {
+			if (
+				$this->member->item('mem_icon')
+				&& ($this->input->post('mem_icon_del') or $updateicon)
+			) {
 				// 기존 파일 삭제
 				@unlink(config_item('uploads_dir') . '/member_icon/' . $this->member->item('mem_icon'));
 			}
@@ -817,7 +827,7 @@ class Membermodify extends CB_Controller
 			$extradata = array();
 			if ($form && is_array($form)) {
 				foreach ($form as $key => $value) {
-					if ( ! element('use', $value)) {
+					if (!element('use', $value)) {
 						continue;
 					}
 					if (element('func', $value) === 'basic') {
@@ -828,8 +838,10 @@ class Membermodify extends CB_Controller
 				$this->Member_extra_vars_model->save($mem_id, $extradata);
 			}
 
-			if ($this->cbconfig->item('use_register_email_auth')
-				&& $this->member->item('mem_email') !== $this->input->post('mem_email')) {
+			if (
+				$this->cbconfig->item('use_register_email_auth')
+				&& $this->member->item('mem_email') !== $this->input->post('mem_email')
+			) {
 
 				$vericode = array('$', '/', '.');
 				$verificationcode = str_replace(
@@ -924,11 +936,10 @@ class Membermodify extends CB_Controller
 				$view['view']['result_message'] = $this->input->post('mem_email') . '로 인증메일이 발송되었습니다. <br />발송된 인증메일을 확인하신 후에 사이트 이용이 가능합니다';
 
 				$this->session->sess_destroy();
-
 			} else {
 				$view['view']['result_message'] = '회원정보가 변경되었습니다. <br />감사합니다';
 				$view['view']['updatedata'] = $updatedata;
-				response_result($view,'success','ok');
+				response_result($view, 'success', 'ok');
 			}
 
 			// 이벤트가 존재하면 실행합니다
@@ -985,7 +996,7 @@ class Membermodify extends CB_Controller
 			redirect('membermodify');
 		}
 
-		 if ( ! function_exists('password_hash')) {
+		if (!function_exists('password_hash')) {
 			$this->load->helper('password');
 		}
 
@@ -1068,7 +1079,6 @@ class Membermodify extends CB_Controller
 			$this->data = $view;
 			$this->layout = element('layout_skin_file', element('layout', $view));
 			$this->view = element('view_skin_file', element('layout', $view));
-
 		} else {
 			/**
 			 * 유효성 검사를 통과한 경우입니다.
@@ -1113,8 +1123,10 @@ class Membermodify extends CB_Controller
 			$this->Member_model->update($mem_id, $updatedata);
 			$this->Member_meta_model->save($mem_id, $metadata);
 
-			if ($this->cbconfig->item('use_register_email_auth')
-				&& $this->member->item('mem_email') !== $this->input->post('mem_email')) {
+			if (
+				$this->cbconfig->item('use_register_email_auth')
+				&& $this->member->item('mem_email') !== $this->input->post('mem_email')
+			) {
 
 				$vericode = array('$', '/', '.');
 				$verificationcode = str_replace(
@@ -1207,8 +1219,6 @@ class Membermodify extends CB_Controller
 				$this->email->send();
 
 				$view['view']['result_message'] = $this->input->post('mem_email') . '로 인증메일이 발송되었습니다. <br />발송된 인증메일을 확인하신 후에 사이트 이용이 가능합니다';
-
-
 			} else {
 				$view['view']['result_message'] = '회원정보가 변경되었습니다. <br />감사합니다';
 			}
@@ -1262,7 +1272,7 @@ class Membermodify extends CB_Controller
 
 		$mem_id = (int) $this->member->item('mem_id');
 
-		if ( ! $this->session->userdata('membermodify')) {
+		if (!$this->session->userdata('membermodify')) {
 			//redirect('membermodify');
 		}
 
@@ -1277,7 +1287,7 @@ class Membermodify extends CB_Controller
 		 */
 		$this->load->library('form_validation');
 
-		 if ( ! function_exists('password_hash')) {
+		if (!function_exists('password_hash')) {
 			$this->load->helper('password');
 		}
 
@@ -1319,9 +1329,11 @@ class Membermodify extends CB_Controller
 			$view['view']['canonical'] = site_url('membermodify/password_modify');
 
 			$password_description = '비밀번호는 ' . $password_length . '자리 이상이어야 ';
-			if ($this->cbconfig->item('password_uppercase_length')
-				OR $this->cbconfig->item('password_numbers_length')
-				OR $this->cbconfig->item('password_specialchars_length')) {
+			if (
+				$this->cbconfig->item('password_uppercase_length')
+				or $this->cbconfig->item('password_numbers_length')
+				or $this->cbconfig->item('password_specialchars_length')
+			) {
 				$password_description .= '하며 ';
 				if ($this->cbconfig->item('password_uppercase_length')) {
 					$password_description .= ', ' . $this->cbconfig->item('password_uppercase_length') . '개의 대문자';
@@ -1338,8 +1350,7 @@ class Membermodify extends CB_Controller
 
 			$view['view']['info'] = $password_description;
 
-			response_result($view,'Err',$password_description);
-
+			response_result($view, 'Err', $password_description);
 		} else {
 
 			// 이벤트가 존재하면 실행합니다
@@ -1365,9 +1376,11 @@ class Membermodify extends CB_Controller
 			$smssendlistuser = array();
 
 			$superadminlist = '';
-			if ($this->cbconfig->item('send_email_changepw_admin')
-				OR $this->cbconfig->item('send_note_changepw_admin')
-				OR $this->cbconfig->item('send_sms_changepw_admin')) {
+			if (
+				$this->cbconfig->item('send_email_changepw_admin')
+				or $this->cbconfig->item('send_note_changepw_admin')
+				or $this->cbconfig->item('send_sms_changepw_admin')
+			) {
 				$mselect = 'mem_id, mem_email, mem_nickname, mem_phone';
 				$superadminlist = $this->Member_model->get_superadmin_list($mselect);
 			}
@@ -1377,7 +1390,8 @@ class Membermodify extends CB_Controller
 				}
 			}
 			if (($this->cbconfig->item('send_email_changepw_user') && $this->member->item('mem_receive_email'))
-				OR $this->cbconfig->item('send_email_changepw_alluser')) {
+				or $this->cbconfig->item('send_email_changepw_alluser')
+			) {
 				$emailsendlistuser['mem_email'] = $this->member->item('mem_email');
 			}
 			if ($this->cbconfig->item('send_note_changepw_admin') && $superadminlist) {
@@ -1385,8 +1399,10 @@ class Membermodify extends CB_Controller
 					$notesendlistadmin[$value['mem_id']] = $value;
 				}
 			}
-			if ($this->cbconfig->item('send_note_changepw_user')
-				&& $this->member->item('mem_use_note')) {
+			if (
+				$this->cbconfig->item('send_note_changepw_user')
+				&& $this->member->item('mem_use_note')
+			) {
 				$notesendlistuser['mem_id'] = $mem_id;
 			}
 			if ($this->cbconfig->item('send_sms_changepw_admin') && $superadminlist) {
@@ -1395,7 +1411,8 @@ class Membermodify extends CB_Controller
 				}
 			}
 			if (($this->cbconfig->item('send_sms_changepw_user') && $this->member->item('mem_receive_sms'))
-				OR $this->cbconfig->item('send_sms_changepw_alluser')) {
+				or $this->cbconfig->item('send_sms_changepw_alluser')
+			) {
 				if ($this->member->item('mem_phone')) {
 					$smssendlistuser['mem_id'] = $mem_id;
 					$smssendlistuser['mem_nickname'] = $this->member->item('mem_nickname');
@@ -1565,10 +1582,9 @@ class Membermodify extends CB_Controller
 
 			$view['view']['result_message'] = '회원님의 패스워드가 변경되었습니다';
 
-		
-			
-			response_result($view,'success','OK');
-		
+
+
+			response_result($view, 'success', 'OK');
 		}
 	}
 
@@ -1654,7 +1670,6 @@ class Membermodify extends CB_Controller
 			$this->data = $view;
 			$this->layout = element('layout_skin_file', element('layout', $view));
 			$this->view = element('view_skin_file', element('layout', $view));
-
 		} else {
 			/**
 			 * 유효성 검사를 통과한 경우입니다.
@@ -1672,9 +1687,11 @@ class Membermodify extends CB_Controller
 			$smssendlistuser = array();
 
 			$superadminlist = '';
-			if ($this->cbconfig->item('send_email_memberleave_admin')
-				OR $this->cbconfig->item('send_note_memberleave_admin')
-				OR $this->cbconfig->item('send_sms_memberleave_admin')) {
+			if (
+				$this->cbconfig->item('send_email_memberleave_admin')
+				or $this->cbconfig->item('send_note_memberleave_admin')
+				or $this->cbconfig->item('send_sms_memberleave_admin')
+			) {
 				$mselect = 'mem_id, mem_email, mem_nickname, mem_phone';
 				$superadminlist = $this->Member_model->get($mselect);
 			}
@@ -1685,7 +1702,8 @@ class Membermodify extends CB_Controller
 				}
 			}
 			if (($this->cbconfig->item('send_email_memberleave_user') && $this->member->item('mem_receive_email'))
-				OR $this->cbconfig->item('send_email_memberleave_alluser')) {
+				or $this->cbconfig->item('send_email_memberleave_alluser')
+			) {
 				$emailsendlistuser['mem_email'] = $this->member->item('mem_email');
 			}
 			if ($this->cbconfig->item('send_note_memberleave_admin') && $superadminlist) {
@@ -1699,7 +1717,8 @@ class Membermodify extends CB_Controller
 				}
 			}
 			if (($this->cbconfig->item('send_sms_memberleave_user') && $this->member->item('mem_receive_sms'))
-				OR $this->cbconfig->item('send_sms_memberleave_alluser')) {
+				or $this->cbconfig->item('send_sms_memberleave_alluser')
+			) {
 				if ($this->member->item('mem_phone')) {
 					$smssendlistuser['mem_id'] = $mem_id;
 					$smssendlistuser['mem_nickname'] = $this->member->item('mem_nickname');
@@ -1887,6 +1906,332 @@ class Membermodify extends CB_Controller
 
 
 	/**
+	 * API 회원탈퇴 페이지입니다
+	 */
+	public function memleave()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_membermodify_memberleave';
+		$this->load->event($eventname);
+
+		/**
+		 * 로그인이 필요한 페이지입니다
+		 */
+		required_user_login();
+
+		$this->input->post('mem_userid');
+
+		$mem_id = (int) $this->member->item('mem_id');
+
+		$view = array();
+		$view['view'] = array();
+
+		// 이벤트가 존재하면 실행합니다
+		$view['view']['event']['before'] = Events::trigger('before', $eventname);
+
+		$this->load->library(array('form_validation'));
+		$login_fail = false;
+		$valid_fail = false;
+
+		/**
+		 * 전송된 데이터의 유효성을 체크합니다
+		 */
+		$config = array(
+			array(
+				'field' => 'mem_password',
+				'label' => '패스워드',
+				'rules' => 'trim|required|min_length[4]|callback__cur_password_check',
+			),
+		);
+		$this->form_validation->set_rules($config);
+		/**
+		 * 유효성 검사를 하지 않는 경우, 또는 유효성 검사에 실패한 경우입니다.
+		 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
+		 */
+		if ($this->form_validation->run() === false) {
+
+			// 이벤트가 존재하면 실행합니다
+			$view['view']['event']['formrunfalse'] = Events::trigger('formrunfalse', $eventname);
+
+			/**
+			 * 레이아웃을 정의합니다
+			 */
+			$page_title = $this->cbconfig->item('site_meta_title_membermodify_memberleave');
+			$meta_description = $this->cbconfig->item('site_meta_description_membermodify_memberleave');
+			$meta_keywords = $this->cbconfig->item('site_meta_keywords_membermodify_memberleave');
+			$meta_author = $this->cbconfig->item('site_meta_author_membermodify_memberleave');
+			$page_name = $this->cbconfig->item('site_page_name_membermodify_memberleave');
+
+			if ($this->member->is_admin() === 'super') {
+				$skin = 'member_admin';
+			} else {
+				$skin = 'memberleave_password';
+			}
+
+			$layoutconfig = array(
+				'path' => 'mypage',
+				'layout' => 'layout',
+				'skin' => $skin,
+				'layout_dir' => $this->cbconfig->item('layout_mypage'),
+				'mobile_layout_dir' => $this->cbconfig->item('mobile_layout_mypage'),
+				'use_sidebar' => $this->cbconfig->item('sidebar_mypage'),
+				'use_mobile_sidebar' => $this->cbconfig->item('mobile_sidebar_mypage'),
+				'skin_dir' => $this->cbconfig->item('skin_mypage'),
+				'mobile_skin_dir' => $this->cbconfig->item('mobile_skin_mypage'),
+				'page_title' => $page_title,
+				'meta_description' => $meta_description,
+				'meta_keywords' => $meta_keywords,
+				'meta_author' => $meta_author,
+				'page_name' => $page_name,
+			);
+			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
+			$this->data = $view;
+			$this->layout = element('layout_skin_file', element('layout', $view));
+			$this->view = element('view_skin_file', element('layout', $view));
+
+			$view['view']['result_message'] = '패스워드가 일치하지 않습니다. 다시 입력해주세요.';
+
+			response_result($view, 'Err', '실패');
+		} else {
+			/**
+			 * 유효성 검사를 통과한 경우입니다.
+			 * 즉 데이터의 insert 나 update 의 process 처리가 필요한 상황입니다
+			 */
+
+			// 이벤트가 존재하면 실행합니다
+			$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
+
+			$emailsendlistadmin = array();
+			$notesendlistadmin = array();
+			$smssendlistadmin = array();
+			$emailsendlistuser = array();
+			$notesendlistuser = array();
+			$smssendlistuser = array();
+
+			$superadminlist = '';
+			if (
+				$this->cbconfig->item('send_email_memberleave_admin')
+				or $this->cbconfig->item('send_note_memberleave_admin')
+				or $this->cbconfig->item('send_sms_memberleave_admin')
+			) {
+				$mselect = 'mem_id, mem_email, mem_nickname, mem_phone';
+				$superadminlist = $this->Member_model->get($mselect);
+			}
+
+			if ($this->cbconfig->item('send_email_memberleave_admin') && $superadminlist) {
+				foreach ($superadminlist as $key => $value) {
+					$emailsendlistadmin[$value['mem_id']] = $value;
+				}
+			}
+			if (($this->cbconfig->item('send_email_memberleave_user') && $this->member->item('mem_receive_email'))
+				or $this->cbconfig->item('send_email_memberleave_alluser')
+			) {
+				$emailsendlistuser['mem_email'] = $this->member->item('mem_email');
+			}
+			if ($this->cbconfig->item('send_note_memberleave_admin') && $superadminlist) {
+				foreach ($superadminlist as $key => $value) {
+					$notesendlistadmin[$value['mem_id']] = $value;
+				}
+			}
+			if ($this->cbconfig->item('send_sms_memberleave_admin') && $superadminlist) {
+				foreach ($superadminlist as $key => $value) {
+					$smssendlistadmin[$value['mem_id']] = $value;
+				}
+			}
+			if (($this->cbconfig->item('send_sms_memberleave_user') && $this->member->item('mem_receive_sms'))
+				or $this->cbconfig->item('send_sms_memberleave_alluser')
+			) {
+				if ($this->member->item('mem_phone')) {
+					$smssendlistuser['mem_id'] = $mem_id;
+					$smssendlistuser['mem_nickname'] = $this->member->item('mem_nickname');
+					$smssendlistuser['mem_phone'] = $this->member->item('mem_phone');
+				}
+			}
+
+			$searchconfig = array(
+				'{홈페이지명}',
+				'{회사명}',
+				'{홈페이지주소}',
+				'{회원아이디}',
+				'{회원닉네임}',
+				'{회원실명}',
+				'{회원이메일}',
+				'{메일수신여부}',
+				'{쪽지수신여부}',
+				'{문자수신여부}',
+				'{회원아이피}',
+			);
+			$receive_email = $this->member->item('mem_receive_email') ? '동의' : '거부';
+			$receive_note = $this->member->item('mem_use_note') ? '동의' : '거부';
+			$receive_sms = $this->member->item('mem_receive_sms') ? '동의' : '거부';
+			$replaceconfig = array(
+				$this->cbconfig->item('site_title'),
+				$this->cbconfig->item('company_name'),
+				site_url(),
+				$this->member->item('mem_userid'),
+				$this->member->item('mem_nickname'),
+				$this->member->item('mem_username'),
+				$this->member->item('mem_email'),
+				$receive_email,
+				$receive_note,
+				$receive_sms,
+				$this->input->ip_address(),
+			);
+			$replaceconfig_escape = array(
+				html_escape($this->cbconfig->item('site_title')),
+				html_escape($this->cbconfig->item('company_name')),
+				site_url(),
+				html_escape($this->member->item('mem_userid')),
+				html_escape($this->member->item('mem_nickname')),
+				html_escape($this->member->item('mem_username')),
+				html_escape($this->member->item('mem_email')),
+				$receive_email,
+				$receive_note,
+				$receive_sms,
+				$this->input->ip_address(),
+			);
+			if ($emailsendlistadmin) {
+				$title = str_replace(
+					$searchconfig,
+					$replaceconfig,
+					$this->cbconfig->item('send_email_memberleave_admin_title')
+				);
+				$content = str_replace(
+					$searchconfig,
+					$replaceconfig_escape,
+					$this->cbconfig->item('send_email_memberleave_admin_content')
+				);
+				foreach ($emailsendlistadmin as $akey => $aval) {
+					$this->email->clear(true);
+					$this->email->from($this->cbconfig->item('webmaster_email'), $this->cbconfig->item('webmaster_name'));
+					$this->email->to(element('mem_email', $aval));
+					$this->email->subject($title);
+					$this->email->message($content);
+					$this->email->send();
+				}
+			}
+			if ($emailsendlistuser) {
+				$title = str_replace(
+					$searchconfig,
+					$replaceconfig,
+					$this->cbconfig->item('send_email_memberleave_user_title')
+				);
+				$content = str_replace(
+					$searchconfig,
+					$replaceconfig_escape,
+					$this->cbconfig->item('send_email_memberleave_user_content')
+				);
+				$this->email->clear(true);
+				$this->email->from($this->cbconfig->item('webmaster_email'), $this->cbconfig->item('webmaster_name'));
+				$this->email->to(element('mem_email', $emailsendlistuser));
+				$this->email->subject($title);
+				$this->email->message($content);
+				$this->email->send();
+			}
+			if ($notesendlistadmin) {
+				$title = str_replace(
+					$searchconfig,
+					$replaceconfig,
+					$this->cbconfig->item('send_note_memberleave_admin_title')
+				);
+				$content = str_replace(
+					$searchconfig,
+					$replaceconfig_escape,
+					$this->cbconfig->item('send_note_memberleave_admin_content')
+				);
+				foreach ($notesendlistadmin as $akey => $aval) {
+					$note_result = $this->notelib->send_note(
+						$sender = 0,
+						$receiver = element('mem_id', $aval),
+						$title,
+						$content,
+						1
+					);
+				}
+			}
+			if ($smssendlistadmin) {
+				if (file_exists(APPPATH . 'libraries/Smslib.php')) {
+					$this->load->library(array('smslib'));
+					$content = str_replace(
+						$searchconfig,
+						$replaceconfig,
+						$this->cbconfig->item('send_sms_memberleave_admin_content')
+					);
+					$sender = array(
+						'phone' => $this->cbconfig->item('sms_admin_phone'),
+					);
+					$receiver = array();
+					foreach ($smssendlistadmin as $akey => $aval) {
+						$receiver[] = array(
+							'mem_id' => element('mem_id', $aval),
+							'name' => element('mem_nickname', $aval),
+							'phone' => element('mem_phone', $aval),
+						);
+					}
+					$smsresult = $this->smslib->send($receiver, $sender, $content, $date = '', '회원탈퇴알림');
+				}
+			}
+			if ($smssendlistuser) {
+				if (file_exists(APPPATH . 'libraries/Smslib.php')) {
+					$this->load->library(array('smslib'));
+					$content = str_replace(
+						$searchconfig,
+						$replaceconfig,
+						$this->cbconfig->item('send_sms_memberleave_user_content')
+					);
+					$sender = array(
+						'phone' => $this->cbconfig->item('sms_admin_phone'),
+					);
+					$receiver = array();
+					$receiver[] = $smssendlistuser;
+					$smsresult = $this->smslib->send($receiver, $sender, $content, $date = '', '회원탈퇴알림');
+				}
+			}
+
+			$this->member->delete_member($mem_id);
+			$this->session->sess_destroy();
+
+			// 이벤트가 존재하면 실행합니다
+			$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
+
+			/**
+			 * 레이아웃을 정의합니다
+			 */
+			$page_title = $this->cbconfig->item('site_meta_title_membermodify_memberleave');
+			$meta_description = $this->cbconfig->item('site_meta_description_membermodify_memberleave');
+			$meta_keywords = $this->cbconfig->item('site_meta_keywords_membermodify_memberleave');
+			$meta_author = $this->cbconfig->item('site_meta_author_membermodify_memberleave');
+			$page_name = $this->cbconfig->item('site_page_name_membermodify_memberleave');
+
+			$layoutconfig = array(
+				'path' => 'mypage',
+				'layout' => 'layout',
+				'skin' => 'memberleave',
+				'layout_dir' => $this->cbconfig->item('layout_mypage'),
+				'mobile_layout_dir' => $this->cbconfig->item('mobile_layout_mypage'),
+				'use_sidebar' => $this->cbconfig->item('sidebar_mypage'),
+				'use_mobile_sidebar' => $this->cbconfig->item('mobile_sidebar_mypage'),
+				'skin_dir' => $this->cbconfig->item('skin_mypage'),
+				'mobile_skin_dir' => $this->cbconfig->item('mobile_skin_mypage'),
+				'page_title' => $page_title,
+				'meta_description' => $meta_description,
+				'meta_keywords' => $meta_keywords,
+				'meta_author' => $meta_author,
+				'page_name' => $page_name,
+			);
+			$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
+			$this->data = $view;
+			$this->layout = element('layout_skin_file', element('layout', $view));
+			$this->view = element('view_skin_file', element('layout', $view));
+
+			$view['view']['result_message'] = '탈퇴되었습니다. 그동안 이용에 감사드립니다.';
+
+			response_result($view, 'Success', '성공');
+		}
+	}
+
+
+	/**
 	 * 회원가입시 회원아이디를 체크하는 함수입니다
 	 */
 	public function _mem_userid_check($str)
@@ -1981,17 +2326,17 @@ class Membermodify extends CB_Controller
 	 */
 	public function _cur_password_check($str)
 	{
-		 if ( ! function_exists('password_hash')) {
+		if (!function_exists('password_hash')) {
 			$this->load->helper('password');
 		}
 
-		if ( ! $this->member->item('mem_id') OR ! $this->member->item('mem_password')) {
+		if (!$this->member->item('mem_id') or !$this->member->item('mem_password')) {
 			$this->form_validation->set_message(
 				'_cur_password_check',
 				'패스워드가 맞지 않습니다'
 			);
 			return false;
-		} elseif ( ! password_verify($str, $this->member->item('mem_password'))) {
+		} elseif (!password_verify($str, $this->member->item('mem_password'))) {
 			$this->form_validation->set_message(
 				'_cur_password_check',
 				'패스워드가 맞지 않습니다'
@@ -2000,7 +2345,7 @@ class Membermodify extends CB_Controller
 		}
 		return true;
 	}
-	
+
 	/**
 	 * API 현재 패스워드가 맞는지 체크합니다
 	 */
@@ -2010,28 +2355,27 @@ class Membermodify extends CB_Controller
 		 * 로그인이 필요한 페이지입니다
 		 */
 		required_user_login('json');
-		
+
 		$mem_password = 0;
 		$mem_password = $this->input->post('mem_password');
-		if(!$mem_password) {
-			response_result($view,'Err','password 누락');
+		if (!$mem_password) {
+			response_result($view, 'Err', 'password 누락');
 		}
-		if ( ! function_exists('password_hash')) {
+		if (!function_exists('password_hash')) {
 			$this->load->helper('password');
 		}
 
-		if ( ! $this->member->item('mem_id') OR ! $this->member->item('mem_password')) {
-			
+		if (!$this->member->item('mem_id') or !$this->member->item('mem_password')) {
+
 			$view['message'] = 	'패스워드가 맞지 않습니다';
 			$view['action'] = 	'cur_password_check';
-			response_result($view,'Err',$view['message']);
-			
-		} elseif ( ! password_verify($mem_password, $this->member->item('mem_password'))) {
+			response_result($view, 'Err', $view['message']);
+		} elseif (!password_verify($mem_password, $this->member->item('mem_password'))) {
 			$view['message'] = 	'패스워드가 맞지 않습니다';
 			$view['action'] = 	'cur_password_check';
-			response_result($view,'Err',$view['message']);
+			response_result($view, 'Err', $view['message']);
 		}
-		response_result($view,'success','OK');
+		response_result($view, 'success', 'OK');
 	}
 
 
@@ -2049,7 +2393,7 @@ class Membermodify extends CB_Controller
 		$str_num = count_numbers($str);
 		$str_spc = count_specialchars($str);
 
-		if ($str_uc < $uppercase OR $str_num < $number OR $str_spc < $specialchar) {
+		if ($str_uc < $uppercase or $str_num < $number or $str_spc < $specialchar) {
 
 			$description = '비밀번호는 ';
 			if ($str_uc < $uppercase) {
@@ -2082,8 +2426,8 @@ class Membermodify extends CB_Controller
 		required_user_login('json');
 		$mem_password = 0;
 		$mem_password = $this->input->post('mem_password');
-		if(!$mem_password) {
-			response_result($view,'Err','password 누락');
+		if (!$mem_password) {
+			response_result($view, 'Err', 'password 누락');
 		}
 		$uppercase = $this->cbconfig->item('password_uppercase_length');
 		$number = $this->cbconfig->item('password_numbers_length');
@@ -2094,7 +2438,7 @@ class Membermodify extends CB_Controller
 		$str_num = count_numbers($mem_password);
 		$str_spc = count_specialchars($smem_passwordtr);
 
-		if ($str_uc < $uppercase OR $str_num < $number OR $str_spc < $specialchar) {
+		if ($str_uc < $uppercase or $str_num < $number or $str_spc < $specialchar) {
 
 			$description = '비밀번호는 ';
 			if ($str_uc < $uppercase) {
@@ -2114,8 +2458,8 @@ class Membermodify extends CB_Controller
 			);
 			$view['message'] = 	$description;
 			$view['action'] = 	'mem_password_check';
-			response_result($view,'Err',$view['message']);
+			response_result($view, 'Err', $view['message']);
 		}
-		response_result($view,'success','OK');
+		response_result($view, 'success', 'OK');
 	}
 }
