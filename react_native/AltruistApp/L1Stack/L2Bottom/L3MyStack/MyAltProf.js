@@ -9,6 +9,7 @@ import {
     Image,
     TouchableOpacity,
     ScrollView,
+    Keyboard
 } from 'react-native'
 import{
     Text,
@@ -67,21 +68,21 @@ class MyAltProf extends React.Component{
             alt_content:'',
             alt_honor:0,
             alt_answertype:0,
-            oldactSelected:[],
+            oldAct:[],
             actSelected:[],
             radio:['1:1질문만','1:다 질문만','모든 질문 허용'],
             radioSelectedIndex:2,
+            areaChanged:false,
+            resultVisible:false,
         }
     }
     static contextType = Signing
 
     updateAltProf= () =>{
-        const {new_alt_photo,alt_aboutme,alt_content,alt_honor,alt_answertype,altInfo,actSelected,oldactSelected} =this.state
+        const {new_alt_photo,alt_aboutme,alt_content,alt_honor,alt_answertype,altInfo,actSelected,oldAct,areaChanged} =this.state
         console.log(JSON.stringify(alt_answertype))
         var updatedata ={};
         var formdata = new FormData();
-        formdata.append('alt_id',this.context.alt_id)
-        
         if(alt_aboutme!=altInfo.alt_aboutme){
             updatedata.alt_aboutme=alt_aboutme
         }
@@ -104,7 +105,7 @@ class MyAltProf extends React.Component{
                 name: new_alt_photo.path,
             });
         }
-        if(actSelected!=oldactSelected){
+        if(areaChanged){
             actSelected.map((item,index)=>{
                 console.log(item,index)
                 formdata.append("act_id[]", actSelected[index].act_id);
@@ -117,11 +118,12 @@ class MyAltProf extends React.Component{
         .then(res=>{
             console.log('modify_general success :)')
             console.log(res.data)
-            
+            this.setState({resultText:res.data.message,resultVisible:true})
         })
         .catch(err=>{
             console.log('modify_general failed :(')
             console.log(err)
+            this.setState({resultText:err.message,resultVisible:true})
         })
     }
 
@@ -229,7 +231,8 @@ class MyAltProf extends React.Component{
         .then(res=>{
             const result =res.data.view.data.list[0]
             const {alt_content,alt_aboutme,alt_honor,alt_photo,alt_answertype} =result.alt_profile;
-            this.setState({altInfo:result.alt_profile,actSelected:result.alt_area,oldactSelected:result.alt_area, alt_content,alt_aboutme,alt_honor,alt_photo,alt_answertype})
+            this.setState({altInfo:result.alt_profile,actSelected:result.alt_area, alt_content,alt_aboutme,alt_honor,alt_photo,alt_answertype})
+            this.setState({oldAct:result.alt_area})
         })
         .catch(err=>{
             alert('오류 발생');
@@ -247,7 +250,7 @@ class MyAltProf extends React.Component{
 
     render(){  
     const {width,height} =Dimensions.get('window')
-    const {alt_content,alt_answertype,alt_aboutme,alt_honor,alt_photo,isLoading,mem_info,new_alt_photo,radio,radioSelectedIndex,altInfo,actSelected,spinnerModalVisible,filterModalVisible,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,} = this.state;
+    const {alt_content,alt_answertype,resultVisible,oldAct,alt_aboutme,alt_honor,alt_photo,isLoading,mem_info,new_alt_photo,radio,radioSelectedIndex,altInfo,actSelected,spinnerModalVisible,filterModalVisible,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,} = this.state;
      
     return(
         <Root>
@@ -259,7 +262,7 @@ class MyAltProf extends React.Component{
                     }}
                     gbckuse={true}
                     right='edit'
-                    func={()=>this.formValidation()}
+                    func={()=>{this.formValidation();Keyboard.dismiss()}}
                     style={{backgroundColor:'#f4f4f4'}}
                 />
                 {
@@ -347,7 +350,7 @@ class MyAltProf extends React.Component{
                             <View style={{display:'flex',flexDirection:'row',marginTop:19,marginLeft:10}}>
                                 <TouchableOpacity 
                                     style = {{height:21,width:23,backgroundColor:'#63579D',borderRadius:7,justifyContent:'center',marginRight:10}} 
-                                    onPress={()=>this.setState({filterModalVisible:true,actSelected:[]})}
+                                    onPress={()=>this.setState({filterModalVisible:true,areaChanged:true})}
                                 >
                                     <Text style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
                                 </TouchableOpacity>
@@ -356,7 +359,9 @@ class MyAltProf extends React.Component{
                                         actSelected.length >0 ?
                                             actSelected.map((act,index) => (
                                             <TouchableHighlight
-                                                onPress ={()=>{actSelected.splice(index,1);this.setState({actSelected})}}
+                                                onPress ={()=>{
+                                                    actSelected.splice(index,1);this.setState({actSelected:actSelected,areaChanged:true});;
+                                            }}
                                                 key = {act.act_content}
                                             >
                                                 <View 
@@ -462,6 +467,20 @@ class MyAltProf extends React.Component{
                     >
                         <Spinner size='giant'/>
                     </Modal>
+                    <Modal
+                        visible={resultVisible}
+                        backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+                        onBackdropPress={() => this.setState({resultVisible: false})}>
+                        <Confirm
+                            type="result"
+                            confirmText={this.state.resultText}
+                            frstText="닫기"
+                            OnFrstPress={() => {
+                            this.setState({resultVisible: false});
+                            this.props.navigation.goBack();
+                            }}
+                        />
+                        </Modal>
                     </>
                 }
               </SafeAreaView>
