@@ -9,6 +9,7 @@ import {
     Image,
     TouchableOpacity,
     ScrollView,
+    Keyboard
 } from 'react-native'
 import{
     Text,
@@ -26,10 +27,11 @@ import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {ActionSheet, Root} from 'native-base';
 import Axios from 'axios';
 import { ToggleSimpleUsageShowcase } from '../L3Toptab/CommunityScreen';
+import ImagePicker from 'react-native-image-crop-picker';
 
  //   TODO : 명예 여부 라디오 선택
 export const RadioHonorSelection = ({setAltHonor,initial}) => {
-    const [selectedIndex, setSelectedIndex] = React.useState(initial);
+    const [selectedIndex, setSelectedIndex] = React.useState(initial*1==0? 1 : 0);
     
     return (
         <RadioGroup
@@ -37,7 +39,7 @@ export const RadioHonorSelection = ({setAltHonor,initial}) => {
             selectedIndex={selectedIndex}
             onChange={(index) => {
                 setSelectedIndex(index);
-                setAltHonor(index==0? true:false)
+                setAltHonor(index==0? 1 : 0)
             }}>
             <Radio>
                 <Text style={{color: '#63579D'}} category="p1">
@@ -65,27 +67,36 @@ class MyAltProf extends React.Component{
             alt_aboutme:'',
             alt_content:'',
             alt_honor:0,
-            oldactSelected:[],
+            alt_answertype:0,
+            oldAct:[],
             actSelected:[],
             radio:['1:1질문만','1:다 질문만','모든 질문 허용'],
             radioSelectedIndex:2,
+            areaChanged:false,
+            resultVisible:false,
         }
     }
     static contextType = Signing
 
     updateAltProf= () =>{
-        const {new_alt_photo,alt_aboutme,alt_content,alt_honor,altInfo,actSelected,oldactSelected} =this.state
-
+        const {new_alt_photo,alt_aboutme,alt_content,alt_honor,alt_answertype,altInfo,actSelected,oldAct,areaChanged} =this.state
+        console.log(JSON.stringify(alt_answertype))
+        var updatedata ={};
         var formdata = new FormData();
         if(alt_aboutme!=altInfo.alt_aboutme){
-            formdata.append('alt_aboutme',alt_aboutme)
+            updatedata.alt_aboutme=alt_aboutme
         }
         if(alt_content!=altInfo.alt_content){
-            formdata.append('alt_content',alt_content)
+            updatedata.alt_content=alt_content
         }
         if(alt_honor!=altInfo.alt_honor){
-            formdata.append('alt_honor',alt_honor)
+            updatedata.alt_honor=alt_honor
         }
+        if(alt_answertype!=altInfo.alt_answertype){
+            updatedata.alt_answertype=alt_answertype
+        }
+        formdata.append('updatedata',JSON.stringify(updatedata));
+        console.log('updatedata : ',updatedata)
         if(new_alt_photo.uri){
             console.log('new_alt_photo!={}')
             formdata.append("alt_photo", {
@@ -94,18 +105,30 @@ class MyAltProf extends React.Component{
                 name: new_alt_photo.path,
             });
         }
-        if(actSelected!=oldactSelected){
+        if(areaChanged){
             actSelected.map((item,index)=>{
                 console.log(item,index)
                 formdata.append("act_id[]", actSelected[index].act_id);
               })
         }
 
-        
+        console.log(formdata)
+
+        Axios.post('http://dev.unyict.org/api/altruists/modify_general',formdata)
+        .then(res=>{
+            console.log('modify_general success :)')
+            console.log(res.data)
+            this.setState({resultText:res.data.message,resultVisible:true})
+        })
+        .catch(err=>{
+            console.log('modify_general failed :(')
+            console.log(err)
+            this.setState({resultText:err.message,resultVisible:true})
+        })
     }
 
     formValidation =() =>{
-        const {alt_aboutme,alt_content} = this.state
+        const {alt_aboutme,alt_content,actSelected} = this.state
         var isNull = false
         console.log('isNull 1 : ' + isNull);
         if(alt_aboutme==null||alt_aboutme==''){
@@ -118,17 +141,22 @@ class MyAltProf extends React.Component{
           this.setState({contentIsNull:true})
           isNull=true;
         }
+        if(actSelected.length==0){
+          console.log('isNull 3 : ' + isNull);
+          this.setState({areaIsNull:true})
+          isNull=true;
+        }
         if(!isNull){
           console.log('isNull 4 : ' + isNull);
-        //   this.setAltruist();
+          this.updateAltProf();
         }else{
           console.log('isNull 5 : ' + isNull);
           this.refs.formScroll.scrollTo('top')
         }
     }
 
-    setAltHonor = (index)=>{
-        this.setState({alt_honor:index==0?true : false})
+    setAltHonor = (alt_honor)=>{
+        this.setState({alt_honor})
     }
 
     onClickProfImage() {
@@ -187,25 +215,24 @@ class MyAltProf extends React.Component{
         await Axios
           .get('http://dev.unyict.org/api/altruists/area_category')
           .then((res) => {
-            console.log('getAreaCat : '+JSON.stringify(res.data.data))
             this.setState({category: res.data.data});
-        this.setState({isLoading:false})
+            this.setState({isLoading:false})
 
           })
           .catch((err) => {
             alert(err);
           });
       };
-    getAltProf = async() =>{
+    getAltProf = async(alt_id) =>{
         this.setState({isLoading:true})
         var formdata = new FormData();
-        formdata.append('alt_id',this.context.alt_id)
+        formdata.append('alt_id',alt_id)
         await Axios.post('http://dev.unyict.org/api/altruists/profile',formdata)
         .then(res=>{
             const result =res.data.view.data.list[0]
-            const {alt_content,alt_aboutme,alt_honor,alt_photo} =result.alt_profile;
-            this.setState({altInfo:result.alt_profile,actSelected:result.alt_area,oldactSelected:result.alt_area, alt_content,alt_aboutme,alt_honor,alt_photo})
-            console.log('getAltProf '+JSON.stringify(result.alt_area))
+            const {alt_content,alt_aboutme,alt_honor,alt_photo,alt_answertype} =result.alt_profile;
+            this.setState({altInfo:result.alt_profile,actSelected:result.alt_area, alt_content,alt_aboutme,alt_honor,alt_photo,alt_answertype})
+            this.setState({oldAct:result.alt_area})
         })
         .catch(err=>{
             alert('오류 발생');
@@ -215,7 +242,7 @@ class MyAltProf extends React.Component{
     }
     componentDidMount(){
         console.log(JSON.stringify(this.context.alt_id))
-        this.getAltProf();
+        this.getAltProf(this.context.alt_id);
         this.getAreaCat();
 
         this.setState({mem_info:this.props.route.params.mem_info})
@@ -223,7 +250,7 @@ class MyAltProf extends React.Component{
 
     render(){  
     const {width,height} =Dimensions.get('window')
-    const {alt_content,alt_aboutme,alt_honor,alt_photo,isLoading,mem_info,new_alt_photo,radio,radioSelectedIndex,altInfo,actSelected,spinnerModalVisible,filterModalVisible,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,} = this.state;
+    const {alt_content,alt_answertype,resultVisible,oldAct,alt_aboutme,alt_honor,alt_photo,isLoading,mem_info,new_alt_photo,radio,radioSelectedIndex,altInfo,actSelected,spinnerModalVisible,filterModalVisible,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,} = this.state;
      
     return(
         <Root>
@@ -235,7 +262,7 @@ class MyAltProf extends React.Component{
                     }}
                     gbckuse={true}
                     right='edit'
-                    func={()=>this.formValidation()}
+                    func={()=>{this.formValidation();Keyboard.dismiss()}}
                     style={{backgroundColor:'#f4f4f4'}}
                 />
                 {
@@ -246,130 +273,154 @@ class MyAltProf extends React.Component{
                 :
                 <>
                     <ScrollView 
-                        ref='formScroll'
-                        style={{flex:1,padding:'5%'}}    
+                        ref='formScroll'    
                     >
-                        <View style={{flexDirection:'row'}}>
-                            <TouchableHighlight onPress={()=>this.onClickProfImage()} >
-                                <View style={{height:width*0.9*100/337}}>
-                                    <Image 
-                                        style={{width:width*0.9*100/337,height:'100%'}}
-                                        source={{uri:!alt_photo? !new_alt_photo.uri? new_alt_photo.uri :'http://dev.unyict.org/uploads/altwink.png':`http://dev.unyict.org/${alt_photo}`}}
-                                        resizeMode='cover'
-                                    />
-                                    <View style={{position:'absolute',bottom:0,right:0,backgroundColor:'#ffffff',borderRadius:15}}>
-                                        <Camsvg width={30} height={30}/>
+                        <View style={{flex:1,padding:'5%'}}>
+                            <View style={{flexDirection:'row'}}>
+                                <TouchableHighlight onPress={()=>this.onClickProfImage()} >
+                                    <View style={{height:width*0.9*100/337}}>
+                                        <Image 
+                                            style={{width:width*0.9*100/337,height:'100%'}}
+                                            source={{uri: !new_alt_photo.uri? !alt_photo? 'http://dev.unyict.org/uploads/altwink.png':`http://dev.unyict.org/${alt_photo}`  : new_alt_photo.uri}}
+                                            resizeMode='cover'
+                                        />
+                                        <View style={{position:'absolute',bottom:0,right:0,backgroundColor:'#ffffff',borderRadius:15}}>
+                                            <Camsvg width={30} height={30}/>
+                                        </View>
+                                        {
+                                            new_alt_photo.uri ?
+                                            <View style={{position:'absolute',right:0}}>
+                                                <TouchableWithoutFeedback 
+                                                    style={{backgroundColor:'#c4c4c4',borderRadius:15}}
+                                                    onPress={()=>{this.setState({new_alt_photo:{}})}}
+                                                >
+                                                    <Text style={{color:'#ffffff',fontWeight:'bold',fontSize:14}}> X </Text>
+                                                </TouchableWithoutFeedback>
+                                            </View>
+                                            :null
+                                        }
                                     </View>
+                                </TouchableHighlight>
+                                <View style={{width:(width-100)*0.9}}>
+                                    <Text style={[styles.nameText]}>
+                                    {isLoading ? null : mem_info.mem_username !='' ? mem_info.mem_username : mem_info.mem_nickname}
+                                    </Text>
+                                    <TextInput
+                                        value={alt_aboutme}
+                                        onChangeText={(text) => this.setState({alt_aboutme:text})}
+                                        placeholder='자기PR (50자 이내)'
+                                        style={[styles.contentInput,{borderWidth: this.state.aboutmeIsNull ? 1:0,borderColor :this.state.aboutmeIsNull ? '#DB2434':'#ffffff'}]}
+                                        multiline={true}
+                                        placeholderTextColor='#A897C2'
+                                        textAlignVertical="top"
+                                        onBackdropPress={()=>Keyboard.dismiss()}
+                                    />
+                                    {
+                                        this.state.aboutmeIsNull ? 
+                                        
+                                        <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>한 줄 소개는 필수값입니다.</Text>
+                                        :
+                                        null
+                                    }
                                 </View>
-                            </TouchableHighlight>
-                            <View style={{width:(width-100)*0.9}}>
-                                <Text style={[styles.nameText]}>
-                                {isLoading ? null : mem_info.mem_username !='' ? mem_info.mem_username : mem_info.mem_nickname}
-                                </Text>
+                            </View>
+                            <View style={{marginTop:25}}>
                                 <TextInput
-                                    value={alt_aboutme}
-                                    onChangeText={(text) => this.setState({alt_aboutme:text})}
-                                    placeholder='자기PR (50자 이내)'
-                                    style={[styles.contentInput,{borderWidth: this.state.aboutmeIsNull ? 1:0,borderColor :this.state.aboutmeIsNull ? '#DB2434':'#ffffff'}]}
+                                    value={alt_content}
+                                    onChangeText={(text) => this.setState({alt_content: text})}
+                                    placeholder='자기소개'
+                                    style={[styles.contentInput,{minHeight:75,borderWidth: this.state.contentIsNull ? 1:0,borderColor :this.state.contentIsNull ? '#DB2434':'#ffffff'}]}
                                     multiline={true}
+                                    textAlignVertical='top'
                                     placeholderTextColor='#A897C2'
-                                    textAlignVertical="top"
                                     onBackdropPress={()=>Keyboard.dismiss()}
                                 />
+                            </View>
+                            {
+                            this.state.contentIsNull ? 
+                            
+                            <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>자기 소개는 필수값입니다.</Text>
+                            :
+                            null
+                            }
+
+                            <View style={{marginLeft:10,marginTop:40}}>
+                                <Text style={styles.fieldTitle}>전문 분야</Text>
+                            </View>
+                            <View style={{display:'flex',flexDirection:'row',marginTop:19,marginLeft:10}}>
+                                <TouchableOpacity 
+                                    style = {{height:21,width:23,backgroundColor:'#63579D',borderRadius:7,justifyContent:'center',marginRight:10}} 
+                                    onPress={()=>this.setState({filterModalVisible:true,areaChanged:true})}
+                                >
+                                    <Text style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
+                                </TouchableOpacity>
+                                    <ScrollView horizontal={true} style={styles.areaContainer} >
+                                    {
+                                        actSelected.length >0 ?
+                                            actSelected.map((act,index) => (
+                                            <TouchableHighlight
+                                                onPress ={()=>{
+                                                    actSelected.splice(index,1);this.setState({actSelected:actSelected,areaChanged:true});;
+                                            }}
+                                                key = {act.act_content}
+                                            >
+                                                <View 
+                                                    style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',marginRight:3}} 
+                                                >
+                                                    <Tag style={[styles.tagSelected,{marginRight:3}]}
+                                                        key = {act.act_content}
+                                                    >
+                                                        {act.act_content}
+                                                    </Tag>
+                                                    <View style={{backgroundColor:'#000000',opacity:0.3,borderRadius:5}}>
+                                                        <Text> x </Text>
+                                                    </View>
+                                                </View>
+                                            </TouchableHighlight>
+                                            ))
+                                        :
+                                        <View style={[styles.areaContainer]}>
+                                            <Text style={{fontSize:11,fontWeight:'bold',color:'#63579D'}}> 전문 분야를 선택하세요</Text>
+                                        </View>
+                                    }
+                                    </ScrollView >
+                            </View>
+                            
+                            <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>
+                                {   
+                                this.state.areaIsNull ? 
+                                    '전문 분야는 1개 이상 5개 이하 선택해주세요.'
+                                :
+                                    ' '
+                                }
+                            </Text>
+                            <View style={{marginLeft:10,marginTop:40}}>
+                                <Text style={styles.fieldTitle}>답변 유형</Text>
+                            </View>
+                            <View style={{flexDirection:'row',marginHorizontal:10,marginTop:20,justifyContent:'space-between'}}>
                                 {
-                                    this.state.aboutmeIsNull ? 
-                                    
-                                    <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>한 줄 소개는 필수값입니다.</Text>
-                                    :
-                                    null
+                                    radio.map((item,index)=>{
+                                        return(
+                                        <TouchableWithoutFeedback
+                                            key={index}
+                                            style={index == alt_answertype-1 ?styles.radioBtnSelected :styles.radioBtn}
+                                            onPress={()=>{this.setState({alt_answertype:index+1});console.log(index)}}
+                                        >
+                                            <Text style={{color:'#ffffff'}}>
+                                                {item}
+                                            </Text>
+                                        </TouchableWithoutFeedback>
+                                        )
+                                    })
                                 }
                             </View>
-                        </View>
-                        <View style={{marginTop:25}}>
-                            <TextInput
-                                value={alt_content}
-                                onChangeText={(text) => this.setState({alt_content: text})}
-                                placeholder='자기소개'
-                                style={[styles.contentInput,{minHeight:75,borderWidth: this.state.contentIsNull ? 1:0,borderColor :this.state.contentIsNull ? '#DB2434':'#ffffff'}]}
-                                multiline={true}
-                                textAlignVertical='top'
-                                placeholderTextColor='#A897C2'
-                                onBackdropPress={()=>Keyboard.dismiss()}
-                            />
-                        </View>
-                        {
-                        this.state.contentIsNull ? 
-                        
-                        <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>자기 소개는 필수값입니다.</Text>
-                        :
-                        null
-                        }
-
-                        <View style={{marginLeft:10,marginTop:40}}>
-                            <Text style={styles.fieldTitle}>전문 분야</Text>
-                        </View>
-                        <View style={{display:'flex',flexDirection:'row',marginTop:19,marginLeft:10}}>
-                            <TouchableOpacity 
-                                style = {{height:21,width:23,backgroundColor:'#63579D',borderRadius:7,justifyContent:'center',marginRight:10}} 
-                                onPress={()=>this.setState({filterModalVisible:true,actSelected:[]})}
-                            >
-                                <Text style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
-                            </TouchableOpacity>
-                                {
-                                    actSelected.length >0 ?
-                                    <ScrollView horizontal={true} style={styles.areaContainer} >
-                                        {actSelected.map((act,index) => (
-                                        <TouchableHighlight
-                                            onPress ={()=>{actSelected.splice(index,1);this.setState({actSelected})}}
-                                            key = {act.act_content}
-                                        >
-                                            <View 
-                                                style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',marginRight:3}} 
-                                            >
-                                                <Tag style={[styles.tagSelected,{marginRight:3}]}
-                                                    key = {act.act_content}
-                                                >
-                                                    {act.act_content}
-                                                </Tag>
-                                                <View style={{backgroundColor:'#000000',opacity:0.3,borderRadius:5}}>
-                                                    <Text> x </Text>
-                                                </View>
-                                            </View>
-                                        </TouchableHighlight>
-                                        ))}
-                                    </ScrollView >
-                                    :
-                                    <View style={styles.areaContainer}>
-                                        <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}}> 전문 분야를 선택하세요</Text>
-                                    </View>
-                                }
-                        </View>
-                        <View style={{marginLeft:10,marginTop:40}}>
-                            <Text style={styles.fieldTitle}>답변 유형</Text>
-                        </View>
-                        <View style={{flexDirection:'row',marginHorizontal:10,marginTop:20,justifyContent:'space-between'}}>
-                            {
-                                radio.map((item,index)=>{
-                                    return(
-                                    <TouchableWithoutFeedback
-                                        key={index}
-                                        style={index == radioSelectedIndex ?styles.radioBtnSelected :styles.radioBtn}
-                                        onPress={()=>{this.setState({radioSelectedIndex:index});console.log(index)}}
-                                    >
-                                        <Text style={{color:'#ffffff'}}>
-                                            {item}
-                                        </Text>
-                                    </TouchableWithoutFeedback>
-                                    )
-                                })
-                            }
-                        </View>
-                        
-                        <View style={{marginLeft:10,marginTop:40}}>
-                            <Text style={styles.fieldTitle}>명예 여부 </Text>
-                        </View>
-                        <View>
-                            <RadioHonorSelection initial={alt_honor? 0:1} setAltHonor={this.setAltHonor} />
+                            
+                            <View style={{marginLeft:10,marginTop:40}}>
+                                <Text style={styles.fieldTitle}>명예 여부 </Text>
+                            </View>
+                            <View style={{}}>
+                                <RadioHonorSelection initial={alt_honor} setAltHonor={this.setAltHonor} />
+                            </View>
                         </View>
                     </ScrollView>
                     <Modal
@@ -416,6 +467,20 @@ class MyAltProf extends React.Component{
                     >
                         <Spinner size='giant'/>
                     </Modal>
+                    <Modal
+                        visible={resultVisible}
+                        backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+                        onBackdropPress={() => this.setState({resultVisible: false})}>
+                        <Confirm
+                            type="result"
+                            confirmText={this.state.resultText}
+                            frstText="닫기"
+                            OnFrstPress={() => {
+                            this.setState({resultVisible: false});
+                            this.props.navigation.goBack();
+                            }}
+                        />
+                        </Modal>
                     </>
                 }
               </SafeAreaView>

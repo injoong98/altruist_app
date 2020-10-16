@@ -947,7 +947,7 @@ class Board_write extends CB_Controller
 			$brd_key = element('brd_key', $board);
 			$brd_name = element('brd_name', $board);
 			$nickname=  $this->session->userdata('mem_nickname');
-
+			$mem_nickname = $this->member->item('mem_nickname');
 			//푸시 notification_personal_question  notification_open_question use_push
 			// 게시판 opq , indi 일 경우 질문 푸시
 			// 오픈 / 돌직 / 일반 게시판 (토픽)
@@ -956,7 +956,7 @@ class Board_write extends CB_Controller
 				//알림 저장
 				if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_personal_question')) {
 					$this->load->library('notificationlib');
-					$not_message = $nickname . '님께서 일대일 질문을 보내셨습니다.';
+					$not_message = $mem_nickname . '님께서 일대일 질문을 보내셨습니다.';
 					$not_url = post_url(element('brd_id', $board), $post_id);
 					$this->notificationlib->set_noti(
 						$updatedata['answer_mem_id'],
@@ -971,7 +971,7 @@ class Board_write extends CB_Controller
 				//푸시 전송
 				if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_personal_question')) {
 					$this->load->library('pushlib');
-					$not_message = $nickname . '님께서 일대일 질문을 보내셨습니다.';
+					$not_message = $mem_nickname . '님께서 일대일 질문을 보내셨습니다.';
 					$not_url = post_url(element('brd_id', $board), $post_id);
 					$this->pushlib->set_push(
 						$updatedata['answer_mem_id'],
@@ -1011,7 +1011,7 @@ EOT;
 						//알림 
 						if ($this->cbconfig->item('use_notification') &&  $this->cbconfig->item('notification_open_question')) {
 							$this->load->library('notificationlib');
-							$not_message = $nickname . '님께서 오픈 질문을 작성하셨습니다.';
+							$not_message = $mem_nickname . '님께서 오픈 질문을 작성하셨습니다.';
 							$not_url = post_url(element('brd_id', $board), $post_id);
 							$this->notificationlib->set_noti(
 								$value->mem_id,
@@ -1027,7 +1027,7 @@ EOT;
 						if($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_open_question')) {
 
 							$this->load->library('pushlib');
-							$not_message = $nickname . '님께서 오픈 질문을 작성하셨습니다.';
+							$not_message = $mem_nickname . '님께서 오픈 질문을 작성하셨습니다.';
 							$not_url = post_url(element('brd_id', $board), $post_id);
 							$this->pushlib->set_push(
 								$value->mem_id,
