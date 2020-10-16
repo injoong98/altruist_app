@@ -32,29 +32,28 @@ export class WriteContentToptab extends React.Component {
                     </TouchableOpacity>
                 </View>
                 {right=='search'
-                ?
-                <View>
-                    <TextInput 
-                        style={styles.titleInput} 
-                        value={this.state.keyword} 
-                        onChangeText={(text) =>{this.setState({keyword:text})}}
-                        placeholder="검색어를 입력하세요"
-                        placeholderTextColor='#A897C2'
-                    />
-                    <TouchableOpacity 
-                        style={{position:"absolute",right:5,top:6}}
-                        // onPress={()=>{Keyboard.dismiss(),this.getAltruistsFilteredList('keyword')}}
-                    >
-                        
-                        <Searchsvg height={25} width={25} fill='#A9C' />
-                    </TouchableOpacity>
-                </View>
-                :
-                <View style={{flex:4, justifyContent:'center', alignItems:'center'}}>
-                    <Text category='h2' style={styles.toptext}>{text}</Text>
-                </View>
+                    ?
+                    <View style={{margin : 5}}>
+                        <TextInput 
+                            style={styles.titleInput} 
+                            value={this.state.keyword} 
+                            onChangeText={(text) =>{this.setState({keyword:text})}}
+                            placeholder="검색어를 입력하세요"
+                            placeholderTextColor='#A897C2'
+                        />
+                        <TouchableOpacity 
+                            style={{position:"absolute",right:5,top:6}}
+                            onPress={this.props.onPress}>
+
+                            <Searchsvg height={25} width={25} fill='#A9C' />
+                        </TouchableOpacity>
+                    </View>
+                    :
+                    <View style={{flex:4, justifyContent:'center', alignItems:'center'}}>
+                        <Text category='h2' style={styles.toptext}>{text}</Text>
+                    </View>
                 }
-                {/* <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                 {
                     !right ?
                     null
@@ -66,9 +65,9 @@ export class WriteContentToptab extends React.Component {
                             </Text>
                     </TouchableOpacity>
                     :
-                    right
+                    null
                 }
-                </View> */}
+                </View>
             </View>
                 /* <View style={styles.rightside}>
                     <View 

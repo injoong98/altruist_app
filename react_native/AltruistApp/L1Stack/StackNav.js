@@ -398,8 +398,8 @@ export class StackNav extends React.Component{
                                 <Screen name = "IlbanContent" component={IlbanContent}/>
                                 <Screen name = "GominContent" component={GominContent}/>
                                 <Screen name = "MarketContent" component={MarketContent}/>
-                                <Screen name = "IlbanWrite" component={IlbanWrite}/>
                                 <Screen name = "AlbaContent" component={AlbaContent}/>
+                                <Screen name = "IlbanWrite" component={IlbanWrite}/>
                                 <Screen name = "MarketWrite" component={MarketWrite}/>
                                 <Screen name = "AlbaWrite" component={AlbaWrite}/>
                                 <Screen name = "GominWrite" component={GominWrite}/>
