@@ -23,7 +23,7 @@ class CommunitySearch extends React.Component{
             <SafeAreaView style={{flex: 1}}>
                 <WriteContentToptab
                 text="수수마켓"
-                right='upload'
+                right='search'
                 gbckfunc={() => {this.props.navigation.goBack()}}
                 gbckuse={true}
                 />
