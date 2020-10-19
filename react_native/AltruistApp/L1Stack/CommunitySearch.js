@@ -80,10 +80,10 @@ class CommunitySearch extends React.Component{
     renderItem = ({item}) => (
         <TouchableOpacity style={styles.item} onPress={() => {this.navigateToContent(item.brd_id,item.post_id)}}>
             {item.images?
-            <View style={{width:80, justifyContent:'center', alignItems:'center'}}>
+            <View style={{width:90, justifyContent:'center', alignItems:'center'}}>
                 <Image 
                   source={{uri : `https://dev.unyict.org/uploads/post/${item.images.pfi_filename}`}} 
-                  style={{width:70, height:70, resizeMode:'cover', borderRadius:10}}
+                  style={{width:80, height:80, resizeMode:'cover', borderRadius:10}}
                 />
             </View>:null}
             <View style={{flex:1}}>
@@ -96,7 +96,7 @@ class CommunitySearch extends React.Component{
                         {item.post_title}
                     </Text>
                     <View style={styles.textBottom}>
-                        <Text style={{...styles.text, color:'#878787', fontSize:10}} numberOfLines={2} ellipsizeMode="tail" category='h4'>
+                        <Text style={{...styles.text, color:'#878787', fontSize:10}} numberOfLines={1} ellipsizeMode="tail" category='h4'>
                             {item.post_content}
                         </Text>
                     </View>
