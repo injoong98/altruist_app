@@ -23,9 +23,13 @@ class CommunitySearch extends React.Component{
             lists : [],
             refreshing : false,
             isLoading : true,
-            spinnerVisible: false,
+            spinnerVisible : false,
+            current_category : 0,
+            current_page : 1,
         }
     }
+
+	category = ['전체', '이타게시판', '고민있어요', '수수마켓', '알바천일국'];
 
     navigateToContent= (brd_id,post_id) =>{
         var brd = brd_id == 1 ? 'GominContent' : brd_id == 2 ? 'MarketContent': brd_id == 3 ?'AlbaContent': 'IlbanContent' 
@@ -36,8 +40,8 @@ class CommunitySearch extends React.Component{
     }
 
     getSearch = async() => {
-        const {skeyword} = this.state;
-        await Axios.get(`https://dev.unyict.org/api/search?skeyword=${skeyword}`)
+        const {skeyword, current_category} = this.state;
+        await Axios.get(`https://dev.unyict.org/api/search?group_id=${current_category}&sfield=post_both&skeyword=${skeyword}`)
         .then((response) =>{
             const {status, message} = response;
             if(status=='200'){
@@ -115,7 +119,7 @@ class CommunitySearch extends React.Component{
     }
 
     render(){ 
-        const {isLoading, spinnerVisible} = this.state;
+        const {isLoading, spinnerVisible, current_category} = this.state;
         return(
             <SafeAreaView style={{flex: 1, backgroundColor : '#FFFFFF'}}>
                 <Layout style={{backgroundColor:'#ffffff',height:49, flexDirection:'row', }}>
@@ -139,6 +143,16 @@ class CommunitySearch extends React.Component{
                         </TouchableOpacity>
                     </View>
                 </Layout>
+				<View style={{flexDirection:'row', marginHorizontal : 20, marginVertical: 4,backgroundColor:'#B09BDE', borderRadius:10}}>
+					{this.category.map((str,index) => (
+					<TouchableOpacity 
+						key={index}
+						style={{alignItems:'center', justifyContent:'center', marginHorizontal:5}}
+                        // onPress={async()=>{this.setState({current_category:index, current_page:1},this.getPostFirst)}}
+                        >
+						<Text category='h6' key={index} style={{color:(current_category==index?'white':'#543D78')}}> {'#'+str} </Text>
+					</TouchableOpacity>))}
+				</View>
                 <View style={{flex : 1}}>
                     {isLoading?
                         spinnerVisible?
