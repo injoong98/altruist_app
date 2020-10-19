@@ -131,24 +131,17 @@ class CommunitySearch extends React.Component{
                             onChangeText={(text) =>{this.setState({skeyword:text})}}
                             placeholder="글 제목, 내용 등 검색어를 입력하세요"
                             placeholderTextColor='#A897C2'
+                            onSubmitEditing={()=>{this.setState({spinnerVisible:true}, this.getSearch)}}
                         />
                         <TouchableOpacity 
                             style={{position:"absolute",right:5,top:6}}
-                            onPress={()=>{this.setState({spinnerVisible:true, isLoading:true},Keyboard.dismiss());this.getSearch();}}>
+                            onPress={()=>{this.setState({spinnerVisible:true},Keyboard.dismiss());this.getSearch();}}>
                             <Searchsvg height={25} width={25} fill='#A9C' />
                         </TouchableOpacity>
                     </View>
                 </Layout>
                 <View style={{flex : 1}}>
                     {isLoading?
-                        spinnerVisible?
-                        <Modal
-                            visible={spinnerVisible}>
-                            <View style={{backgroundColor: 'rgba(0,0,0,0.7)', width : 100, height :100, borderRadius:20, justifyContent: 'center', alignItems:'center'}}>
-                                <Spinner size="giant" />
-                            </View>
-                        </Modal>
-                        :
                         <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                             <Searchsvg height={100} width={100} fill='#A9C' />
                             <Text category = 'h1' style = {{margin : 20}}>게시판의 글을 검색해보세요</Text>
@@ -164,7 +157,12 @@ class CommunitySearch extends React.Component{
                         ListFooterComponent={this.renderFooter}
                         onRefresh={this.onRefresh}
                     />}
-                    
+                    <Modal
+                        visible={spinnerVisible}>
+                        <View style={{backgroundColor: 'rgba(0,0,0,0.7)', width : 100, height :100, borderRadius:20, justifyContent: 'center', alignItems:'center'}}>
+                            <Spinner size="giant" />
+                        </View>
+                    </Modal>
                 </View>
             </SafeAreaView>
         )
