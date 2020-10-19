@@ -50,11 +50,11 @@ export class RenderAltList extends React.Component{
                 <View style={{flex:22,height:'100%'}}>
                     <View style={{flex:73,flexDirection:'row'}}>
                         <View style={{flex:1}}>
-                            <View style={{flex:1,width:'100%',paddingLeft:'18%'}}>
+                            <View style={{flex:1,width:'100%',paddingLeft:'15%'}}>
                                 <Text category='h2' style={{fontSize:18,marginTop:12}}>
                                     {arg.item.mem_basic_info.mem_nickname}
                                 </Text>
-                                <Text style={{fontSize:12,fontWeight:'600'}}>
+                                <Text style={{fontSize:12,fontWeight:'600'}} numberOfLines={3} ellipsizeMode="tail">
                                     {arg.item.alt_profile.alt_aboutme}
                                 </Text>
                             </View>                        
@@ -106,7 +106,9 @@ export class RenderAltList extends React.Component{
                     <Rightsvg width={22} height={22}/>
                 </View>
                 <View style={{position:'absolute' , right:15,top:10}}>
-                <Heartsvg width={18} height={18}/>
+                    <TouchableOpacity>
+                        <Heartsvg width={18} height={18}/>
+                    </TouchableOpacity>
                 </View>
             </TouchableOpacity>
         )
