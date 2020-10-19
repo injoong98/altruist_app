@@ -95,7 +95,6 @@ class AltProfileScreen extends React.Component {
                   height: 150,
                   borderRadius: 30,
                   resizeMode: 'cover',
-                  flex: 1,
                 }}
               />
               <View style={{marginLeft: 10, flex: 2, marginBottom: 5,}}>

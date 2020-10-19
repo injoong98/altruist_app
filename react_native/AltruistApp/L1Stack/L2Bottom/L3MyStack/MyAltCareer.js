@@ -1,6 +1,6 @@
 import React from 'react';
 import {SafeAreaView,View,TextInput,TouchableHighlight,StyleSheet,Animated, Pressable} from 'react-native';
-import {Text,Modal,CheckBox,Select,SelectItem, IndexPath} from '@ui-kitten/components';
+import {Text,Modal,CheckBox,Select,SelectItem, IndexPath,Spinner} from '@ui-kitten/components';
 import Axios from 'axios';
 import {Signing} from '../../Context' 
 import { FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -56,8 +56,8 @@ class RenderCareerInput extends React.Component{
         
         Axios.post('http://dev.unyict.org/api/altruists/insert_career',formdata)
         .then(res=>{
-            console.log('requestInsert success! : '+JSON.stringify(res.data))
-            
+            console.log('requestInsert success! : '+JSON.stringify(res.data));
+            this.props.setRes('성공적으로 추가했습니다.');
         })
         .catch(err=>{
             console.log('requestInsert faied! : '+err)
@@ -101,8 +101,8 @@ class RenderCareerInput extends React.Component{
             
             Axios.post('http://dev.unyict.org/api/altruists/modify_career',formdata)
             .then(res=>{
-                console.log('request success! : '+JSON.stringify(res.data))
-                
+                console.log('request success! : '+JSON.stringify(res.data));
+                this.props.setRes('성공적으로 수정했습니다.');
             })
             .catch(err=>{
                 console.log('request faied! : '+err)
@@ -213,7 +213,7 @@ class RenderCareerInput extends React.Component{
             outputRange:["90deg","-90deg"]
         })
         return(
-            <View style={{padding:'5%',borderBottomWidth:1,borderBottomColor:'#c4c4c4'}}>
+            <View style={{padding:'5%',borderBottomWidth:1,borderBottomColor:'#c4c4c4'}} key={this.props.item.index}>
                 <Pressable style={{flexDirection:'row',justifyContent:'space-between'}} onPress={()=>this.toggle()}>
                     <View style={{flexDirection:'row'}}>
                         <Text style={{fontSize:15,fontWeight:'bold'}}>{`${this.props.item.index+1}) `}</Text>
@@ -367,6 +367,10 @@ class MyAltCareer extends React.Component{
     }
     static contextType =Signing;
 
+    setRes = (resultText) =>{
+        this.setState({resultText,resultVisible:true})
+    }
+
     Footer = () =>(
         <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:30}}>
             <TouchableWithoutFeedback 
@@ -413,10 +417,8 @@ class MyAltCareer extends React.Component{
                 />
                 {
                     isLoading?
-                    <View style={{flex:1}}> 
-                        <Text>
-                            MyAltCareer Screen
-                        </Text>
+                    <View style={{flex:1,alignItems:'center',justifyContent:'center'}}> 
+                       <Spinner size = 'giant'/>
                     </View>
                     :
                     <View
@@ -424,7 +426,7 @@ class MyAltCareer extends React.Component{
                     >
                         <FlatList
                             data={careers}
-                            renderItem={(item)=><RenderCareerInput item={item}/>}
+                            renderItem={(item)=><RenderCareerInput item={item} setRes={this.setRes}/>}
                             keyExtractor={item => item.index}
                             ListFooterComponent={()=><this.Footer/>}
                             
@@ -445,7 +447,6 @@ class MyAltCareer extends React.Component{
                         frstText="닫기"
                         OnFrstPress={() => {
                         this.setState({resultVisible: false});
-                        this.props.navigation.goBack();
                         }}
                     />
                 </Modal>
