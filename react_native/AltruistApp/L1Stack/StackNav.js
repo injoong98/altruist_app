@@ -274,7 +274,7 @@ export class StackNav extends React.Component{
                 this.syncPushToken(token,mem_id)
                 
                 try {
-                    await AsyncStorage.setItem('currentMemId',mem_id);
+                    await AsyncStorage.setItem('currentMemId',mem_id+'');
                   } 
                 catch (error) {
                     console.log('asyncstorage error'+error)
