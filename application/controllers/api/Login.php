@@ -68,14 +68,36 @@ class Login extends CB_Controller
 	//세션 체크, 없으면 로그인 페이지로 이동
 		function session_check()
 		{	
+			$eventname = 'event_login_index';
+			$this->load->event($eventname);
+			
 			$view['session'] = '';
+			
 			if($_SESSION['mem_id'] == ""||$_SESSION['mem_id'] == 0){
 				$token = $this->input->post('token');
 				$token_saved = $this->db->get_where('cb_push_token',array('ptk_token'=>$token))->row_array();
 				if(!$token_saved){
 					$view['session'] = 'N';
-				}else{
-					$_SESSION['mem_id'] = $token_saved['mem_id'];	
+				}else{	
+					$userinfo = $this->Member_model->get_by_memid($token_saved['mem_id'], 'mem_id, mem_userid,mem_nickname,mem_is_admin, mem_username');
+					
+					$this->member->update_login_log(element('mem_id', $userinfo), element('mem_userid', $userinfo), 1, '토큰 로그인 성공');
+					$this->session->set_userdata(
+						'mem_id',
+						element('mem_id', $userinfo)
+					);
+					$this->session->set_userdata(
+						'mem_nickname',
+						element('mem_nickname', $userinfo)
+					);
+					$this->session->set_userdata(
+						'mem_username',
+						element('mem_username', $userinfo)
+					);
+					$this->session->set_userdata(
+						'mem_is_admin',
+						element('mem_is_admin', $userinfo)
+					);	
 				}
 			}
 

@@ -8,6 +8,7 @@ import {PostTime} from '../../components/PostTime'
 import {TopBarTune} from '../../components/TopBarTune'
 import {Notice} from '../Context'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import Reloadsvg from '../../assets/icons/reload.svg'
 
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
@@ -333,6 +334,8 @@ export class AlarmScreen extends React.Component{
                     <Text>
                         알림 내역이 없습니다.
                     </Text>
+                    <Reloadsvg height={15} width={15} fill="#A9C"/>
+
                 </View>
 
                 }
