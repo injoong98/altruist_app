@@ -1,10 +1,15 @@
 import React,{useState} from 'react';
 import {SafeAreaView, View, Image, TextInput, StyleSheet,TouchableOpacity, AsyncStorage, Keyboard} from 'react-native'
-import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction, Radio, CheckBox, Card, List } from '@ui-kitten/components'
+import {Layout,Text,Icon, TopNavigationAction, Modal, List, Spinner } from '@ui-kitten/components'
 import {WriteContentToptab} from '../components/WriteContentTopBar';
 import Axios from 'axios';
 import Backsvg from '../assets/icons/back-arrow-color.svg';
 import Searchsvg from '../assets/icons/search-outline.svg';
+import { PostTime } from '../components/PostTime';
+import Heartsvg from '../assets/icons/heart.svg'
+import Viewsvg from '../assets/icons/view.svg'
+import Commentsvg from '../assets/icons/comment.svg'
+
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -18,6 +23,7 @@ class CommunitySearch extends React.Component{
             lists : [],
             refreshing : false,
             isLoading : true,
+            spinnerVisible: false,
         }
     }
 
@@ -35,7 +41,7 @@ class CommunitySearch extends React.Component{
         .then((response) =>{
             const {status, message} = response;
             if(status=='200'){
-                this.setState({lists:response.data.view.data.list, isLoading:false});
+                this.setState({lists:response.data.view.data.list, isLoading:false, spinnerVisible:false});
             }
             else{
                 alert(message);
@@ -66,22 +72,31 @@ class CommunitySearch extends React.Component{
         <TopNavigationAction icon={BackIcon} onPress={() => {this.props.navigation.goBack()}}/>
     )
 
+    brdNm = (brd_id)=>{
+        var brd = brd_id == 1 ? '고민게시판' : brd_id == 2 ? '수수마켓': brd_id == 3 ?'알바천일국': '이타게시판'  
+        return brd
+    }
 
     renderItem = ({item}) => (
         <TouchableOpacity style={styles.item} onPress={() => {this.navigateToContent(item.brd_id,item.post_id)}}>
-            {item.images?<View style={{width:70, justifyContent:'center', alignItems:'center'}}>
+            {item.images?
+            <View style={{width:80, justifyContent:'center', alignItems:'center'}}>
                 <Image 
                   source={{uri : `https://dev.unyict.org/uploads/post/${item.images.pfi_filename}`}} 
-                  style={{width:60, height:60, resizeMode:'cover', borderRadius:10}}
+                  style={{width:70, height:70, resizeMode:'cover', borderRadius:10}}
                 />
             </View>:null}
             <View style={styles.textArea}>
                 <View style={{flex:1, paddingHorizontal:5}}>
+                    <View style={{flexDirection:'row', justifyContent : 'space-between', marginHorizontal : 4}}>
+                        <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{ this.brdNm(item.brd_id)}</Text>
+                        <PostTime datetime = {item.post_datetime}/>
+                    </View>
                     <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail" category='h4'>
                         {item.post_title}
                     </Text>
                     <View style={styles.textBottom}>
-                        <Text style={{...styles.text, color:'#878787', fontSize:10}} numberOfLines={3} ellipsizeMode="tail" category='h4'>
+                        <Text style={{...styles.text, color:'#878787', fontSize:10}} numberOfLines={2} ellipsizeMode="tail" category='h4'>
                             {item.post_content}
                         </Text>
                     </View>
@@ -100,43 +115,57 @@ class CommunitySearch extends React.Component{
     }
 
     render(){ 
-        const {isLoading} = this.state;
+        const {isLoading, spinnerVisible} = this.state;
         return(
             <SafeAreaView style={{flex: 1, backgroundColor : '#FFFFFF'}}>
-                <View style={{backgroundColor:'#ffffff',height:49, flexDirection:'row'}}>
+                <Layout style={{backgroundColor:'#ffffff',height:49, flexDirection:'row', }}>
                     <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                         <TouchableOpacity onPress={()=>this.props.navigation.goBack()}>
-                                <Backsvg width={25} height={25}/>
+                            <Backsvg width={25} height={25}/>
                         </TouchableOpacity>
                     </View>
-                    <View style={{flex:5, margin : 5, borderColor: '#A897C2'}}>
+                    <View style={{flex:7, margin : 5, borderColor: '#A897C2', marginRight : 10}}>
                         <TextInput 
                             style={styles.titleInput} 
                             value={this.state.skeyword} 
                             onChangeText={(text) =>{this.setState({skeyword:text})}}
-                            placeholder="검색어를 입력하세요"
+                            placeholder="글 제목, 내용 등 검색어를 입력하세요"
                             placeholderTextColor='#A897C2'
                         />
                         <TouchableOpacity 
                             style={{position:"absolute",right:5,top:6}}
-                            onPress={()=>{Keyboard.dismiss();this.getSearch();}}>
+                            onPress={()=>{this.setState({spinnerVisible:true, isLoading:true},Keyboard.dismiss());this.getSearch();}}>
                             <Searchsvg height={25} width={25} fill='#A9C' />
                         </TouchableOpacity>
                     </View>
+                </Layout>
+                <View style={{flex : 1}}>
+                    {isLoading?
+                        spinnerVisible?
+                        <Modal
+                            visible={spinnerVisible}>
+                            <View style={{backgroundColor: 'rgba(0,0,0,0.7)', width : 100, height :100, borderRadius:20, justifyContent: 'center', alignItems:'center'}}>
+                                <Spinner size="giant" />
+                            </View>
+                        </Modal>
+                        :
+                        <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                            <Searchsvg height={100} width={100} fill='#A9C' />
+                            <Text category = 'h1' style = {{margin : 20}}>게시판의 글을 검색해보세요</Text>
+                        </View>
+                    :<List
+                        style={styles.container}
+                        contentContainerStyle={styles.contentContainer}
+                        data={this.state.lists}
+                        renderItem={this.renderItem}
+                        refreshing={this.state.refreshing}
+                        // onEndReached={this.load_more_data}
+                        // onEndReachedThreshold = {0.9}
+                        ListFooterComponent={this.renderFooter}
+                        onRefresh={this.onRefresh}
+                    />}
+                    
                 </View>
-                {isLoading?
-                <Text category = 'h4' style = {{margin : 20}}>검색어를 입력하세요</Text>
-                :<List
-                    style={styles.container}
-                    contentContainerStyle={styles.contentContainer}
-                    data={this.state.lists}
-                    renderItem={this.renderItem}
-                    refreshing={this.state.refreshing}
-                    // onEndReached={this.load_more_data}
-                    // onEndReachedThreshold = {0.9}
-                    ListFooterComponent={this.renderFooter}
-                    onRefresh={this.onRefresh}
-                />}
             </SafeAreaView>
         )
     }
