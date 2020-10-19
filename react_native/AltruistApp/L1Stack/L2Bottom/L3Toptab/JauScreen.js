@@ -167,7 +167,7 @@ class JauScreen extends React.Component {
 						{post_remove_tags}
 					</Text>
 				</View>
-				<View style={{flexDirection:'row', justifyContent:'space-between'}}>
+				<View style={{flexDirection:'row', justifyContent:'space-between', marginLeft:-10, marginRight:-10}}>
 					{imageData
 					?imageData.length==1
 					?imageData.map(i=>
