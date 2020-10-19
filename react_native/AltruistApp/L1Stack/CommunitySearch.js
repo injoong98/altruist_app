@@ -90,8 +90,8 @@ class CommunitySearch extends React.Component{
                   style={{width:70, height:70, resizeMode:'cover', borderRadius:10}}
                 />
             </View>:null}
-            <View style={styles.textArea}>
-                <View style={{flex:1, paddingHorizontal:5}}>
+            <View style={{flex:1}}>
+                <View style={{flex:1, padding:5}}>
                     <View style={{flexDirection:'row', justifyContent : 'space-between', marginHorizontal : 4}}>
                         <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{ this.brdNm(item.brd_id)}</Text>
                         <PostTime datetime = {item.post_datetime}/>
@@ -103,6 +103,25 @@ class CommunitySearch extends React.Component{
                         <Text style={{...styles.text, color:'#878787', fontSize:10}} numberOfLines={2} ellipsizeMode="tail" category='h4'>
                             {item.post_content}
                         </Text>
+                    </View>
+                </View>
+                <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                    <View>
+                        {/* <PostTime style={{alignItems:'center', marginLeft : 5}}datetime = {item.post_datetime}/> */}
+                    </View>
+                    <View style={styles.infocontainer}>
+                        <View style={{alignItems:'center',}}>
+                            <Heartsvg width={10} height={10}/>
+                            <Text style={styles.infotext} category="c1">{item.post_like}</Text>
+                        </View>
+                        <View style={{alignItems:'center',}}>
+                            <Commentsvg width={10} height={10}/>
+                            <Text style={styles.infotext} category="c1">{item.post_comment_count}</Text>
+                        </View>
+                        <View style={{alignItems:'center',}}>
+                            <Viewsvg width={10} height={10}/>
+                            <Text style={styles.infotext} category="c1">{item.post_hit}</Text>
+                        </View>
                     </View>
                 </View>
             </View>
@@ -135,10 +154,11 @@ class CommunitySearch extends React.Component{
                             onChangeText={(text) =>{this.setState({skeyword:text})}}
                             placeholder="글 제목, 내용 등 검색어를 입력하세요"
                             placeholderTextColor='#A897C2'
+                            onSubmitEditing={()=>{this.setState({spinnerVisible:true}, this.getSearch)}}
                         />
                         <TouchableOpacity 
                             style={{position:"absolute",right:5,top:6}}
-                            onPress={()=>{this.setState({spinnerVisible:true, isLoading:true},Keyboard.dismiss());this.getSearch();}}>
+                            onPress={()=>{this.setState({spinnerVisible:true},Keyboard.dismiss());this.getSearch();}}>
                             <Searchsvg height={25} width={25} fill='#A9C' />
                         </TouchableOpacity>
                     </View>
@@ -155,14 +175,6 @@ class CommunitySearch extends React.Component{
 				</View>
                 <View style={{flex : 1}}>
                     {isLoading?
-                        spinnerVisible?
-                        <Modal
-                            visible={spinnerVisible}>
-                            <View style={{backgroundColor: 'rgba(0,0,0,0.7)', width : 100, height :100, borderRadius:20, justifyContent: 'center', alignItems:'center'}}>
-                                <Spinner size="giant" />
-                            </View>
-                        </Modal>
-                        :
                         <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                             <Searchsvg height={100} width={100} fill='#A9C' />
                             <Text category = 'h1' style = {{margin : 20}}>게시판의 글을 검색해보세요</Text>
@@ -178,7 +190,12 @@ class CommunitySearch extends React.Component{
                         ListFooterComponent={this.renderFooter}
                         onRefresh={this.onRefresh}
                     />}
-                    
+                    <Modal
+                        visible={spinnerVisible}>
+                        <View style={{backgroundColor: 'rgba(0,0,0,0.7)', width : 100, height :100, borderRadius:20, justifyContent: 'center', alignItems:'center'}}>
+                            <Spinner size="giant" />
+                        </View>
+                    </Modal>
                 </View>
             </SafeAreaView>
         )
@@ -199,12 +216,6 @@ const styles = StyleSheet.create({
         margin:5,
         backgroundColor:'#F4F4F4',
         borderRadius:10,
-    },
-    textArea: {
-        flex: 1,
-        paddingVertical: 7,
-        paddingRight: 5,
-        paddingLeft: 0,
     },
     textTop: {
         flex:1,
@@ -231,6 +242,13 @@ const styles = StyleSheet.create({
         fontSize:12,
         height:40,
         minWidth:'80%'
+    },
+    infocontainer:{
+        display:"flex",flexDirection:"row",justifyContent:'space-evenly',
+        borderTopLeftRadius:20,
+        width:100,
+        backgroundColor:"#ffffff",
+        position:"relative",bottom:0,right:0,
     },
   });
 
