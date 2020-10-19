@@ -86,8 +86,8 @@ class CommunitySearch extends React.Component{
                   style={{width:70, height:70, resizeMode:'cover', borderRadius:10}}
                 />
             </View>:null}
-            <View style={styles.textArea}>
-                <View style={{flex:1, paddingHorizontal:5}}>
+            <View style={{flex:1}}>
+                <View style={{flex:1, padding:5}}>
                     <View style={{flexDirection:'row', justifyContent : 'space-between', marginHorizontal : 4}}>
                         <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{ this.brdNm(item.brd_id)}</Text>
                         <PostTime datetime = {item.post_datetime}/>
@@ -99,6 +99,25 @@ class CommunitySearch extends React.Component{
                         <Text style={{...styles.text, color:'#878787', fontSize:10}} numberOfLines={2} ellipsizeMode="tail" category='h4'>
                             {item.post_content}
                         </Text>
+                    </View>
+                </View>
+                <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                    <View>
+                        {/* <PostTime style={{alignItems:'center', marginLeft : 5}}datetime = {item.post_datetime}/> */}
+                    </View>
+                    <View style={styles.infocontainer}>
+                        <View style={{alignItems:'center',}}>
+                            <Heartsvg width={10} height={10}/>
+                            <Text style={styles.infotext} category="c1">{item.post_like}</Text>
+                        </View>
+                        <View style={{alignItems:'center',}}>
+                            <Commentsvg width={10} height={10}/>
+                            <Text style={styles.infotext} category="c1">{item.post_comment_count}</Text>
+                        </View>
+                        <View style={{alignItems:'center',}}>
+                            <Viewsvg width={10} height={10}/>
+                            <Text style={styles.infotext} category="c1">{item.post_hit}</Text>
+                        </View>
                     </View>
                 </View>
             </View>
@@ -184,12 +203,6 @@ const styles = StyleSheet.create({
         backgroundColor:'#F4F4F4',
         borderRadius:10,
     },
-    textArea: {
-        flex: 1,
-        paddingVertical: 7,
-        paddingRight: 5,
-        paddingLeft: 0,
-    },
     textTop: {
         flex:1,
         backgroundColor:'#FFFFFF',
@@ -215,6 +228,13 @@ const styles = StyleSheet.create({
         fontSize:12,
         height:40,
         minWidth:'80%'
+    },
+    infocontainer:{
+        display:"flex",flexDirection:"row",justifyContent:'space-evenly',
+        borderTopLeftRadius:20,
+        width:100,
+        backgroundColor:"#ffffff",
+        position:"relative",bottom:0,right:0,
     },
   });
 
