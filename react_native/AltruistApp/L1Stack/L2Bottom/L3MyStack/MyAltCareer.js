@@ -1,6 +1,6 @@
 import React from 'react';
 import {SafeAreaView,View,TextInput,TouchableHighlight,StyleSheet} from 'react-native';
-import {Text,Modal,CheckBox,Select,SelectItem} from '@ui-kitten/components';
+import {Text,Modal,CheckBox,Select,SelectItem, IndexPath} from '@ui-kitten/components';
 import Axios from 'axios';
 import {Signing} from '../../Context' 
 import { FlatList } from 'react-native-gesture-handler';
@@ -9,7 +9,7 @@ import Backsvg from '../../../assets/icons/back-arrow-color.svg'
 import Clipsvg from '../../../assets/icons/clip.svg';
 import DocumentPicker from 'react-native-document-picker';
 import ImagePicker from 'react-native-image-crop-picker';
-import {ActionSheet, Root} from 'native-base';
+import {ActionSheet,  Root} from 'native-base';
 
 class RenderCareerInput extends React.Component{
     constructor(props){
@@ -26,7 +26,50 @@ class RenderCareerInput extends React.Component{
         }
     }
     request(){
-        console.log(JSON.stringify(this.state))
+        const career =this.props.item.item;
+        const {acv_open,acv_type,acv_year,acv_content,acv_final,acv_file1}=this.state;
+        var updatedata={}
+        
+        var formdata = new FormData();
+        formdata.append('acv_id',career.acv_id);
+
+        if(career.acv_open!=acv_open){
+            updatedata.acv_open=acv_open;
+            // formdata.append('acv_open',acv_open);
+        }
+        if(career.acv_type!=acv_type){
+            updatedata.acv_type=acv_type;
+            // formdata.append('acv_type',acv_type);
+        }
+        if(career.acv_year!=acv_year){
+            updatedata.acv_year=acv_year;
+            // formdata.append('acv_year',acv_year);
+        }
+        if(career.acv_content!=acv_content){
+            updatedata.acv_content=acv_content;
+            // formdata.append('acv_content',acv_content);
+        }
+        if(career.acv_final!=acv_final){
+            updatedata.acv_final=acv_final;
+            // formdata.append('acv_final',acv_final);
+        }
+        if(acv_file1.uri){
+            formdata.append('acv_file1',acv_file1);
+        }
+        if(Object.keys(updatedata).length>0||acv_file1.uri){
+            updatedata.acv_status=0;
+            formdata.append('updatedata',JSON.stringify(updatedata));
+            console.log('form data : '+JSON.stringify(formdata));
+            
+            Axios.post('http://dev.unyict.org/api/altruists/modify_career',formdata)
+            .then(res=>{
+                console.log('request success! : '+JSON.stringify(res.data))
+                
+            })
+            .catch(err=>{
+                console.log('request faied! : '+err)
+            })
+        }
     }
     attatchFileOniOS = () =>{
         const buttons = ['사진 선택','파일 선택', '취소'];
@@ -91,10 +134,10 @@ class RenderCareerInput extends React.Component{
     
     }
     componentDidMount(){
-        var career =this.props.item.item
+        const career =this.props.item.item
         const {acv_open,acv_type,acv_year,acv_content,acv_final} = career;
         this.setState({acv_type,acv_year,acv_content,acv_contentacv_open:acv_open==1? true : false,acv_final:acv_final==1? true : false,})
-        this.setState({selectedIndex:acv_type == 'H'? 0:acv_type == 'J'? 1 : 2})
+        this.setState({selectedIndex: new IndexPath( acv_type == 'H'? 0:acv_type == 'J'? 1 : 2)})
     }
     render(){
         const {acv_open,acv_type,acv_year,acv_content,acv_final,acv_file1,selectedIndex} = this.state;
@@ -138,7 +181,7 @@ class RenderCareerInput extends React.Component{
                             }
                             selectedIndex={selectedIndex}
                             onSelect={index =>{
-                            this.setState({selectedIndex,acv_type:index.row==0? 'H':index.row==1? 'J':'E'});
+                            this.setState({selectedIndex:index,acv_type:index.row==0? 'H':index.row==1? 'J':'E'});
                             }}
                             style={{}}
                             >
@@ -262,7 +305,7 @@ class MyAltCareer extends React.Component{
                     <View>
                         <FlatList
                             data={careers}
-                            renderItem={(item,index)=><RenderCareerInput item={item}/>}
+                            renderItem={(item)=><RenderCareerInput item={item}/>}
                             keyExtractor={item => item.acv_id}
                         />
                     </View>

@@ -18,7 +18,7 @@ class Altruists extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Altruists', 'Member_nickname', 'Member_meta', 'Member_auth_email', 'Member_userid', 'Member_group_member', 'Member_group', 'Social_meta', 'Member_extra_vars');
+	protected $models = array('Altruists','Altruists_cv', 'Member_nickname', 'Member_meta', 'Member_auth_email', 'Member_userid', 'Member_group_member', 'Member_group', 'Social_meta', 'Member_extra_vars');
 
 	protected $modelname = 'Member_model';
 	/**
@@ -1781,6 +1781,143 @@ EOT;
 		$this->layout = element('layout_skin_file', element('layout', $view));
 		$this->view = element('view_skin_file', element('layout', $view));
 	}
+
+	/**
+	 * 이타주의자 경력사항 수정  API 
+	 */
+
+	public function modify_career(){
+			// 이벤트 라이브러리를 로딩합니다
+			$eventname = 'event_Altruists_form';
+			$this->load->event($eventname);
+	
+			// 이타주의자에 지원 자격 조건
+			$_SESSION['mem_id']=37;
+			if (!$this->member->is_member()) { // 이타주의자들 회원 
+				response_result($r,'Err','세션이 만료 되었습니다. 다시 로그인 해주세요');
+			}
+
+			$view = array();
+			$view['view'] = array();
+	
+			// 이벤트가 존재하면 실행합니다
+			$view['view']['event']['before'] = Events::trigger('before', $eventname);
+	
+			$mem_id = $this->session->userdata('mem_id');
+				
+			if (empty($mem_id)) {
+				response_result($r, 'Err', 'mem_id 누락');
+			}
+			$alt_id = 0;
+			$alt_mem = $this->Altruists_model->get_by_memid($mem_id);
+			$alt_id = $alt_mem['alt_id'];
+			if ($alt_mem) {
+				// 테스트 끝나면 !== R 부분의 ! 제거 해주기
+				// if ($alt_mem['alt_status'] == 'Y' || $alt_mem['alt_status'] !== 'R') {
+				// 	response_result($alt_mem, 'Err', '회원님은 이미 이타주의자에 지원하셨습니다.');
+				// }
+			}
+	
+			/** 첨부 파일 업로드  */
+			$file_error ='' ; 
+			if (true) {
+				$this->load->library('upload');
+				if (isset($_FILES) && isset($_FILES['acv_file1']) && isset($_FILES['acv_file1']['name'])) {
+					$upload_path = config_item('uploads_dir') . '/altruists_apply/';
+					if (is_dir($upload_path) === false) {
+						mkdir($upload_path, 0707);
+						$file = $upload_path . 'index.php';
+						$f = @fopen($file, 'w');
+						@fwrite($f, '');
+						@fclose($f);
+						@chmod($file, 0644);
+					}
+					$upload_path .= $mem_id. '/';
+					if (is_dir($upload_path) === false) {
+						mkdir($upload_path, 0707);
+						$file = $upload_path . 'index.php';
+						$f = @fopen($file, 'w');
+						@fwrite($f, '');
+						@fclose($f);
+						@chmod($file, 0644);
+					}
+					
+					$uploadconfig = array();
+					$uploadconfig['upload_path'] = $upload_path;
+					$uploadconfig['allowed_types'] = '*';
+					$uploadconfig['max_size'] = 10 * 1024;
+					$uploadconfig['encrypt_name'] = true;
+
+					$this->upload->initialize($uploadconfig);
+					if ($this->upload->do_upload('acv_file1')) {
+						$filedata = $this->upload->data();
+						$uploadfiledata = array();
+						$uploadfiledata['file'] = $upload_path. element('file_name', $filedata);
+					} else {
+						$file_error = $this->upload->display_errors();
+					}
+						
+					
+				}
+			}
+			/** 첨부 파일 업로드  끝 */
+	
+			/**
+			 * 유효성 검사를 하지 않는 경우, 또는 유효성 검사에 실패한 경우입니다.
+			 * 즉 글쓰기나 수정 페이지를 보고 있는 경우입니다
+			 */
+			if ($file_error !== '') {
+				response_result(array($file_error), 'Err', '파일 저장 중 오류가 발생하였습니다.');
+			}
+			// 이벤트가 존재하면 실행합니다
+			$view['view']['event']['formruntrue'] = Events::trigger('formruntrue', $eventname);
+	
+			//$mem_level = (int) $this->cbconfig->item('register_level');
+	
+			$metadata = array();
+			log_message('error', 'call Altruists/apply');
+			
+			try {
+				$this->db->trans_start();
+				if($updatephoto =='' || $updatephoto == null) $updatephoto = '/';
+				//프로필 저장 
+				$data =json_decode($this->input->post('updatedata'));
+				
+				$updatedata = array();
+				foreach($data as $key=>$value){
+					$updatedata[$key] = $value;	
+				}
+
+				if ($uploadfiledata['file']) {
+					$updatedata['acv_file1'] = $uploadfiledata['file'];
+				}
+
+				$acv_id =$this->input->post('acv_id');
+				$this->Altruists_cv_model->update($acv_id,$updatedata);
+				
+				
+				log_message('log', 'acv_result :'.$acv_result);
+				 
+				//commit 
+				$this->db->trans_complete();
+	
+				if ($this->db->trans_status() === FALSE) 
+				{
+					response_result($view, 'Err', '수정 도중 오류가 발생하였습니다');
+				} else {
+					response_result($view, 'success', '정상적으로 수정되었습니다.');
+				}
+
+			}catch (Exception $e) {
+				log_message('error', $e->getMessage());
+				response_result($view, 'Err', '수정에 실패하였습니다');
+			}
+
+	} 
+
+	/**
+	 * 이타주의자 일반 프로필 수정  API 
+	 */
 
 	public function modify_general(){
 			// 이벤트 라이브러리를 로딩합니다
