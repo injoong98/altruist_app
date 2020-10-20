@@ -448,6 +448,10 @@ class GominContent extends React.Component{
         const {navigation,route} =this.props
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible} = this.state
          return(
+            <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            style={{flex:1}} 
+         >
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {if(Platform.OS!=='ios'){
@@ -484,7 +488,7 @@ class GominContent extends React.Component{
                 }
                 <TextInput
                     ref="commentInput"
-                    style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                    style={Platform.OS=="ios"? styles.commentiOS : styles.commentAndroid}
                     value={cmt_content}
                     placeholder={ replying?"대댓글" :"댓글"}
                     placeholderTextColor='#A897C2'
@@ -600,6 +604,7 @@ class GominContent extends React.Component{
             </Modal>
             
         </SafeAreaView>
+        </KeyboardAvoidingView>
          )
      }
 }
@@ -1069,6 +1074,11 @@ class MarketContent extends React.Component {
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, popoverVisible, modalType} = this.state;
 
         return(
+            <KeyboardAvoidingView
+               behavior={Platform.OS == "ios" ? "padding" : "height"}
+               style={{flex:1}} 
+            >
+
             <SafeAreaView style={{flex:1}}>
                 <WriteContentToptab
                     backgroundColor='#F4F4F4'
@@ -1110,7 +1120,7 @@ class MarketContent extends React.Component {
                     }
                     <TextInput
                         ref="commentInput"
-                        style={{backgroundColor:'#ffffff',borderRadius:14,fontSize:15}}
+                        style={Platform.OS=="ios"? styles.commentiOS : styles.commentAndroid}
                         value={cmt_content}
                         placeholder={ replying?"대댓글" :"댓글"}
                         placeholderTextColor='#63579D'
@@ -1231,6 +1241,7 @@ class MarketContent extends React.Component {
                     <Spinner size='giant'/>
                 </Modal>
             </SafeAreaView>
+            </KeyboardAvoidingView>
         
             )
     }
@@ -2031,6 +2042,11 @@ class IlbanContent extends Component {
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image} = this.state
         
         return(
+            <KeyboardAvoidingView
+               behavior={Platform.OS == "ios" ? "padding" : "height"}
+               style={{flex:1}} 
+            >
+
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {
@@ -2068,7 +2084,7 @@ class IlbanContent extends Component {
                 }
                 <TextInput
                     ref="commentInput"
-                    style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                    style={Platform.OS=="ios"? styles.commentiOS : styles.commentAndroid}
                     value={cmt_content}
                     placeholder={ replying?"대댓글" :"댓글"}
                     placeholderTextColor='#A897C2'
@@ -2205,6 +2221,7 @@ class IlbanContent extends Component {
                 />
             </Modal>
         </SafeAreaView>
+            </KeyboardAvoidingView>
          )
      }
 }
@@ -2298,7 +2315,21 @@ const styles = StyleSheet.create({
     marketText: {
         marginTop:10,
         marginLeft: 10
-    }
+    },
+    commentAndroid:{
+        backgroundColor:'#f4f4f4',
+        borderRadius:14,
+        fontSize:14
+    },
+    commentiOS:{
+        backgroundColor:'#f4f4f4',
+        borderRadius:14,
+        fontSize:18,
+        textAlignVertical:'center',
+        paddingHorizontal:'3%',
+        minHeight:50
+    },
+    
 });
 
 
