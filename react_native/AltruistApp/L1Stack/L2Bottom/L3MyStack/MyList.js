@@ -96,9 +96,7 @@ export class MyList extends React.Component{
                         <Viewsvg width={20} height={20}/>
                         <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                     </View>
-  
                 </View>
-  
             </View>
         </TouchableOpacity>
         )

@@ -142,6 +142,11 @@ class AltApplyScreen extends React.Component {
         <ScrollView style={styles.wrapper}>
           <View style={styles.agrees}>
             <View style={styles.checks}>
+              <View style={{alignItems:'flex-start',marginLeft:14}}>
+                <Text>
+                  {'내용을 확인한 후 네모 칸을 클릭하여 \n체크 표시해주세요.\n'}
+                </Text>
+              </View>
               <View style={styles.checkbox}>
                 <this.CheckAgrees i={0} />
                 <Text category="p1" style={styles.chkText}>
@@ -166,15 +171,7 @@ STEP3. 질문을 선택하여 답변을 작성합니다.
 - 상시 확인 부탁드립니다.
 - 답변을 확인한 경우, 해당 질문이 '답변 중' 상태로 변경됩니다.
 - 작성 후, '답변 완료'라고 상태가 변경되어 답변을 수정할 수 없습니다.
-
-[주의사항]
-- 이타주의자는 부적절한 질문에 대해 신고할 수 있습니다.
-- 질문자는 부적절한 답변에 대한 신고할 수 있습니다.
-- 아래에 해당하는 질문은 답변을 거절할 수 있습니다.
-> 「더불어 성장하는 이타주의자들」 이용규칙에 준수되지 않는 내용
-> 이타주의자 전문분야와 무관한 질문
-> 외부 행사 참여 요청(활동방법은 제외)
-> 인터뷰 혹은 과제 요청`}
+`}
                 </Text>
               </View>
               <View style={styles.checkbox}>
@@ -201,7 +198,7 @@ STEP3. 질문을 선택하여 답변을 작성합니다.
               </View>
             </View>
             <TouchableHighlight
-              style={styles.btn}
+              style={[styles.btn,{marginBottom:23}]}
               onPress={() => this.goNextStep()}>
               <Text category="h2" style={styles.btnText}>
                 다음

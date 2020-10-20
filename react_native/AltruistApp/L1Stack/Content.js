@@ -25,6 +25,7 @@ import Emailsvg from '../assets/icons/Email.svg'
 import Viewsvg from '../assets/icons/view.svg'
 import Timesvg from '../assets/icons/Time.svg'
 import Heartsvg from '../assets/icons/heart.svg'
+import Heartfillsvg from '../assets/icons/heartfill.svg'
 
 
 const BackIcon =  (props) =>(
@@ -238,7 +239,8 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/post_like',formdata)
+        
+        Axios.post(`http://dev.unyict.org/api/postact/${this.state.post.is_liked?'cancel_post_like':'post_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -250,11 +252,11 @@ class GominContent extends React.Component{
             this.setState({resultModalVisible:true, resultText : error.message});
         })
     }
-    cmtLike = (cmt_id) =>{
+    cmtLike = (cmt_id, is_liked) =>{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 alert(`${JSON.stringify(response.data.message)}`)
@@ -302,7 +304,12 @@ class GominContent extends React.Component{
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
     }
-    
+
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
+    }
     modalList = [
         {
             text : '이 게시글을 신고하시겠습니까?',
@@ -331,7 +338,7 @@ class GominContent extends React.Component{
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
         return (
-            <View style={{backgroundColor:'#F4F4F4',paddingTop:15, marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10, paddingHorizontal:25}} >
+            <View style={{backgroundColor:'#F4F4F4',paddingTop:15, marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10, paddingHorizontal:20}} >
                 <View style={{paddingBottom:5,marginTop:10, marginBottom:10}}>
                     <Text style={{fontSize:18}} category='h3'>{post.post_title}</Text>
                 </View>
@@ -367,10 +374,10 @@ class GominContent extends React.Component{
                             </View>
                         </View>
                     </View>
-                    <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
-                        <View style={{flexDirection:'row', justifyContent:'space-evenly', alignItems:'center'}}>
+                    <View style={{paddingVertical:15,flexDirection:"row",justifyContent:"flex-end"}}>
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
                             <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
-                                <Heartsvg width='16' height='16'/>
+                                {post.is_liked?<Heartfillsvg width='16' height='16'/>:<Heartsvg width='16' height='16'/>}
                             </TouchableOpacity>
                             <Text category="s1" style={{color:'#63579D', fontSize:13, marginBottom:-2}}>{post.post_like}</Text>
                             {/* <TouchableOpacity onPress={()=>alert("저장!")}>
@@ -436,8 +443,8 @@ class GominContent extends React.Component{
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg width='12' height='12'/>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                        {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
@@ -660,6 +667,11 @@ class MarketContent extends React.Component {
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
     }
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
+    }
 
     getPostData = async(post_id)=>{
         
@@ -860,11 +872,12 @@ class MarketContent extends React.Component {
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
         })
     }
-    cmtLike = (cmt_id) =>{
+    cmtLike = (cmt_id, is_liked) =>{
+
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -984,8 +997,8 @@ class MarketContent extends React.Component {
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg width='12' height='12'/>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                        {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
@@ -1283,6 +1296,12 @@ class AlbaContent extends React.Component {
         const {post_id} = this.props.route.params;
         await this.getPostData(post_id)
         .then(()=>{this.setState({isLoading:false})})
+    }
+
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
     }
 
     getPostData = async(post_id)=>{
@@ -1814,11 +1833,11 @@ class IlbanContent extends Component {
             this.setState({resultModalVisible:true, resultText : error.message});
         })
     }
-    cmtLike = (cmt_id) =>{
+    cmtLike = (cmt_id, is_liked) =>{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post(this.state.comment.is_liked?'http://dev.unyict.org/api/postact/cancel_comment_like':'http://dev.unyict.org/api/postact/comment_like',formdata)
+        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -1883,6 +1902,12 @@ class IlbanContent extends Component {
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
+    }
+
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
     }
     
     modalList = [
@@ -1964,8 +1989,8 @@ class IlbanContent extends Component {
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
                         <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
                             {post.is_liked?<Thumbfillsvg width = {18} height={18}/>:<Thumbsvg width='18' height='18'/>}
-                            <Text category="s1" style={{color:'#A897C2', fontSize:15}}>{post.post_like}</Text>
                         </TouchableOpacity>
+                        <Text category="s1" style={{color:'#A897C2', fontSize:15}}>{post.post_like}</Text>
                         {/* <TouchableOpacity onPress={()=>alert("저장!")}>
                             <PlusIcon />
                             <Text>{post.scrap_count}</Text>
@@ -2028,7 +2053,7 @@ class IlbanContent extends Component {
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
                         {item.is_liked?<Thumbfillsvg width='12' height='12'/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                     <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
