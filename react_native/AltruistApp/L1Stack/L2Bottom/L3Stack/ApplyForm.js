@@ -174,7 +174,7 @@ class AltApplyFormScreen extends React.Component {
                     value= {acv_year[i]}
                     onChangeText={(text)=>{acv_year[i]=text;this.setState({acv_year});}}
                     placeholder='ex)2010~'
-                    style={{backgroundColor:'#ffffff',fontSize:10,padding:0}}
+                    style={{backgroundColor:'#ffffff',fontSize:10,padding:0,minHeight:Platform.OS=='ios'? 20:0}}
                     keyboardType='default'
                   />
               </View>
@@ -183,7 +183,7 @@ class AltApplyFormScreen extends React.Component {
                     value= {acv_content[i]}
                     onChangeText={(text)=>{acv_content[i]=text;this.setState({acv_content})}}
                     placeholder='경력내용'
-                    style={{backgroundColor:'#ffffff',fontSize:10,padding:0}}
+                    style={{backgroundColor:'#ffffff',fontSize:10,padding:0,minHeight:Platform.OS=='ios'? 20:0}}
                   />
               </View>
               <View style={{flex:4,alignItems:'center',justifyContent:'space-evenly',flexDirection:'row'}}>
@@ -542,7 +542,7 @@ class AltApplyFormScreen extends React.Component {
                   value={alt_aboutme}
                   onChangeText={(text) => this.setState({alt_aboutme:text})}
                   placeholder='자기PR (50자 이내)'
-                  style={[styles.contentInput,{borderWidth: this.state.aboutmeIsNull ? 1:0,borderColor :this.state.aboutmeIsNull ? '#DB2434':'#ffffff'}]}
+                  style={[styles.contentInput,{borderWidth: this.state.aboutmeIsNull ? 1:0,borderColor :this.state.aboutmeIsNull ? '#DB2434':'#ffffff',minHeight:Platform.OS=='ios'? 50:0}]}
                   multiline={true}
                   placeholderTextColor='#A897C2'
                   textAlignVertical="top"
