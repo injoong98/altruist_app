@@ -39,7 +39,6 @@ export const MyStackNav = () =>(
     <Navigator headerMode="none">
         <Screen name = "Mypage" component={Mypage}/>
         <Screen name = "MyList" component={MyList}/>
-        <Screen name = "MyLeave" component={MyLeave}/>
         <Screen name = "MyPoint" component={MyPoint}/>
         <Screen name = "MyProfEdit" component={MyProfEdit}/>
         <Screen name = "MyIlban" component={IlbanContent}/>
@@ -52,5 +51,6 @@ export const MyStackNav = () =>(
         <Screen name = "MyAlarm" component={MyAlarm}/>
         <Screen name = "MyAltCareer" component={MyAltCareer}/>
         <Screen name = "MyAltProf" component={MyAltProf}/>
+        <Screen name = "MyLeave" component={MyLeave}/>
     </Navigator>
 )

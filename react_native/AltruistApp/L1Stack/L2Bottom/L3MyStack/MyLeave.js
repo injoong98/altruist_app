@@ -1,14 +1,10 @@
 import React from 'react';
-import {SafeAreaView,View,LogBox,StyleSheet,ActivityIndicator,TouchableOpacity, } from 'react-native';
-import { Text,List,Spinner,TopNavigationAction,TopNavigation,Button, Icon, Input} from '@ui-kitten/components';
+import {SafeAreaView,View,LogBox,StyleSheet,ActivityIndicator,TouchableOpacity,Alert} from 'react-native';
+import { Text,List,Spinner,TopNavigationAction,TopNavigation,Button, Icon, Input, Modal} from '@ui-kitten/components';
 import axios from 'axios'
-import {PostTime} from '../../../components/PostTime'
-import Heartsvg from '../../../assets/icons/heart.svg'
-import Viewsvg from '../../../assets/icons/view.svg'
-import Commentsvg from '../../../assets/icons/comment.svg'
-import Backsvg from '../../../assets/icons/back-arrow-color.svg'
-
-
+import Confirm from '../../../components/confirm.component'
+import {Signing} from '../../Context'
+import { set } from 'react-native-reanimated';
 
 const BackIcon = (props) => (
     <Icon
@@ -18,16 +14,18 @@ const BackIcon = (props) => (
       pack="alticons"
     />
   );
-
   
-
 export class MyLeave extends React.Component{
     constructor(props) {
       super(props);
       this.state={
-          idConfirm:''
-     }
+        mem_password:'',
+        inputborderRed:'',
+        logOutModalVisible:false
+       
     }
+}
+static contextType = Signing;
 
 BackAction = () => (
     <TopNavigationAction
@@ -37,35 +35,29 @@ BackAction = () => (
       }}
     />
   );
-  
+
   SubmitForm = async () => {
-    const {mem_userid} = this.state;
+    const {mem_password} = this.state;
     let formdata = new FormData();
     
+    formdata.append('mem_password', mem_password);
     
-    formdata.append('mem_userid', mem_userid);
-    // return Alert.alert(
-      //   '접근 실패',
-      //   '{`올바른 접근 방법이 아닙니다. \n 다시 시도해주세요.`}',
-      //   [
-        //     {
-          //       text: 'OK',
-          //     },
-          //   ],
-          //   {cancelable: false},
-          // );
-          
-    console.info('form', this.state);
-
     await axios
-      .post(`http://dev.unyict.org/api/membermodify/memleave`, formdata)
-      .then((res) => {
-        console.log(res);
+    .post(`https://dev.unyict.org/api/membermodify/memleave`, formdata)
+    .then((res) => {
+        console.log(res)
+        if(res.data.status == 200){
+            this.setState({ logOutModalVisible: true})
+        }else{
+            this.setState({colorRed:"red"})
+        }
       })
   };
 
     render(){
-        const { idConfirm} = this.state;
+    const { mem_password, colorRed, logOutModalVisible} = this.state;
+    const {signOut} = this.context
+
         return(
             <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
             <TopNavigation
@@ -84,10 +76,12 @@ BackAction = () => (
                 </Text>
             <Input
                 placeholder="PASSWORD를 한번 더 입력해주세요!"
-                style={styles.inputs}
-                onChangeText={idConfirm=> {this.setState({idConfirm})}}
-                onEndEditing={idConfirm=> this.setState({idConfirm})}
-                caption= {!idConfirm ? null : "진짜 가는건가요?ㅠㅠ" }
+                style={[{borderColor: colorRed ? colorRed : '#FFFFFF'}, styles.inputs]}
+                onChangeText={mem_password=> {this.setState({mem_password})}}
+                onEndEditing={mem_password=> this.setState({mem_password})}
+                caption= {
+                    !mem_password ? null : `진짜 가는건가요?ㅠㅠ`,
+                    colorRed ? <Text style={{ marginHorizontal: 30, fontSize:10, color:colorRed}}>{`패스워드가 일치 하지 않습니다 !`}</Text> : null}
                 secureTextEntry = {true}
             />
               <Button
@@ -97,10 +91,22 @@ BackAction = () => (
                   height: 34,
                   borderRadius: 6,
                 }}
+                onPress={()=>{this.SubmitForm(); }}
                 >
                 확인
               </Button>
             </View>
+            <Modal
+            visible={logOutModalVisible}
+            backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+            onBackdropPress={() => this.setState({logOutModalVisible:false})}
+        >
+            <Confirm 
+                confirmText="그동안 이용에 감사드립니다!"
+                scndText="확인"
+                OnScndPress={() => {signOut()}}
+            />
+        </Modal>
           </SafeAreaView>
             )
         }
@@ -114,57 +120,6 @@ const styles = StyleSheet.create({
         paddingBottom: 30,
         backgroundColor: '#F8F8F8',
         borderRadius: 15,
-        borderColor: '#FFFFFF',
         color: 'black',
-      },
-    container:{
-        backgroundColor:"#F4F4F4",
-        borderRadius : 20,
-        marginVertical:4.5,
-        marginHorizontal:19,
-        padding:0,
-        paddingLeft:21
-
-
-    },
-    buttoncontainer:{
-        width:"100%",bottom:0,
-        display :"flex", 
-        justifyContent:"center", 
-        alignItems:"center"
-    },
-    icon:{
-        // width: 15,
-        // height: 15
-    },
-    subtitle:{
-        marginTop:10, display:"flex",flexDirection:"row", justifyContent:"space-between",
-    },
-    infocontainer:{
-        display:"flex",flexDirection:"row",justifyContent:'space-evenly',
-        borderTopLeftRadius:23,
-        width:116,
-        backgroundColor:"#ffffff",
-        position:"relative",bottom:0,right:0,
-        paddingTop:5,
-        paddingLeft:20,
-        paddingRight:10
-    },
-    loader:{
-        marginTop : 10,
-        alignItems : 'center',
-    },
-    infotext:{
-        color:'#141552',
-        fontSize:9
-    },
-    headtext:{
-        marginTop:11,
-        paddingTop:10,
-        fontWeight:'bold'
-    },
-    subtext:{
-        marginTop:5,
-        maxWidth:200
-    }
+      }
 })
