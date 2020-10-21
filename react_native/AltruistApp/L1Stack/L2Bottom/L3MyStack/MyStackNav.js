@@ -7,7 +7,7 @@ import {Mypage} from './Mypage';
 import {MyList} from './MyList';
 import {MyPoint} from './MyPoint';
 import {MyProfEdit} from './MyProfEdit';
-import {MyAlarm} from './MyAlarm';
+import {MyAlarmSetting} from './MyAlarm';
 import MyAltCareer from './MyAltCareer';
 import MyAltProf from './MyAltProf';
 import {AltQueToptab} from '../L3Stack/AltQueToptab';
@@ -18,7 +18,7 @@ const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
 
-const MyAlarmSetting =({navigation}) =>{
+const SpareScreen =({navigation}) =>{
 
     return(
     <SafeAreaView style={{flex:1}}>
@@ -45,9 +45,8 @@ export const MyStackNav = () =>(
         <Screen name = "MyQueList" component={AltQueToptab}/>
         <Screen name = "AltReplying" component={AltReplying}/>
         <Screen name = "AltQueContent" component={AltQueContent}/>
-        <Screen name = "MyAlarm" component={MyAlarm}/>
+        <Screen name = "MyAlarmSetting" component={MyAlarmSetting}/>
         <Screen name = "MyAltCareer" component={MyAltCareer}/>
         <Screen name = "MyAltProf" component={MyAltProf}/>
-        {/* <Screen name = "MyAlarmSetting" component={MyAlarmSetting}/> */}
     </Navigator>
 )
