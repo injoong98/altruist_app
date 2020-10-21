@@ -135,16 +135,18 @@ export class ComBottomNav extends React.Component{
 
     render(){
         return(
-            <Navigator 
-                initialRouteName={this.context.isPushNoti() ?"Alarm": "Alt"}
-                tabBar={props => <BottomTabBar {...props} 
-            />}>
-                {/* <Screen name = "Home" component={FontScreen}/> */}
-                <Screen name = "Alt" component={AltStackNav}/>
-                <Screen name = "Commu" component={ComToptabNav}/>
-                <Screen name = "Alarm" component={AlarmToptab}/>
-                <Screen name = "Prof" component={MyStackNav}/>
-            </Navigator>
+            <SafeAreaView style={{flex:1}}>
+                <Navigator 
+                    initialRouteName={this.context.isPushNoti() ?"Alarm": "Alt"}
+                    tabBar={props => <BottomTabBar {...props} 
+                />}>
+                    {/* <Screen name = "Home" component={FontScreen}/> */}
+                    <Screen name = "Alt" component={AltStackNav}/>
+                    <Screen name = "Commu" component={ComToptabNav}/>
+                    <Screen name = "Alarm" component={AlarmToptab}/>
+                    <Screen name = "Prof" component={MyStackNav}/>
+                </Navigator>
+            </SafeAreaView>
         )}
 }
 

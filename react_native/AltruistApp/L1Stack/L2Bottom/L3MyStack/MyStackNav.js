@@ -1,13 +1,13 @@
 import React from 'react';
+import {SafeAreaView,TouchableWithoutFeedback,Linking} from 'react-native'
 import {createStackNavigator} from '@react-navigation/stack';
-import {SafeAreaView} from 'react-native'
 import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction} from '@ui-kitten/components';
 import {IlbanContent, GominContent, MarketContent, AlbaContent} from '../../Content'
 import {Mypage} from './Mypage';
 import {MyList} from './MyList';
 import {MyPoint} from './MyPoint';
 import {MyProfEdit} from './MyProfEdit';
-import {MyAlarm} from './MyAlarm';
+import {MyAlarmSetting} from './MyAlarm';
 import MyAltCareer from './MyAltCareer';
 import MyAltProf from './MyAltProf';
 import {MyLeave} from './MyLeave';
@@ -21,16 +21,14 @@ const BackIcon =  (props) =>(
 
 const SpareScreen =({navigation}) =>{
 
-    const BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() => {navigation.goBack()}}/>
-        )
- 
     return(
     <SafeAreaView style={{flex:1}}>
-        <TopNavigation title="이타주의자" alignment="center" accessoryLeft={BackAction}/> 
-        <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
+        <TouchableWithoutFeedback
+            style={{flex:1,justifyContent:"center", alignItems:"center"}}
+            onPress={()=>{Linking.openSettings()}}
+        >
             <Text>이타주의자</Text>
-        </Layout>   
+        </TouchableWithoutFeedback>   
     </SafeAreaView>
     )
 }
@@ -48,7 +46,7 @@ export const MyStackNav = () =>(
         <Screen name = "MyQueList" component={AltQueToptab}/>
         <Screen name = "AltReplying" component={AltReplying}/>
         <Screen name = "AltQueContent" component={AltQueContent}/>
-        <Screen name = "MyAlarm" component={MyAlarm}/>
+        <Screen name = "MyAlarmSetting" component={MyAlarmSetting}/>
         <Screen name = "MyAltCareer" component={MyAltCareer}/>
         <Screen name = "MyAltProf" component={MyAltProf}/>
         <Screen name = "MyLeave" component={MyLeave}/>

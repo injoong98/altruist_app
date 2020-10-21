@@ -13,7 +13,6 @@ import AltruistSvg from '../../../assets/icons/altruist.svg'
 import NoimageSvg from '../../../assets/icons/noimage.svg'
 import PersonSvg from '../../../assets/icons/person.svg'
 
-
 class Mypage extends React.Component{
     constructor(props){
         super(props);
@@ -190,15 +189,10 @@ class Mypage extends React.Component{
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{this.setState({logOutModalVisible:true})}} >
                         <Text style={styles.menuItem}>로그아웃</Text>
                       </TouchableOpacity>
-                      <View>
-                        <Text></Text>
-                      </View>
-                      {/* <TouchableOpacity style={styles.menuContainer} onPress={()=>{()=>{this.sessionChk();}}}>
-                        <Text style={styles.menuItem}>세션체크</Text>
+                     
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarmSetting');}}>
+                        <Text style={styles.menuItem}>알림 설정</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarm');}}>
-                        <Text style={styles.menuItem}>알림 체크</Text>
-                      </TouchableOpacity> */}
                     </View>
                   </View>
 

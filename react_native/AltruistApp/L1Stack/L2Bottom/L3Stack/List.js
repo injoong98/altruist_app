@@ -353,7 +353,7 @@ class AltListScreen extends React.Component{
                         <TextInput 
                             style={styles.titleInput} 
                             value={keyword} 
-                            onChangeText={(text) =>{this.setState({keyword:text})}}
+                            onChangeText={(text) =>{this.setState({keyword:text},()=>this.getAltruistsFilteredList('keyword'));}}
                             placeholder="이름/자기소개/경력으로 검색해보세요"
                             placeholderTextColor='#A897C2'
                         />
@@ -371,6 +371,7 @@ class AltListScreen extends React.Component{
                         <Text category='h2' style={{fontSize:13,color:"#ffffff"}}>필터</Text>
                     </TouchableHighlight>
                 </View>
+                
                 <this.SelectedArea />
                 {
                     isLoading ? 
@@ -388,7 +389,7 @@ class AltListScreen extends React.Component{
                             />
                         </View> 
                         :
-                        <NoListRes text= {no_result_text} onPress={()=>{this.setState({keyword:null});this.getAltruistsList()}} />
+                        <NoListRes text= {no_result_text} onPress={()=>{this.getAltruistsFilteredList('keyword')}} />
                 }
                 <this.Filter />
             </SafeAreaView>
