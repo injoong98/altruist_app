@@ -2081,12 +2081,14 @@ class IlbanContent extends Component {
             <WriteContentToptab
                 gbckfunc={() => {
                     this.props.navigation.goBack();
-                    if(Platform.OS!=='ios'){
+                if(Platform.OS!=='ios'){
                         StatusBar.setBackgroundColor('#B09BDE');
                         StatusBar.setBarStyle('default');}}
                     }
                 gbckuse={true}
-                right={<this.MoreAction/>}/>
+                func={()=>this.setState({popoverVisible:true})}
+                right={`dotdotdot`}
+                />
             {this.state.isLoading ?
                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
                     <Text>is Loading now...</Text>
