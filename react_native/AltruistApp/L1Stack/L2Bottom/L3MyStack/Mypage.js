@@ -180,9 +180,9 @@ class Mypage extends React.Component{
                       <View>
                         <Text></Text>
                       </View>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarmSetting');}}>
+                      {/* <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarmSetting');}}>
                         <Text style={styles.menuItem}>알림 체크</Text>
-                      </TouchableOpacity>
+                      </TouchableOpacity> */}
                     </View>
                   </View>
 

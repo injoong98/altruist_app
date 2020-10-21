@@ -48,6 +48,6 @@ export const MyStackNav = () =>(
         <Screen name = "MyAlarm" component={MyAlarm}/>
         <Screen name = "MyAltCareer" component={MyAltCareer}/>
         <Screen name = "MyAltProf" component={MyAltProf}/>
-        <Screen name = "MyAlarmSetting" component={MyAlarmSetting}/>
+        {/* <Screen name = "MyAlarmSetting" component={MyAlarmSetting}/> */}
     </Navigator>
 )
