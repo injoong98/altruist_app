@@ -1,6 +1,6 @@
 import React from 'react';
+import {SafeAreaView,TouchableWithoutFeedback,Linking} from 'react-native'
 import {createStackNavigator} from '@react-navigation/stack';
-import {SafeAreaView} from 'react-native'
 import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction} from '@ui-kitten/components';
 import {IlbanContent, GominContent, MarketContent, AlbaContent} from '../../Content'
 import {Mypage} from './Mypage';
@@ -18,18 +18,16 @@ const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
 
-const SpareScreen =({navigation}) =>{
+const MyAlarmSetting =({navigation}) =>{
 
-    const BackAction = () =>(
-        <TopNavigationAction icon={BackIcon} onPress={() => {navigation.goBack()}}/>
-        )
- 
     return(
     <SafeAreaView style={{flex:1}}>
-        <TopNavigation title="이타주의자" alignment="center" accessoryLeft={BackAction}/> 
-        <Layout style={{flex:1,justifyContent:"center", alignItems:"center"}}>
+        <TouchableWithoutFeedback
+            style={{flex:1,justifyContent:"center", alignItems:"center"}}
+            onPress={()=>{Linking.openSettings()}}
+        >
             <Text>이타주의자</Text>
-        </Layout>   
+        </TouchableWithoutFeedback>   
     </SafeAreaView>
     )
 }
@@ -50,5 +48,6 @@ export const MyStackNav = () =>(
         <Screen name = "MyAlarm" component={MyAlarm}/>
         <Screen name = "MyAltCareer" component={MyAltCareer}/>
         <Screen name = "MyAltProf" component={MyAltProf}/>
+        <Screen name = "MyAlarmSetting" component={MyAlarmSetting}/>
     </Navigator>
 )
