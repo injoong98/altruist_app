@@ -799,10 +799,15 @@ class AltQueList extends React.Component{
             modalVisible:false,
             list:[],
             list_showing:[],
+            refreshing:false
         }
     }
     static contextType = Signing;
 
+    
+    onRefresh= () =>{
+        this.getQuestions();
+    }
     getQuestions = ()=>{
         const {type,scndType} = this.props
         axios.get(`http://dev.unyict.org/api/board_post/lists/${type}?type=${scndType}`)
@@ -927,6 +932,8 @@ class AltQueList extends React.Component{
                             data={list}
                             renderItem={this.renderQueList }
                             style={{backgroundColor:'#ffffff',}}
+                            onRefresh={this.onRefresh}
+                            refreshing={this.state.refreshing}
                         />
                 </View>
             :
