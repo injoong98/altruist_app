@@ -8,10 +8,11 @@ import {PostTime} from '../../components/PostTime'
 import {TopBarTune} from '../../components/TopBarTune'
 import {Notice} from '../Context'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import Reloadsvg from '../../assets/icons/reload.svg'
 
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
-const renderNotis =(item,index,navigation,onRefresh) => {
+const RenderNotis =({item,index,navigation,onRefresh}) => {
     return(
         <TouchableOpacity 
             key={index} 
@@ -35,7 +36,7 @@ export class AlarmFaq extends React.Component{
     }
     render(){
         return(
-            <AlarmNotices type='faq'/>
+            <AlarmNotices {...this.props} type='faq'/>
         )
     }
 }
@@ -45,7 +46,7 @@ export class AlarmOfficial extends React.Component{
     }
     render(){
         return(
-            <AlarmNotices type='notice'/>
+            <AlarmNotices {...this.props} type='notice'/>
         )
     }
 }
@@ -128,7 +129,7 @@ export class AlarmNotices extends React.Component{
                      <View style={{flex:1,paddingTop:10,backgroundColor:'#ffffff'}}>
                         <FlatList 
                         data={noti}
-                        renderItem={({item,index})=>renderNotis(item,index,this.props.navigation,this.onRefresh)}
+                        renderItem={({item,index})=><RenderNotis item={item} index={index} navigation= {this.props.navigation} onRefresh ={this.onRefresh}/> }
                         keyExtractor={(item,index)=>index.toString()}
                         style={{backgroundColor:'#ffffff'}}
                         onRefresh={this.onRefresh}
@@ -252,6 +253,9 @@ export class AlarmScreen extends React.Component{
             }else if(item.not_type=='이타주의자들'&&item.not_message.includes("질문")){
                 console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
                 this.navigateToPost(item.not_content_id,'10')
+            }else if(item.not_type=='이타주의자들'&&item.not_message.includes("좋아")){
+                console.log(`post_id = ${item.post_id} brd_id = ${item.brd_id}`)
+                this.navigateToPost(item.not_content_id,item.brd_id)
 
             }
             this.context.reloadUnreadCount();
@@ -330,6 +334,8 @@ export class AlarmScreen extends React.Component{
                     <Text>
                         알림 내역이 없습니다.
                     </Text>
+                    <Reloadsvg height={15} width={15} fill="#A9C"/>
+
                 </View>
 
                 }

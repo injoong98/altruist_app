@@ -49,6 +49,14 @@ class Member_model extends CB_Model
 		$where = array('mem_userid' => $userid);
 		return $this->get_one('', $select, $where);
 	}
+	public function get_by_hp($id_pw_hp = '', $select = '')
+	{
+		if (empty($id_pw_hp)) {
+			return false;
+		}
+		$where = array('mem_phone' => $id_pw_hp);
+		return $this->get_one('', $select, $where);
+	}
 
 
 	public function get_by_email($email = '', $select = '')

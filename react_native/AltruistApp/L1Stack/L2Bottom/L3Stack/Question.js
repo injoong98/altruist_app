@@ -20,8 +20,9 @@ import {TopBarTune} from '../../../components/TopBarTune'
 import {WriteContentToptab} from '../../../components/WriteContentTopBar'
 import Heartsvg from '../../../assets/icons/heart.svg'
 import Viewsvg from '../../../assets/icons/view.svg'
-import Commentsvg from '../../../assets/icons/comment.svg'
+import Commentsvg from '../../../assets/icons/comment-square.svg'
 import Writesvg from '../../../assets/icons/write.svg'
+import {NoListRes} from './List'
 
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
@@ -645,8 +646,7 @@ class AltQueContent extends React.Component{
             this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({isLoading:true,resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
     onRefresh=()=>{
@@ -719,6 +719,7 @@ class AltQueContent extends React.Component{
                     OnFrstPress={
                         () =>{ 
                             this.setState({resultModalVisible:false, });
+                            this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
                         }}
                 />
             </Modal>
@@ -798,10 +799,15 @@ class AltQueList extends React.Component{
             modalVisible:false,
             list:[],
             list_showing:[],
+            refreshing:false
         }
     }
     static contextType = Signing;
 
+    
+    onRefresh= () =>{
+        this.getQuestions();
+    }
     getQuestions = ()=>{
         const {type,scndType} = this.props
         axios.get(`http://dev.unyict.org/api/board_post/lists/${type}?type=${scndType}`)
@@ -821,8 +827,6 @@ class AltQueList extends React.Component{
         this.getQuestions();    
     }
     renderQueList = ({item}) =>{
-        
-        console.log(item.area)
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = item.post_content.replace(regex, '');
         return(
@@ -896,10 +900,12 @@ class AltQueList extends React.Component{
                             <Text style={styles.infotext} category="s1">{item.post_like}</Text>
                         </View>
                         <View style={{alignItems:'center',}}>
-                            <Commentsvg width={20} height={20}/>
+                            <Commentsvg 
+                             width={15} height={20}
+                            />
                             <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
                         </View>
-                        <View style={{alignItems:'center',}}>
+                        <View style={{alignItems:'center'}}>
                             <Viewsvg width={20} height={20}/>
                             <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                         </View>
@@ -920,11 +926,18 @@ class AltQueList extends React.Component{
                 <Spinner size='giant'/>
             </View>
             :
-            <List
-                data={list}
-                renderItem={this.renderQueList }
-                style={{backgroundColor:'#ffffff',}}
-            />
+            list.length > 0 ?
+                <View style={{flex:1}}>
+                        <List
+                            data={list}
+                            renderItem={this.renderQueList }
+                            style={{backgroundColor:'#ffffff',}}
+                            onRefresh={this.onRefresh}
+                            refreshing={this.state.refreshing}
+                        />
+                </View>
+            :
+                <NoListRes text='아직 질문이 없습니다.' onPress={()=>{this.getQuestions();}}/>
             )
     }
 
@@ -1038,19 +1051,23 @@ class AltQuestionWrite extends React.Component
             answer_mem_id:this.props.route.params.answer_mem_id ?this.props.route.params.answer_mem_id :null,
             filterModalVisible:false,
             actSelected:[],
-            act_array:[]
-
+            act_array:[],
+            resultVisible:false,
+            resultText:'',
+            spinnerVisible:false,
         }
     }
 
     sendQue = () => {
+        this.setState({spinnerVisible:true})        
         const brd_key = this.props.route.params.answer_mem_id ? 'indi':'opq';
-
         const {title,content,answer_mem_id} = this.state;
+
         var formdata = new FormData();
         formdata.append('brd_key',brd_key);
         formdata.append('post_title',title);
         formdata.append('post_content',content);
+
         this.props.route.params.answer_mem_id ?
         formdata.append('answer_mem_id',answer_mem_id)
         :
@@ -1062,17 +1079,11 @@ class AltQuestionWrite extends React.Component
         
         axios.post('http://dev.unyict.org/api/board_write/write',formdata)
         .then(response=>{
-            Alert.alert(
-                "이타주의자",
-                "질문을 전달했습니다!",
-                [
-                    { 
-                        text: "닫기", 
-                        onPress: ()=> this.props.navigation.navigate('AltMain')
-                    }
-                ],
-                { cancelable: false }
-            );
+            const {message,status}=response.data
+            this.setState({spinnerVisible:false,resultVisible:true,resultText:message})        
+            if(status=="200"){
+                this.props.navigation.navigate('AltMain')
+            }
         })
         .catch(error=>{
             alert('BYE:(')
@@ -1081,7 +1092,8 @@ class AltQuestionWrite extends React.Component
 
     filterSpamKeyword= async() => {
         const {title,content} =this.state;
-        
+        this.setState({spinnerVisible:true})
+
         var formdata =new FormData();
         formdata.append("title", title);
         formdata.append("content", content);
@@ -1092,24 +1104,9 @@ class AltQuestionWrite extends React.Component
         .then(response=>{
             const {message,status}=response.data
             if(status=='500'){
-                alert(message)
+                this.setState({spinnerVisible:false,resultVisible:true,resultText:message})
             }else if(status=="200"){
-                Alert.alert(
-                    "이타주의자",
-                    "질문을 보내시겠습니까?",
-                    [
-                        { 
-                            text: "보내기", 
-                            onPress: ()=> this.sendQue()
-                        },
-                        {
-                            text: "취소",
-                            onPress: () => alert('취소했습니다.')
-                        }
-                        
-                    ],
-                    { cancelable: false }
-                );
+                this.sendQue()
             }
 
         })
@@ -1156,7 +1153,7 @@ class AltQuestionWrite extends React.Component
         }
     }
     render(){
-        const {title,content,filterModalVisible,actSelected} = this.state;
+        const {title,content,filterModalVisible,actSelected,resultVisible,resultText,spinnerVisible} = this.state;
         const {act,answer_mem_id,brd_key,item,altruist} = this.props.route.params;
         const {width,height} =Dimensions.get('window')
         return(
@@ -1165,6 +1162,7 @@ class AltQuestionWrite extends React.Component
                 text={ answer_mem_id ? '1대1 질문': '오픈질문'}
                 right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
                 func={() => {
+                    Keyboard.dismiss()
                     this.filterSpamKeyword();
                 }}
                 gbckfunc={() => {
@@ -1285,6 +1283,24 @@ class AltQuestionWrite extends React.Component
                         </TouchableHighlight>
                     </View>
                 </View>
+            </Modal>
+            <Modal
+                visible={resultVisible}
+                backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+                onBackdropPress={() => this.setState({resultVisible: false})}>
+                <Confirm
+                    type="result"
+                    confirmText={this.state.resultText}
+                    frstText="닫기"
+                    OnFrstPress={() => {
+                        this.setState({resultVisible: false});
+                    }}
+                />
+            </Modal>
+            <Modal
+                visible={spinnerVisible}
+                backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
+                <Spinner size="giant" />
             </Modal>
         </SafeAreaView>
         )

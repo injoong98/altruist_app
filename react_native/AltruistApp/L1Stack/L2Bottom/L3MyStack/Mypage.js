@@ -13,7 +13,6 @@ import AltruistSvg from '../../../assets/icons/altruist.svg'
 import NoimageSvg from '../../../assets/icons/noimage.svg'
 import PersonSvg from '../../../assets/icons/person.svg'
 
-
 class Mypage extends React.Component{
     constructor(props){
         super(props);
@@ -26,8 +25,8 @@ class Mypage extends React.Component{
 
     static contextType = Signing;
     
-    loadMemInfo = () => {
-      axios.get('http://dev.unyict.org/api/mypage')
+    loadMemInfo = async() => {
+      await axios.get('http://dev.unyict.org/api/mypage')
       .then(res=>{
         this.setState({mem_info:res.data.myinfo,isLoading:false})
         
@@ -54,8 +53,8 @@ class Mypage extends React.Component{
     }
     render(){
       const {signOut} = this.context
-      const {logOutModalVisible} = this.state
-      const {mem_point,mem_nickname,mem_photo,mem_profile_content} = this.state.mem_info
+      const {logOutModalVisible,mem_info} = this.state
+      const {mem_point,mem_nickname,mem_photo,mem_profile_content} = mem_info
       const {navigate} =this.props.navigation
         return(
           <SafeAreaView style={{flex:1}}>
@@ -64,7 +63,7 @@ class Mypage extends React.Component{
                       <View style={{marginVertical:20,marginLeft:30,borderRadius:62.5,width:125, height : 125,overflow:'hidden'}}>
                         <Image 
                             source = {{uri : 'http://dev.unyict.org/'+ (mem_photo ?'uploads/member_photo/'+mem_photo: 'uploads/altwink-rect.png')}} 
-                            style = {{ width : '100%', height : '100%', resizeMode:'contain',borderWidth:1}}
+                            style = {{ width : '100%', height : '100%', resizeMode:'cover'}}
                         />
                       </View>
                       <View style={{maxWidth:'40%',marginHorizontal:16,marginTop:13,marginBottom:24,justifyContent:'space-between'}}>
@@ -97,6 +96,18 @@ class Mypage extends React.Component{
                     {/* <TouchableOpacity onPress={()=>{alert('more')}} style={{position:'absolute',top:8,right:0 }}>
                       <MoreSvg height={19} width={19}/>
                     </TouchableOpacity >  */}
+                  </View>
+                  <View style={{ marginHorizontal:40}}>
+                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
+                      {/* <PencilSvg height={28} width={22}/> */}
+                      <AltruistSvg height={19} width={22}/>
+                      <Text category='h2' style={styles.menuTitle}>"더불어 성장하는 이타주의자들"?</Text>
+                    </View>
+                    {/* <View>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'post'})}} >
+                        <Text style={styles.menuItem}></Text>
+                      </TouchableOpacity>
+                    </View> */}
                   </View>
                   <View style={{ marginHorizontal:40,marginBottom:20}}>
                     <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
@@ -146,6 +157,23 @@ class Mypage extends React.Component{
                         <Text style={styles.menuItem}>질문함</Text>
                       </TouchableOpacity>
                     </View>
+                    {
+                      this.context.is_altruist ?
+                      <>
+                        <View>
+                          <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAltProf',{mem_info})}} >
+                            <Text style={styles.menuItem}>멘토 프로필</Text>
+                          </TouchableOpacity>
+                        </View>
+                        <View>
+                          <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAltCareer')}} >
+                            <Text style={styles.menuItem}>경력사항</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </>
+                      :
+                      null
+                    }
                   </View>
                   <View style={{ marginHorizontal:40,marginBottom:20}}>
                     <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
@@ -155,18 +183,16 @@ class Mypage extends React.Component{
                       <Text category='h2' style={styles.menuTitle}>계정</Text>
                     </View>
                     <View>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>navigate('MyProfEdit',{mem_info:this.state.mem_info,onGoback:this.onRefresh})} >
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyProfEdit', { mem_info:this.state.mem_info, onGoback: () => this.onRefresh() })}}>
                         <Text style={styles.menuItem}>프로필 수정</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{this.setState({logOutModalVisible:true})}} >
                         <Text style={styles.menuItem}>로그아웃</Text>
                       </TouchableOpacity>
-                      {/* <TouchableOpacity style={styles.menuContainer} onPress={()=>{()=>{this.sessionChk();}}}>
-                        <Text style={styles.menuItem}>세션체크</Text>
+                     
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarmSetting');}}>
+                        <Text style={styles.menuItem}>알림 설정</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarm');}}>
-                        <Text style={styles.menuItem}>알림 체크</Text>
-                      </TouchableOpacity> */}
                     </View>
                   </View>
 
@@ -193,22 +219,22 @@ export  {Mypage};
 
 const styles = StyleSheet.create({
   menuTitle :{
-    fontSize:12,
-    lineHeight:13,
+    fontSize:14,
+    lineHeight:15,
     color:'#63579D'
   },
   menuContainer:{
-    paddingLeft:14,
+    paddingLeft:18,
     borderBottomWidth:1,
     borderBottomColor:'#f4f4f4',
     marginTop:10,
-    marginBottom:5
+    
   },
   menuItem:{
-    fontSize:12,
-    lineHeight:13,
+    fontSize:14,
+    lineHeight:14,
     color:'#63579D',
-    marginBottom:2
+    marginBottom:10
   }
 
 })

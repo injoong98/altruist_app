@@ -33,6 +33,8 @@ class FindRwSuccessScreen extends Component {
   );
 
   render() {
+    const {email} = this.props.route.params;
+
     console.log(this.state);
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
@@ -51,6 +53,14 @@ class FindRwSuccessScreen extends Component {
                 paddingBottom: 20,
               }}>
               비밀번호 재설정 메일 전송
+            </Text>
+            <Text
+              style={{
+                alignSelf: 'center',
+                color: '#A897C2',
+                fontWeight: 'bold',
+              }}>
+              {email} 로
             </Text>
             <Text style={{alignSelf: 'center', color: '#A897C2'}}>
               비밀번호 재설정 메일을 전송하였습니다.

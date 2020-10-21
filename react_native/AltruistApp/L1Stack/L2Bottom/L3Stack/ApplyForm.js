@@ -42,6 +42,9 @@ import axios from 'axios';
 import Tag from '../../../components/tag.component'
 import Camsvg from '../../../assets/icons/Icon_Cam.svg';
 import Clipsvg from '../../../assets/icons/clip.svg';
+import {ActionSheet, Root} from 'native-base';
+import ImagePicker from 'react-native-image-crop-picker';
+
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CommonTextInput = (props) =>
 (
@@ -125,7 +128,7 @@ class AltApplyFormScreen extends React.Component {
               <View style={{flex:2,alignItems:'center'}}>
                     <CheckBox
                       checked={acv_open[i]}
-                      onChange={nextChk => {acv_open[i]=nextChk;this.setState({acv_open});console.log(acv_open)}}
+                      onChange={nextChk => {acv_open[i]=nextChk? 1:0 ;this.setState({acv_open});console.log(acv_open)}}
                     />
               </View>
               <View style={{flex:3.5}}>
@@ -171,7 +174,7 @@ class AltApplyFormScreen extends React.Component {
                     value= {acv_year[i]}
                     onChangeText={(text)=>{acv_year[i]=text;this.setState({acv_year});}}
                     placeholder='ex)2010~'
-                    style={{backgroundColor:'#ffffff',fontSize:10,padding:0}}
+                    style={{backgroundColor:'#ffffff',fontSize:10,padding:0,minHeight:Platform.OS=='ios'? 20:0}}
                     keyboardType='default'
                   />
               </View>
@@ -180,13 +183,13 @@ class AltApplyFormScreen extends React.Component {
                     value= {acv_content[i]}
                     onChangeText={(text)=>{acv_content[i]=text;this.setState({acv_content})}}
                     placeholder='경력내용'
-                    style={{backgroundColor:'#ffffff',fontSize:10,padding:0}}
+                    style={{backgroundColor:'#ffffff',fontSize:10,padding:0,minHeight:Platform.OS=='ios'? 20:0}}
                   />
               </View>
               <View style={{flex:4,alignItems:'center',justifyContent:'space-evenly',flexDirection:'row'}}>
                 <CheckBox
                   checked={acv_final[i]}
-                  onChange={nextChk => {acv_final[i]=nextChk;this.setState({acv_final})}}
+                  onChange={nextChk => {acv_final[i]=nextChk? 1:0;this.setState({acv_final})}}
                 />
               <TouchableHighlight style={{width:15,height:15,justifyContent:'center',backgroundColor:'#c4c4c4'}} onPress={()=>this.cancleCareer(i)}>
                 <View style={{borderWidth:1}} />
@@ -194,6 +197,48 @@ class AltApplyFormScreen extends React.Component {
               </View>
             </View>
     )
+  }
+  
+  onClickProfImage() {
+    const buttons = ['갤러리에서 선택', '취소'];
+    ActionSheet.show(
+      {options: buttons, cancelButtonIndex: 1, title: 'Select a photo'},
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            this.choosePhotoFromGallery();
+            break;
+          default:
+            break;
+        }
+      },
+    );
+  }
+
+  //갤러리에서 사진 가져오기
+  choosePhotoFromGallery(){
+    ImagePicker.openPicker({
+        width: 300,
+        height: 300,
+        cropping: true,
+    }).then((image) => {
+      this.onSelectedImage(image);
+      //console.log(image);
+    });
+  }
+
+  //불러온 사진의 정보를 this.state에 저장
+  onSelectedImage(image) {
+    console.log(image);
+    let item = {
+      id: Date.now(),
+      uri: image.path,
+      type: image.mime,
+      path: image.path,
+      content: image.data,
+      index: this.state.Image_index,
+    };
+    this.setState({alt_photo: item});
   }
   attatchProfImg = async ()=>{
     try {
@@ -220,6 +265,43 @@ class AltApplyFormScreen extends React.Component {
         throw err;
       }
     }
+  }
+  attatchFileOniOS = (index) =>{
+    const buttons = ['사진 선택','파일 선택', '취소'];
+    ActionSheet.show(
+      {options: buttons, cancelButtonIndex: 2, title: 'Select a photo'},
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            this.chooseFileFromGallery(index);
+            break;
+          case 1:
+            this.attatchFile(index);
+            break;
+          default:
+            break;
+        }
+      },
+    );
+  }
+
+  chooseFileFromGallery(i){
+    const {acv_file1} =this.state
+    ImagePicker.openPicker({
+        cropping: false,
+    }).then((image) => {
+      let item = {
+        id: Date.now(),
+        uri: image.path,
+        type: image.mime,
+        path: image.path,
+        name:image.filename,
+        content: image.data,
+        index: this.state.Image_index,
+      };
+      this.state.acv_file1[i]=item
+      this.setState({acv_file1})
+    });
   }
   attatchFile= async (i)=>{
     const {acv_file1} =this.state
@@ -313,7 +395,7 @@ class AltApplyFormScreen extends React.Component {
       formdata.append("alt_photo", {
         uri: alt_photo.uri,
         type: alt_photo.type,
-        name: alt_photo.name,
+        name: alt_photo.path,
       });
     }
 
@@ -432,250 +514,252 @@ class AltApplyFormScreen extends React.Component {
     const {width,height} =Dimensions.get('window')
     const {isLoading,userinfo,spinnerModalVisible,filterModalVisible,actSelected,alt_content,alt_aboutme,arrayForLoop,acv_open,acv_type,acv_file1,acv_year,acv_content,acv_final,selectedIndex,category,alt_photo} = this.state;
     return (
-      <SafeAreaView style={styles.container}>
-        <WriteContentToptab
-          text='지원하기'
-          gbckfunc={() => {
-              this.props.navigation.goBack();
-          }}
-          gbckuse={true}
-          style={{backgroundColor:'#f4f4f4'}}
-        />
-        <ScrollView style={{paddingHorizontal:"5%"}} ref='formScroll'>
-          <View style={{flexDirection:'row'}}>
-            <TouchableHighlight onPress={()=>this.attatchProfImg()} >
-                <View >
-                  <Image 
-                    style={{width:100,height:100}}
-                    source={{uri:!alt_photo.uri? 'http://dev.unyict.org/uploads/altwink.png':alt_photo.uri}}/>
-                  <Camsvg style={{position:'absolute',bottom:0,right:0}}/>
-                </View>
-              </TouchableHighlight>
-            <View style={{width:(width-100)*0.9}}>
-              <Text style={[styles.nameText]}>
-                {isLoading ? null : userinfo.mem_username !='' ? userinfo.mem_username : userinfo.mem_nickname}
-              </Text>
-              <TextInput
-                value={alt_aboutme}
-                onChangeText={(text) => this.setState({alt_aboutme:text})}
-                placeholder='자기PR (50자 이내)'
-                style={[styles.contentInput,{borderWidth: this.state.aboutmeIsNull ? 1:0,borderColor :this.state.aboutmeIsNull ? '#DB2434':'#ffffff'}]}
-                multiline={true}
-                placeholderTextColor='#A897C2'
-                textAlignVertical="top"
-               onBackdropPress={()=>Keyboard.dismiss()}
-                />
-                {
-                  this.state.aboutmeIsNull ? 
-                  
-                  <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>한 줄 소개는 필수값입니다.</Text>
-                  :
-                  null
-                }
+      <Root>
+        <SafeAreaView style={styles.container}>
+          <WriteContentToptab
+            text='지원하기'
+            gbckfunc={() => {
+                this.props.navigation.goBack();
+            }}
+            gbckuse={true}
+            style={{backgroundColor:'#f4f4f4'}}
+          />
+          <ScrollView style={{paddingHorizontal:"5%"}} ref='formScroll'>
+            <View style={{flexDirection:'row'}}>
+              <TouchableHighlight onPress={()=>this.onClickProfImage()} >
+                  <View >
+                    <Image 
+                      style={{width:100,height:100}}
+                      source={{uri:!alt_photo.uri? 'http://dev.unyict.org/uploads/altwink.png':alt_photo.uri}}/>
+                    <Camsvg style={{position:'absolute',bottom:0,right:0}}/>
+                  </View>
+                </TouchableHighlight>
+              <View style={{width:(width-100)*0.9}}>
+                <Text style={[styles.nameText]}>
+                  {isLoading ? null : userinfo.mem_username !='' ? userinfo.mem_username : userinfo.mem_nickname}
+                </Text>
+                <TextInput
+                  value={alt_aboutme}
+                  onChangeText={(text) => this.setState({alt_aboutme:text})}
+                  placeholder='자기PR (50자 이내)'
+                  style={[styles.contentInput,{borderWidth: this.state.aboutmeIsNull ? 1:0,borderColor :this.state.aboutmeIsNull ? '#DB2434':'#ffffff',minHeight:Platform.OS=='ios'? 50:0}]}
+                  multiline={true}
+                  placeholderTextColor='#A897C2'
+                  textAlignVertical="top"
+                onBackdropPress={()=>Keyboard.dismiss()}
+                  />
+                  {
+                    this.state.aboutmeIsNull ? 
+                    
+                    <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>한 줄 소개는 필수값입니다.</Text>
+                    :
+                    null
+                  }
+              </View>
             </View>
-          </View>
-          <View style={{marginTop:25}}>
-            <TextInput
-              value={alt_content}
-              onChangeText={(text) => this.setState({alt_content: text})}
-              placeholder='자기소개'
-              style={[styles.contentInput,{minHeight:75,borderWidth: this.state.contentIsNull ? 1:0,borderColor :this.state.contentIsNull ? '#DB2434':'#ffffff'}]}
-              multiline={true}
-              textAlignVertical='top'
-              placeholderTextColor='#A897C2'
-              onBackdropPress={()=>Keyboard.dismiss()}
-            />
-          </View>
-          {
-            this.state.contentIsNull ? 
-            
-            <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>자기 소개는 필수값입니다.</Text>
-            :
-            null
-          }
-
-          <View style={{marginLeft:10,marginTop:40}}>
-            <Text style={styles.fieldTitle}>전문 분야</Text>
-          </View>
-          <View style={{display:'flex',flexDirection:'row',marginTop:19,marginLeft:10}}>
-                    {
-                        <TouchableOpacity 
-                            style = {{height:21,width:23,backgroundColor:'#63579D',borderRadius:7,justifyContent:'center',marginRight:10}} 
-                            onPress={()=>this.setState({filterModalVisible:true})}
-                        >
-                            <Text style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
-                        </TouchableOpacity>
-                    }
-                    {
-                        actSelected.length >0 ?
-                        <ScrollView horizontal={true} style={styles.areaContainer} >
-                          {actSelected.map((act,index) => (
-                            <TouchableHighlight
-                                onPress ={()=>{actSelected.splice(index,1);this.setState({actSelected})}}
-                                key = {act.act_content}
-                            >
-                                <View 
-                                    style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',marginRight:3}} 
-                                >
-                                    <Tag style={[styles.tagSelected,{marginRight:3}]}
-                                        key = {act.act_content}
-                                    >
-                                        {act.act_content}
-                                    </Tag>
-                                    <View style={{backgroundColor:'#000000',opacity:0.3,borderRadius:5}}>
-                                        <Text> x </Text>
-                                    </View>
-                                </View>
-                            </TouchableHighlight>
-                          ))}
-                      </ScrollView >
-                        :
-                        <View style={styles.areaContainer}>
-                            <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}}> 전문 분야를 선택하세요</Text>
-                        </View>
-                    }
-          </View>
-          {/* 경력구분 */}
-          <View style={{marginTop:40,paddingLeft:10,flexDirection:'row',alignItems:'center'}}>
-            <Text style={styles.fieldTitle}>경력 사항</Text>
-            <Text style={[styles.fieldTitle,{fontSize:12}]}>[ 학력 | 직장 | 기타]</Text>
-          </View>
-          <View style={{marginTop:20}}>
-            <View style={{flexDirection:'row',justifyContent:'space-evenly'}}>
-                <View style={{flex:2,alignItems:'center'}}>
-                  <Text style={styles.careerHead}>
-                  공개
-                  </Text>
-                </View>
-                <View style={{flex:3.5,alignItems:'center'}}>
-                  <Text style={styles.careerHead}>
-                  구분
-                  </Text>
-                </View>
-                <View style={{flex:5,alignItems:'center'}}>
-                  <Text style={styles.careerHead}>
-                  년도
-                  </Text>
-                </View>
-                <View style={{flex:14,alignItems:'center'}}>
-                  <Text style={styles.careerHead}>
-                  내용
-                  </Text>
-                </View>
-                <View style={{flex:4,alignItems:'center'}}>
-                  <Text style={styles.careerHead}>
-                  최종경력
-                  </Text>
-                </View>
+            <View style={{marginTop:25}}>
+              <TextInput
+                value={alt_content}
+                onChangeText={(text) => this.setState({alt_content: text})}
+                placeholder='자기소개'
+                style={[styles.contentInput,{minHeight:75,borderWidth: this.state.contentIsNull ? 1:0,borderColor :this.state.contentIsNull ? '#DB2434':'#ffffff'}]}
+                multiline={true}
+                textAlignVertical='top'
+                placeholderTextColor='#A897C2'
+                onBackdropPress={()=>Keyboard.dismiss()}
+              />
             </View>
             {
+              this.state.contentIsNull ? 
+              
+              <Text style={{marginTop:5,marginHorizontal: 10,fontSize:9,color:'#DB2434'}}>자기 소개는 필수값입니다.</Text>
+              :
+              null
+            }
+
+            <View style={{marginLeft:10,marginTop:40}}>
+              <Text style={styles.fieldTitle}>전문 분야</Text>
+            </View>
+            <View style={{display:'flex',flexDirection:'row',marginTop:19,marginLeft:10}}>
+                      {
+                          <TouchableOpacity 
+                              style = {{height:21,width:23,backgroundColor:'#63579D',borderRadius:7,justifyContent:'center',marginRight:10}} 
+                              onPress={()=>this.setState({filterModalVisible:true})}
+                          >
+                              <Text style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
+                          </TouchableOpacity>
+                      }
+                      {
+                          actSelected.length >0 ?
+                          <ScrollView horizontal={true} style={styles.areaContainer} >
+                            {actSelected.map((act,index) => (
+                              <TouchableHighlight
+                                  onPress ={()=>{actSelected.splice(index,1);this.setState({actSelected})}}
+                                  key = {act.act_content}
+                              >
+                                  <View 
+                                      style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',marginRight:3}} 
+                                  >
+                                      <Tag style={[styles.tagSelected,{marginRight:3}]}
+                                          key = {act.act_content}
+                                      >
+                                          {act.act_content}
+                                      </Tag>
+                                      <View style={{backgroundColor:'#000000',opacity:0.3,borderRadius:5}}>
+                                          <Text> x </Text>
+                                      </View>
+                                  </View>
+                              </TouchableHighlight>
+                            ))}
+                        </ScrollView >
+                          :
+                          <View style={styles.areaContainer}>
+                              <Text style={{fontSize:12,fontWeight:'bold',color:'#63579D'}}> 전문 분야를 선택하세요</Text>
+                          </View>
+                      }
+            </View>
+            {/* 경력구분 */}
+            <View style={{marginTop:40,paddingLeft:10,flexDirection:'row',alignItems:'center'}}>
+              <Text style={styles.fieldTitle}>경력 사항</Text>
+              <Text style={[styles.fieldTitle,{fontSize:12}]}>[ 학력 | 직장 | 기타]</Text>
+            </View>
+            <View style={{marginTop:20}}>
+              <View style={{flexDirection:'row',justifyContent:'space-evenly'}}>
+                  <View style={{flex:2,alignItems:'center'}}>
+                    <Text style={styles.careerHead}>
+                    공개
+                    </Text>
+                  </View>
+                  <View style={{flex:3.5,alignItems:'center'}}>
+                    <Text style={styles.careerHead}>
+                    구분
+                    </Text>
+                  </View>
+                  <View style={{flex:5,alignItems:'center'}}>
+                    <Text style={styles.careerHead}>
+                    년도
+                    </Text>
+                  </View>
+                  <View style={{flex:14,alignItems:'center'}}>
+                    <Text style={styles.careerHead}>
+                    내용
+                    </Text>
+                  </View>
+                  <View style={{flex:4,alignItems:'center'}}>
+                    <Text style={styles.careerHead}>
+                    최종경력
+                    </Text>
+                  </View>
+              </View>
+              {
+                arrayForLoop.map((item,index)=>(
+                  <this.RenderCareerInput i={index} key={index}/>
+                ))
+              }
+              <TouchableOpacity 
+                  style = {{marginTop:10,height:21,width:23,backgroundColor:'#63579D',borderRadius:7,justifyContent:'center',marginRight:10}} 
+                  onPress={()=>this.arrayForLoop()}
+              >
+                  <Text style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
+              </TouchableOpacity>
+            </View>
+
+            <View style={{marginTop:40,paddingLeft:10,}}>
+              <Text style={styles.fieldTitle}>경력 사항 첨부파일</Text>
+              <View style={{flexDirection:'row',alignItems:'flex-end',marginTop:16}}>
+                <Text>- </Text>
+                <Text style={{fontWeight:'bold'}}>관리자 확인</Text>
+                <Text>에만 사용되며</Text> 
+                <Text style={{fontWeight:'bold'}}>동의없이 공개</Text>
+                <Text>하지 않습니다</Text>
+              </View>
+              <View style={{flexDirection:'row',alignItems:'flex-end',marginTop:9}}>
+                <Text>- </Text>
+                <Text style={{fontWeight:'bold'}}>경력사항 공개</Text>
+                <Text>를 원하시면 첨부파일로 인증 부탁드립니다.</Text>
+              </View>
+
+            </View>
+            <View style={{marginTop:20}}>
+            {
               arrayForLoop.map((item,index)=>(
-                <this.RenderCareerInput i={index} key={index}/>
+              <TouchableHighlight onPress={()=>Platform.OS!=='ios'? this.attatchFile(index) : this.attatchFileOniOS(index)} key={index} >
+                <View style={{flexDirection:'row',alignItems:'center'}} >
+                  <Clipsvg width={35} height={35}/>
+                  <Text style={{marginLeft:15}}>
+                    {!acv_file1[index]? `첨부파일 ${index+1} 추가`:acv_file1[index].name}
+                  </Text>
+                  {
+                    !acv_file1[index]?
+                    null
+                    :
+                  <TouchableHighlight 
+                      style={{marginLeft:5, width:15,height:15,justifyContent:'center',backgroundColor:'#c4c4c4'}} 
+                      onPress={()=>{acv_file1.splice(index,1);this.setState({acv_file1})}}>
+                    <View style={{borderWidth:1}} />
+                  </TouchableHighlight>
+                  }
+                </View>
+              </TouchableHighlight>
               ))
             }
-            <TouchableOpacity 
-                style = {{marginTop:10,height:21,width:23,backgroundColor:'#63579D',borderRadius:7,justifyContent:'center',marginRight:10}} 
-                onPress={()=>this.arrayForLoop()}
-            >
-                <Text style={{color:'#ffffff',fontSize:30,textAlign:'center',textAlignVertical:'center'}}>+</Text>    
-            </TouchableOpacity>
-          </View>
-
-          <View style={{marginTop:40,paddingLeft:10,}}>
-            <Text style={styles.fieldTitle}>경력 사항 첨부파일</Text>
-            <View style={{flexDirection:'row',alignItems:'flex-end',marginTop:16}}>
-              <Text>- </Text>
-              <Text style={{fontWeight:'bold'}}>관리자 확인</Text>
-              <Text>에만 사용되며</Text> 
-              <Text style={{fontWeight:'bold'}}>동의없이 공개</Text>
-              <Text>하지 않습니다</Text>
             </View>
-            <View style={{flexDirection:'row',alignItems:'flex-end',marginTop:9}}>
-              <Text>- </Text>
-              <Text style={{fontWeight:'bold'}}>경력사항 공개</Text>
-              <Text>를 원하시면 첨부파일로 인증 부탁드립니다.</Text>
+            
+            <View style={{alignItems:'center',justifyContent:'center',marginTop:30}}>  
+            <TouchableHighlight 
+              style={{alignItems:'center',justifyContent:'center',borderRadius:7.5,height:33,width:60,backgroundColor:'#63579D'}}
+              onPress={() => this.formValidation()}>
+              <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>신청</Text>
+            </TouchableHighlight>
             </View>
 
-          </View>
-          <View style={{marginTop:20}}>
-          {
-            arrayForLoop.map((item,index)=>(
-             <TouchableHighlight onPress={()=>this.attatchFile(index)} key={index} >
-              <View style={{flexDirection:'row',alignItems:'center'}} >
-                <Clipsvg width={35} height={35}/>
-                <Text style={{marginLeft:15}}>
-                  {!acv_file1[index]? `첨부파일 ${index+1} 추가`:acv_file1[index].name}
-                </Text>
-                {
-                  !acv_file1[index]?
-                  null
-                  :
-                <TouchableHighlight 
-                    style={{marginLeft:5, width:15,height:15,justifyContent:'center',backgroundColor:'#c4c4c4'}} 
-                    onPress={()=>{acv_file1.splice(index,1);this.setState({acv_file1})}}>
-                  <View style={{borderWidth:1}} />
-                </TouchableHighlight>
-                }
-              </View>
-             </TouchableHighlight>
-            ))
-          }
-          </View>
-          
-          <View style={{alignItems:'center',justifyContent:'center',marginTop:30}}>  
-          <TouchableHighlight 
-            style={{alignItems:'center',justifyContent:'center',borderRadius:7.5,height:33,width:60,backgroundColor:'#63579D'}}
-            onPress={() => this.formValidation()}>
-            <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>신청</Text>
-          </TouchableHighlight>
-          </View>
-
-        </ScrollView>
-            <Modal
-                visible={filterModalVisible}
-                backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                onBackdropPress={() => this.setState({filterModalVisible:false})}
-                style={{justifyContent:'center'}}
-            >
-                <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
-                    <View style={{alignItems:'center',justifyContent:'center',marginTop:23}}>
-                        <Text category='h2' style={{fontSize:18,color:'#000000'}}>전문 분야 선택</Text>
-                        <Text style={{fontSize:10,color:actSelected.length==5?'#DB2434':'#878787',marginTop:10}}>최대 5가지 선택할 수 있습니다.</Text>
-                        <Text style={{fontSize:10,color:'#878787'}}>가장 자신있는 분야를 선택해주세요.</Text>
-                        <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginVertical:15}}></View>
-                    </View>
-                    <ScrollView ScrollViewstyle = {{}}>
-                        <View style = {{justifyContent:'space-between',flexDirection : 'row', flexWrap: 'wrap',paddingHorizontal:'5%'}}>
-                            {category.map(act => (
-                                <Tag 
-                                    key = {act.act_content}
-                                    onPress ={()=>{
-                                      this.actSelect(act);  
-                                    }}
-                                    style={[{padding:4},actSelected.includes(act) ? styles.tagSelected:{}]}
-                                >
-                                    {act.act_content}
-                                    
-                                </Tag>
-                            ))}
-                        </View>
-                    </ScrollView>
-                    <View style={{alignItems:'center',justifyContent:'center',marginVertical:20}}>
-                        <TouchableHighlight 
-                            onPress={()=>{this.setState({filterModalVisible:false})}} 
-                            style={{backgroundColor:'#63579D', paddingVertical:4,paddingHorizontal:20,borderRadius:8.5}}>
-                            <Text style={{fontSize:18,fontWeight:'700',color:'#ffffff'}}>적용</Text>
-                        </TouchableHighlight>
-                    </View>
-                </View>
-            </Modal>
-            <Modal
-                visible={spinnerModalVisible}
-                backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
-            >
-                <Spinner size='giant'/>
-            </Modal>
-      </SafeAreaView>
+          </ScrollView>
+              <Modal
+                  visible={filterModalVisible}
+                  backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                  onBackdropPress={() => this.setState({filterModalVisible:false})}
+                  style={{justifyContent:'center'}}
+              >
+                  <View style={{backgroundColor:'#ffffff',borderRadius:20,width:width*0.8}}>
+                      <View style={{alignItems:'center',justifyContent:'center',marginTop:23}}>
+                          <Text category='h2' style={{fontSize:18,color:'#000000'}}>전문 분야 선택</Text>
+                          <Text style={{fontSize:10,color:actSelected.length==5?'#DB2434':'#878787',marginTop:10}}>최대 5가지 선택할 수 있습니다.</Text>
+                          <Text style={{fontSize:10,color:'#878787'}}>가장 자신있는 분야를 선택해주세요.</Text>
+                          <View style={{borderWidth:1,borderColor:'#E3E3E3',width:'90%',marginVertical:15}}></View>
+                      </View>
+                      <ScrollView ScrollViewstyle = {{}}>
+                          <View style = {{justifyContent:'space-between',flexDirection : 'row', flexWrap: 'wrap',paddingHorizontal:'5%'}}>
+                              {category.map(act => (
+                                  <Tag 
+                                      key = {act.act_content}
+                                      onPress ={()=>{
+                                        this.actSelect(act);  
+                                      }}
+                                      style={[{padding:4},actSelected.includes(act) ? styles.tagSelected:{}]}
+                                  >
+                                      {act.act_content}
+                                      
+                                  </Tag>
+                              ))}
+                          </View>
+                      </ScrollView>
+                      <View style={{alignItems:'center',justifyContent:'center',marginVertical:20}}>
+                          <TouchableHighlight 
+                              onPress={()=>{this.setState({filterModalVisible:false})}} 
+                              style={{backgroundColor:'#63579D', paddingVertical:4,paddingHorizontal:20,borderRadius:8.5}}>
+                              <Text style={{fontSize:18,fontWeight:'700',color:'#ffffff'}}>적용</Text>
+                          </TouchableHighlight>
+                      </View>
+                  </View>
+              </Modal>
+              <Modal
+                  visible={spinnerModalVisible}
+                  backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
+              >
+                  <Spinner size='giant'/>
+              </Modal>
+        </SafeAreaView>
+      </Root>
     );
   }
 }

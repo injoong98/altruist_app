@@ -16,6 +16,7 @@ import MoreLsvg from '../assets/icons/dotdotdot-large.svg'
 import MoreSsvg from '../assets/icons/dotdotdot-small.svg'
 import Backsvg from '../assets/icons/back-arrow-color.svg'
 import Thumbsvg from '../assets/icons/thumb-up.svg'
+import Thumbfillsvg from '../assets/icons/thumb-up-filled.svg';
 import UploadCirclesvg from '../assets/icons/upload-circle.svg'
 import PaperPlanesvg from '../assets/icons/paper-plane.svg'
 import Callsvg from '../assets/icons/call.svg'
@@ -24,6 +25,7 @@ import Emailsvg from '../assets/icons/Email.svg'
 import Viewsvg from '../assets/icons/view.svg'
 import Timesvg from '../assets/icons/Time.svg'
 import Heartsvg from '../assets/icons/heart.svg'
+import Heartfillsvg from '../assets/icons/heartfill.svg'
 
 
 const BackIcon =  (props) =>(
@@ -237,7 +239,8 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/post_like',formdata)
+        
+        Axios.post(`http://dev.unyict.org/api/postact/${this.state.post.is_liked?'cancel_post_like':'post_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -249,11 +252,11 @@ class GominContent extends React.Component{
             this.setState({resultModalVisible:true, resultText : error.message});
         })
     }
-    cmtLike = (cmt_id) =>{
+    cmtLike = (cmt_id, is_liked) =>{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 alert(`${JSON.stringify(response.data.message)}`)
@@ -283,8 +286,7 @@ class GominContent extends React.Component{
             this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
     onRefresh=()=>{
@@ -301,7 +303,12 @@ class GominContent extends React.Component{
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
     }
-    
+
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
+    }
     modalList = [
         {
             text : '이 게시글을 신고하시겠습니까?',
@@ -319,6 +326,10 @@ class GominContent extends React.Component{
             text : '이 댓글을 삭제하시겠습니까?',
             func : this.cmtDelete,
         },
+        {
+            text : '이 댓글을 수정하시겠습니까?',
+
+        }
     ]
 
     renderPostBody = (post)=>{
@@ -326,14 +337,22 @@ class GominContent extends React.Component{
         const regex = /(<([^>]+)>)|&nbsp;/ig;
         const post_remove_tags = post.post_content.replace(regex, '\n');
         return (
-            <View style={{backgroundColor:'#F4F4F4',paddingTop:15, marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10, paddingHorizontal:25}} >
+            <View style={{backgroundColor:'#F4F4F4',paddingTop:15, marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:10, paddingHorizontal:20}} >
                 <View style={{paddingBottom:5,marginTop:10, marginBottom:10}}>
                     <Text style={{fontSize:18}} category='h3'>{post.post_title}</Text>
                 </View>
                 <View style={{marginBottom:16}}>
-                    <Text style={{fontSize:12,fontWeight:'800'}} category='s1'>
-                    {post_remove_tags}
-                    </Text>
+                    {/* <Text style={{fontSize:12,fontWeight:'800'}} category='s1'>
+                        {post_remove_tags}
+                    </Text> */}
+                    <HTML 
+                        baseFontStyle={{ fontFamily: "Roboto" }}
+                        ignoredStyles={["font-family"]}
+                        html={post.content} 
+                        imagesMaxWidth={Dimensions.get('window').width}
+                        onLinkPress={(event, href)=>{
+                            Linking.openURL(href)
+                        }}/>
                 </View>
                 <View style={{display:"flex",flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
                     <View style={{flexDirection:'row'}}>
@@ -354,10 +373,10 @@ class GominContent extends React.Component{
                             </View>
                         </View>
                     </View>
-                    <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
-                        <View style={{flexDirection:'row', justifyContent:'space-evenly', alignItems:'center'}}>
+                    <View style={{paddingVertical:15,flexDirection:"row",justifyContent:"flex-end"}}>
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
                             <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
-                                <Heartsvg width='16' height='16'/>
+                                {post.is_liked?<Heartfillsvg width='16' height='16'/>:<Heartsvg width='16' height='16'/>}
                             </TouchableOpacity>
                             <Text category="s1" style={{color:'#63579D', fontSize:13, marginBottom:-2}}>{post.post_like}</Text>
                             {/* <TouchableOpacity onPress={()=>alert("저장!")}>
@@ -398,8 +417,8 @@ class GominContent extends React.Component{
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
-                        <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/>
-                        <View>
+                        {/* <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/> */}
+                        <View style={{marginLeft:5}}>
                             <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
                             <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
                         </View>
@@ -423,8 +442,8 @@ class GominContent extends React.Component{
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg width='12' height='12'/>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                        {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
@@ -435,6 +454,10 @@ class GominContent extends React.Component{
         const {navigation,route} =this.props
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible} = this.state
          return(
+            <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            style={{flex:1}} 
+         >
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {if(Platform.OS!=='ios'){
@@ -471,7 +494,7 @@ class GominContent extends React.Component{
                 }
                 <TextInput
                     ref="commentInput"
-                    style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                    style={Platform.OS=="ios"? styles.commentiOS : styles.commentAndroid}
                     value={cmt_content}
                     placeholder={ replying?"대댓글" :"댓글"}
                     placeholderTextColor='#A897C2'
@@ -480,7 +503,10 @@ class GominContent extends React.Component{
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                 />
                 <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
-                    <UploadCirclesvg width={50} height={50}/>
+                    <Image 
+                        style={{width:50,height:50}}
+                        source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                    />
                 </TouchableOpacity>
             </View>
             <Modal
@@ -529,7 +555,17 @@ class GominContent extends React.Component{
                 visible={modalVisible}
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                 onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})} >
-                <View>
+                <View style={{borderRadius:15, backgroundColor:'white'}}>
+                    {this.context.session_mem_id==comment.mem_id?
+                    <>
+                    <TouchableOpacity 
+                        onPress={()=>{this.setState({modalVisible:false}, [alert('댓글수정 준비중입니다'),Keyboard.dismiss()])}}
+                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
+                    </TouchableOpacity>
+                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                    </>
+                    :null}
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding : 10, paddingHorizontal:20, margin:5}}>
@@ -551,7 +587,10 @@ class GominContent extends React.Component{
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false})}
+                    OnFrstPress={() => {
+                        this.setState({resultModalVisible:false});
+                        this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                    }}
                 />
             </Modal>
             <Modal
@@ -574,6 +613,7 @@ class GominContent extends React.Component{
             </Modal>
             
         </SafeAreaView>
+        </KeyboardAvoidingView>
          )
      }
 }
@@ -601,6 +641,8 @@ class MarketContent extends React.Component {
             confirmModalVisible:false,
             spinnerModalVisible:false,
             // dealStatusVisible:false
+            commentSession : 0,
+            revise : false,
         }
     }
 
@@ -627,6 +669,11 @@ class MarketContent extends React.Component {
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
     }
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
+    }
 
     getPostData = async(post_id)=>{
         
@@ -646,8 +693,7 @@ class MarketContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
     
@@ -704,7 +750,6 @@ class MarketContent extends React.Component {
     postDelete = async () => {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
-        console.log(formdata);
         await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
         .then(res=>{
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
@@ -742,12 +787,13 @@ class MarketContent extends React.Component {
     }
     
     commentUpload= async()=>{
-        const {cmt_content,post,cmt_id}=this.state;
+        const {cmt_content,post,cmt_id, revise}=this.state;
         var formdata = new FormData();
         formdata.append("post_id",post.post_id);
         formdata.append("cmt_content",cmt_content);
         cmt_id==''? null : formdata.append("cmt_id",cmt_id);
-        
+        revise? formdata.append("cmt_id",cmt_id):null;
+        revise? formdata.append("mode",'cu'):null;
         // this.commentWrite()
         
         await Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
@@ -827,11 +873,12 @@ class MarketContent extends React.Component {
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
         })
     }
-    cmtLike = (cmt_id) =>{
+    cmtLike = (cmt_id, is_liked) =>{
+
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -936,7 +983,7 @@ class MarketContent extends React.Component {
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
+                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} style={{width:10,alignItems:'flex-end'}}>
                             <MoreSsvg/>
                         </TouchableOpacity>
                     </View>
@@ -951,8 +998,8 @@ class MarketContent extends React.Component {
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg width='12' height='12'/>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                        {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
@@ -1005,6 +1052,14 @@ class MarketContent extends React.Component {
                 </Layout>
                 <Layout style={styles.container}>
                     <Text style={{marginBottom:5}} category='h2'>상품설명</Text>
+                    {/* <HTML 
+                        baseFontStyle={{ fontFamily: "Roboto" }}
+                        ignoredStyles={["font-family"]}
+                        html={post.post_content} 
+                        imagesMaxWidth={Dimensions.get('screen').width}
+                        onLinkPress={(event, href)=>{
+                            Linking.openURL(href)
+                    }}/> */}
                     <Text style={styles.marketText} category='s1'>{post.post_content}</Text>
                 </Layout>
                 <Layout style={styles.container}>
@@ -1033,6 +1088,11 @@ class MarketContent extends React.Component {
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, popoverVisible, modalType} = this.state;
 
         return(
+            <KeyboardAvoidingView
+               behavior={Platform.OS == "ios" ? "padding" : "height"}
+               style={{flex:1}} 
+            >
+
             <SafeAreaView style={{flex:1}}>
                 <WriteContentToptab
                     backgroundColor='#F4F4F4'
@@ -1074,7 +1134,7 @@ class MarketContent extends React.Component {
                     }
                     <TextInput
                         ref="commentInput"
-                        style={{backgroundColor:'#ffffff',borderRadius:14,fontSize:15}}
+                        style={Platform.OS=="ios"? styles.commentiOS : styles.commentAndroid}
                         value={cmt_content}
                         placeholder={ replying?"대댓글" :"댓글"}
                         placeholderTextColor='#63579D'
@@ -1082,7 +1142,10 @@ class MarketContent extends React.Component {
                         onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                     />
                     <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
-                        <UploadCirclesvg width={50} height={50}/>
+                        <Image 
+                            style={{width:50,height:50}}
+                            source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                        />
                     </TouchableOpacity>
                 </View>
                 <Modal
@@ -1140,6 +1203,16 @@ class MarketContent extends React.Component {
                     backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                     onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}>
                     <View style={{borderRadius:15, backgroundColor:'white'}}>
+                        {this.context.session_mem_id==this.state.commentSession?
+                            <>
+                            <TouchableOpacity 
+                                onPress={()=>{this.setState({modalVisible:false, revise:true}, this.refs.commentInput.focus())}}
+                                style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                                <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
+                            </TouchableOpacity>
+                            <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                            </>
+                        :null}
                         <TouchableOpacity 
                             onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
                             style={{padding : 10, paddingHorizontal:20, margin:5}}>
@@ -1162,7 +1235,10 @@ class MarketContent extends React.Component {
                         type = 'result'
                         confirmText={this.state.resultText}
                         frstText="닫기"
-                        OnFrstPress={() => this.setState({resultModalVisible:false})}
+                        OnFrstPress={() =>{
+                            this.setState({resultModalVisible:false})
+                            this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                        }}
                     />
                 </Modal>
                 <Modal
@@ -1182,6 +1258,7 @@ class MarketContent extends React.Component {
                     <Spinner size='giant'/>
                 </Modal>
             </SafeAreaView>
+            </KeyboardAvoidingView>
         
             )
     }
@@ -1225,6 +1302,12 @@ class AlbaContent extends React.Component {
         .then(()=>{this.setState({isLoading:false})})
     }
 
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
+    }
+
     getPostData = async(post_id)=>{
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
@@ -1234,7 +1317,6 @@ class AlbaContent extends React.Component {
                     this.setState({thumb_image: response.data.view.file_image[0]});
                 this.setState({
                     file_images : response.data.view.file_image.map((i, index) => {
-                        // console.log('received image', i);
                         return {
                             id : i.pfi_id,
                             edit : true,
@@ -1244,12 +1326,10 @@ class AlbaContent extends React.Component {
                         };
                     })
                 })
-                // console.log(this.state.file_images);
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
 
@@ -1434,12 +1514,14 @@ class AlbaContent extends React.Component {
                         </Layout>
                     </Card>
                     <Card disabled={true} style={styles.item}>
-                        <HTML
-                            html = {post.post_content}
+                        <HTML 
+                            baseFontStyle={{ fontFamily: "Roboto" }}
+                            ignoredStyles={["font-family"]}
+                            html={post.post_content} 
                             imagesMaxWidth={Dimensions.get('window').width}
                             onLinkPress={(event, href)=>{
                                 Linking.openURL(href)
-                            }}/>
+                        }}/>
                         {this.state.file_images ? this.state.file_images.map((i,index) => <View key={i.uri}>{this.renderImage(i,index)}</View>) : null} 
                     </Card>
                 </ScrollView>}
@@ -1531,7 +1613,10 @@ class AlbaContent extends React.Component {
                             type = 'result'
                             confirmText={this.state.resultText}
                             frstText="닫기"
-                            OnFrstPress={() => this.setState({resultModalVisible:false})}
+                            OnFrstPress={() =>{    
+                                this.setState({resultModalVisible:false})
+                                this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                            }}
                         />
                     </Modal>
                     <Modal
@@ -1578,6 +1663,8 @@ class IlbanContent extends Component {
             imageModalVisible:false,
             imageIndex: 0,
             modalType : 0,
+            commentSession : 0,
+            revise : false,
         }
     }
 
@@ -1619,11 +1706,13 @@ class IlbanContent extends Component {
     }
     
     commentUpload= async()=>{
-        const {cmt_content,post,cmt_id}=this.state;
+        const {cmt_content,post,cmt_id, revise}=this.state;
         var formdata = new FormData();
         formdata.append("post_id",post.post_id);
         formdata.append("cmt_content",cmt_content);
         cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+        revise? formdata.append("cmt_id",cmt_id):null;
+        revise? formdata.append("mode",'cu'):null;
         
         // this.commentWrite()
         
@@ -1633,7 +1722,7 @@ class IlbanContent extends Component {
             if(status=='200'){
                 Keyboard.dismiss();
                 this.getCommentData(post.post_id);
-                this.setState({cmt_id:'', cmt_content:'', replying:false});
+                this.setState({cmt_id:'', cmt_content:'', replying:false, revise:false});
 
                 this.refs.pstcmtlist.scrollToEnd();
             }else if(status=='500'){
@@ -1644,7 +1733,7 @@ class IlbanContent extends Component {
             alert(error);
         })
     }
-    
+
     commentValid =async() =>{
         const {cmt_content} =this.state;
         var formdata = new FormData();
@@ -1738,7 +1827,7 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/post_like',formdata)
+        Axios.post(this.state.post.is_liked?'http://dev.unyict.org/api/postact/cancel_post_like':'http://dev.unyict.org/api/postact/post_like',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -1750,11 +1839,11 @@ class IlbanContent extends Component {
             this.setState({resultModalVisible:true, resultText : error.message});
         })
     }
-    cmtLike = (cmt_id) =>{
+    cmtLike = (cmt_id, is_liked) =>{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -1770,15 +1859,16 @@ class IlbanContent extends Component {
         await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
+            this.setState({isLoading:false})
         })
         .catch((error)=>{
-            alert('error')
         })
     }
     getPostData = async (post_id)=>{
+        this.setState({isLoading:true})
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_icon});
+            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_photo});
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
             this.setState({content:post_remove_tagsf})
@@ -1787,6 +1877,8 @@ class IlbanContent extends Component {
                     var image_info = {};
                     image_info['props'] = {};
                     image_info['url'] = item.origin_image_url;
+                    image_info['props']['path'] = item.origin_image_url;
+                    image_info['props']['mime'] = "image/jpeg";
                     image_info['props']['id'] = item.pfi_id;
                     image_info['props']['title'] = item.pfi_originname;
                     image_info['props']['index'] = index;
@@ -1797,8 +1889,7 @@ class IlbanContent extends Component {
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'});
         })
     }
     
@@ -1816,7 +1907,12 @@ class IlbanContent extends Component {
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
-        .then(()=>{this.setState({isLoading:false})})
+    }
+
+    componentWillUnmount(){
+        StatusBar.setBackgroundColor('#B09BDE');
+        StatusBar.setBarStyle('default');
+        this.props.route.params.OnGoback();
     }
     
     modalList = [
@@ -1869,7 +1965,9 @@ class IlbanContent extends Component {
                         {post_remove_tags}
                     </Text> */}
                     <HTML 
-                        html={post.post_content} 
+                        baseFontStyle={{ fontFamily: "Roboto" }}
+                        ignoredStyles={["font-family"]}
+                        html={post.content} 
                         imagesMaxWidth={Dimensions.get('window').width}
                         onLinkPress={(event, href)=>{
                             Linking.openURL(href)
@@ -1895,7 +1993,7 @@ class IlbanContent extends Component {
                 <View style={{paddingHorizontal:15,paddingVertical:15,display:"flex",flexDirection:"row",justifyContent:"flex-end"}}>
                     <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly'}}>
                         <TouchableOpacity onPress={()=>this.postLike()} style={{marginHorizontal:6}}>
-                            <Thumbsvg width='18' height='18'/>
+                            {post.is_liked?<Thumbfillsvg width = {18} height={18}/>:<Thumbsvg width='18' height='18'/>}
                         </TouchableOpacity>
                         <Text category="s1" style={{color:'#A897C2', fontSize:15}}>{post.post_like}</Text>
                         {/* <TouchableOpacity onPress={()=>alert("저장!")}>
@@ -1945,7 +2043,7 @@ class IlbanContent extends Component {
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
+                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} style={{width:10,alignItems:'flex-end'}}>
                             <MoreSsvg/>
                         </TouchableOpacity>
                     </View>
@@ -1960,10 +2058,10 @@ class IlbanContent extends Component {
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id)}>
-                        <Thumbsvg width='12' height='12'/>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                        {item.is_liked?<Thumbfillsvg width='12' height='12'/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
-                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
+                    <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
             </View>
         </View>
@@ -1972,18 +2070,25 @@ class IlbanContent extends Component {
 
         const {navigation,route} =this.props
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image} = this.state
-
+        
         return(
+            <KeyboardAvoidingView
+               behavior={Platform.OS == "ios" ? "padding" : "height"}
+               style={{flex:1}} 
+            >
+
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {
                     this.props.navigation.goBack();
-                    if(Platform.OS!=='ios'){
+                if(Platform.OS!=='ios'){
                         StatusBar.setBackgroundColor('#B09BDE');
                         StatusBar.setBarStyle('default');}}
                     }
                 gbckuse={true}
-                right={<this.MoreAction/>}/>
+                func={()=>this.setState({popoverVisible:true})}
+                right={`dotdotdot`}
+                />
             {this.state.isLoading ?
                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
                     <Text>is Loading now...</Text>
@@ -2011,7 +2116,7 @@ class IlbanContent extends Component {
                 }
                 <TextInput
                     ref="commentInput"
-                    style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                    style={Platform.OS=="ios"? styles.commentiOS : styles.commentAndroid}
                     value={cmt_content}
                     placeholder={ replying?"대댓글" :"댓글"}
                     placeholderTextColor='#A897C2'
@@ -2020,7 +2125,10 @@ class IlbanContent extends Component {
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                 />
                 <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
-                    <UploadCirclesvg width={50} height={50}/>
+                    <Image 
+                        style={{width:50,height:50}}
+                        source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                     />
                 </TouchableOpacity>
             </View>
             <Modal
@@ -2072,6 +2180,16 @@ class IlbanContent extends Component {
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                 onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}>
                 <View style={{borderRadius:15, backgroundColor:'white'}}>
+                    {this.context.session_mem_id==this.state.commentSession?
+                        <>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({modalVisible:false, revise:true}, this.refs.commentInput.focus())}}
+                            style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        </>
+                    :null}
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding : 10, paddingHorizontal:20, margin:5}}>
@@ -2094,7 +2212,10 @@ class IlbanContent extends Component {
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false})}
+                    OnFrstPress={() =>{
+                        this.setState({resultModalVisible:false});
+                        this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                    }}
                 />
             </Modal>
             <Modal
@@ -2135,6 +2256,7 @@ class IlbanContent extends Component {
                 />
             </Modal>
         </SafeAreaView>
+            </KeyboardAvoidingView>
          )
      }
 }
@@ -2228,7 +2350,21 @@ const styles = StyleSheet.create({
     marketText: {
         marginTop:10,
         marginLeft: 10
-    }
+    },
+    commentAndroid:{
+        backgroundColor:'#f4f4f4',
+        borderRadius:14,
+        fontSize:14
+    },
+    commentiOS:{
+        backgroundColor:'#f4f4f4',
+        borderRadius:14,
+        fontSize:18,
+        textAlignVertical:'center',
+        paddingHorizontal:'3%',
+        minHeight:50
+    },
+    
 });
 
 

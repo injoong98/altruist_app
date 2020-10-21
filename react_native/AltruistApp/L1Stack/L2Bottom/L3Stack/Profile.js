@@ -95,26 +95,21 @@ class AltProfileScreen extends React.Component {
                   height: 150,
                   borderRadius: 30,
                   resizeMode: 'cover',
-                  flex: 1,
                 }}
               />
-              <View style={{marginLeft: 10, flex: 2, marginBottom: 5}}>
+              <View style={{marginLeft: 10, flex: 2, marginBottom: 5,}}>
                 <Text category="h1">
-                  {altruist.mem_basic_info.mem_nickname}
-                </Text>
-                <Text category="h6" numberOfLines={2}>
-                  {altruist.alt_profile.alt_aboutme}
-                </Text>
+                  {altruist.mem_basic_info.mem_username}
+                </Text>    
               </View>
+                <TouchableOpacity 
+                  style={{borderRadius:7, backgroundColor:'#63579D',paddingVertical:8,paddingHorizontal:16}} 
+                  onPress={() =>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:altruist.alt_profile.mem_id,altruist})}>
+                  <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>
+                    질문하기
+                  </Text>
+                </TouchableOpacity>
             </View>
-            
-            <TouchableOpacity 
-              style={{position:'absolute',right:10,bottom:10,borderRadius:7, backgroundColor:'#63579D',paddingVertical:8,paddingHorizontal:16}} 
-              onPress={() =>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:altruist.alt_profile.mem_id,altruist})}>
-              <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>
-                질문하기
-              </Text>
-            </TouchableOpacity>
           </View>
           {
             altruist.alt_profile.alt_aboutme!=null&&altruist.alt_profile.alt_aboutme!=''? 

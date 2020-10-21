@@ -14,10 +14,11 @@ import {Contrast, Grayscale} from 'react-native-color-matrix-image-filters';
 //icon
 import Heartsvg from '../../../assets/icons/heart.svg';
 import Viewsvg from '../../../assets/icons/view.svg';
-import Commentsvg from '../../../assets/icons/comment.svg';
+import Commentsvg from '../../../assets/icons/comment-square.svg';
 import Writesvg from '../../../assets/icons/write.svg';
 import Sharesvg from '../../../assets/icons/share.svg';
 import Thumbsvg from '../../../assets/icons/thumb-up.svg';
+import Thumbfillsvg from '../../../assets/icons/thumb-up-filled.svg';
 
 class JauScreen extends React.Component {
 	constructor(props) {
@@ -151,7 +152,7 @@ class JauScreen extends React.Component {
 			style={styles.itembox}
 			onPress={() => {this.props.navigation.navigate('IlbanContent', {OnGoback: () => this.onRefresh(),post_id: item.post_id});}}
 			>
-			<View style={{flex:1, backgroundColor:'white', width:90, borderBottomRightRadius:15}}>
+			<View style={{flex:1, backgroundColor:'white', width:50, borderBottomRightRadius:15}}>
 				<Text category='s2' style={{fontSize:12, color:'#63579D', padding:5, flex:1}}>{'#'+this.category[item.post_category]}</Text>
 			</View>
 			<View style={{marginHorizontal:20, marginTop:5}}>
@@ -166,7 +167,7 @@ class JauScreen extends React.Component {
 						{post_remove_tags}
 					</Text>
 				</View>
-				<View style={{flexDirection:'row', justifyContent:'space-between'}}>
+				<View style={{flexDirection:'row', justifyContent:'space-between', marginLeft:-10, marginRight:-10}}>
 					{imageData
 					?imageData.length==1
 					?imageData.map(i=>
@@ -218,11 +219,11 @@ class JauScreen extends React.Component {
 					</View>
 					<View style={styles.subtitle}>
 						<View style={{alignItems:'center', marginHorizontal:10}}>
-							<Thumbsvg width = {20} height={20}/>
+							{item.is_liked?<Thumbfillsvg width = {20} height={20}/>:<Thumbsvg width = {20} height={20}/>}
 							<Text style={styles.infotext} category="s2">{item.post_like}</Text>
 						</View>
 						<View style={{alignItems:'center', marginHorizontal:10}}>
-							<Commentsvg width = {20} height={20}/>
+							<Commentsvg width = {15} height={20}/>
 							<Text style={styles.infotext} category="s2">{item.post_comment_count}</Text>
 						</View>
 						<View style={{alignItems:'center', marginHorizontal:10}}>
@@ -275,13 +276,14 @@ class JauScreen extends React.Component {
 						refreshing={this.state.refreshing}
 						onRefresh={this.onRefresh}
 						onEndReached={this.load_more_data}
-                		onEndReachedThreshold = {0.1}
+                		onEndReachedThreshold = {0.9}
 						ListFooterComponent={this.renderFooter}/>
 				</View>
 				<TouchableOpacity
-						style={{position: 'absolute', right: 20, bottom: 14}}
+						style={{position: 'absolute', right: 30, bottom: 14}}
 						onPress={() => {this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})}}>
-						<Writesvg />
+						{/* <Writesvg /> */}
+						<Image source={{uri:"http://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
 				</TouchableOpacity>
 			</View>
 		);

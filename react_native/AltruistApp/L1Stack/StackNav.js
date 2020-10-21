@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions,Animated,View,SafeAreaView,Alert,Image} from 'react-native';
+import {Platform, Dimensions,Animated,View,SafeAreaView,Alert,Image, Linking } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
@@ -24,6 +24,11 @@ import {Signing,Notice} from './Context'
 import {AltQueContent} from './L2Bottom/L3Stack/Question'
 import LogoSvg from '../assets/icons/logo.svg'
 import MainImg from '../assets/images/main-logo-img.png'
+import VersionCheck from "react-native-version-check";
+import { version } from '../package.json';
+import CommunitySearch from './CommunitySearch'
+
+
 
 const {width} = Dimensions.get('window')
 const wdithLogo = (width*0.67);
@@ -36,9 +41,12 @@ class LoadingScreen extends React.Component{
         super(props)
         this.state={
             opacity:new Animated.Value(0),
+            yourCurrentVersion : '',
         }
     }
 
+    
+    
     fadeIn = () => {
         Animated.timing(this.state.opacity,{
             toValue:1,
@@ -47,30 +55,57 @@ class LoadingScreen extends React.Component{
         }).start();
     }
     
-    fadeOut = () => {
+    fadeOut = () =>{
         Animated.timing(this.state.opacity,{
-            toValue:1,
-            duration: 0,
-            useNativeDriver: false
-        }).start();
+            toValue:0, 
+            delay:10000
+        }).reset()
+    }
+
+    VersionChkAndroid = () => {
+        const yourCurrentVersion = VersionCheck.getCurrentVersion();        
+        this.setState({yourCurrentVersion : yourCurrentVersion});
     }
     
+    
+   
     componentDidMount(){
-        this.fadeIn();
+        
+
+        // // Platform.OS === 'ios' ?  
+        // // null
+        // //     // VersionCheck.setAppID(APP_ID);
+        // //     // VersionCheck.setAppName(APP_NAME);
+        // // : 
+        // //     console.log('            this.fadeIn();')
+        // //     this.fadeIn();
+        // //     VersionCheck.getLatestVersion()
+        // //     .then(latestVersion => {
+        // //       console.log('latestVersion : ', latestVersion);
+        // //       // 2.0.0
+        // //     })
+        Platform.OS === 'ios' ? null : this.fadeIn(); this.VersionChkAndroid();
     }
+
     componentWillUnmount(){
-        this.fadeOut();
+        Platform.OS === 'ios' ?  null : this.fadeOut()
     }
+
+
 
     render(){
         
         return(
-            <SafeAreaView style={{flex:1}}>
+            <SafeAreaView style={{flex:1,}}>
                 <Animated.View 
-                    style={{flex:1,justifyContent:"center", alignItems:"center",backgroundColor:"#ffffff",opacity:this.state.opacity}}>
+                    style={{flex:1, justifyContent:"space-between", alignItems:"center", backgroundColor:"#ffffff",opacity:this.state.opacity}}>
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
+                    <Text category="s2" style={{backgroundColor: 'white', color: '#ffffff', textAlign:'center', includeFontPadding:true}}>CARP x UNYICT</Text>
                     <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
-                </Animated.View>   
+                {Platform.OS === 'android'?  
+                <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`BETA ver. ${this.state.yourCurrentVersion}`}</Text>
+            : null }
+                </Animated.View> 
             </SafeAreaView>
     )}
 }
@@ -78,6 +113,7 @@ export class StackNav extends React.Component{
     constructor(props){
         super(props)
         this.state={
+            versionOk : true,
             isLoading:true,
             isSignedIn:false,
             isSignedOut:false,
@@ -133,7 +169,8 @@ export class StackNav extends React.Component{
                     this.session_chk()
                 },
                 session_mem_id:'',
-                is_altruist:false
+                is_altruist:false,
+                alt_id:'',
             },
             noticeContext:{
                 noti:[],
@@ -152,6 +189,45 @@ export class StackNav extends React.Component{
         }
         
     }
+
+    latestVersionChk = () =>{
+       
+
+    }
+
+    VersionUpdateChk = () => {
+        VersionCheck.getLatestVersion().then(latestVersion => {
+            console.log(latestVersion);
+            });
+
+
+        VersionCheck.getLatestVersion({
+            forceUpdate: true,
+            provider: () => fetch(`https://play.google.com/store/apps/details?id=com.everytime.v2`)
+            .then(r =>{ r.json();
+            console.log('r',r)}
+            )
+            .then(({version}) => 
+                console.log('version:', version))
+            }).then(latestVersion =>{
+            console.log(latestVersion);
+            });
+
+
+            // VersionCheck.getLatestVersion({
+            //     forceUpdate: true,
+            //     provider: () => fetch('')
+            //       .then(r => r.json())
+            //       .then(({version}) => version),   // You can get latest version from your own api.
+            //   }).then(latestVersion =>{
+            //     console.log(latestVersion);
+            //   });
+
+
+
+        
+    }
+
     static contextType = Signing
     syncPushToken = async (token,mem_id) =>{
         console.log('synchPushToken token :'+token)
@@ -182,16 +258,23 @@ export class StackNav extends React.Component{
         .then(async res=>{
             console.log('session_checking')
             if(res.data.status == 200){
-                const {mem_id,is_altruist} =res.data.session
+                this.getNotiList();
+                this.getFirstNotiList();
                 
+                const {mem_id,is_altruist,alt_id} =res.data.session
+                console.log(`mem_id : ${mem_id} is_altruist : ${is_altruist} alt_id : ${alt_id}`)
                 this.setState({isSignedIn:true});
                 this.state.context.session_mem_id = mem_id;
                 this.state.context.is_altruist = is_altruist;
-                
+                is_altruist ?
+                this.state.context.alt_id =alt_id
+                :
+                null
+
                 this.syncPushToken(token,mem_id)
                 
                 try {
-                    await AsyncStorage.setItem('currentMemId',mem_id);
+                    await AsyncStorage.setItem('currentMemId',mem_id+'');
                   } 
                 catch (error) {
                     console.log('asyncstorage error'+error)
@@ -255,9 +338,13 @@ export class StackNav extends React.Component{
         })
     }
     componentDidMount(){
-        setTimeout(this.session_chk,600);
-        this.getNotiList();
-        this.getFirstNotiList();
+        setTimeout(
+            ()=>
+            {
+                // this.VersionUpdateChk();
+            this.session_chk();
+        }
+            ,600);
         messaging()
             .getInitialNotification()
             .then(async remoteMessage=>{
@@ -279,11 +366,13 @@ export class StackNav extends React.Component{
             
     }
     render(){
-        const {context,isLoading,isSignedIn,noticeContext} = this.state
+        const {context,isLoading,isSignedIn,noticeContext, versionOk} = this.state
         return(
-            isLoading? 
+            Platform.OS === 'android' && isLoading ? 
             <LoadingScreen />
             :
+            !versionOk ? 
+            null : 
             <Signing.Provider value={context}>
                 <Notice.Provider value={noticeContext}>
                     <Navigator headerMode="none">
@@ -309,14 +398,15 @@ export class StackNav extends React.Component{
                                 <Screen name = "IlbanContent" component={IlbanContent}/>
                                 <Screen name = "GominContent" component={GominContent}/>
                                 <Screen name = "MarketContent" component={MarketContent}/>
-                                <Screen name = "IlbanWrite" component={IlbanWrite}/>
                                 <Screen name = "AlbaContent" component={AlbaContent}/>
+                                <Screen name = "IlbanWrite" component={IlbanWrite}/>
                                 <Screen name = "MarketWrite" component={MarketWrite}/>
                                 <Screen name = "AlbaWrite" component={AlbaWrite}/>
                                 <Screen name = "GominWrite" component={GominWrite}/>
                                 <Screen name = "ApplyComplete" component={ApplyCompleteScreen}/>
                                 <Screen name = "ApplyFail" component={ApplyFailScreen}/>
                                 <Screen name = "StckQueContent" component={AltQueContent}/>
+                                <Screen name = "CommunitySearch" component={CommunitySearch}/>
                             </>
                         }
 

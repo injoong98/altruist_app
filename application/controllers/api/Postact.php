@@ -658,8 +658,6 @@ class Postact extends CB_Controller
 		if (element('lik_id', $exist)) {
 			$status = element('lik_type', $exist) === '1' ? '추천' : '비추천';
 			response_result($view,'Err', '이미 이 글을 ' . $status . '하셨습니다');
-	/* 		$result = array('error' => '이미 이 글을 ' . $status . '하셨습니다');
-			exit(json_encode($result)); */
 		}
 
 		$insertdata = array(
@@ -738,7 +736,11 @@ class Postact extends CB_Controller
 		
 		//추천일경우 알림 및  푸시
 		if ($like_type == 1) {
-			$not_message = $this->session->userdata('mem_nickname'). '님께서 당신의 글을 좋아합니다.';
+			
+			$mem_nickname = $this->member->item('mem_nickname');
+
+			//$not_message = $this->session->userdata('mem_nickname'). '님께서 당신의 글을 좋아합니다.';
+			$not_message = $mem_nickname. '님께서 당신의 글을 좋아합니다.';
 			//알림 
 			if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
 				$this->load->library('notificationlib');
@@ -782,6 +784,112 @@ class Postact extends CB_Controller
 		$result = array('count' => $count);
 		response_result($view,'success', $success);
 		//exit(json_encode($result));
+
+	}
+
+	/**
+	 * 게시물 추천/비추천 취소
+	 */
+	public function cancel_post_like($post_id = 0, $like_type = 0)
+	{
+		$target_type = 1; //원글
+
+		$this->output->set_content_type('application/json');
+
+		if ($this->member->is_member() === false) {
+			response_result($view,'Err','로그인 후 이용해주세요');
+		}
+		$post_id = (int)$this->input->post('post_id');
+		if (empty($post_id) OR $post_id < 1) {
+			response_result($view,'Err','잘못된 post_id 접근입니다('.$post_id.')');
+		}
+		$like_type = (int)$this->input->post('like_type');
+		
+		if ($like_type !== 1 AND $like_type !== 2) {
+			response_result($view,'Err','잘못된 like_type 접근입니다('.$like_type.')');
+		}
+		if ( ! $this->session->userdata('post_id_' . $post_id)) {
+			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
+		}
+
+		$mem_id = (int) $this->member->item('mem_id');
+
+		$this->load->model(array('Post_model', 'Like_model'));
+
+		$select = 'post_id, brd_id, mem_id, post_del';
+		$post = $this->Post_model->get_one($post_id, $select);
+
+		if ( ! element('post_id', $post)) {
+			response_result($view,'Err','존재하지 않는 게시물입니다');
+		}
+		if (element('post_del', $post)) {
+			response_result($view,'Err','삭제된 게시물입니다');
+		}
+
+		$board = $this->board->item_all(element('brd_id', $post));
+
+		if ( ! element('use_post_like', $board) && $like_type === 1) {
+			response_result($view,'Err','이 게시판은 추천 기능을 사용하지 않습니다');
+		}
+
+		if ( ! element('use_post_dislike', $board) && $like_type === 2) {
+			response_result($view,'Err','이 게시판은 비추천 기능을 사용하지 않습니다');
+		}
+
+		if (abs(element('mem_id', $post)) === $mem_id) {
+			response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
+		}
+
+		$select = 'lik_id, lik_type';
+		$where = array(
+			'target_id' => $post_id,
+			'target_type' => $target_type,
+			'mem_id' => $mem_id,
+		);
+		$exist = $this->Like_model->get_one('', $select, $where);
+
+		if (!element('lik_id', $exist)) {
+			$status = element('lik_type', $exist) === '1' ? '추천' : '비추천';
+			response_result($view,'Err', '이 글을 ' . $status . '하지 않았습니다.');
+		}
+
+	
+		$delwhere = array(
+			'target_id' => $post_id,
+			'target_type' => $target_type,
+			'brd_id' => element('brd_id', $post),
+			'mem_id' => $mem_id,
+			'target_mem_id' => abs(element('mem_id', $post)),
+			'lik_type' => $like_type,
+		);
+		$this->Like_model->delete_where($delwhere);
+
+
+
+		$where = array(
+			'target_id' => $post_id,
+			'target_type' => $target_type,
+			'lik_type' => $like_type,
+		);
+		$count = $this->Like_model->count_by($where);
+
+
+		if ($like_type === 1) {
+			$field = 'post_like';
+		}
+		elseif ($like_type === 2) {
+			$field = 'post_dislike';
+		}
+
+		$updata = array(
+			$field => $count,
+		);
+		$this->Post_model->update($post_id, $updata);
+
+		$status = $like_type === 1 ? '추천' : '비추천';
+		$success = '이 글을 ' . $status . '을 취소 하셨습니다';
+		
+		response_result($view,'success', $success);
 
 	}
 
@@ -962,18 +1070,36 @@ class Postact extends CB_Controller
 
 		//추천일경우 푸시
 		if ($like_type == 1) {
-			$this->session->userdata('mem_nickname');
+			
+			$mem_nickname = $this->member->item('mem_nickname');
+			$not_message = $mem_nickname. '님께서 당신의 댓글을 좋아합니다.';
+			//알림 
+			if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
+				$this->load->library('notificationlib');
+				
+				$not_url = post_url(element('brd_key', $board), $post_id);
+				$this->notificationlib->set_noti(
+					abs(element('mem_id', $comment)),
+					$mem_id,
+					'이타주의자들',
+					abs(element('post_id', $comment)),
+					$not_message,
+					$not_url.abs(element('post_id', $comment))
+				);
+				//log_message('Error','알림 : '.$not_message );
+			}
+
 			$push_type = 'token';
 			$topic_name = '';
 			if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_like_post')) {
 				$this->load->library('pushlib');
-				$not_message = $this->session->userdata('mem_nickname'). '님께서 당신의 댓글을 좋아합니다.';
+			
 				$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
 				$this->pushlib->set_push(
-					abs(element('mem_id', $post)),
+					abs(element('mem_id', $comment)),
 					$mem_id,
 					'이타주의자들',
-					$cmt_id,
+					abs(element('post_id', $comment)),
 					$not_message,
 					$not_url,
 					$push_type,
@@ -992,6 +1118,115 @@ class Postact extends CB_Controller
 		
 	//	exit(json_encode($result));
 
+	}
+	/**
+	 * 댓글 추천/비추천 취소 하기 5060 1
+	 */
+	public function cancel_comment_like($cmt_id = 0, $like_type = 0)
+	{
+		$cmt_id = (int)$this->input->post('cmt_id');
+		$like_type = (int)$this->input->post('like_type');
+
+		$target_type = 2; //댓글
+
+		$result = array();
+		$this->output->set_content_type('application/json');
+
+		if ($this->member->is_member() === false) {
+			response_result($view,'Err','로그인 후 이용해주세요');
+		}
+
+		if (empty($cmt_id) OR $cmt_id < 1) {
+			response_result($view,'Err','잘못된 cmt_id 접근입니다');
+		}
+
+		if ($like_type !== 1 AND $like_type !== 2) {
+			response_result($view,'Err','잘못된 like_type 접근입니다.');
+		}
+
+		$mem_id = (int) $this->member->item('mem_id');
+
+		$this->load->model(array('Comment_model', 'Like_model'));
+
+		$select = 'cmt_id, post_id, mem_id, cmt_del';
+		$comment = $this->Comment_model->get_one($cmt_id, $select);
+
+		if ( ! element('cmt_id', $comment)) {
+			response_result($view,'Err','존재하지 않는 댓글입니다');
+		}
+		if (element('cmt_del', $comment)) {
+			response_result($view,'Err','삭제된 댓글입니다');
+		}
+
+		$select = 'post_id, brd_id, mem_id, post_del';
+		$post = $this->Post_model->get_one(element('post_id', $comment), $select);
+
+		if ( ! $this->session->userdata('post_id_' . element('post_id', $comment))) {
+			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
+		}
+
+		$board = $this->board->item_all(element('brd_id', $post));
+
+		if ( ! element('use_comment_like', $board) && $like_type === 1) {
+			response_result($view,'Err','이 게시판은 추천 기능을 사용하지 않습니다');
+		}
+
+		if ( ! element('use_comment_dislike', $board) && $like_type === 2) {
+			response_result($view,'Err','이 게시판은 비추천 기능을 사용하지 않습니다');
+		}
+
+		if (abs(element('mem_id', $comment)) === $mem_id) {
+			response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
+		}
+
+		$select = 'lik_id, lik_type';
+		$where = array(
+			'target_id' => $cmt_id,
+			'target_type' => $target_type,
+			'mem_id' => $mem_id,
+		);
+		$exist = $this->Like_model->get_one('', $select, $where);
+
+		if (!element('lik_id', $exist)) {
+		
+			response_result($view,'Err','이 댓글을 추천/비추 하지 않으셨습니다');
+		}
+	
+
+		$delete_where = array(
+			'target_id' => $cmt_id,
+			'target_type' => $target_type,
+			'brd_id' => element('brd_id', $post),
+			'mem_id' => $mem_id,
+			'lik_type' => $like_type,
+			
+		);
+		$this->Like_model->delete_where($delete_where);
+
+
+		if ($like_type === 1) {
+			$field = 'cmt_like';
+		}
+		if ($like_type === 2) {
+			$field = 'cmt_dislike';
+		}
+		
+		$where = array(
+			'target_id' => $cmt_id,
+			'target_type' => $target_type,
+			'lik_type' => $like_type,
+		);
+		$count = $this->Like_model->count_by($where);
+
+		$updata = array(
+			$field => $count
+		);
+		$this->Comment_model->update($cmt_id, $updata);
+
+		$status = $like_type === 1 ? '추천' : '비추천';
+		$success = '이 댓글의 ' . $status . '을 취소 하셨습니다';
+	
+		response_result($result,'success', $success);
 	}
 
 

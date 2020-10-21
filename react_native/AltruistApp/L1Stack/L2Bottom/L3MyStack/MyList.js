@@ -85,20 +85,18 @@ export class MyList extends React.Component{
                 </View>
                 <View style={styles.infocontainer}>
                     <View style={{alignItems:'center',}}>
-                        <Heartsvg />
+                        <Heartsvg width={15} height={20}/>
                         <Text style={styles.infotext} category="s1">{item.post_like}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
-                        <Commentsvg />
+                        <Commentsvg width={15} height={20}/>
                         <Text style={styles.infotext} category="s1">{item.post_comment_count}</Text>
                     </View>
                     <View style={{alignItems:'center',}}>
-                        <Viewsvg />
+                        <Viewsvg width={20} height={20}/>
                         <Text style={styles.infotext} category="s1">{item.post_hit}</Text>
                     </View>
-  
                 </View>
-  
             </View>
         </TouchableOpacity>
         )

@@ -1,10 +1,14 @@
 import React from 'react';
-import {View,Image,TextInput, SafeAreaView,StyleSheet,KeyboardAvoidingView,ScrollView,TouchableHighlight,Keyboard} from 'react-native';
-import {Text} from '@ui-kitten/components'
+import {View,Image,TextInput, SafeAreaView,StyleSheet,KeyboardAvoidingView,ScrollView,TouchableHighlight,Keyboard,TouchableWithoutFeedback, TouchableOpacity} from 'react-native';
+import {Text, Modal} from '@ui-kitten/components'
 import axios from 'axios'
 import Camsvg from '../../../assets/icons/Icon_Cam.svg';
 import {WriteContentToptab} from '../../../components/WriteContentTopBar'
 import DocumentPicker from 'react-native-document-picker';
+import ImagePicker from 'react-native-image-crop-picker';
+import Confirm from '../../../components/confirm.component';
+import {ActionSheet, Root} from 'native-base';
+
 
 export class MyProfEdit extends React.Component{
     constructor(props){
@@ -20,6 +24,9 @@ export class MyProfEdit extends React.Component{
             mem_profile_content:'',
             old_mem_photo:{},
             new_mem_photo:{},
+            resultText:'',
+            resultModalVisible:false,
+            mem_photo_del:false,
         }
     }
     
@@ -35,7 +42,7 @@ export class MyProfEdit extends React.Component{
           this.setState({mem_phone: phonefinal});
         }
         console.log('phonefinal', phonefinal);
-      };
+    };
     PhoneHyphen = (phonenum) => {
         var number = phonenum.replace(/[^0-9]/g, '');
         var phone = '';
@@ -62,6 +69,59 @@ export class MyProfEdit extends React.Component{
         var value = phone;
         this.setState({mem_phone: value});
     };
+    onClickProfImage() {
+        const buttons = ['기본이미지','갤러리에서 선택', '취소'];
+        ActionSheet.show(
+          {options: buttons, cancelButtonIndex: 2, title: 'Select a photo'},
+          (buttonIndex) => {
+            switch (buttonIndex) {
+              case 0:
+                this.chooseDefaultPhoto();
+                break;
+              case 1:
+                this.choosePhotoFromGallery();
+                break;
+              default:
+                break;
+            }
+          },
+        );
+      }
+  // 원래 이미지로 재설정
+  resetPhoto(){
+      this.setState({new_mem_photo:{},mem_photo_del:false})
+  }
+  // 기본이미지로 변경
+  chooseDefaultPhoto(){
+      this.setState({new_mem_photo:{uri:'http://dev.unyict.org/uploads/altwink-rect.png'}});
+      this.setState({mem_photo_del:true})
+  }
+  //갤러리에서 사진 가져오기
+  choosePhotoFromGallery() {
+    ImagePicker.openPicker({
+        width: 300,
+        height: 300,
+        cropping: true,
+    }).then((image) => {
+      this.onSelectedImage(image);
+      this.setState({mem_photo_del:false})
+      //console.log(image);
+    });
+  }
+
+  //불러온 사진의 정보를 this.state에 저장
+  onSelectedImage(image) {
+    console.log(image);
+    let item = {
+      id: Date.now(),
+      uri: image.path,
+      type: image.mime,
+      path: image.path,
+      content: image.data,
+      index: this.state.Image_index,
+    };
+    this.setState({new_mem_photo: item});
+  }
     attatchProfImg = async ()=>{
         try {
         const res = await DocumentPicker.pick({
@@ -88,8 +148,8 @@ export class MyProfEdit extends React.Component{
         }
         }
     }
-    modify=()=>{
-        const {mem_nickname,mem_profile_content,mem_username,mem_email,mem_phone,new_mem_photo,mem_sex} = this.state
+    modify= async ()=>{
+        const {mem_nickname,mem_profile_content,mem_username,mem_email,mem_phone,new_mem_photo,mem_sex,mem_photo_del} = this.state
         var formdata = new FormData();
         formdata.append('mem_username',mem_username)
         formdata.append('mem_nickname',mem_nickname)
@@ -98,21 +158,23 @@ export class MyProfEdit extends React.Component{
         formdata.append('mem_sex', mem_sex);
         formdata.append('mem_profile_content',mem_profile_content)
 
+        mem_photo_del?
+        formdata.append("mem_photo_del",1)
+        :
         new_mem_photo.uri ?
         formdata.append("mem_photo", {
             uri: new_mem_photo.uri,
             type: new_mem_photo.type,
-            name: new_mem_photo.name,
+            name: new_mem_photo.path,
           })
         :
         null
     
-        axios.post('http://dev.unyict.org/api/membermodify/modify',formdata)
+        await axios.post('http://dev.unyict.org/api/membermodify/modify',formdata)
         .then(res=>{    
             const regex = /(<([^>]+)>)|&nbsp;/ig;
             const result_message = res.data.view.result_message.replace(regex, '\n');
-            alert(result_message)
-            this.props.route.params.onGoback()
+            this.setState({resultModalVisible:true,resultText:result_message});
         })
         .catch(err=>{
             console.log('err : '+err )
@@ -140,110 +202,145 @@ export class MyProfEdit extends React.Component{
     }
 
     render(){
-      const {mem_username,mem_nickname,mem_email,mem_phone,mem_profile_content,old_mem_photo,new_mem_photo} = this.state
+      const {mem_username,mem_nickname,mem_email,mem_phone,mem_profile_content,old_mem_photo,new_mem_photo, resultModalVisible} = this.state
+      const {navigate} =this.props.navigation
         return(
-            <SafeAreaView style={{flex:1,backgroundColor:'#f4f4f4'}}>
-                <WriteContentToptab
-                    text='프로필 수정'
-                    right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-                    func={() => {
-                        Keyboard.dismiss();
-                        this.modify();
-                    }}
-                    gbckfunc={() => {
-                        this.props.navigation.goBack();
-                    }}
-                    gbckuse={true}
-                />
-                <ScrollView style={{paddingHorizontal:'5%'}}>
-                    <View style={{alignItems:'center'}}>
-                        
-                        <TouchableHighlight 
-                            onPress={()=>this.attatchProfImg()} 
-                            style={{marginVertical:20,}}
+            <Root>
+                <SafeAreaView style={{flex:1,backgroundColor:'#f4f4f4'}}>
+                    <WriteContentToptab
+                        text='프로필 수정'
+                        right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+                        func={() => {
+                            Keyboard.dismiss();
+                            this.modify();
+                        }}
+                        gbckfunc={() => {
+                            this.props.navigation.goBack();
+                        }}
+                        gbckuse={true}
+                    />
+                    <ScrollView style={{paddingHorizontal:'5%'}}>
+                        <View style={{alignItems:'center'}}>
+                            <View>
+                                <TouchableHighlight 
+                                    onPress={()=>this.onClickProfImage()} 
+                                    style={{}}
+                                    >
+                                    <>
+                                    <View style={{borderRadius:62.5,width:125, height : 125,overflow:'hidden'}} >
+                                    <Image 
+                                        source = {{uri : new_mem_photo.uri ? new_mem_photo.uri: 'http://dev.unyict.org/'+ (old_mem_photo.uri ?'uploads/member_photo/'+ old_mem_photo.uri: 'uploads/altwink-rect.png')}} 
+                                        style = {{ width : '100%', height : '100%', resizeMode:'cover'}}
+                                    />
+                                    </View>
+                                    <Camsvg style={{position:'absolute',bottom:0,right:0}}/>
+                                    </>
+                                </TouchableHighlight>
+                                {
+                                new_mem_photo.uri ?
+                                <View style={{position:'absolute',right:0}}>
+                                    <TouchableWithoutFeedback 
+                                        style={{backgroundColor:'#c4c4c4',borderRadius:15}}
+                                        onPress={()=>{this.resetPhoto()}}
+                                    >
+                                        <Text style={{color:'#ffffff',fontWeight:'bold',fontSize:14}}> X </Text>
+                                    </TouchableWithoutFeedback>
+                                </View>
+                                :null
+                                }
+                            </View>
+                            <KeyboardAvoidingView 
+                                behavior='height'
+                                style={{width:'100%',marginBottom:24,paddingTop:20}}
+                            > 
+                                <View style={styles.inputContainer}>
+                                    <View>
+                                        <Text category='h1' style={{fontSize:16,color:'#63579D'}}>이름</Text>
+                                    </View>
+                                    <TextInput
+                                        value={mem_username} 
+                                        style={styles.textInput} 
+                                        onChangeText={(text)=>this.setState({mem_username:text})}
+                                        />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <View>
+                                        <Text category='h1' style={{fontSize:16,color:'#63579D'}}>닉네임</Text>
+                                    </View>
+                                    <TextInput
+                                        value={mem_nickname} 
+                                        style={styles.textInput} 
+                                        onChangeText={(text)=>{this.setState({mem_nickname:text},this.checkCharNum)}}
+                                        onEndEditing={this.trim}
+                                        />
+                                </View>
+                                <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',}}>
+                                    <Text category='s2' style={{opacity: this.state.nickLengthOver ? 1:0,color:'#DB2434'}}>닉네임은 10자 이하입니다.</Text>
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <View>
+                                        <Text category='h1' style={{fontSize:16,color:'#63579D'}}>이메일</Text>
+                                    </View>
+                                    <TextInput
+                                        value={mem_email} 
+                                        style={[styles.textInput,{backgroundColor:'#c4c4c4'}]} 
+                                        onChangeText={(text)=>this.setState({mem_email:text})}
+                                        editable={false}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <View>
+                                        <Text category='h1' style={{fontSize:16,color:'#63579D'}}>연락처</Text>
+                                    </View>
+                                    <TextInput
+                                        value={mem_phone} 
+                                        style={[styles.textInput]} 
+                                        onChangeText={(mem_phone)=>{
+                                            this.setState({mem_phone});
+                                            this.NoString(mem_phone);
+                                            this.PhoneHyphen(mem_phone);
+                                        }}
+                                        keyboardType='number-pad'
+                                        onEndEditing={() => {
+                                            this.phoneSubstr(mem_phone);
+                                        }}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <View>
+                                        <Text category='h1' style={{fontSize:16,color:'#63579D'}}>자기소개</Text>
+                                    </View>
+                                    <TextInput
+                                        value={mem_profile_content!='null'? mem_profile_content:null} 
+                                        style={[styles.textInput]} 
+                                        onChangeText={(text)=>this.setState({mem_profile_content:text})}
+                                        multiline={true}
+                                    />
+                                </View>
+                            </KeyboardAvoidingView>
+                        </View>
+                    </ScrollView>
+                    <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyLeave')}} >
+                        <Text style={[{textAlign:'right', color:'#ACACAC'},styles.menuItem]}>회원 탈퇴</Text>
+                      </TouchableOpacity>
+                    <Modal
+                        visible={resultModalVisible}
+                        backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                        onBackdropPress={() => this.setState({resultModalVisible:false})}
                         >
-                            <>
-                            <View style={{borderRadius:62.5,width:125, height : 125,overflow:'hidden'}} >
-                            <Image 
-                                source = {{uri : new_mem_photo.uri ? new_mem_photo.uri: 'http://dev.unyict.org/'+ (old_mem_photo.uri ?'uploads/member_photo/'+ old_mem_photo.uri: 'uploads/altwink-rect.png')}} 
-                                style = {{ width : '100%', height : '100%', resizeMode:'contain',borderWidth:1}}
-                            />
-                            </View>
-                            <Camsvg style={{position:'absolute',bottom:0,right:0}}/>
-                            </>
-                        </TouchableHighlight>
-                        <KeyboardAvoidingView 
-                            behavior='height'
-                            style={{width:'100%',marginBottom:24,paddingTop:20}}
-                        > 
-                            <View style={styles.inputContainer}>
-                                <View>
-                                    <Text category='h1' style={{fontSize:16,color:'#63579D'}}>이름</Text>
-                                </View>
-                                <TextInput
-                                    value={mem_username} 
-                                    style={styles.textInput} 
-                                    onChangeText={(text)=>this.setState({mem_username:text})}
-                                    />
-                            </View>
-                            <View style={styles.inputContainer}>
-                                <View>
-                                    <Text category='h1' style={{fontSize:16,color:'#63579D'}}>닉네임</Text>
-                                </View>
-                                <TextInput
-                                    value={mem_nickname} 
-                                    style={styles.textInput} 
-                                    onChangeText={(text)=>{this.setState({mem_nickname:text},this.checkCharNum)}}
-                                    onEndEditing={this.trim}
-                                    />
-                            </View>
-                            <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',}}>
-                                <Text category='s2' style={{opacity: this.state.nickLengthOver ? 1:0,color:'#DB2434'}}>닉네임은 10자 이하입니다.</Text>
-                            </View>
-                            <View style={styles.inputContainer}>
-                                <View>
-                                    <Text category='h1' style={{fontSize:16,color:'#63579D'}}>이메일</Text>
-                                </View>
-                                <TextInput
-                                    value={mem_email} 
-                                    style={[styles.textInput,{backgroundColor:'#c4c4c4'}]} 
-                                    onChangeText={(text)=>this.setState({mem_email:text})}
-                                    editable={false}
-                                />
-                            </View>
-                            <View style={styles.inputContainer}>
-                                <View>
-                                    <Text category='h1' style={{fontSize:16,color:'#63579D'}}>연락처</Text>
-                                </View>
-                                <TextInput
-                                    value={mem_phone} 
-                                    style={[styles.textInput]} 
-                                    onChangeText={(mem_phone)=>{
-                                        this.setState({mem_phone});
-                                        this.NoString(mem_phone);
-                                        this.PhoneHyphen(mem_phone);
-                                    }}
-                                    keyboardType='number-pad'
-                                    onEndEditing={() => {
-                                        this.phoneSubstr(mem_phone);
-                                    }}
-                                />
-                            </View>
-                            <View style={styles.inputContainer}>
-                                <View>
-                                    <Text category='h1' style={{fontSize:16,color:'#63579D'}}>자기소개</Text>
-                                </View>
-                                <TextInput
-                                    value={mem_profile_content!='null'? mem_profile_content:null} 
-                                    style={[styles.textInput]} 
-                                    onChangeText={(text)=>this.setState({mem_profile_content:text})}
-                                    multiline={true}
-                                />
-                            </View>
-                        </KeyboardAvoidingView>
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
+                        <Confirm 
+                            type = 'result'
+                            confirmText={this.state.resultText}
+                            frstText="닫기"
+                            OnFrstPress={() => {
+                                this.setState({resultModalVisible:false})
+                                this.props.route.params.onGoback();
+                                this.props.navigation.goBack();
+                            }}
+                        />
+                    </Modal>
+                </SafeAreaView>
+            </Root>
         )
     }
 }

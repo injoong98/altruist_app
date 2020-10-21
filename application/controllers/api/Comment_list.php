@@ -18,7 +18,7 @@ class Comment_list extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array('Post', 'Comment', 'Comment_meta');
+	protected $models = array('Post', 'Comment', 'Comment_meta','Like');
 
 	/**
 	 * 헬퍼를 로딩합니다
@@ -327,7 +327,7 @@ class Comment_list extends CB_Controller
 					= member_photo_url(element('mem_photo', $val), 64, 64)
 					? member_photo_url(element('mem_photo', $val), 64, 64)
 					: site_url('assets/images/member_default.gif');
-
+				if($board['brd_key'] == 'b-a-1')  $result['list'][$key]['member_photo_url'] = site_url('assets/images/member_default.gif');
 				$result['list'][$key]['cmt_depth'] = strlen($result['list'][$key]['cmt_reply']) * 30;
 
 				$result['list'][$key]['can_update'] = false;
@@ -361,6 +361,24 @@ class Comment_list extends CB_Controller
 					if (strlen(element('cmt_reply', $val)) < 5 && $can_comment_write === true) {
 						$result['list'][$key]['can_reply'] = true;
 					}
+					//글을 조회하는 사람이 해당 글의 추천 여부 값 추가 
+					$result['list'][$key]['is_liked'] =  0;
+					if($mem_id) {
+						$select = 'lik_id, lik_type';
+						$where = array(
+							'target_id' => element('cmt_id', $val),
+							'target_type' => 2,
+							'mem_id' => $mem_id,
+						);
+						$exist = $this->Like_model->get_one('', $select, $where);
+
+						if (element('lik_id', $exist)) {
+							$result['list'][$key]['is_liked'] = 1;
+						}
+					}
+
+
+
 				}
 			}
 		}
