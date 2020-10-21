@@ -646,8 +646,7 @@ class AltQueContent extends React.Component{
             this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({isLoading:true,resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
     onRefresh=()=>{
@@ -720,6 +719,7 @@ class AltQueContent extends React.Component{
                     OnFrstPress={
                         () =>{ 
                             this.setState({resultModalVisible:false, });
+                            this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
                         }}
                 />
             </Modal>

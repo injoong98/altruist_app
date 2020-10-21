@@ -286,8 +286,7 @@ class GominContent extends React.Component{
             this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
     onRefresh=()=>{
@@ -588,7 +587,10 @@ class GominContent extends React.Component{
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false})}
+                    OnFrstPress={() => {
+                        this.setState({resultModalVisible:false});
+                        this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                    }}
                 />
             </Modal>
             <Modal
@@ -691,8 +693,7 @@ class MarketContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
     
@@ -1234,7 +1235,10 @@ class MarketContent extends React.Component {
                         type = 'result'
                         confirmText={this.state.resultText}
                         frstText="닫기"
-                        OnFrstPress={() => this.setState({resultModalVisible:false})}
+                        OnFrstPress={() =>{
+                            this.setState({resultModalVisible:false})
+                            this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                        }}
                     />
                 </Modal>
                 <Modal
@@ -1325,8 +1329,7 @@ class AlbaContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
 
@@ -1610,7 +1613,10 @@ class AlbaContent extends React.Component {
                             type = 'result'
                             confirmText={this.state.resultText}
                             frstText="닫기"
-                            OnFrstPress={() => this.setState({resultModalVisible:false})}
+                            OnFrstPress={() =>{    
+                                this.setState({resultModalVisible:false})
+                                this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                            }}
                         />
                     </Modal>
                     <Modal
@@ -1853,12 +1859,13 @@ class IlbanContent extends Component {
         await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
+            this.setState({isLoading:false})
         })
         .catch((error)=>{
-            alert('error')
         })
     }
     getPostData = async (post_id)=>{
+        this.setState({isLoading:true})
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_photo});
@@ -1882,8 +1889,7 @@ class IlbanContent extends Component {
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'});
         })
     }
     
@@ -1901,7 +1907,6 @@ class IlbanContent extends Component {
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
-        .then(()=>{this.setState({isLoading:false})})
     }
 
     componentWillUnmount(){
@@ -2205,7 +2210,10 @@ class IlbanContent extends Component {
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false})}
+                    OnFrstPress={() =>{
+                        this.setState({resultModalVisible:false});
+                        this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                    }}
                 />
             </Modal>
             <Modal
