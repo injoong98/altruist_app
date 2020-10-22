@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
         display:"flex",flexDirection:"row",justifyContent:'space-around',
         borderTopLeftRadius:23,
         width:150,
-        backgroundColor:"#ffffff",
+        // backgroundColor:"#ffffff",
         position:"relative",bottom:0,right:0,
         paddingTop:5,
         paddingLeft:25,
