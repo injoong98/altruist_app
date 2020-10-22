@@ -37,11 +37,16 @@ export function MyTabBar({ state, descriptors, navigation, position }) {
           const isFocused = state.index === index;
   
           const onPress = () => {
-            const event = navigation.emit({
+            const event = 
+            isFocused ?
+            navigation.emit({
               type: 'tabPress',
               target: route.key,
               canPreventDefault: true,
-            });
+            })
+            :
+            ()=>{}
+            ;
   
             if (!isFocused && !event.defaultPrevented) {
               navigation.navigate(route.name);

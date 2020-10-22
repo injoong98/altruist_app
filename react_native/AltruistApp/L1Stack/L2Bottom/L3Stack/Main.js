@@ -110,7 +110,6 @@ class AltMainScreen extends React.Component{
     componentDidMount(){
         this.getAltruistsList();
         this.getBanners()
-
     }
 
     renderHeadSection = () =>{
