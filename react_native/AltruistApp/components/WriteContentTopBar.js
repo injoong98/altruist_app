@@ -5,15 +5,12 @@ import BellLargesvg from '../assets/icons/bell-large.svg'
 import Uploadsvg from '../assets/icons/upload.svg'
 import Backsvg from '../assets/icons/back-arrow-color.svg'
 import Searchsvg from '../assets/icons/search-outline.svg';
+import MoreLsvg from '../assets/icons/dotdotdot-large.svg'
+import MoreSsvg from '../assets/icons/dotdotdot-small.svg'
 
 export class WriteContentToptab extends React.Component {
     constructor(props){
         super(props)
-        {this.props.right=='search'
-        ?this.state={
-            keyword : null
-        }
-        :null}
     }
 
     render(){
@@ -31,28 +28,9 @@ export class WriteContentToptab extends React.Component {
                         }
                     </TouchableOpacity>
                 </View>
-                {right=='search'
-                    ?
-                    <View style={{margin : 5}}>
-                        <TextInput 
-                            style={styles.titleInput} 
-                            value={this.state.keyword} 
-                            onChangeText={(text) =>{this.setState({keyword:text})}}
-                            placeholder="검색어를 입력하세요"
-                            placeholderTextColor='#A897C2'
-                        />
-                        <TouchableOpacity 
-                            style={{position:"absolute",right:5,top:6}}
-                            onPress={this.props.onPress}>
-
-                            <Searchsvg height={25} width={25} fill='#A9C' />
-                        </TouchableOpacity>
-                    </View>
-                    :
-                    <View style={{flex:4, justifyContent:'center', alignItems:'center'}}>
-                        <Text category='h2' style={styles.toptext}>{text}</Text>
-                    </View>
-                }
+                <View style={{flex:4, justifyContent:'center', alignItems:'center'}}>
+                    <Text category='h2' style={styles.toptext}>{text}</Text>
+                </View>
                 <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                 {
                     !right ?
@@ -65,7 +43,7 @@ export class WriteContentToptab extends React.Component {
                             </Text>
                     </TouchableOpacity>
                     :
-                    null
+                    right
                 }
                 </View>
             </View>
