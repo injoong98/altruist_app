@@ -2109,8 +2109,7 @@ class IlbanContent extends Component {
                         StatusBar.setBarStyle('default');}}
                     }
                 gbckuse={true}
-                func={()=>this.setState({popoverVisible:true})}
-                right={`dotdotdot`}
+                right={<this.MoreAction/>}
                 />
             {this.state.isLoading ?
                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
