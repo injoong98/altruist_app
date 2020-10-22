@@ -1247,18 +1247,15 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		if ($this->member->is_member() === false) {
-			$result = array('error' => '로그인 후 이용해주세요');
-			exit(json_encode($result));
+			response_result($view,'Err','로그인 후 이용해주세요');
 		}
 
 		$post_id = (int) $post_id;
 		if (empty($post_id) OR $post_id < 1) {
-			$result = array('error' => '잘못된 접근입니다');
-			exit(json_encode($result));
+			response_result($view,'Err','잘못된 접근입니다');
 		}
 		if ( ! $this->session->userdata('post_id_' . $post_id)) {
-			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
-			exit(json_encode($result));
+			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
 		}
 
 		$mem_id = (int) $this->member->item('mem_id');
@@ -1269,19 +1266,16 @@ class Postact extends CB_Controller
 		$post = $this->Post_model->get_one($post_id, $select);
 
 		if ( ! element('post_id', $post)) {
-			$result = array('error' => '존재하지 않는 게시물입니다');
-			exit(json_encode($result));
+			response_result($view,'Err','존재하지 않는 게시물입니다');
 		}
 		if (element('post_del', $post)) {
-			$result = array('error' => '삭제된 게시물입니다');
-			exit(json_encode($result));
+			response_result($view,'Err','삭제된 게시물입니다');
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
 
 		if ( ! element('use_scrap', $board)) {
-			$result = array('error' => '이 게시판은 스크랩 기능을 사용하지 않습니다');
-			exit(json_encode($result));
+			response_result($view,'Err','이 게시판은 스크랩 기능을 사용하지 않습니다');
 		}
 
 		$where = array(
@@ -1291,8 +1285,7 @@ class Postact extends CB_Controller
 		$exist = $this->Scrap_model->get_one('', 'scr_id', $where);
 
 		if (element('scr_id', $exist)) {
-			$result = array('error' => '이미 이 글을 스크랩 하셨습니다');
-			exit(json_encode($result));
+			response_result($view,'Err','이미 이 글을 스크랩 하셨습니다');
 		}
 
 		$insertdata = array(
@@ -1314,10 +1307,74 @@ class Postact extends CB_Controller
 
 		$success = '이 글을 스크랩 하셨습니다';
 		$result = array('success' => $success, 'count' => $count);
-		exit(json_encode($result));
+		response_result($result,'success',$success);
 
 	}
+	/**
+	 * 게시물 스크랩 취소
+	 */
+	public function cancel_post_scrap($post_id = 0)
+	{
 
+		if ($this->member->is_member() === false) {
+			response_result($view,'Err','로그인 후 이용해주세요');
+		}
+		//$post_id = (int)$this->input->post('post_id');
+		if (empty($post_id) OR $post_id < 1) {
+			response_result($view,'Err','잘못된 post_id 접근입니다('.$post_id.')');
+		}
+		$post_id = (int) $post_id;
+		if (empty($post_id) OR $post_id < 1) {
+			response_result($view,'Err','잘못된 접근입니다');
+		}
+		if ( ! $this->session->userdata('post_id_' . $post_id)) {
+			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
+		}
+
+		$mem_id = (int) $this->member->item('mem_id');
+
+		$this->load->model('Scrap_model');
+
+		$select = 'post_id, brd_id, mem_id, post_del';
+		$post = $this->Post_model->get_one($post_id, $select);
+
+		if ( ! element('post_id', $post)) {
+			response_result($view,'Err','존재하지 않는 게시물입니다');
+		}
+		if (element('post_del', $post)) {
+			response_result($view,'Err','삭제된 게시물입니다');
+		}
+
+		$where = array(
+			'post_id' => $post_id,
+			'mem_id' => $mem_id,
+		);
+		$exist = $this->Scrap_model->get_one('', 'scr_id', $where);
+
+		if (!element('scr_id', $exist)) {
+			response_result($view,'Err','이 글을 스크랩 하지 않으셨습니다.');
+		}
+
+		$insertdata = array(
+			'post_id' => $post_id,
+			'brd_id' => element('brd_id', $post),
+			'mem_id' => $mem_id,
+			'target_mem_id' => abs(element('mem_id', $post)),
+		);
+		$delete_result = false;
+		$delete_result = $this->Scrap_model->delete_where($insertdata);
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('after', $eventname);
+		if ($delete_result) {
+			$success = '이 글의 스크랩을 취소 하셨습니다';
+		}else {
+			$success = '이 글의 스크랩을 취소 하지 못했습니다.';
+		}
+		$result = array('success' => $success, 'count' => $count);
+		response_result($result,'success', $success);
+
+	}
 
 	/**
 	 * 게시물 신고 하기

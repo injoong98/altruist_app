@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:testAltruistApp.xcodeproj">
+      location = "group:/Users/ryanhokanson/Documents/unyict/Altruists_app/react_native/AltruistApp/ios/AltruistApp.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
