@@ -108,7 +108,8 @@ BackAction = () => (
         >
             <Confirm 
                 type="result"
-                confirmText={` 아쉽지만 좀 더 개선하여 다시 만나요! \n 그동안 이용에 감사드립니다! \n 모달창이 곧 닫힙니다! `}
+                confirmText={` 아쉽지만 부족한 부분을 알려주시면 적용할께요! 
+                \n 꼭 다시 만나요! \n 그동안 이용에 감사드립니다!`}
                 frstText="확인"
                 OnFrstPress={() => {signOut()}}
             />
