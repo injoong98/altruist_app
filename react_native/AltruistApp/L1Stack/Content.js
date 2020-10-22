@@ -280,7 +280,12 @@ class GominContent extends React.Component{
     getPostData = async (post_id)=>{
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_icon});
+            this.setState({
+                post:response.data.view.post, 
+                mem_icon_url:response.data.mem_icon=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
+                ?"https://dev.unyict.org/uploads/altwink-rect.png"
+                :response.data.mem_icon
+            });
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
             this.setState({content:post_remove_tagsf})
@@ -679,7 +684,12 @@ class MarketContent extends React.Component {
         
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_icon})
+            this.setState({
+                post:response.data.view.post, 
+                mem_icon_url:response.data.mem_icon=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
+                ?"https://dev.unyict.org/uploads/altwink-rect.png"
+                :response.data.mem_icon
+            });
             if (response.data.view.file_image){
                 this.setState({image: response.data.view.file_image.map(function(item, index){
                     var image_info = {};
@@ -973,7 +983,11 @@ class MarketContent extends React.Component {
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
-                        <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/>
+                        <Image source={{
+                            uri : item.member_photo_url=="https://dev.unyict.org/assets/images/member_default.gif"
+                            ?"https://dev.unyict.org/uploads/altwink-rect.png"
+                            :item.member_photo_url}} 
+                            style={{width:20, height:20, marginRight:5}}/>
                         <View>
                             <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
                             <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
@@ -1868,7 +1882,12 @@ class IlbanContent extends Component {
         this.setState({isLoading:true})
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_photo});
+            this.setState({
+                post:response.data.view.post, 
+                mem_icon_url:response.data.mem_icon=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
+                ?"https://dev.unyict.org/uploads/altwink-rect.png"
+                :response.data.mem_icon
+            });
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
             this.setState({content:post_remove_tagsf})
@@ -2033,7 +2052,11 @@ class IlbanContent extends Component {
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
-                        <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/>
+                        <Image source={{
+                            uri : item.member_photo_url=="https://dev.unyict.org/assets/images/member_default.gif"
+                            ?"https://dev.unyict.org/uploads/altwink-rect.png"
+                            :item.member_photo_url}} 
+                            style={{width:20, height:20, marginRight:5}}/>
                         <View>
                             <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
                             <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
@@ -2086,8 +2109,7 @@ class IlbanContent extends Component {
                         StatusBar.setBarStyle('default');}}
                     }
                 gbckuse={true}
-                func={()=>this.setState({popoverVisible:true})}
-                right={`dotdotdot`}
+                right={<this.MoreAction/>}
                 />
             {this.state.isLoading ?
                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
