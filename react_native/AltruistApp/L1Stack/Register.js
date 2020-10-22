@@ -748,11 +748,12 @@ class RegisterScreen extends Component {
                 fontSize: 13,
                 paddingHorizontal: 10,
                 maxHeight: 40,
+                minHeight:30
               },
               this.state.pwStyle ? this.state.pwStyle : styles.inputs,
             ]}
             secureTextEntry={true}
-            placeholder="    * 비밀번호"
+            placeholder="* 비밀번호"
             onChangeText={(mem_password) => {
               this.setState({mem_password: mem_password});
               this.EqualPW(mem_password, this.state.mem_password_re);
@@ -779,14 +780,16 @@ class RegisterScreen extends Component {
             style={[
               {
                 fontSize: 13,
-                paddingHorizontal: 5,
+                paddingHorizontal: 10,
                 marginVertical: 7,
                 maxHeight: 40,
+                minHeight:30
+
               },
               this.state.pwreStyle ? this.state.pwreStyle : styles.inputs,
             ]}
             secureTextEntry={true}
-            placeholder="    * 비밀번호 확인"
+            placeholder="* 비밀번호 확인"
             onChangeText={(mem_password_re) => {
               this.setState({mem_password_re: mem_password_re});
               this.EqualPW(this.state.mem_password, mem_password_re);

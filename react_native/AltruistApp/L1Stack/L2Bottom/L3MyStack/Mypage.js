@@ -13,7 +13,6 @@ import AltruistSvg from '../../../assets/icons/altruist.svg'
 import NoimageSvg from '../../../assets/icons/noimage.svg'
 import PersonSvg from '../../../assets/icons/person.svg'
 
-
 class Mypage extends React.Component{
     constructor(props){
         super(props);
@@ -98,6 +97,18 @@ class Mypage extends React.Component{
                       <MoreSvg height={19} width={19}/>
                     </TouchableOpacity >  */}
                   </View>
+                  <View style={{ marginHorizontal:40}}>
+                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
+                      {/* <PencilSvg height={28} width={22}/> */}
+                      <AltruistSvg height={19} width={22}/>
+                      <Text category='h2' style={styles.menuTitle}>"더불어 성장하는 이타주의자들"?</Text>
+                    </View>
+                    {/* <View>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'post'})}} >
+                        <Text style={styles.menuItem}></Text>
+                      </TouchableOpacity>
+                    </View> */}
+                  </View>
                   <View style={{ marginHorizontal:40,marginBottom:20}}>
                     <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
                       <PencilSvg height={28} width={22}/>
@@ -178,15 +189,10 @@ class Mypage extends React.Component{
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{this.setState({logOutModalVisible:true})}} >
                         <Text style={styles.menuItem}>로그아웃</Text>
                       </TouchableOpacity>
-                      <View>
-                        <Text></Text>
-                      </View>
-                      {/* <TouchableOpacity style={styles.menuContainer} onPress={()=>{()=>{this.sessionChk();}}}>
-                        <Text style={styles.menuItem}>세션체크</Text>
+                     
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarmSetting');}}>
+                        <Text style={styles.menuItem}>알림 설정</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarm');}}>
-                        <Text style={styles.menuItem}>알림 체크</Text>
-                      </TouchableOpacity> */}
                     </View>
                   </View>
 

@@ -5,6 +5,8 @@ import BellLargesvg from '../assets/icons/bell-large.svg'
 import Uploadsvg from '../assets/icons/upload.svg'
 import Backsvg from '../assets/icons/back-arrow-color.svg'
 import Searchsvg from '../assets/icons/search-outline.svg';
+import MoreLsvg from '../assets/icons/dotdotdot-large.svg'
+import MoreSsvg from '../assets/icons/dotdotdot-small.svg'
 
 export class WriteContentToptab extends React.Component {
     constructor(props){

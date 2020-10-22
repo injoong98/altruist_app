@@ -291,8 +291,7 @@ class GominContent extends React.Component{
             this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
     onRefresh=()=>{
@@ -460,6 +459,10 @@ class GominContent extends React.Component{
         const {navigation,route} =this.props
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible} = this.state
          return(
+            <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            style={{flex:1}} 
+         >
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {if(Platform.OS!=='ios'){
@@ -496,7 +499,7 @@ class GominContent extends React.Component{
                 }
                 <TextInput
                     ref="commentInput"
-                    style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                    style={Platform.OS=="ios"? styles.commentiOS : styles.commentAndroid}
                     value={cmt_content}
                     placeholder={ replying?"대댓글" :"댓글"}
                     placeholderTextColor='#A897C2'
@@ -589,7 +592,10 @@ class GominContent extends React.Component{
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false})}
+                    OnFrstPress={() => {
+                        this.setState({resultModalVisible:false});
+                        this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                    }}
                 />
             </Modal>
             <Modal
@@ -612,6 +618,7 @@ class GominContent extends React.Component{
             </Modal>
             
         </SafeAreaView>
+        </KeyboardAvoidingView>
          )
      }
 }
@@ -696,8 +703,7 @@ class MarketContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
     
@@ -1096,6 +1102,11 @@ class MarketContent extends React.Component {
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, popoverVisible, modalType} = this.state;
 
         return(
+            <KeyboardAvoidingView
+               behavior={Platform.OS == "ios" ? "padding" : "height"}
+               style={{flex:1}} 
+            >
+
             <SafeAreaView style={{flex:1}}>
                 <WriteContentToptab
                     backgroundColor='#F4F4F4'
@@ -1137,7 +1148,7 @@ class MarketContent extends React.Component {
                     }
                     <TextInput
                         ref="commentInput"
-                        style={{backgroundColor:'#ffffff',borderRadius:14,fontSize:15}}
+                        style={Platform.OS=="ios"? styles.commentiOS : styles.commentAndroid}
                         value={cmt_content}
                         placeholder={ replying?"대댓글" :"댓글"}
                         placeholderTextColor='#63579D'
@@ -1238,7 +1249,10 @@ class MarketContent extends React.Component {
                         type = 'result'
                         confirmText={this.state.resultText}
                         frstText="닫기"
-                        OnFrstPress={() => this.setState({resultModalVisible:false})}
+                        OnFrstPress={() =>{
+                            this.setState({resultModalVisible:false})
+                            this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                        }}
                     />
                 </Modal>
                 <Modal
@@ -1258,6 +1272,7 @@ class MarketContent extends React.Component {
                     <Spinner size='giant'/>
                 </Modal>
             </SafeAreaView>
+            </KeyboardAvoidingView>
         
             )
     }
@@ -1328,8 +1343,7 @@ class AlbaContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
 
@@ -1613,7 +1627,10 @@ class AlbaContent extends React.Component {
                             type = 'result'
                             confirmText={this.state.resultText}
                             frstText="닫기"
-                            OnFrstPress={() => this.setState({resultModalVisible:false})}
+                            OnFrstPress={() =>{    
+                                this.setState({resultModalVisible:false})
+                                this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                            }}
                         />
                     </Modal>
                     <Modal
@@ -1856,12 +1873,13 @@ class IlbanContent extends Component {
         await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
+            this.setState({isLoading:false})
         })
         .catch((error)=>{
-            alert('error')
         })
     }
     getPostData = async (post_id)=>{
+        this.setState({isLoading:true})
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({
@@ -1890,8 +1908,7 @@ class IlbanContent extends Component {
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'});
         })
     }
     
@@ -1909,7 +1926,6 @@ class IlbanContent extends Component {
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
-        .then(()=>{this.setState({isLoading:false})})
     }
 
     componentWillUnmount(){
@@ -2079,16 +2095,23 @@ class IlbanContent extends Component {
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image} = this.state
         
         return(
+            <KeyboardAvoidingView
+               behavior={Platform.OS == "ios" ? "padding" : "height"}
+               style={{flex:1}} 
+            >
+
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {
                     this.props.navigation.goBack();
-                    if(Platform.OS!=='ios'){
+                if(Platform.OS!=='ios'){
                         StatusBar.setBackgroundColor('#B09BDE');
                         StatusBar.setBarStyle('default');}}
                     }
                 gbckuse={true}
-                right={<this.MoreAction/>}/>
+                func={()=>this.setState({popoverVisible:true})}
+                right={`dotdotdot`}
+                />
             {this.state.isLoading ?
                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
                     <Text>is Loading now...</Text>
@@ -2116,7 +2139,7 @@ class IlbanContent extends Component {
                 }
                 <TextInput
                     ref="commentInput"
-                    style={{backgroundColor:'#f4f4f4',borderRadius:14,fontSize:15}}
+                    style={Platform.OS=="ios"? styles.commentiOS : styles.commentAndroid}
                     value={cmt_content}
                     placeholder={ replying?"대댓글" :"댓글"}
                     placeholderTextColor='#A897C2'
@@ -2212,7 +2235,10 @@ class IlbanContent extends Component {
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false})}
+                    OnFrstPress={() =>{
+                        this.setState({resultModalVisible:false});
+                        this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                    }}
                 />
             </Modal>
             <Modal
@@ -2253,6 +2279,7 @@ class IlbanContent extends Component {
                 />
             </Modal>
         </SafeAreaView>
+            </KeyboardAvoidingView>
          )
      }
 }
@@ -2346,7 +2373,21 @@ const styles = StyleSheet.create({
     marketText: {
         marginTop:10,
         marginLeft: 10
-    }
+    },
+    commentAndroid:{
+        backgroundColor:'#f4f4f4',
+        borderRadius:14,
+        fontSize:14
+    },
+    commentiOS:{
+        backgroundColor:'#f4f4f4',
+        borderRadius:14,
+        fontSize:18,
+        textAlignVertical:'center',
+        paddingHorizontal:'3%',
+        minHeight:50
+    },
+    
 });
 
 

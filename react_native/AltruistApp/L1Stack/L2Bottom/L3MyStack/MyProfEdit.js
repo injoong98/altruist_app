@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,Image,TextInput, SafeAreaView,StyleSheet,KeyboardAvoidingView,ScrollView,TouchableHighlight,Keyboard,TouchableWithoutFeedback} from 'react-native';
+import {View,Image,TextInput, SafeAreaView,StyleSheet,KeyboardAvoidingView,ScrollView,TouchableHighlight,Keyboard,TouchableWithoutFeedback, TouchableOpacity} from 'react-native';
 import {Text, Modal} from '@ui-kitten/components'
 import axios from 'axios'
 import Camsvg from '../../../assets/icons/Icon_Cam.svg';
@@ -203,6 +203,7 @@ export class MyProfEdit extends React.Component{
 
     render(){
       const {mem_username,mem_nickname,mem_email,mem_phone,mem_profile_content,old_mem_photo,new_mem_photo, resultModalVisible} = this.state
+      const {navigate} =this.props.navigation
         return(
             <Root>
                 <SafeAreaView style={{flex:1,backgroundColor:'#f4f4f4'}}>
@@ -319,6 +320,9 @@ export class MyProfEdit extends React.Component{
                             </KeyboardAvoidingView>
                         </View>
                     </ScrollView>
+                    <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyLeave')}} >
+                        <Text style={[{textAlign:'right', color:'#ACACAC'},styles.menuItem]}>회원 탈퇴</Text>
+                      </TouchableOpacity>
                     <Modal
                         visible={resultModalVisible}
                         backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
