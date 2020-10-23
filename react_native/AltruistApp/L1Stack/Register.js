@@ -273,7 +273,7 @@ class RegisterScreen extends Component {
     console.info('form', this.state);
 
     await axios
-      .post('http://dev.unyict.org/api/register/form', formdata)
+      .post('https://dev.unyict.org/api/register/form', formdata)
       .then((res) => {
         console.log('response', res);
         console.log('status', res.data.status);
@@ -430,7 +430,7 @@ class RegisterScreen extends Component {
     formdata.append('email', mem_email);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/email_check`, formdata)
+      .post(`https://dev.unyict.org/api/register/email_check`, formdata)
       .then((res) => {
         console.log(res.data);
         if (res.data.message.includes('예약어')) {
@@ -454,7 +454,7 @@ class RegisterScreen extends Component {
     formdata.append('password', mem_password);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/password_check`, formdata)
+      .post(`https://dev.unyict.org/api/register/password_check`, formdata)
       .then((res) => {
         console.log(res.data);
         const pwmessage = res.data.message;
@@ -470,7 +470,7 @@ class RegisterScreen extends Component {
     formdata.append('userid', mem_recommend);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .post(`https://dev.unyict.org/api/register/userid_check`, formdata)
       .then((res) => {
         console.log(res.data);
 
@@ -490,7 +490,7 @@ class RegisterScreen extends Component {
     formdata.append('userid', mem_userid);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .post(`https://dev.unyict.org/api/register/userid_check`, formdata)
       .then((res) => {
         console.log(res.data);
 
@@ -509,7 +509,7 @@ class RegisterScreen extends Component {
     formdata.append('nickname', mem_nickname);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/nickname_check`, formdata)
+      .post(`https://dev.unyict.org/api/register/nickname_check`, formdata)
       .then((res) => {
         console.log(res.data);
         if (res.data.reason == '닉네임값이 넘어오지 않았습니다') {
