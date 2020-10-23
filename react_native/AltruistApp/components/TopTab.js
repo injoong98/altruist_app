@@ -69,7 +69,7 @@ export function MyTabBar({ state, descriptors, navigation, position }) {
               testID={options.tabBarTestID}
               onPress={onPress}
               onLongPress={onLongPress}
-              style={{ flex: 1, alignItems:'center',justifyContent:'center',backgroundColor:isFocused ? '#ffffff' : '#dedede',paddingVertical:10}}
+              style={{ flex: 1, alignItems:'center',justifyContent:'center',backgroundColor: '#ffffff' ,paddingVertical:10}}
             >
                 {label(isFocused)}
             </Pressable>

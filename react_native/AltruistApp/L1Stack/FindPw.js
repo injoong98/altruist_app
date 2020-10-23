@@ -94,7 +94,7 @@ class FindPwScreen extends Component {
     console.info('form', this.state);
 
     await axios
-      .post(`http://dev.unyict.org/api/findaccount/findpw`, formdata)
+      .post(`https://dev.unyict.org/api/findaccount/findpw`, formdata)
       .then((res) => {
         console.log(res);
         if (res.data.status == 500) {
@@ -145,7 +145,7 @@ class FindPwScreen extends Component {
       formdata.append('userid', value);
 
       await axios
-        .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+        .post(`https://dev.unyict.org/api/register/userid_check`, formdata)
         .then((res) => {
           if (res.data.result != `no`) {
             this.setState({
@@ -171,7 +171,7 @@ class FindPwScreen extends Component {
       formdata.append('email', value);
 
       await axios
-        .post(`http://dev.unyict.org/api/register/email_check`, formdata)
+        .post(`https://dev.unyict.org/api/register/email_check`, formdata)
         .then((res) => {
           if (!res.data.message.includes('이미 사용중')) {
             this.setState({

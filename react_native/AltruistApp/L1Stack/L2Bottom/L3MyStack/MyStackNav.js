@@ -11,8 +11,12 @@ import {MyAlarmSetting} from './MyAlarm';
 import MyAltCareer from './MyAltCareer';
 import MyAltProf from './MyAltProf';
 import {MyLeave} from './MyLeave';
+import {AboutApp} from './AboutApp';
 import {AltQueToptab} from '../L3Stack/AltQueToptab';
 import {AltQueContent,AltReplying} from '../L3Stack/Question';
+
+import { WebView } from 'react-native-webview';
+
 const {Navigator,Screen} = createStackNavigator();
 
 const BackIcon =  (props) =>(
@@ -29,6 +33,16 @@ const SpareScreen =({navigation}) =>{
         >
             <Text>이타주의자</Text>
         </TouchableWithoutFeedback>   
+    </SafeAreaView>
+    )
+}
+const MyGame =({navigation}) =>{
+
+    return(
+    <SafeAreaView style={{flex:1}}>
+         <WebView
+                source={{uri: 'https://dev.unyict.org/games/trex'}}
+            />
     </SafeAreaView>
     )
 }
@@ -50,5 +64,7 @@ export const MyStackNav = () =>(
         <Screen name = "MyAltCareer" component={MyAltCareer}/>
         <Screen name = "MyAltProf" component={MyAltProf}/>
         <Screen name = "MyLeave" component={MyLeave}/>
+        <Screen name = "AboutApp" component={AboutApp}/>
+        <Screen name = "MyGame" component={MyGame}/>
     </Navigator>
 )

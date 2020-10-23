@@ -36,7 +36,7 @@ class AgreementScreen extends Component {
 
   GetAgreement = async () => {
     await axios
-      .get('http://dev.unyict.org/api/register/get_register_policy')
+      .get('https://dev.unyict.org/api/register/get_register_policy')
       .then((res) => {
         // let key = 0;
         // //리스트에 key값 넣기
