@@ -42,7 +42,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>testAltruistApp would like to use your camera</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>testAltruistApp would like to use your microphone (for videos)</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
