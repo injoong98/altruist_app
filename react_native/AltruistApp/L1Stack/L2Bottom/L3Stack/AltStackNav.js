@@ -33,22 +33,38 @@ const SpareScreen =({navigation}) =>{
     )
 }
 
-export const AltStackNav = () =>(
-    <Navigator headerMode="none">
-        <Screen name = "AltMain" component={AltMainScreen}/>
-        <Screen name = "AltApply" component={AltApplyScreen}/>
-        <Screen name = "AltList" component={AltListScreen}/>
-        <Screen name = "AltProfile" component={AltProfileScreen}/>
-        <Screen name = "AltApplyForm" component={AltApplyFormScreen}/>
-        <Screen name = "AltApplyComplete" component={ApplyCompleteScreen}/>
-        <Screen name = "AltApplyStatus" component={AltApplyStatus}/>
-        <Screen name = "AltQueType" component={AltQueType}/>
-        <Screen name = "AltAreaList" component={AltAreaList}/>
-        <Screen name = "AltQuestionWrite" component={AltQuestionWrite}/>
-        <Screen name = "AltQueList" component={AltQueList}/>
-        <Screen name = "AltQueContent" component={AltQueContent}/>
-        <Screen name = "AltReplying" component={AltReplying}/>
-        <Screen name = "AltQueToptab" component={AltQueToptab}/>
-        <Screen name = "AltOpqQueList" component={AltOpqQueList}/>
-    </Navigator>
-)
+export const AltStackNav = ({navigation}) =>{
+
+    React.useEffect(() => {
+        const unsubscribe = navigation.addListener('tabPress', e => {
+          // Prevent default behavior
+          console.log("tabPress Listener : Hi!")
+          navigation.navigate('AltMain')
+          // Do something manually
+          // ...
+        });
+      
+        return unsubscribe;
+      }, [navigation]);
+
+     return(
+        <Navigator headerMode="none">
+            <Screen name = "AltMain" component={AltMainScreen}/>
+            <Screen name = "AltApply" component={AltApplyScreen}/>
+            <Screen name = "AltList" component={AltListScreen}/>
+            <Screen name = "AltProfile" component={AltProfileScreen}/>
+            <Screen name = "AltApplyForm" component={AltApplyFormScreen}/>
+            <Screen name = "AltApplyComplete" component={ApplyCompleteScreen}/>
+            <Screen name = "AltApplyStatus" component={AltApplyStatus}/>
+            <Screen name = "AltQueType" component={AltQueType}/>
+            <Screen name = "AltAreaList" component={AltAreaList}/>
+            <Screen name = "AltQuestionWrite" component={AltQuestionWrite}/>
+            <Screen name = "AltQueList" component={AltQueList}/>
+            <Screen name = "AltQueContent" component={AltQueContent}/>
+            <Screen name = "AltReplying" component={AltReplying}/>
+            <Screen name = "AltQueToptab" component={AltQueToptab}/>
+            <Screen name = "AltOpqQueList" component={AltOpqQueList}/>
+        </Navigator>
+     ) 
+}
+

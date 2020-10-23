@@ -59,6 +59,7 @@ class RegisterScreen extends Component {
       EmailIcon: false,
       goNext: true,
       date: new Date(),
+      checked : true
     };
   }
 
@@ -891,7 +892,7 @@ class RegisterScreen extends Component {
               textDecorationColor: '#63579D',
               flexDirection: 'row',
             }}>
-            <this.CheckboxKitten />
+            {/* <this.CheckboxKitten /> */}
             <Text category="s1" style={{color: '#63579D'}}>
               {` `} * 하늘 부모님 성회 아래
               {`\n`} {` `}

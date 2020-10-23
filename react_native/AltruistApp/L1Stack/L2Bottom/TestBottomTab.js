@@ -88,7 +88,12 @@ class AlarmIcon extends React.Component{
     render(){
         return(
             <View style={{width:50,alignItems:'center'}}>
+                {
+                    this.props.focused?
                 <BellIcon style={{height:30,width:42}} />
+                :
+                <AltIcon style={{height:30,width:30}}/>
+                }
                     <Notice.Consumer>{
                         notice=>
                         notice.unreadCount>0?
@@ -131,9 +136,11 @@ export class ComBottomNav extends React.Component{
                         component={AltStackNav}
                         options={{
                             tabBarIcon : (focused)=>{
-                                console.log('focused : '+ focused)
                                 return(
+                                    focused?
                                     <AltIcon style={{height:30,width:30}}/>
+                                    :
+                                    <Communitysvg height={30} width={64}/>
                             )}
                         }}
                     />
@@ -141,8 +148,11 @@ export class ComBottomNav extends React.Component{
                         name = "Commu"
                         component={ComToptabNav}
                         options={{
-                            tabBarIcon : ()=>(
+                            tabBarIcon : (focused)=>(
+                                focused?
                                 <Communitysvg height={30} width={64}/>
+                                :
+                                <AltIcon style={{height:30,width:30}}/>
                             )
                         }}
                     />
@@ -150,8 +160,8 @@ export class ComBottomNav extends React.Component{
                         name = "Alarm"
                         component={AlarmToptab}
                         options={{
-                            tabBarIcon : ()=>(
-                                <AlarmIcon />
+                            tabBarIcon : (focused)=>(
+                                <AlarmIcon focused={focused}/>
                             )
                         }}
                     />
@@ -159,8 +169,11 @@ export class ComBottomNav extends React.Component{
                         name = "Prof"
                         component={MyStackNav}
                         options={{
-                            tabBarIcon : ()=>(
+                            tabBarIcon : (focused)=>(
+                                focused?
                                 <MyIcon style={{height:30,width:49}}/>
+                                :
+                                <AltIcon style={{height:30,width:30}}/>
                             )
                         }}
                     />
