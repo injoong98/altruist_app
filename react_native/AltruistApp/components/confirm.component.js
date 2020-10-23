@@ -12,15 +12,16 @@ export default class Confirm extends React.Component {
 
     render(){
         const regex = /(<([^>]+)>)|&nbsp;/ig;
-        const confirmText_remove_tags =this.props.confirmText.replace(regex, '\n');
+        const confirmText_remove_tags =this.props.confirmText.replace(regex, '');
         
         return(
                 <View style ={{width:200,height:175,borderRadius:23,backgroundColor:'#ffffff'}}>
                     <View style={{flex:3 ,justifyContent:'center',alignItems:'center'}}>
-                        <Text category='h1' style={{color:'#63579D',fontSize:13, margin:5}}>
+                        <Text style={{color:'#63579D',fontSize:15, margin:5,textAlign:'center',lineHeight:22}}>
                             {confirmText_remove_tags}
                         </Text>   
                     </View>
+                    <View style={{borderWidth:1,borderColor:'#F0F0F0',width:'90%',marginHorizontal:'5%'}}></View>
                     <View style={{flex:1,display:'flex',flexDirection:'row',alignItems:'center'}}>
                         <TouchableOpacity 
                             onPress={this.props.OnFrstPress}
