@@ -41,6 +41,7 @@
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* testAltruistAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* testAltruistAppTests.m */; };
 		2E02088C3A174221B9E25A21 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4DE90E073404EE8958537B8 /* AntDesign.ttf */; };
+		2E4CDAE0CB3F46B3AE49C8BD /* libPods-AltruistApp-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6F93470FD0AD1D7823265CB /* libPods-AltruistApp-tvOS.a */; };
 		2F74AE72E59541918DD6B6AF /* next.svg in Resources */ = {isa = PBXBuildFile; fileRef = 00488C82397F4A66A87134F0 /* next.svg */; };
 		2FA1E878563C400D9EDD8787 /* clip.svg in Resources */ = {isa = PBXBuildFile; fileRef = 288710E577974B8584CBDA0B /* clip.svg */; };
 		30223CEA8A1A447C903DB3B0 /* view.svg in Resources */ = {isa = PBXBuildFile; fileRef = 8074AE6D39D8404B81DDB50E /* view.svg */; };
@@ -61,6 +62,7 @@
 		3DCCB44B26F747D487BC9D40 /* icon-overflow-menu-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F0D7984200B46BEB32201F0 /* icon-overflow-menu-dark.png */; };
 		3E88E0DF50D247BE8B2CAB40 /* image-splash.png in Resources */ = {isa = PBXBuildFile; fileRef = 2EEA94A1C00A40A9A133F148 /* image-splash.png */; };
 		3EA384006F0D41C7BD9677CA /* image-layout-add-new-card.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CD47568672AD4CBDA1245E83 /* image-layout-add-new-card.jpg */; };
+		3FB29D052D960D81A98FA70D /* libPods-AltruistApp-AltruistAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D69DF77DFE4410D70A1C10F /* libPods-AltruistApp-AltruistAppTests.a */; };
 		40D48A69807E470D8BACD3D3 /* arrow-bended-small.svg in Resources */ = {isa = PBXBuildFile; fileRef = 81FD9AEE244A4FCA9F60420B /* arrow-bended-small.svg */; };
 		42DCE925EF38440083237A75 /* pencil-outline.svg in Resources */ = {isa = PBXBuildFile; fileRef = 54495111ADB9447A86999BA1 /* pencil-outline.svg */; };
 		43565E76C76C417A80103C54 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DD285E02ACF542E1B08277A1 /* FontAwesome.ttf */; };
@@ -88,7 +90,6 @@
 		673160D5B70843699EAA54EB /* home.svg in Resources */ = {isa = PBXBuildFile; fileRef = 47BC52A7B80B4601BBA4437D /* home.svg */; };
 		6741370A0294432FBC17DE5E /* Time.svg in Resources */ = {isa = PBXBuildFile; fileRef = 202E44238DA14FD1B7F9B4BE /* Time.svg */; };
 		68D700493C7147A49B6EC134 /* social_kakao.png in Resources */ = {isa = PBXBuildFile; fileRef = AC376795F5F54AD4A12A778E /* social_kakao.png */; };
-		69A7A6916A766340327B65BC /* libPods-testAltruistApp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14FA986816E66A8445278CA2 /* libPods-testAltruistApp-tvOSTests.a */; };
 		6BC3D11CCB3F49F6B05AE9BC /* image-layout-shopping-cart.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC94EAD7DB4D418392C3BB12 /* image-layout-shopping-cart.jpg */; };
 		6C21814D9F4C4E55A6CB440D /* upload-circle.svg in Resources */ = {isa = PBXBuildFile; fileRef = 40A6B8BD53A547EEBD3E0056 /* upload-circle.svg */; };
 		6CB23DD9FFCD45F8A3184BFB /* image-training-1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A45E9A31938B42A78A4F6907 /* image-training-1.jpg */; };
@@ -98,6 +99,7 @@
 		70A2F4CD980F421D8B6E56DA /* image-layout-profile-settings-2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F3B92AF9A436428FB4356624 /* image-layout-profile-settings-2.jpg */; };
 		70C52278B2C14B1BA72E0C1C /* icon-modal.png in Resources */ = {isa = PBXBuildFile; fileRef = EACAF8A2B4044F5D9329E2A9 /* icon-modal.png */; };
 		732BAD53D3044716ABD53005 /* back-arrow-white.svg in Resources */ = {isa = PBXBuildFile; fileRef = 804892301D2F4560B098E0B5 /* back-arrow-white.svg */; };
+		7403064E41986D4EB326D7D4 /* libPods-AltruistApp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AE1A6A26242F5ECE558EC62 /* libPods-AltruistApp-tvOSTests.a */; };
 		744C7EAAC6D0446ABF3214DD /* flower-sky.svg in Resources */ = {isa = PBXBuildFile; fileRef = 7BF04BAFFC8B4F078750DC68 /* flower-sky.svg */; };
 		7555494370A04B4FBF2B2EFC /* image-layout-payment.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7B64DB8BB1B8427E9B2C47C1 /* image-layout-payment.jpg */; };
 		7634FD97BF074A3CB6755595 /* image-layout-profile-3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 89D6EFA400E54F3EB093AB8A /* image-layout-profile-3.jpg */; };
@@ -117,6 +119,7 @@
 		835E518193A34C188058BFD6 /* icon-card-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 52ACA92A91464ABBB60093D4 /* icon-card-dark.png */; };
 		842458CA04364258A92561DA /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F7062DA96EC44AF94315077 /* Entypo.ttf */; };
 		87562A426B3B4A36BEC1E3C9 /* thumb-up-filled.svg in Resources */ = {isa = PBXBuildFile; fileRef = 79B968DD1A964888B6772478 /* thumb-up-filled.svg */; };
+		879B00B2CFDB67693BE8E4A1 /* libPods-AltruistApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EAB5C13C752CC5D3D7229EE1 /* libPods-AltruistApp.a */; };
 		87B97C40F0614298A5A56BB4 /* roboto-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5A3DB253166F4FE6A6F86B47 /* roboto-regular.ttf */; };
 		890AD9E2704C4CA281CD24A2 /* icon-messaging-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DC9737054304345B8CDB463 /* icon-messaging-dark.png */; };
 		8A3D82689BB14924BD53F53C /* image-layout-article-list-1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CFD0F9682E0A45179DCDA2AF /* image-layout-article-list-1.jpg */; };
@@ -127,7 +130,6 @@
 		91CCF08DC84146D3A89B4A82 /* person.svg in Resources */ = {isa = PBXBuildFile; fileRef = C7899962E7FF4C70940A4193 /* person.svg */; };
 		93F7393C5C2D4F5AB0962DA2 /* message.svg in Resources */ = {isa = PBXBuildFile; fileRef = 2CE48D125B0D46098553E737 /* message.svg */; };
 		94443245518444C1A0FFB696 /* icon-tooltip-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = AEE4B774953A4CB79B3B0DFB /* icon-tooltip-dark.png */; };
-		959F03C2AC076AE0B8839A05 /* libPods-testAltruistApp-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47A52E6E84672DCE4BC69921 /* libPods-testAltruistApp-tvOS.a */; };
 		962853D65B9440F6B965858A /* icon-auth-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 66059BAEE5A340F4AB1CDB0A /* icon-auth-dark.png */; };
 		9631F195EBDB42F7824C895E /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FB127885FD1F463F8F0B238C /* Roboto_medium.ttf */; };
 		97CE5DA585B449A38CA582AB /* icon-datepicker.png in Resources */ = {isa = PBXBuildFile; fileRef = 44FE72D4BB544953839BD166 /* icon-datepicker.png */; };
@@ -153,7 +155,6 @@
 		AF7ED5C8546F40B7A56912BB /* image-layout-profile-6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BBC5357FE9CE4664BF2E6312 /* image-layout-profile-6.jpg */; };
 		B181C1BE179D4C7BA6DFE617 /* image-layout-sign-in-4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BDF06DF1ACD14B969013FBE7 /* image-layout-sign-in-4.jpg */; };
 		B1CC71B0C1634FDABCC4CAE0 /* icon-list-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = D115ED29E69B4749858A6909 /* icon-list-dark.png */; };
-		B291174EC34302ECCBF36095 /* libPods-testAltruistApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 688B95FE7B5F98D16E50671E /* libPods-testAltruistApp.a */; };
 		B2C9A0C43E9345BC8D11614A /* altruist_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = C5A4497BBE4946B1BC91DB08 /* altruist_logo.png */; };
 		B7956D117EA7419FB58EA939 /* icon-text.png in Resources */ = {isa = PBXBuildFile; fileRef = 9CAD0B905D084F1C995C9C1E /* icon-text.png */; };
 		B7EDE3A309824DDF801D4C2A /* icon-articles-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = C723433EA911437E8ED3FFD4 /* icon-articles-dark.png */; };
@@ -174,7 +175,6 @@
 		CF4F1FE64321486A9B134B47 /* icon-popover-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = D612F3EAA3A340F49DE20313 /* icon-popover-dark.png */; };
 		D06305E8D60E4EFD84429401 /* community_svg.svg in Resources */ = {isa = PBXBuildFile; fileRef = AA79B5EDAB684B0B9F0464E1 /* community_svg.svg */; };
 		D216D1E0BCCD4AB885BC5498 /* icon-calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = FCE6B3043F334253A82818B2 /* icon-calendar.png */; };
-		D21B09E7827BB3BD1A1FF79C /* libPods-testAltruistApp-testAltruistAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E654754C2E1E094F017AEDE0 /* libPods-testAltruistApp-testAltruistAppTests.a */; };
 		D26D2F215F6C4D4383F5A560 /* icon-autocomplete.png in Resources */ = {isa = PBXBuildFile; fileRef = 2EB7D6E7771849B3B00624FC /* icon-autocomplete.png */; };
 		D28309300758492E90884C0A /* icon-calendar-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 86281A6495B3445DA0B4E1EA /* icon-calendar-dark.png */; };
 		D2932B3362E0462B8EDECD57 /* icon-select-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 74452964A34B498B8AE1A3A8 /* icon-select-dark.png */; };
@@ -247,7 +247,9 @@
 		08BB7391524B4AB2920D517A /* icon-menu-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-menu-dark.png"; path = "../assets/images/icon-menu-dark.png"; sourceTree = "<group>"; };
 		092D0E04B7BB4354B18566DD /* icon-toggle-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-toggle-dark.png"; path = "../assets/images/icon-toggle-dark.png"; sourceTree = "<group>"; };
 		0B0ADA4ECB7E4761B27F688D /* comment.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = comment.svg; path = ../assets/icons/comment.svg; sourceTree = "<group>"; };
+		0BEC07368A6F2367B9D50F59 /* Pods-AltruistApp-AltruistAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltruistApp-AltruistAppTests.release.xcconfig"; path = "Target Support Files/Pods-AltruistApp-AltruistAppTests/Pods-AltruistApp-AltruistAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		0C0BBD14CD5D4018BE894D9B /* image-layout-profile-5.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-profile-5.jpg"; path = "../assets/images/image-layout-profile-5.jpg"; sourceTree = "<group>"; };
+		0CF7186910A9F43D2E1FA8FD /* Pods-AltruistApp-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltruistApp-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-AltruistApp-tvOS/Pods-AltruistApp-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		0D0C5B2E9B67459AB4745104 /* image-layout-chat-1.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-chat-1.jpg"; path = "../assets/images/image-layout-chat-1.jpg"; sourceTree = "<group>"; };
 		0E0A03A6DCDE464CB2C48E62 /* Jalnan.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Jalnan.ttf; path = ../assets/fonts/Jalnan.ttf; sourceTree = "<group>"; };
 		1353B2A8BA6C47459407EA76 /* call-message.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "call-message.svg"; path = "../assets/icons/call-message.svg"; sourceTree = "<group>"; };
@@ -259,9 +261,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = testAltruistApp/main.m; sourceTree = "<group>"; };
 		13D4AB81B4504EBBA9C16D2B /* double-next.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "double-next.svg"; path = "../assets/icons/double-next.svg"; sourceTree = "<group>"; };
 		1467E778AC8F4668AF2AA619 /* icon-popover.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-popover.png"; path = "../assets/images/icon-popover.png"; sourceTree = "<group>"; };
-		14FA986816E66A8445278CA2 /* libPods-testAltruistApp-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-testAltruistApp-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		18F4B84014CE4FEBBAD1BBB9 /* share.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = share.svg; path = ../assets/icons/share.svg; sourceTree = "<group>"; };
-		1B41149A971F21D2E69E27CD /* Pods-testAltruistAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAltruistAppTests.release.xcconfig"; path = "Target Support Files/Pods-testAltruistAppTests/Pods-testAltruistAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		1C1F07D0551C4723A255DF2F /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		1C5A6042946242E5A7879FE1 /* icon-top-navigation.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-top-navigation.png"; path = "../assets/images/icon-top-navigation.png"; sourceTree = "<group>"; };
 		1CFED9DF4DB74DEE95A01CB3 /* icon-menu.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-menu.png"; path = "../assets/images/icon-menu.png"; sourceTree = "<group>"; };
@@ -282,7 +282,6 @@
 		2DC9737054304345B8CDB463 /* icon-messaging-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-messaging-dark.png"; path = "../assets/images/icon-messaging-dark.png"; sourceTree = "<group>"; };
 		2E16865746134297A770663B /* icon-checkbox-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-checkbox-dark.png"; path = "../assets/images/icon-checkbox-dark.png"; sourceTree = "<group>"; };
 		2EB7D6E7771849B3B00624FC /* icon-autocomplete.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-autocomplete.png"; path = "../assets/images/icon-autocomplete.png"; sourceTree = "<group>"; };
-		2EC44E2B74E657860F5496F9 /* Pods-testAltruistApp-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAltruistApp-tvOS.release.xcconfig"; path = "Target Support Files/Pods-testAltruistApp-tvOS/Pods-testAltruistApp-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		2EEA94A1C00A40A9A133F148 /* image-splash.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-splash.png"; path = "../assets/images/image-splash.png"; sourceTree = "<group>"; };
 		2FC10B1F75D941ED90EE01B9 /* icon-messaging.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-messaging.png"; path = "../assets/images/icon-messaging.png"; sourceTree = "<group>"; };
 		308EC169D29941FE9538D3B0 /* image-layout-training-1.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-training-1.jpg"; path = "../assets/images/image-layout-training-1.jpg"; sourceTree = "<group>"; };
@@ -295,12 +294,12 @@
 		34200C7B062143C8A92496A6 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/native-base/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		3987F3CFE136492E8D51BAE6 /* image-layout-sign-up-3.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-sign-up-3.jpg"; path = "../assets/images/image-layout-sign-up-3.jpg"; sourceTree = "<group>"; };
 		39D94C8EE76B498EAEA22F94 /* Icon_Cam.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Icon_Cam.svg; path = ../assets/icons/Icon_Cam.svg; sourceTree = "<group>"; };
-		3CC4E541C03BD23FDF187340 /* Pods-testAltruistApp-testAltruistAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAltruistApp-testAltruistAppTests.release.xcconfig"; path = "Target Support Files/Pods-testAltruistApp-testAltruistAppTests/Pods-testAltruistApp-testAltruistAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		3E57A1B2CC0D4589A2620669 /* image-layout-article-2.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-article-2.jpg"; path = "../assets/images/image-layout-article-2.jpg"; sourceTree = "<group>"; };
 		3E983C1BE1304F558966797B /* thumb-up.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "thumb-up.svg"; path = "../assets/icons/thumb-up.svg"; sourceTree = "<group>"; };
 		3EAA2987F1D242B49C2D7D9F /* image-layout-sign-in-5.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-sign-in-5.jpg"; path = "../assets/images/image-layout-sign-in-5.jpg"; sourceTree = "<group>"; };
 		3F0D7984200B46BEB32201F0 /* icon-overflow-menu-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-overflow-menu-dark.png"; path = "../assets/images/icon-overflow-menu-dark.png"; sourceTree = "<group>"; };
 		3F2379B3E593477C99B80BBD /* right-arrow.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "right-arrow.svg"; path = "../assets/icons/right-arrow.svg"; sourceTree = "<group>"; };
+		404172BEA8127CA144E63ECE /* Pods-AltruistApp-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltruistApp-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-AltruistApp-tvOSTests/Pods-AltruistApp-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		40A6B8BD53A547EEBD3E0056 /* upload-circle.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "upload-circle.svg"; path = "../assets/icons/upload-circle.svg"; sourceTree = "<group>"; };
 		420CF1E1277F4346B93CD07B /* image-layout-profile-1.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-profile-1.jpg"; path = "../assets/images/image-layout-profile-1.jpg"; sourceTree = "<group>"; };
 		4306A427742446B384F19660 /* image-layout-article-list-2.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-article-list-2.jpg"; path = "../assets/images/image-layout-article-list-2.jpg"; sourceTree = "<group>"; };
@@ -309,8 +308,6 @@
 		44FE72D4BB544953839BD166 /* icon-datepicker.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-datepicker.png"; path = "../assets/images/icon-datepicker.png"; sourceTree = "<group>"; };
 		45D7C461B09549679A7716D7 /* mypage.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = mypage.svg; path = ../assets/icons/mypage.svg; sourceTree = "<group>"; };
 		46803C2CD8D44FC4A6A930DA /* image-layout-article-1.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-article-1.jpg"; path = "../assets/images/image-layout-article-1.jpg"; sourceTree = "<group>"; };
-		4789D9DA691BA5F39B1A2AB3 /* Pods-testAltruistApp-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAltruistApp-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-testAltruistApp-tvOSTests/Pods-testAltruistApp-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		47A52E6E84672DCE4BC69921 /* libPods-testAltruistApp-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-testAltruistApp-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		47BC52A7B80B4601BBA4437D /* home.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = home.svg; path = ../assets/icons/home.svg; sourceTree = "<group>"; };
 		4B12325111144DCCBD0A04E6 /* icon-select.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-select.png"; path = "../assets/images/icon-select.png"; sourceTree = "<group>"; };
 		4EA0272DD85A4407AD2104B4 /* icon-top-navigation-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-top-navigation-dark.png"; path = "../assets/images/icon-top-navigation-dark.png"; sourceTree = "<group>"; };
@@ -322,11 +319,12 @@
 		52ACA92A91464ABBB60093D4 /* icon-card-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-card-dark.png"; path = "../assets/images/icon-card-dark.png"; sourceTree = "<group>"; };
 		536A2607E26444C993780454 /* icon-auth.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-auth.png"; path = "../assets/images/icon-auth.png"; sourceTree = "<group>"; };
 		54495111ADB9447A86999BA1 /* pencil-outline.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "pencil-outline.svg"; path = "../assets/icons/pencil-outline.svg"; sourceTree = "<group>"; };
-		544A6FDC814CB4B2DDD812FA /* Pods-testAltruistApp-testAltruistAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAltruistApp-testAltruistAppTests.debug.xcconfig"; path = "Target Support Files/Pods-testAltruistApp-testAltruistAppTests/Pods-testAltruistApp-testAltruistAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		545E089D539347EEA1723BE9 /* icon-list.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-list.png"; path = "../assets/images/icon-list.png"; sourceTree = "<group>"; };
+		56A323C825FD9BF65C9FB968 /* Pods-AltruistApp-AltruistAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltruistApp-AltruistAppTests.debug.xcconfig"; path = "Target Support Files/Pods-AltruistApp-AltruistAppTests/Pods-AltruistApp-AltruistAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		59F6C015266343579589458F /* icon-text-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-text-dark.png"; path = "../assets/images/icon-text-dark.png"; sourceTree = "<group>"; };
 		5A3DB253166F4FE6A6F86B47 /* roboto-regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "roboto-regular.ttf"; path = "../assets/fonts/roboto-regular.ttf"; sourceTree = "<group>"; };
 		5AC821705FEA4846ABEEF6E2 /* icon-modal-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-modal-dark.png"; path = "../assets/images/icon-modal-dark.png"; sourceTree = "<group>"; };
+		5AE1A6A26242F5ECE558EC62 /* libPods-AltruistApp-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AltruistApp-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BB73D9F3C334B9EAC6447B6 /* bell.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = bell.svg; path = ../assets/icons/bell.svg; sourceTree = "<group>"; };
 		5BC88ECBDFBA4955BCA8C994 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		5C795819B09443A8A054B2ED /* tooltip.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = tooltip.svg; path = ../assets/icons/tooltip.svg; sourceTree = "<group>"; };
@@ -337,7 +335,6 @@
 		656FD7727B1549C38E82FF06 /* icon-button-group.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-button-group.png"; path = "../assets/images/icon-button-group.png"; sourceTree = "<group>"; };
 		65F2A8A805A94E4594B882E9 /* flower-yellow.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "flower-yellow.svg"; path = "../assets/icons/flower-yellow.svg"; sourceTree = "<group>"; };
 		66059BAEE5A340F4AB1CDB0A /* icon-auth-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-auth-dark.png"; path = "../assets/images/icon-auth-dark.png"; sourceTree = "<group>"; };
-		688B95FE7B5F98D16E50671E /* libPods-testAltruistApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-testAltruistApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BADF31B0C994C7A8ED14558 /* image-layout-feed-2.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-feed-2.jpg"; path = "../assets/images/image-layout-feed-2.jpg"; sourceTree = "<group>"; };
 		6F68B4111FA04541A8FFCC86 /* NanumSquareEB.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareEB.ttf; path = ../assets/fonts/NanumSquareEB.ttf; sourceTree = "<group>"; };
 		70C453AB95F341CEA7AC07F7 /* icon-icon-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-icon-dark.png"; path = "../assets/images/icon-icon-dark.png"; sourceTree = "<group>"; };
@@ -356,7 +353,6 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = testAltruistApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		81FD9AEE244A4FCA9F60420B /* arrow-bended-small.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "arrow-bended-small.svg"; path = "../assets/icons/arrow-bended-small.svg"; sourceTree = "<group>"; };
 		86281A6495B3445DA0B4E1EA /* icon-calendar-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-calendar-dark.png"; path = "../assets/images/icon-calendar-dark.png"; sourceTree = "<group>"; };
-		86D015EA19BEBF3074D55E14 /* Pods-testAltruistApp-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAltruistApp-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-testAltruistApp-tvOSTests/Pods-testAltruistApp-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		88003B544A3040CF990FE5D0 /* upload.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = upload.svg; path = ../assets/icons/upload.svg; sourceTree = "<group>"; };
 		89D6EFA400E54F3EB093AB8A /* image-layout-profile-3.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-profile-3.jpg"; path = "../assets/images/image-layout-profile-3.jpg"; sourceTree = "<group>"; };
 		89F3FC18506641848D29312F /* image-layout-settings.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-settings.jpg"; path = "../assets/images/image-layout-settings.jpg"; sourceTree = "<group>"; };
@@ -364,26 +360,28 @@
 		8B278ABAD9EA4E3890BEEA0E /* icon-button.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-button.png"; path = "../assets/images/icon-button.png"; sourceTree = "<group>"; };
 		8BF5C40B252E95CD0025B147 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../uploads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8C70015BA86D4BD3BE5CE7CA /* view-filled.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "view-filled.png"; path = "../assets/icons/view-filled.png"; sourceTree = "<group>"; };
-		8F9EF5C29ABFF141647C841E /* Pods-testAltruistAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAltruistAppTests.debug.xcconfig"; path = "Target Support Files/Pods-testAltruistAppTests/Pods-testAltruistAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		91EC2C4373214559B84B0598 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		92F78A2BA36945B2959379F2 /* write.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = write.svg; path = ../assets/icons/write.svg; sourceTree = "<group>"; };
 		945FA49C4CBC40FDBF64B1CF /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/native-base/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		952DCE33876662DF671C690F /* Pods-AltruistApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltruistApp.release.xcconfig"; path = "Target Support Files/Pods-AltruistApp/Pods-AltruistApp.release.xcconfig"; sourceTree = "<group>"; };
+		95FAFF8786C689559BB29D74 /* Pods-AltruistApp-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltruistApp-tvOS.release.xcconfig"; path = "Target Support Files/Pods-AltruistApp-tvOS/Pods-AltruistApp-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		965E125B0DA246EA90034292 /* image-layout-profile-settings-1.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-profile-settings-1.jpg"; path = "../assets/images/image-layout-profile-settings-1.jpg"; sourceTree = "<group>"; };
 		980EF905E8CE41758326AC9A /* image-layout-profile-2.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-profile-2.jpg"; path = "../assets/images/image-layout-profile-2.jpg"; sourceTree = "<group>"; };
 		9AA3C1A7243B4573BD79A5F3 /* image-layout-sign-up-4.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-sign-up-4.jpg"; path = "../assets/images/image-layout-sign-up-4.jpg"; sourceTree = "<group>"; };
 		9C62CBC9B7BE4CE788AD70A0 /* paper-plane.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "paper-plane.svg"; path = "../assets/icons/paper-plane.svg"; sourceTree = "<group>"; };
 		9CAD0B905D084F1C995C9C1E /* icon-text.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-text.png"; path = "../assets/images/icon-text.png"; sourceTree = "<group>"; };
+		9D69DF77DFE4410D70A1C10F /* libPods-AltruistApp-AltruistAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AltruistApp-AltruistAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DFF35959FE144A28705E2BC /* icon-radio-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-radio-dark.png"; path = "../assets/images/icon-radio-dark.png"; sourceTree = "<group>"; };
 		9F015A5ED4354902AAF5015A /* icon-input-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-input-dark.png"; path = "../assets/images/icon-input-dark.png"; sourceTree = "<group>"; };
 		A08C97ECD84A44F1822B769A /* noimage.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = noimage.svg; path = ../assets/icons/noimage.svg; sourceTree = "<group>"; };
 		A31A98EAFDBA4E7F8B7A404C /* icon-overflow-menu.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-overflow-menu.png"; path = "../assets/images/icon-overflow-menu.png"; sourceTree = "<group>"; };
 		A45E9A31938B42A78A4F6907 /* image-training-1.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-training-1.jpg"; path = "../assets/images/image-training-1.jpg"; sourceTree = "<group>"; };
 		A49AA5B5C5F2425FBFCB7E92 /* altruist.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = altruist.svg; path = ../assets/icons/altruist.svg; sourceTree = "<group>"; };
+		A4C253E4D0510B79B2B84559 /* Pods-AltruistApp-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltruistApp-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-AltruistApp-tvOSTests/Pods-AltruistApp-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A4CA976714154B8AAC972B95 /* pencil-outline-color.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "pencil-outline-color.svg"; path = "../assets/icons/pencil-outline-color.svg"; sourceTree = "<group>"; };
 		A514E4D18B7044FB87654940 /* icon-spinner-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-spinner-dark.png"; path = "../assets/images/icon-spinner-dark.png"; sourceTree = "<group>"; };
 		A6EB005C16D247BC82323BBE /* image-layout-article-list-4.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-article-list-4.jpg"; path = "../assets/images/image-layout-article-list-4.jpg"; sourceTree = "<group>"; };
 		A72E43A578D64C31805155F2 /* back-arrow-color.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "back-arrow-color.svg"; path = "../assets/icons/back-arrow-color.svg"; sourceTree = "<group>"; };
-		A7EE686828434E1AA46C26BA /* Pods-testAltruistApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAltruistApp.release.xcconfig"; path = "Target Support Files/Pods-testAltruistApp/Pods-testAltruistApp.release.xcconfig"; sourceTree = "<group>"; };
 		A874D922EEA04206BC423B52 /* image-layout-profile-4.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-profile-4.jpg"; path = "../assets/images/image-layout-profile-4.jpg"; sourceTree = "<group>"; };
 		AA728D41465D43C78D367466 /* icon-social.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-social.png"; path = "../assets/images/icon-social.png"; sourceTree = "<group>"; };
 		AA79B5EDAB684B0B9F0464E1 /* community_svg.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = community_svg.svg; path = ../assets/icons/community_svg.svg; sourceTree = "<group>"; };
@@ -407,7 +405,6 @@
 		BDF06DF1ACD14B969013FBE7 /* image-layout-sign-in-4.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-sign-in-4.jpg"; path = "../assets/images/image-layout-sign-in-4.jpg"; sourceTree = "<group>"; };
 		C20E9A06E0394E618B00A7C9 /* icon-datepicker-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-datepicker-dark.png"; path = "../assets/images/icon-datepicker-dark.png"; sourceTree = "<group>"; };
 		C3208BC25F01480AAD53D20B /* image-layout-sign-in-3.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-sign-in-3.jpg"; path = "../assets/images/image-layout-sign-in-3.jpg"; sourceTree = "<group>"; };
-		C535D76A4D5C7AEAE063D10A /* Pods-testAltruistApp-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAltruistApp-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-testAltruistApp-tvOS/Pods-testAltruistApp-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		C5A4497BBE4946B1BC91DB08 /* altruist_logo.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = altruist_logo.png; path = ../assets/altruist_logo.png; sourceTree = "<group>"; };
 		C6EB3CAAB7FA44F183A11D84 /* icon-icon.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-icon.png"; path = "../assets/images/icon-icon.png"; sourceTree = "<group>"; };
 		C723433EA911437E8ED3FFD4 /* icon-articles-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-articles-dark.png"; path = "../assets/images/icon-articles-dark.png"; sourceTree = "<group>"; };
@@ -428,22 +425,23 @@
 		D5D05BEE5387461FA79FB62A /* community.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = community.svg; path = ../assets/icons/community.svg; sourceTree = "<group>"; };
 		D612F3EAA3A340F49DE20313 /* icon-popover-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-popover-dark.png"; path = "../assets/images/icon-popover-dark.png"; sourceTree = "<group>"; };
 		D67D139F8F97496F935ED704 /* icon-tab-view-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-tab-view-dark.png"; path = "../assets/images/icon-tab-view-dark.png"; sourceTree = "<group>"; };
+		D6F93470FD0AD1D7823265CB /* libPods-AltruistApp-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AltruistApp-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7D4D4BAAC0244EEA0BFE50D /* icon-button-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-button-dark.png"; path = "../assets/images/icon-button-dark.png"; sourceTree = "<group>"; };
 		D95CEF3E7B3143CD9C442C55 /* icon-avatar-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-avatar-dark.png"; path = "../assets/images/icon-avatar-dark.png"; sourceTree = "<group>"; };
 		DCA2FB808A7947E1B4DD5B68 /* icon-checkbox.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-checkbox.png"; path = "../assets/images/icon-checkbox.png"; sourceTree = "<group>"; };
 		DD1F375F8E73433AB2236E57 /* reload.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = reload.svg; path = ../assets/icons/reload.svg; sourceTree = "<group>"; };
 		DD285E02ACF542E1B08277A1 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		DE0F65CE7B0E48E9B2DD2384 /* icon-social-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-social-dark.png"; path = "../assets/images/icon-social-dark.png"; sourceTree = "<group>"; };
-		DF99C9CF1FEF025AB3EEB74C /* Pods-testAltruistApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-testAltruistApp.debug.xcconfig"; path = "Target Support Files/Pods-testAltruistApp/Pods-testAltruistApp.debug.xcconfig"; sourceTree = "<group>"; };
 		DFF6EC7AD974491C9D24CBA3 /* image-layout-product-details-2.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "image-layout-product-details-2.jpg"; path = "../assets/images/image-layout-product-details-2.jpg"; sourceTree = "<group>"; };
 		E122576643F648C09984181A /* noimage.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = noimage.png; path = ../assets/images/noimage.png; sourceTree = "<group>"; };
 		E3A52F59401A460DBC621FCF /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/native-base/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		E4DE90E073404EE8958537B8 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/native-base/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		E603FF86749A4B9FA628D120 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
-		E654754C2E1E094F017AEDE0 /* libPods-testAltruistApp-testAltruistAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-testAltruistApp-testAltruistAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6D7028434F4403086D0ED60 /* Email.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Email.svg; path = ../assets/icons/Email.svg; sourceTree = "<group>"; };
 		EA4015F0A0074CA19499017D /* icon-bottom-navigation-dark.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-bottom-navigation-dark.png"; path = "../assets/images/icon-bottom-navigation-dark.png"; sourceTree = "<group>"; };
+		EAB5C13C752CC5D3D7229EE1 /* libPods-AltruistApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AltruistApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EACAF8A2B4044F5D9329E2A9 /* icon-modal.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "icon-modal.png"; path = "../assets/images/icon-modal.png"; sourceTree = "<group>"; };
+		EB97AE5E6CFC778DD0545A05 /* Pods-AltruistApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AltruistApp.debug.xcconfig"; path = "Target Support Files/Pods-AltruistApp/Pods-AltruistApp.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		ED33360450E146C6B1246886 /* logo.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = logo.svg; path = ../assets/icons/logo.svg; sourceTree = "<group>"; };
@@ -471,7 +469,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D21B09E7827BB3BD1A1FF79C /* libPods-testAltruistApp-testAltruistAppTests.a in Frameworks */,
+				3FB29D052D960D81A98FA70D /* libPods-AltruistApp-AltruistAppTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,7 +477,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B291174EC34302ECCBF36095 /* libPods-testAltruistApp.a in Frameworks */,
+				879B00B2CFDB67693BE8E4A1 /* libPods-AltruistApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -487,7 +485,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				959F03C2AC076AE0B8839A05 /* libPods-testAltruistApp-tvOS.a in Frameworks */,
+				2E4CDAE0CB3F46B3AE49C8BD /* libPods-AltruistApp-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -495,7 +493,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69A7A6916A766340327B65BC /* libPods-testAltruistApp-tvOSTests.a in Frameworks */,
+				7403064E41986D4EB326D7D4 /* libPods-AltruistApp-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -539,10 +537,10 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				688B95FE7B5F98D16E50671E /* libPods-testAltruistApp.a */,
-				E654754C2E1E094F017AEDE0 /* libPods-testAltruistApp-testAltruistAppTests.a */,
-				47A52E6E84672DCE4BC69921 /* libPods-testAltruistApp-tvOS.a */,
-				14FA986816E66A8445278CA2 /* libPods-testAltruistApp-tvOSTests.a */,
+				EAB5C13C752CC5D3D7229EE1 /* libPods-AltruistApp.a */,
+				9D69DF77DFE4410D70A1C10F /* libPods-AltruistApp-AltruistAppTests.a */,
+				D6F93470FD0AD1D7823265CB /* libPods-AltruistApp-tvOS.a */,
+				5AE1A6A26242F5ECE558EC62 /* libPods-AltruistApp-tvOSTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -789,16 +787,14 @@
 		D9B0C57F3FDACE58FB9ADBF2 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				DF99C9CF1FEF025AB3EEB74C /* Pods-testAltruistApp.debug.xcconfig */,
-				A7EE686828434E1AA46C26BA /* Pods-testAltruistApp.release.xcconfig */,
-				86D015EA19BEBF3074D55E14 /* Pods-testAltruistApp-tvOSTests.debug.xcconfig */,
-				4789D9DA691BA5F39B1A2AB3 /* Pods-testAltruistApp-tvOSTests.release.xcconfig */,
-				8F9EF5C29ABFF141647C841E /* Pods-testAltruistAppTests.debug.xcconfig */,
-				1B41149A971F21D2E69E27CD /* Pods-testAltruistAppTests.release.xcconfig */,
-				544A6FDC814CB4B2DDD812FA /* Pods-testAltruistApp-testAltruistAppTests.debug.xcconfig */,
-				3CC4E541C03BD23FDF187340 /* Pods-testAltruistApp-testAltruistAppTests.release.xcconfig */,
-				C535D76A4D5C7AEAE063D10A /* Pods-testAltruistApp-tvOS.debug.xcconfig */,
-				2EC44E2B74E657860F5496F9 /* Pods-testAltruistApp-tvOS.release.xcconfig */,
+				EB97AE5E6CFC778DD0545A05 /* Pods-AltruistApp.debug.xcconfig */,
+				952DCE33876662DF671C690F /* Pods-AltruistApp.release.xcconfig */,
+				56A323C825FD9BF65C9FB968 /* Pods-AltruistApp-AltruistAppTests.debug.xcconfig */,
+				0BEC07368A6F2367B9D50F59 /* Pods-AltruistApp-AltruistAppTests.release.xcconfig */,
+				0CF7186910A9F43D2E1FA8FD /* Pods-AltruistApp-tvOS.debug.xcconfig */,
+				95FAFF8786C689559BB29D74 /* Pods-AltruistApp-tvOS.release.xcconfig */,
+				A4C253E4D0510B79B2B84559 /* Pods-AltruistApp-tvOSTests.debug.xcconfig */,
+				404172BEA8127CA144E63ECE /* Pods-AltruistApp-tvOSTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -893,7 +889,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1200;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
@@ -914,7 +910,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "AltruistApp" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "	" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -1195,7 +1191,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-testAltruistApp-testAltruistAppTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-AltruistApp-AltruistAppTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1231,7 +1227,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-testAltruistApp-tvOSTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-AltruistApp-tvOSTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1244,7 +1240,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-testAltruistApp-testAltruistAppTests/Pods-testAltruistApp-testAltruistAppTests-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-AltruistApp-AltruistAppTests/Pods-AltruistApp-AltruistAppTests-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNImageCropPicker/QBImagePicker.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/TOCropViewController/TOCropViewControllerBundle.bundle",
@@ -1257,7 +1253,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-testAltruistApp-testAltruistAppTests/Pods-testAltruistApp-testAltruistAppTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AltruistApp-AltruistAppTests/Pods-AltruistApp-AltruistAppTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A4DA8481BCA4924CFD54A721 /* [CP] Check Pods Manifest.lock */ = {
@@ -1275,7 +1271,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-testAltruistApp-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-AltruistApp-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1307,7 +1303,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-testAltruistApp-tvOS-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-AltruistApp-tvOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1358,7 +1354,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-testAltruistApp/Pods-testAltruistApp-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-AltruistApp/Pods-AltruistApp-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNImageCropPicker/QBImagePicker.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/TOCropViewController/TOCropViewControllerBundle.bundle",
@@ -1371,7 +1367,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-testAltruistApp/Pods-testAltruistApp-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AltruistApp/Pods-AltruistApp-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1429,15 +1425,16 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 544A6FDC814CB4B2DDD812FA /* Pods-testAltruistApp-testAltruistAppTests.debug.xcconfig */;
+			baseConfigurationReference = 56A323C825FD9BF65C9FB968 /* Pods-AltruistApp-AltruistAppTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = testAltruistAppTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1452,12 +1449,13 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3CC4E541C03BD23FDF187340 /* Pods-testAltruistApp-testAltruistAppTests.release.xcconfig */;
+			baseConfigurationReference = 0BEC07368A6F2367B9D50F59 /* Pods-AltruistApp-AltruistAppTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = testAltruistAppTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1472,17 +1470,18 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DF99C9CF1FEF025AB3EEB74C /* Pods-testAltruistApp.debug.xcconfig */;
+			baseConfigurationReference = EB97AE5E6CFC778DD0545A05 /* Pods-AltruistApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1.3;
+				CURRENT_PROJECT_VERSION = 1.5;
 				DEVELOPMENT_TEAM = MSM7QF4236;
-				ENABLE_BITCODE = NO;
+				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = testAltruistApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1498,16 +1497,18 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A7EE686828434E1AA46C26BA /* Pods-testAltruistApp.release.xcconfig */;
+			baseConfigurationReference = 952DCE33876662DF671C690F /* Pods-AltruistApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1.3;
+				CURRENT_PROJECT_VERSION = 1.5;
 				DEVELOPMENT_TEAM = MSM7QF4236;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = testAltruistApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1522,7 +1523,7 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C535D76A4D5C7AEAE063D10A /* Pods-testAltruistApp-tvOS.debug.xcconfig */;
+			baseConfigurationReference = 0CF7186910A9F43D2E1FA8FD /* Pods-AltruistApp-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1544,13 +1545,13 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
 			};
 			name = Debug;
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2EC44E2B74E657860F5496F9 /* Pods-testAltruistApp-tvOS.release.xcconfig */;
+			baseConfigurationReference = 95FAFF8786C689559BB29D74 /* Pods-AltruistApp-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1572,13 +1573,13 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
 			};
 			name = Release;
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 86D015EA19BEBF3074D55E14 /* Pods-testAltruistApp-tvOSTests.debug.xcconfig */;
+			baseConfigurationReference = A4C253E4D0510B79B2B84559 /* Pods-AltruistApp-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1599,13 +1600,13 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AltruistApp-tvOS.app/AltruistApp-tvOS";
-				TVOS_DEPLOYMENT_TARGET = 10.1;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
 			};
 			name = Debug;
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4789D9DA691BA5F39B1A2AB3 /* Pods-testAltruistApp-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = 404172BEA8127CA144E63ECE /* Pods-AltruistApp-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1626,7 +1627,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AltruistApp-tvOS.app/AltruistApp-tvOS";
-				TVOS_DEPLOYMENT_TARGET = 10.1;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
 			};
 			name = Release;
 		};
@@ -1653,6 +1654,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1677,7 +1679,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
@@ -1713,6 +1715,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1730,7 +1733,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
@@ -1738,6 +1741,7 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1753,7 +1757,7 @@
 				00E356F71AD99517003FC87E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "AltruistApp" */ = {
 			isa = XCConfigurationList;
@@ -1762,7 +1766,7 @@
 				13B07F951A680F5B00A75B9A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "AltruistApp-tvOS" */ = {
 			isa = XCConfigurationList;
@@ -1771,7 +1775,7 @@
 				2D02E4981E0B4A5E006451C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "AltruistApp-tvOSTests" */ = {
 			isa = XCConfigurationList;
@@ -1780,16 +1784,16 @@
 				2D02E49A1E0B4A5E006451C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "AltruistApp" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "	" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
