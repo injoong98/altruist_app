@@ -83,7 +83,7 @@ class Mypage extends React.Component{
                             <Text style={{fontSize:9,maxHeight:'100%'}} numberOfLines={2}> {mem_profile_content} </Text>          
                         </View> 
                         <TouchableOpacity style={{padding:8,flexDirection:'row',backgroundColor:'#ffffff',borderRadius:10}} onPress={()=>this.props.navigation.navigate('MyPoint')}>
-                              <View style={{}}>
+                              <View>
                                   <Text category='p2'style={{color:'#A897C2',fontSize:10,textAlignVertical:'bottom'}}>point{`\n`}score</Text>
                               </View>
                               <View style={{ marginVertical:3,marginLeft:4,borderColor:'#F0F0F0'}}>
@@ -98,10 +98,13 @@ class Mypage extends React.Component{
                     </TouchableOpacity >  */}
                   </View>
                   <View style={{ marginHorizontal:40}}>
-                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
+                    <View>
                       {/* <PencilSvg height={28} width={22}/> */}
-                      <AltruistSvg height={19} width={22}/>
-                      <Text category='h2' style={styles.menuTitle}>"더불어 성장하는 이타주의자들"?</Text>
+                      <TouchableOpacity style={{flexDirection:'row',alignItems:'center',marginBottom:15}} 
+                      onPress={()=>{ navigate('AboutApp') }} >
+                        <AltruistSvg height={19} width={22}/>
+                        <Text category='h2' style={styles.menuTitle}>"더불어 성장하는 이타주의자들"?</Text>
+                      </TouchableOpacity>
                     </View>
                     {/* <View>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'post'})}} >
