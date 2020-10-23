@@ -36,6 +36,11 @@ BackAction = () => (
     />
   );
 
+  SessionOut = async() =>{
+    axios.get(`https://dev.unyict.org/api/login/session_clear`)
+    .then(res => console.log(res))
+  }
+
   SubmitForm = async () => {
     const {mem_password} = this.state;
     let formdata = new FormData();
@@ -80,7 +85,7 @@ BackAction = () => (
                 onChangeText={mem_password=> {this.setState({mem_password})}}
                 onEndEditing={mem_password=> this.setState({mem_password})}
                 caption= {
-                    !mem_password ? null : `진짜 가는건가요?ㅠㅠ`,
+                    !mem_password ? null : `진짜 떠나는 건가요?ㅠㅠ`,
                     colorRed ? <Text style={{ marginHorizontal: 30, fontSize:10, color:colorRed}}>{`패스워드가 일치 하지 않습니다 !`}</Text> : null}
                 secureTextEntry = {true}
             />
@@ -102,9 +107,11 @@ BackAction = () => (
             onBackdropPress={() => this.setState({logOutModalVisible:false})}
         >
             <Confirm 
-                confirmText="그동안 이용에 감사드립니다!"
-                scndText="확인"
-                OnScndPress={() => {signOut()}}
+                type="result"
+                confirmText={` 아쉽지만 부족한 부분을 알려주시면 적용할께요! 
+                \n 꼭 다시 만나요! \n 그동안 이용에 감사드립니다!`}
+                frstText="확인"
+                OnFrstPress={() => {signOut()}}
             />
         </Modal>
           </SafeAreaView>
