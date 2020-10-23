@@ -18,7 +18,7 @@
 <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo element('layout_skin_url', $layout); ?>/css/style.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo element('layout_skin_url', $layout); ?>/css/trex.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo element('layout_skin_url', $layout); ?>/css/trex.css?ver=<?php echo time(); ?>" />
 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/earlyaccess/nanumgothic.css" />
 <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ui-lightness/jquery-ui.css" />
 <?php echo $this->managelayout->display_css(); ?>
@@ -48,7 +48,7 @@ var cookie_prefix = "<?php echo config_item('cookie_prefix'); ?>";
 <script type="text/javascript" src="<?php echo base_url('assets/js/respond.min.js'); ?>"></script>
 <![endif]-->
 <script type="text/javascript" src="<?php echo base_url('assets/js/common.js'); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/js/trex.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo base_url('assets/js/trex.js'); ?>?ver=<?php echo time(); ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/js/jquery.validate.min.js'); ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/js/jquery.validate.extension.js'); ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/js/sideview.js'); ?>"></script>

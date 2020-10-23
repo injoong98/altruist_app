@@ -266,95 +266,12 @@ class Games extends CB_Controller
 		$view['view']['event']['before'] = Events::trigger('before', $eventname);
 
 		$this->load->model(array('Cmall_item_model'));
-		/**
-		 * 페이지에 숫자가 아닌 문자가 입력되거나 1보다 작은 숫자가 입력되면 에러 페이지를 보여줍니다.
-		 */
-		/* $param =& $this->querystring;
-		$page = (((int) $this->input->get('page')) > 0) ? ((int) $this->input->get('page')) : 1;
-
-		$alertmessage = $this->member->is_member()
-			? '회원님은 상품 목록을 볼 수 있는 권한이 없습니다'
-			: '비회원은 상품목록에 접근할 권한이 없습니다.\\n\\n회원이시라면 로그인 후 이용해 보십시오';
-		$access_list = $this->cbconfig->item('access_cmall_list');
-		$access_list_level = $this->cbconfig->item('access_cmall_list_level');
-		$access_list_group = $this->cbconfig->item('access_cmall_list_group');
-		$this->accesslevel->check(
-			$access_list,
-			$access_list_level,
-			$access_list_group,
-			$alertmessage,
-			''
-		); */
-
-		/* $findex = ($this->input->get('findex') && in_array($this->input->get('findex'), $allow_order_field)) ? $this->input->get('findex') : 'cit_order asc';
-		$sfield = $this->input->get('sfield', null, '');
-		if ($sfield === 'cit_both') {
-			$sfield = array('cit_name', 'cit_content');
-		}
-		$skeyword = $this->input->get('skeyword', null, '');
-
-		$per_page = $this->cbconfig->item('list_count') ? (int) $this->cbconfig->item('list_count') : 20;
-		$offset = ($page - 1) * $per_page;
-
-		$this->Cmall_item_model->allow_search_field = array('cit_id', 'cit_name', 'cit_content', 'cit_both', 'cit_price'); // 검색이 가능한 필드
-		$this->Cmall_item_model->search_field_equal = array('cit_id'); // 검색중 like 가 아닌 = 검색을 하는 필드
- */
-		/**
-		 * 게시판 목록에 필요한 정보를 가져옵니다.
-		 */
-		/* $where = array();
-		$where['cit_status'] = 1;
-		$result = $this->Cmall_item_model
-			->get_item_list($per_page, $offset, $where, $category_id, $findex, $sfield, $skeyword);
-		$list_num = $result['total_rows'] - ($page - 1) * $per_page;
-		if (element('list', $result)) {
-			foreach (element('list', $result) as $key => $val) {
-				$result['list'][$key]['item_url'] = cmall_item_url(element('cit_key', $val));
-				$result['list'][$key]['num'] = $list_num--;
-			}
-		}
-		$view['view']['data'] = $result;
-
-		$view['view']['category_nav'] = $this->cmalllib->get_nav_category($category_id);
-		$view['view']['category_all'] = $this->cmalllib->get_all_category();
-		$view['view']['category_id'] = $category_id; */
-
-		/**
-		 * 페이지네이션을 생성합니다
-		 */
-		/* $config['base_url'] = site_url('cmall/lists/' . $category_id) . '?' . $param->replace('page');
-		$config['total_rows'] = $result['total_rows'];
-		$config['per_page'] = $per_page;
-		$this->pagination->initialize($config);
-		$view['view']['paging'] = $this->pagination->create_links();
-		$view['view']['page'] = $page;
- */
+	
 
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
 
-		/**
-		 * 레이아웃을 정의합니다
-		 */
-		/* $page_title = $this->cbconfig->item('site_meta_title_cmall_list');
-		$meta_description = $this->cbconfig->item('site_meta_description_cmall_list');
-		$meta_keywords = $this->cbconfig->item('site_meta_keywords_cmall_list');
-		$meta_author = $this->cbconfig->item('site_meta_author_cmall_list');
-		$page_name = $this->cbconfig->item('site_page_name_cmall_list'); */
-
-	/* 	$searchconfig = array(
-			'{컨텐츠몰명}',
-		);
-		$replaceconfig = array(
-			$this->cbconfig->item('cmall_name'),
-		);
-
-		$page_title = str_replace($searchconfig, $replaceconfig, $page_title);
-		$meta_description = str_replace($searchconfig, $replaceconfig, $meta_description);
-		$meta_keywords = str_replace($searchconfig, $replaceconfig, $meta_keywords);
-		$meta_author = str_replace($searchconfig, $replaceconfig, $meta_author);
-		$page_name = str_replace($searchconfig, $replaceconfig, $page_name);
- */
+		
 		$layoutconfig = array(
 			'path' => 'games',
 			'layout' => 'layout_games',

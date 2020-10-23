@@ -2,15 +2,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no">
-    <title >chrome easter egg: t-rex runner</title>
+    <title >Altruists easter egg: t-rex runner</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> 
 </head>
 
 <body id="t" class="offline">
-    <div id="messageBox" class="sendmessage">
-         <h1 style="text-align: center;font-family: 'Open Sans', sans-serif;">Press Space to start</h1>
-         <div class="niokbutton" onclick="okbuttonsend()"></div>
-    </div>
+<!-- <span class="badge badge-pill badge-primary">easter egg</span> -->
+
+<pre><b>최고점수 : </b><span id="top-score">0000000 </span></pre>
+
+   
+    
     <div id="main-frame-error" class="interstitial-wrapper">
         <div id="main-content">
             <div class="icon icon-offline" alt=""></div>
@@ -25,9 +27,38 @@
             </template>
         </div>
     </div>
+    <!-- <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">어서오세요!</h4>
+        <p>Aww yeah, you successfully read this important alert message. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.</p>
+        <hr>
+        <p class="mb-0">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p>
+    </div> -->
+    <div id="messageBox" class="sendmessage">
+        <pre> 화면을 <kbd>터치</kbd> 하면 모험이 시작됩니다</pre>
+    </div>
+    <table class="table"> 
+        <thead> 
+            <tr> 
+                <th>순위</th> 
+                <th>점수</th> 
+                <th>회원</th> 
+                <th>일자</th> 
+            </tr> 
+        </thead> 
+        <tbody id='tbody'> 
+           
+        </tbody> 
+    </table>
 </body>
 
 <script>
+
+    $( document ).ready(function() {
+    // Handler for .ready() called.
+    //        getRanklist();
+    });
+
+
     document.onkeydown = function(evt) {
     evt = evt || window.event;
     if (evt.keyCode == 32) {
