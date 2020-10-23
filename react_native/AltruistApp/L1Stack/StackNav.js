@@ -97,15 +97,20 @@ class LoadingScreen extends React.Component{
         
         return(
             <SafeAreaView style={{flex:1,}}>
+                {Platform.OS == 'android'?  
                 <Animated.View 
                     style={{flex:1, justifyContent:"space-between", alignItems:"center", backgroundColor:"#ffffff",opacity:this.state.opacity}}>
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
                     <Text category="s2" style={{backgroundColor: 'white', color: '#ffffff', textAlign:'center', includeFontPadding:true}}>CARP x UNYICT</Text>
                     <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
-                {Platform.OS === 'android'?  
                 <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`BETA ver. ${this.state.yourCurrentVersion}`}</Text>
-            : null }
                 </Animated.View> 
+            : 
+            <View style={{flex:1, justifyContent:"space-between", alignItems:"center", backgroundColor:'#FFFFFF'}}>
+                <Text category="p2" >더불어 사는 이타주의자들에 오신 여러분을 환영합니다!</Text>
+                <Text category="p2" style={{backgroundColor: 'white', textAlign:'center', color:'#ACACAC', includeFontPadding:true}}>{`v ${this.state.yourCurrentVersion}`}</Text>
+            </View>
+            }
             </SafeAreaView>
     )}
 }
@@ -190,44 +195,6 @@ export class StackNav extends React.Component{
         
     }
 
-    latestVersionChk = () =>{
-       
-
-    }
-
-    VersionUpdateChk = () => {
-        VersionCheck.getLatestVersion().then(latestVersion => {
-            console.log(latestVersion);
-            });
-
-
-        VersionCheck.getLatestVersion({
-            forceUpdate: true,
-            provider: () => fetch(`https://play.google.com/store/apps/details?id=com.everytime.v2`)
-            .then(r =>{ r.json();
-            console.log('r',r)}
-            )
-            .then(({version}) => 
-                console.log('version:', version))
-            }).then(latestVersion =>{
-            console.log(latestVersion);
-            });
-
-
-            // VersionCheck.getLatestVersion({
-            //     forceUpdate: true,
-            //     provider: () => fetch('')
-            //       .then(r => r.json())
-            //       .then(({version}) => version),   // You can get latest version from your own api.
-            //   }).then(latestVersion =>{
-            //     console.log(latestVersion);
-            //   });
-
-
-
-        
-    }
-
     static contextType = Signing
     syncPushToken = async (token,mem_id) =>{
         console.log('synchPushToken token :'+token)
@@ -236,7 +203,7 @@ export class StackNav extends React.Component{
         formdata.append('token',token);
         formdata.append('mem_id',mem_id);
         
-        await axios.post('http://dev.unyict.org/api/login/sync_push_token',formdata)
+        await axios.post('https://dev.unyict.org/api/login/sync_push_token',formdata)
         .then(res=>{
             console.log('success!')
         })
@@ -254,7 +221,7 @@ export class StackNav extends React.Component{
             formdata.append('token',token);
         });
         
-        await axios.post('http://dev.unyict.org/api/login/session_check',formdata)
+        await axios.post('https://dev.unyict.org/api/login/session_check',formdata)
         .then(async res=>{
             console.log('session_checking')
             if(res.data.status == 200){
@@ -321,7 +288,7 @@ export class StackNav extends React.Component{
         })
     }
     getNotiList=()=>{
-        axios.get('http://dev.unyict.org/api/notification?read=N')
+        axios.get('https://dev.unyict.org/api/notification?read=N')
         .then(res=>{
            console.log('getNotiList success! : '+res.data.view.data.total_rows)   
            this.setState(prevState=>({
@@ -368,9 +335,10 @@ export class StackNav extends React.Component{
     render(){
         const {context,isLoading,isSignedIn,noticeContext, versionOk} = this.state
         return(
-            Platform.OS === 'android' && isLoading ? 
+            isLoading ?
             <LoadingScreen />
             :
+            // Platform.OS == 'ios' || !isLoading
             !versionOk ? 
             null : 
             <Signing.Provider value={context}>
