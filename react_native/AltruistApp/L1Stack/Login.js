@@ -104,7 +104,7 @@ class LoginScreen extends React.Component{
               <View style={{position:'relative',flex:1,alignItems:'center',justifyContent:'center'}}>
                 <View style={{backgroundColor:'#ffffff',alignItems:'center',justifyContent:'center'}}>
                   {/* <LogoSvg  width={wdithLogo} height={heightLogo}/> */}
-                  <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
+                  <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'https://dev.unyict.org/uploads/main_png.png'}}/>
                 </View>
                   <TextInput
                       style={styles.testInput}
