@@ -29,7 +29,9 @@ const TopTabBar = ({ navigation, state }) => (
 );
 
 const TabNavigator = () => (
-  <Navigator swipeEnabled={false} tabBar={props => <TopTabBar {...props} />}>
+  <Navigator 
+    // swipeEnabled={false} 
+    tabBar={props => <TopTabBar {...props} />}>
     {/* <Screen name='Main' component={CommunityScreen}/> */}
     <Screen name='Jau' component={JauScreen}/>
     <Screen name='Gomin' component={GominScreen}/>
@@ -38,7 +40,7 @@ const TabNavigator = () => (
   </Navigator>
 );
 
-export const ComToptabNav= ({navigation}) => (
+export const ComToptabNav= ({navigation, state}) => (
   <SafeAreaView style={{flex:1}}>
     {/* <TopNavigation title ="Community" alignment ='center' style={{backgroundColor : '#B09BDE'}}/> */}
     <TopBarTune text="COMMUNITY" right='community' func={()=>navigation.navigate('CommunitySearch')} />
