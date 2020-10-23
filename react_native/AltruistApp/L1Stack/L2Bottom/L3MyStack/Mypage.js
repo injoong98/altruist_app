@@ -28,7 +28,7 @@ class Mypage extends React.Component{
     static contextType = Signing;
     
     loadMemInfo = async() => {
-      await axios.get('http://dev.unyict.org/api/mypage')
+      await axios.get('https://dev.unyict.org/api/mypage')
       .then(res=>{
         this.setState({mem_info:res.data.myinfo,isLoading:false})
         
@@ -38,7 +38,7 @@ class Mypage extends React.Component{
       })
     }
     sessionChk = () =>{
-      axios.get('http://dev.unyict.org/api/login/session_check')
+      axios.get('https://dev.unyict.org/api/login/session_check')
       .then(res=>{
           alert(JSON.stringify(res.data))
         }
@@ -65,7 +65,7 @@ class Mypage extends React.Component{
                     <Pressable onPress={()=>this.setState({showGameCnt:showGameCnt+1})}>
                       <View style={{marginVertical:20,marginLeft:30,borderRadius:62.5,width:125, height : 125,overflow:'hidden'}}>
                         <Image 
-                            source = {{uri : 'http://dev.unyict.org/'+ (mem_photo ?'uploads/member_photo/'+mem_photo: 'uploads/altwink-rect.png')}} 
+                            source = {{uri : 'https://dev.unyict.org/'+ (mem_photo ?'uploads/member_photo/'+mem_photo: 'uploads/altwink-rect.png')}} 
                             style = {{ width : '100%', height : '100%', resizeMode:'cover'}}
                         />
                       </View>
@@ -102,14 +102,13 @@ class Mypage extends React.Component{
                     </TouchableOpacity >  */}
                   </View>
                   <View style={{ marginHorizontal:40}}>
-                    <View>
-                      {/* <PencilSvg height={28} width={22}/> */}
+                    {/* <View>
                       <TouchableOpacity style={{flexDirection:'row',alignItems:'center',marginBottom:15}} 
                       onPress={()=>{ navigate('AboutApp') }} >
                         <AltruistSvg height={19} width={22}/>
                         <Text category='h2' style={styles.menuTitle}>"더불어 성장하는 이타주의자들"?</Text>
                       </TouchableOpacity>
-                    </View>
+                    </View> */}
                     {/* <View>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'post'})}} >
                         <Text style={styles.menuItem}></Text>
