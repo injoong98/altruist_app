@@ -102,7 +102,7 @@ class LoadingScreen extends React.Component{
                     style={{flex:1, justifyContent:"space-between", alignItems:"center", backgroundColor:"#ffffff",opacity:this.state.opacity}}>
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
                     <Text category="s2" style={{backgroundColor: 'white', color: '#ffffff', textAlign:'center', includeFontPadding:true}}>CARP x UNYICT</Text>
-                    <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
+                    <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'https://dev.unyict.org/uploads/main_png.png'}}/>
                 <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`BETA ver. ${this.state.yourCurrentVersion}`}</Text>
                 </Animated.View> 
             : 
@@ -133,7 +133,7 @@ export class StackNav extends React.Component{
                     formdata.append('autologin',autologin)
                     :null
                     
-                    axios.post('http://dev.unyict.org/api/login',formdata)
+                    axios.post('https://dev.unyict.org/api/login',formdata)
                     .then(response=>{
                         console.log('sign in res:'+JSON.stringify(response.data.status))
                         if(response.data.status == 200 )
@@ -158,7 +158,7 @@ export class StackNav extends React.Component{
                     .then(token=>{
                         var formdata = new FormData();
                         formdata.append('token',token);
-                        axios.post('http://dev.unyict.org/api/login/logout/',formdata)
+                        axios.post('https://dev.unyict.org/api/login/logout/',formdata)
                         .then(response=>{
                             this.setState({isSignedOut:true})
                             this.session_chk()
@@ -272,7 +272,7 @@ export class StackNav extends React.Component{
         })
     }
     getFirstNotiList=()=>{
-        axios.get('http://dev.unyict.org/api/notification')
+        axios.get('https://dev.unyict.org/api/notification')
         .then(res=>{
            console.log('getFirstNotiList success! : '+res.data.view.data.total_rows)   
            this.setState(prevState=>({
