@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,StyleSheet, SafeAreaView, TouchableOpacity,ScrollView,Image} from 'react-native';
+import {View,StyleSheet, SafeAreaView, TouchableOpacity,ScrollView,Image, Pressable} from 'react-native';
 import {Input,Button,Text,Modal} from '@ui-kitten/components';
 import axios from 'axios'
 import Confirm from '../../../components/confirm.component'
@@ -12,6 +12,7 @@ import MessageSvg from '../../../assets/icons/message.svg'
 import AltruistSvg from '../../../assets/icons/altruist.svg'
 import NoimageSvg from '../../../assets/icons/noimage.svg'
 import PersonSvg from '../../../assets/icons/person.svg'
+import { threshold } from 'react-native-color-matrix-image-filters';
 
 class Mypage extends React.Component{
     constructor(props){
@@ -19,7 +20,8 @@ class Mypage extends React.Component{
         this.state={
             mem_info:[],
             isLoading:true,
-            logOutModalVisible:false
+            logOutModalVisible:false,
+            showGameCnt : 0,
         }
     }
 
@@ -53,19 +55,21 @@ class Mypage extends React.Component{
     }
     render(){
       const {signOut} = this.context
-      const {logOutModalVisible,mem_info} = this.state
+      const {logOutModalVisible,mem_info,showGameCnt} = this.state
       const {mem_point,mem_nickname,mem_photo,mem_profile_content} = mem_info
       const {navigate} =this.props.navigation
         return(
           <SafeAreaView style={{flex:1}}>
               <ScrollView style={{flex:1,backgroundColor:'#ffffff'}}>
                   <View style={{flexDirection:'row',margin:35,backgroundColor:'#F0F0F0',borderRadius:10}}>
+                    <Pressable onPress={()=>this.setState({showGameCnt:showGameCnt+1})}>
                       <View style={{marginVertical:20,marginLeft:30,borderRadius:62.5,width:125, height : 125,overflow:'hidden'}}>
                         <Image 
                             source = {{uri : 'http://dev.unyict.org/'+ (mem_photo ?'uploads/member_photo/'+mem_photo: 'uploads/altwink-rect.png')}} 
                             style = {{ width : '100%', height : '100%', resizeMode:'cover'}}
                         />
                       </View>
+                    </Pressable>
                       <View style={{maxWidth:'40%',marginHorizontal:16,marginTop:13,marginBottom:24,justifyContent:'space-between'}}>
                         <View style={{marginTop:15,display:'flex',flexDirection:'row', alignItems:'flex-end'}}>
                             <Text category='h2' style={{fontSize:20,color:'#63579D'}}>{mem_nickname}</Text>
@@ -196,6 +200,13 @@ class Mypage extends React.Component{
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarmSetting');}}>
                         <Text style={styles.menuItem}>알림 설정</Text>
                       </TouchableOpacity>
+                      {
+                        showGameCnt >7 ?
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyGame');this.setState({showGameCnt:0})}}>
+                        <Text style={styles.menuItem}>게임하러가기</Text>
+                      </TouchableOpacity>
+                      :null
+                      }
                     </View>
                   </View>
 
