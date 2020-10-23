@@ -84,11 +84,11 @@ class LoadingScreen extends React.Component{
         // //       console.log('latestVersion : ', latestVersion);
         // //       // 2.0.0
         // //     })
-        Platform.OS === 'ios' ? null : this.fadeIn(); this.VersionChkAndroid();
+        this.fadeIn(); this.VersionChkAndroid();
     }
 
     componentWillUnmount(){
-        Platform.OS === 'ios' ?  null : this.fadeOut()
+        this.fadeOut()
     }
 
 
@@ -106,8 +106,12 @@ class LoadingScreen extends React.Component{
                 <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`BETA ver. ${this.state.yourCurrentVersion}`}</Text>
                 </Animated.View> 
             : 
-            <View style={{flex:1, justifyContent:"space-between", alignItems:"center", backgroundColor:'#FFFFFF'}}>
-                <Text category="p2" >더불어 사는 이타주의자들에 오신 여러분을 환영합니다!</Text>
+            <View style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:'#FFFFFF'}}>
+                {/* <Text category="p2" style={{lineHeight:25, textAlign:'center', padding: 50}}>
+                    우리는 
+                   {`\n`} 더불어 사는 이타주의자들 
+                   {`\n`} 입니다!
+                    </Text> */}
                 <Text category="p2" style={{backgroundColor: 'white', textAlign:'center', color:'#ACACAC', includeFontPadding:true}}>{`v ${this.state.yourCurrentVersion}`}</Text>
             </View>
             }
