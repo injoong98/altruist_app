@@ -33,10 +33,13 @@
         this.tRex = null;
 
         this.distanceMeter = null;
-        this.distanceRan = 0;
-
+        this.distanceRan = 0; 
+        // Distance
+        // 
         this.highestScore = 0;
 
+       
+        // console.info('highestScore',this.highestScore);
         this.time = 0;
         this.runningTime = 0;
         this.msPerFrame = 1000 / FPS;
@@ -70,6 +73,11 @@
         } else {
             this.loadImages();
         }
+        // set high score
+        this.getHighScore(this);
+        this.getRankList(this);
+
+
     }
     window['Runner'] = Runner;
 
@@ -759,6 +767,69 @@
         },
 
         /**
+         * Get High Score.
+         */
+        getHighScore: function (_this) {
+            $.ajax({
+                url : '/api/games/get_highscore/',
+                type : 'get',
+                dataType : 'json',
+                success : function(data) {
+                    console.info('max score :',data.score);
+                    _this.highestScore = data.score;
+                    $('#top-score').text(data.score);
+                }
+            }); 
+         
+            
+        },
+        /**
+         * Get rank list.
+         */
+        getRankList: function (_this) {
+           $("#tbody").html('');
+            $.ajax({
+                url : '/api/games/lists/trex',
+                type : 'get',
+                dataType : 'json',
+                success : function(data) {
+                    console.info('rank data : ',data);
+                    for (var key in data.list) {
+                        let ranking = Number(key) + 1;
+                        let style_class = 'light';
+                        if (ranking == 1 ) {
+                            style_class = 'danger';
+                        }else if(ranking == 2) {
+                            style_class = 'info';
+
+                        }else if(ranking == 3) {
+                            style_class = 'warning';
+                        }else {
+                            style_class = 'light';
+
+                        }
+                        // console.log(key, data.list[key]);
+                       //  console.log('rank', ranking);
+                         let html = `
+                         <tr class="${style_class}"> 
+                             <th style='text-align: center;' scope="row">${ranking}</th> 
+                             <td>${data.list[key].gam_point}</td> 
+                             <td>${data.list[key].nickname}</td> 
+                             <td>${data.list[key].gam_datetime}</td> 
+                         </tr>  `;
+                     
+                     
+                         $("#tbody").append(html);
+                    }
+
+                  
+                }
+            }); 
+         
+            
+        },
+
+        /**
          * Whether the game is running.
          * @return {boolean}
          */
@@ -789,13 +860,32 @@
             }
 
             // Update the high score.
+            
+            
+            
+            let distance = this.distanceMeter.getActualDistance(Math.ceil(this.distanceRan));
+            let MyScoreStr = (this.distanceMeter.defaultString + distance).substr(-this.maxScoreUnits);
+
+            console.info('high score : ',this.highestScore);
+            console.info('your score : ',MyScoreStr);
+            this.distanceMeter.saveScore(MyScoreStr,this.distanceRan);
+          
+            this.getRankList();
             if (this.distanceRan > this.highestScore) {
+
                 this.highestScore = Math.ceil(this.distanceRan);
                 this.distanceMeter.setHighScore(this.highestScore);
+
             }
 
+            this.getHighScore(this);
             // Reset the time clock.
             this.time = getTimeStamp();
+           // this.getRankList();
+          
+
+             
+            
         },
 
         stop: function () {
@@ -1863,7 +1953,7 @@
 
         this.currentDistance = 0;
         this.maxScore = 0;
-        this.highScore = 0;
+        this.highScore = 1000;
         this.container = null;
 
         this.digits = [];
@@ -2091,8 +2181,38 @@
             distance = this.getActualDistance(distance);
             var highScoreStr = (this.defaultString +
                 distance).substr(-this.maxScoreUnits);
-
+            
             this.highScore = ['10', '11', ''].concat(highScoreStr.split(''));
+            $('#top-score').text(highScoreStr );
+                
+        },
+        /**
+         * Save my score .
+         * score Str and distance value pass on.
+         * @param {number} distance Distance ran in pixels.
+         * @param {number} myscorestr Number value from Distance value.
+         */
+        saveScore: function (myscorestr,distance) {
+            //
+      
+            $.ajax({
+                url : '/api/games/save_myscore',
+				type : 'POST',
+				cache : false,
+				data : {gam_point:myscorestr, gam_data: distance},
+				dataType : 'json',
+				success : function(data) {
+					if (data.status == 200) {
+                        // reload rank list
+                        console.info('save result ', data);
+                    }
+				},
+				error : function(data) {
+                    console.info('save error ', data);
+					return false;
+				}
+			}); 
+                
         },
 
         /**
