@@ -418,7 +418,7 @@ if (typeof(COMMON_JS) === 'undefined') {
 	}
 
 	function delete_follow(userid, classname) {
-
+		
 		var href;
 
 		if ( userid == '') {

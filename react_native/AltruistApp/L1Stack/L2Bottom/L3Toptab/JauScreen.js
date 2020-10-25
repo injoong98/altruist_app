@@ -258,7 +258,8 @@ class JauScreen extends React.Component {
 			</View>
 			:
 			<View style={{flex:1, backgroundColor:'white'}}>
-				<ScrollView horizontal={true} style={{flex:1, marginHorizontal : 20, marginVertical: 4,backgroundColor:'#B09BDE', borderRadius:10}}>
+				{/* <ScrollView horizontal={true} style={{flex:1, marginHorizontal : 20, marginVertical: 4,backgroundColor:'#B09BDE', borderRadius:10}}> */}
+				<View style={{flex:1, marginHorizontal : 20, marginVertical: 4,backgroundColor:'#B09BDE', borderRadius:10, flexDirection:'row'}}>
 					{this.category.map((str,index) => (
 					<TouchableOpacity 
 						key={index}
@@ -266,7 +267,8 @@ class JauScreen extends React.Component {
 						onPress={async()=>{this.setState({current_category:index, current_page:1},this.getPostFirst)}}>
 						<Text category='h6' key={index} style={{color:(current_category==index?'white':'#543D78')}}> {'#'+str} </Text>
 					</TouchableOpacity>))}
-				</ScrollView>
+				</View>
+				{/* </ScrollView> */}
 				<View style={{flex:20}}>
 					<List
 						style={{backgroundColor: 'white'}}

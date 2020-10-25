@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {SafeAreaView, View, Image, TextInput, StyleSheet,TouchableOpacity, AsyncStorage, Keyboard} from 'react-native'
+import {SafeAreaView, View, Image, TextInput, StyleSheet,TouchableOpacity, AsyncStorage, Keyboard, ScrollView} from 'react-native'
 import {Layout,Text,Icon, TopNavigationAction, Modal, List, Spinner } from '@ui-kitten/components'
 import {WriteContentToptab} from '../components/WriteContentTopBar';
 import Axios from 'axios';
@@ -94,7 +94,6 @@ class CommunitySearch extends React.Component{
                 <View style={{flex:1, padding:5}}>
                     <View style={{flexDirection:'row', justifyContent : 'space-between', marginHorizontal : 4}}>
                         <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{ this.brdNm(item.brd_id)}</Text>
-                        <PostTime datetime = {item.post_datetime}/>
                     </View>
                     <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail" category='h4'>
                         {item.post_title}
@@ -106,8 +105,9 @@ class CommunitySearch extends React.Component{
                     </View>
                 </View>
                 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-                    <View>
-                        {/* <PostTime style={{alignItems:'center', marginLeft : 5}}datetime = {item.post_datetime}/> */}
+                    <View style={{flex:4,display:'flex',flexDirection:'row',alignItems:'flex-end', margin:4, paddingLeft : 5}}>
+                        <Text category="s2" style={{fontSize:10, color:'#63579D', marginRight:5}}>{item.post_nickname}</Text>
+                        <PostTime style={{alignItems:'center', marginLeft : 5, color:'#63579D'}}datetime = {item.post_datetime}/>
                     </View>
                     <View style={styles.infocontainer}>
                         <View style={{alignItems:'center',}}>
@@ -163,7 +163,7 @@ class CommunitySearch extends React.Component{
                         </TouchableOpacity>
                     </View>
                 </Layout>
-				<View style={{flexDirection:'row', marginHorizontal : 20, marginVertical: 4,backgroundColor:'#B09BDE', borderRadius:10}}>
+				<ScrollView horizontal={true} style={{flex:1, flexDirection:'row', marginHorizontal : 20, marginVertical: 4,backgroundColor:'#B09BDE', borderRadius:10}}>
 					{this.category.map((str,index) => (
 					<TouchableOpacity 
 						key={index}
@@ -172,8 +172,8 @@ class CommunitySearch extends React.Component{
                         >
 						<Text category='h6' key={index} style={{color:(current_category==index?'white':'#543D78')}}> {'#'+str} </Text>
 					</TouchableOpacity>))}
-				</View>
-                <View style={{flex : 1}}>
+				</ScrollView>
+                <View style={{flex : 20}}>
                     {isLoading?
                         <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                             <Searchsvg height={100} width={100} fill='#A9C' />
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
         display:"flex",flexDirection:"row",justifyContent:'space-evenly',
         borderTopLeftRadius:20,
         width:100,
-        backgroundColor:"#ffffff",
+        // backgroundColor:"#ffffff",
         position:"relative",bottom:0,right:0,
     },
   });
