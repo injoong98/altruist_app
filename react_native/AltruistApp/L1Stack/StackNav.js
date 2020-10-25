@@ -44,8 +44,6 @@ class LoadingScreen extends React.Component{
             yourCurrentVersion : '',
         }
     }
-
-    
     
     fadeIn = () => {
         Animated.timing(this.state.opacity,{
@@ -70,20 +68,6 @@ class LoadingScreen extends React.Component{
     
    
     componentDidMount(){
-        
-
-        // // Platform.OS === 'ios' ?  
-        // // null
-        // //     // VersionCheck.setAppID(APP_ID);
-        // //     // VersionCheck.setAppName(APP_NAME);
-        // // : 
-        // //     console.log('            this.fadeIn();')
-        // //     this.fadeIn();
-        // //     VersionCheck.getLatestVersion()
-        // //     .then(latestVersion => {
-        // //       console.log('latestVersion : ', latestVersion);
-        // //       // 2.0.0
-        // //     })
         Platform.OS === 'ios' ? null : this.fadeIn(); this.VersionChkAndroid();
     }
 
@@ -103,7 +87,7 @@ class LoadingScreen extends React.Component{
                     <Text category="s2" style={{backgroundColor: 'white', color: '#ffffff', textAlign:'center', includeFontPadding:true}}>CARP x UNYICT</Text>
                     <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
                 {Platform.OS === 'android'?  
-                <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`BETA ver. ${this.state.yourCurrentVersion}`}</Text>
+                <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`ver ${this.state.yourCurrentVersion} (BETA) `}</Text>
             : null }
                 </Animated.View> 
             </SafeAreaView>

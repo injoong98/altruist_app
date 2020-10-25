@@ -98,14 +98,14 @@ class Mypage extends React.Component{
                     </TouchableOpacity >  */}
                   </View>
                   <View style={{ marginHorizontal:40}}>
-                    <View>
+                    {/* <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}> */}
                       {/* <PencilSvg height={28} width={22}/> */}
-                      <TouchableOpacity style={{flexDirection:'row',alignItems:'center',marginBottom:15}} 
-                      onPress={()=>{ navigate('AboutApp') }} >
-                        <AltruistSvg height={19} width={22}/>
-                        <Text category='h2' style={styles.menuTitle}>"더불어 성장하는 이타주의자들"?</Text>
-                      </TouchableOpacity>
-                    </View>
+                      {/* <TouchableOpacity style={{flexDirection:'row',alignItems:'center',marginBottom:15}}  */}
+                      {/* onPress={()=>{ navigate('AboutApp') }} > */}
+                        {/* <AltruistSvg height={19} width={22}/> */}
+                        {/* <Text category='h2' style={styles.menuTitle}>"더불어 성장하는 이타주의자들"?</Text> */}
+                      {/* </TouchableOpacity> */}
+                    {/* </View>./g */}
                     {/* <View>
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyList',{type:'post'})}} >
                         <Text style={styles.menuItem}></Text>
