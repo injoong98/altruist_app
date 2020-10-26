@@ -89,7 +89,7 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
 
-        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
         .then((res)=>{
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
             this.props.navigation.goBack();
@@ -108,7 +108,7 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         
-        await Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
         .then(response=>{
             if(response.data.success)
                 this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
@@ -127,7 +127,7 @@ class GominContent extends React.Component{
         formdata.append("cmt_content",cmt_content);
         cmt_id==''? null : formdata.append("cmt_id",cmt_id);
         
-        Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
+        Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
         .then(response=>{
             const {status, message}=response.data;
             if(status=='200'){
@@ -150,7 +150,7 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append("content",cmt_content);
         
-        await Axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {status,message} = response.data;
             if(status=='500'){
@@ -188,7 +188,7 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
 
-        await Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
         .then(response=>{
             if(response.data.status == 500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
@@ -205,7 +205,7 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append('cmt_id',this.state.cmt_id);
 
-        Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
+        Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
@@ -222,7 +222,7 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append('cmt_id',this.state.cmt_id);
 
-        Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
+        Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
@@ -240,7 +240,7 @@ class GominContent extends React.Component{
         formdata.append('post_id',this.state.post.post_id)
         formdata.append('like_type',1)
         
-        Axios.post(`http://dev.unyict.org/api/postact/${this.state.post.is_liked?'cancel_post_like':'post_like'}`,formdata)
+        Axios.post(`https://dev.unyict.org/api/postact/${this.state.post.is_liked?'cancel_post_like':'post_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -256,7 +256,7 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
+        Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 alert(`${JSON.stringify(response.data.message)}`)
@@ -269,7 +269,7 @@ class GominContent extends React.Component{
     }
     
     getCommentData = async (post_id)=>{
-        await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
         })
@@ -278,7 +278,7 @@ class GominContent extends React.Component{
         })
     }
     getPostData = async (post_id)=>{
-        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({
                 post:response.data.view.post, 
@@ -510,7 +510,7 @@ class GominContent extends React.Component{
                 <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                     <Image 
                         style={{width:50,height:50}}
-                        source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                        source={{uri:"https://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
                     />
                 </TouchableOpacity>
             </View>
@@ -682,7 +682,7 @@ class MarketContent extends React.Component {
 
     getPostData = async(post_id)=>{
         
-        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({
                 post:response.data.view.post, 
@@ -708,7 +708,7 @@ class MarketContent extends React.Component {
     }
     
     getCommentData = async (post_id)=>{
-        await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
         })
@@ -727,7 +727,7 @@ class MarketContent extends React.Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         
-        Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
         .then(response=>{
             if(response.data.success)
                 this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
@@ -743,7 +743,7 @@ class MarketContent extends React.Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         
-        Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+        Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
@@ -760,7 +760,7 @@ class MarketContent extends React.Component {
     postDelete = async () => {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
-        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
         .then(res=>{
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
             this.props.navigation.goBack();
@@ -778,7 +778,7 @@ class MarketContent extends React.Component {
     renderImage = ({item}) => {
         console.log(item.url)
         return (
-        <Image source={{uri : 'http://dev.unyict.org/'+item.url}} style={{flex : 1, width:394, resizeMode:'cover'}}/>
+        <Image source={{uri : 'https://dev.unyict.org/'+item.url}} style={{flex : 1, width:394, resizeMode:'cover'}}/>
         );
     }
 
@@ -806,7 +806,7 @@ class MarketContent extends React.Component {
         revise? formdata.append("mode",'cu'):null;
         // this.commentWrite()
         
-        await Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
+        await Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
         .then(response=>{
             const {status,message}=response.data;
             if(status=='200'){
@@ -829,7 +829,7 @@ class MarketContent extends React.Component {
         var formdata = new FormData();
         formdata.append("content",cmt_content);
         
-        await Axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {status,message} = response.data;
             if(status=='500'){
@@ -853,7 +853,7 @@ class MarketContent extends React.Component {
         var formdata = new FormData();
         formdata.append('cmt_id',this.state.cmt_id);
         
-        Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
+        Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
@@ -870,7 +870,7 @@ class MarketContent extends React.Component {
         var formdata = new FormData();
         formdata.append('cmt_id',this.state.cmt_id)
         
-        Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
+        Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
@@ -888,7 +888,7 @@ class MarketContent extends React.Component {
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
+        Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -911,7 +911,7 @@ class MarketContent extends React.Component {
         formdata.append('post_id', post.post_id);
         formdata.append('deal_status', 0)
         console.log(formdata);
-        await Axios.post('http://dev.unyict.org/api/board_write/finish_deal',formdata)
+        await Axios.post('https://dev.unyict.org/api/board_write/finish_deal',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
@@ -1158,7 +1158,7 @@ class MarketContent extends React.Component {
                     <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                         <Image 
                             style={{width:50,height:50}}
-                            source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                            source={{uri:"https://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
                         />
                     </TouchableOpacity>
                 </View>
@@ -1323,7 +1323,7 @@ class AlbaContent extends React.Component {
     }
 
     getPostData = async(post_id)=>{
-        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
@@ -1376,7 +1376,7 @@ class AlbaContent extends React.Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         
-        await Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
         .then(response=>{
             if(response.data.success)
                 this.setState({resultModalVisible:true, resultText:response.data.success});
@@ -1392,7 +1392,7 @@ class AlbaContent extends React.Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
 
-        await Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
         .then(response=>{
             if(response.data.status == 500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
@@ -1415,7 +1415,7 @@ class AlbaContent extends React.Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
 
-        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
         .then((res)=>{
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
             this.props.navigation.goBack();
@@ -1688,7 +1688,7 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
 
-        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
         .then((res)=>{
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
             this.props.navigation.goBack();
@@ -1707,7 +1707,7 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         
-        await Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
         .then(response=>{
             if(response.data.success)
                 this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
@@ -1730,7 +1730,7 @@ class IlbanContent extends Component {
         
         // this.commentWrite()
         
-        Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
+        Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
         .then(response=>{
             const {status, message}=response.data;
             if(status=='200'){
@@ -1753,7 +1753,7 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append("content",cmt_content);
         
-        await Axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {status,message} = response.data;
             if(status=='500'){
@@ -1790,7 +1790,7 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
 
-        await Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
         .then(response=>{
             if(response.data.status == 500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
@@ -1807,7 +1807,7 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append('cmt_id',this.state.cmt_id);
 
-        Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
+        Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
@@ -1824,7 +1824,7 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append('cmt_id',this.state.cmt_id);
 
-        Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
+        Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
@@ -1841,7 +1841,7 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         formdata.append('like_type',1)
-        Axios.post(this.state.post.is_liked?'http://dev.unyict.org/api/postact/cancel_post_like':'http://dev.unyict.org/api/postact/post_like',formdata)
+        Axios.post(this.state.post.is_liked?'https://dev.unyict.org/api/postact/cancel_post_like':'https://dev.unyict.org/api/postact/post_like',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -1857,7 +1857,7 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
+        Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -1870,7 +1870,7 @@ class IlbanContent extends Component {
     }
     
     getCommentData = async (post_id)=>{
-        await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
             this.setState({isLoading:false})
@@ -1880,7 +1880,7 @@ class IlbanContent extends Component {
     }
     getPostData = async (post_id)=>{
         this.setState({isLoading:true})
-        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({
                 post:response.data.view.post, 
@@ -2149,7 +2149,7 @@ class IlbanContent extends Component {
                 <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                     <Image 
                         style={{width:50,height:50}}
-                        source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                        source={{uri:"https://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
                      />
                 </TouchableOpacity>
             </View>
