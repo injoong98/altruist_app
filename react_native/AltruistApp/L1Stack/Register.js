@@ -571,6 +571,11 @@ class RegisterScreen extends Component {
             여자
           </Text>
         </Radio>
+        <Radio>
+          <Text style={{color: '#63579D'}} category="p1">
+            공개안함
+          </Text>
+        </Radio>
       </RadioGroup>
     );
   };
