@@ -775,7 +775,7 @@
                 type : 'get',
                 dataType : 'json',
                 success : function(data) {
-                    console.info('max score :',data.score);
+                    console.info('max score :',data);
                     _this.highestScore = data.score;
                     $('#top-score').text(data.score);
                 }
