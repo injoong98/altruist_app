@@ -1,5 +1,9 @@
 <?php
-echo date('Y-m-d H:i:s')." : Start Backup Schedule \n";
+echo "start!";
+//ini_set('display_startup_errors', 1);
+//ini_set('display_errors', 1);
+//error_reporting(-1);
+// Database configuration
 $host = "localhost";
 $username = "root";
 $password = "dksk15917*";
@@ -72,21 +76,20 @@ if(!empty($sqlScript))
     $fileHandler = fopen("/home/altruists/schedule/backup/".$backup_file_name, 'w+');
     $number_of_lines = fwrite($fileHandler, $sqlScript);
     fclose($fileHandler); 
-    echo  date('Y-m-d H:i:s')." : Backup File name - ".$backup_file_name."\n";
    // closedir($dirHandler);
     // Download the SQL backup file to the browser
-    //header('Content-Description:FileTransfer');
-    //header('Content-Type:application/octet-stream');
-    //header('Content-Disposition:attachment; filename='. basename($backup_file_name));
-    //header('Content-Transfer-Encoding:binary');
-    //header('Expires:0');
-    //header('Cache-Control:must-revalidate');
-    //header('Pragma:public');
-    //header('Content-Length:'. filesize($backup_file_name));
-    //ob_clean();
-    //flush();
-    //readfile($backup_file_name);
-    //exec('rm :'. $backup_file_name); 
+    header('Content-Description:FileTransfer');
+    header('Content-Type:application/octet-stream');
+    header('Content-Disposition:attachment; filename='. basename($backup_file_name));
+    header('Content-Transfer-Encoding:binary');
+    header('Expires:0');
+    header('Cache-Control:must-revalidate');
+    header('Pragma:public');
+    header('Content-Length:'. filesize($backup_file_name));
+    ob_clean();
+    flush();
+    readfile($backup_file_name);
+    exec('rm '. $backup_file_name); 
 }
-echo  date('Y-m-d H:i:s')." : End Bye.\n";
+echo "end!";
 ?>

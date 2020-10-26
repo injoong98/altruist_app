@@ -9,7 +9,7 @@
 <body id="t" class="offline">
 <!-- <span class="badge badge-pill badge-primary">easter egg</span> -->
 
-<pre><b>최고점수 : </b><span id="top-score">0000000 </span></pre>
+<pre><b>이타주의자들 최고점수 : <kbd><span id="top-score">0000000 </span></kbd> </b></pre>
 
    
     
@@ -34,7 +34,7 @@
         <p class="mb-0">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p>
     </div> -->
     <div id="messageBox" class="sendmessage">
-        <pre> 화면을 <kbd>터치</kbd> 하면 모험이 시작됩니다</pre>
+        <pre> 화면을 <kbd>터치</kbd> 하면 게임이 시작됩니다</pre>
     </div>
     <table class="table"> 
         <thead> 

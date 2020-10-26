@@ -56,7 +56,7 @@ class Gpoint_model extends CB_Model
 	{
 		/* SELECT gp.*, member.mem_nickname nickname, member.mem_photo photo FROM cb_gpoint gp 
 		LEFT JOIN cb_member member ON gp.mem_id = member.mem_id */
-		
+		$limit = 10;
 		$this->db->select('gpoint.*, member.mem_nickname nickname, member.mem_photo photo');
 		$this->db->join('member', 'gpoint.mem_id = member.mem_id', 'inner');
 		$this->db->where('member.mem_denied', 0);
@@ -65,7 +65,7 @@ class Gpoint_model extends CB_Model
 		$this->db->where('gam_type =', $gam_type);
 		/* $this->db->group_by('member.mem_id'); */
 		$this->db->order_by('gam_point', 'DESC');
-		/* $this->db->limit($limit); */
+		$this->db->limit($limit);
 		$qry = $this->db->get('gpoint');
 		$result = $qry->result_array();
 
@@ -150,7 +150,8 @@ class Gpoint_model extends CB_Model
 
 	public function get_highscore($gam_type='trex')
 	{
-		$this->db->select('MAX(gam_point) score');
+		/* $this->db->select('MAX(gam_point) score'); */
+		$this->db->select("CONCAT(MAX(gam_point),'점 by ',(SELECT mem_nickname from cb_member member where member.mem_id = cb_gpoint.mem_id),'님') score");
 		$this->db->where('gam_type =', $gam_type);
 		$qry = $this->db->get('gpoint');
 
