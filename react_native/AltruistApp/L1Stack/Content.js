@@ -1873,13 +1873,11 @@ class IlbanContent extends Component {
         await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
-            this.setState({isLoading:false})
         })
         .catch((error)=>{
         })
     }
     getPostData = async (post_id)=>{
-        this.setState({isLoading:true})
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({
@@ -1923,9 +1921,13 @@ class IlbanContent extends Component {
             StatusBar.setBarStyle('dark-content');
         }
 
+        this.setState({isLoading:true})
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
+        .then(()=>{
+            this.setState({isLoading:false})
+        })
     }
 
     componentWillUnmount(){
