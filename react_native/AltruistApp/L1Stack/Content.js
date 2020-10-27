@@ -1933,7 +1933,11 @@ class IlbanContent extends Component {
     componentWillUnmount(){
         StatusBar.setBackgroundColor('#B09BDE');
         StatusBar.setBarStyle('default');
-        this.props.route.params.OnGoback();
+        if(this.props.route.params.OnGoback){
+            this.props.route.params.OnGoback();
+        }
+        
+        null
     }
     
     modalList = [
@@ -2106,9 +2110,10 @@ class IlbanContent extends Component {
             <WriteContentToptab
                 gbckfunc={() => {
                     this.props.navigation.goBack();
-                if(Platform.OS!=='ios'){
+                    if(Platform.OS!=='ios'){
                         StatusBar.setBackgroundColor('#B09BDE');
-                        StatusBar.setBarStyle('default');}}
+                        StatusBar.setBarStyle('default');}
+                    }
                     }
                 gbckuse={true}
                 right={<this.MoreAction/>}
