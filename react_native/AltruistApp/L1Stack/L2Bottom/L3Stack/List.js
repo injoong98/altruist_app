@@ -328,7 +328,13 @@ class AltListScreen extends React.Component{
                 </View>
                 <Button 
                     style = {{height : 20}}
-                    onPress={()=>{this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:item.alt_profile.mem_id,title:this.props.route.params.title})}}>
+                    onPress={()=>{
+                        if(!global.mem_id) {
+                            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                        }else {
+                            this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:item.alt_profile.mem_id,title:this.props.route.params.title})
+                        }
+                    }}>
                     질문하기
                 </Button>
             </View>
@@ -343,7 +349,14 @@ class AltListScreen extends React.Component{
             <SafeAreaView style={{flex:1,backgroundColor:'#ffffff'}}>
                 <TopBarTune 
                     text="이타주의자들" 
-                    func={()=>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:''})} 
+                    func={()=>{
+                            if(!global.mem_id) {
+                                this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                            }else {
+                                this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:''})
+                            }
+                        }
+                    } 
                     right='opq'
                     gbckuse={true}
                     gbckfunc={()=>{this.props.navigation.goBack()}}                

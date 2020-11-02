@@ -86,63 +86,84 @@ class GominContent extends React.Component{
     static contextType = Signing;
 
     postDelete = async () => {
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-
-        await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
-        .then((res)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
-            this.props.navigation.goBack();
-            this.props.route.params.OnGoback();
-        })
-        .catch((error)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
-        })
+         if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+            var formdata = new FormData();
+            formdata.append('post_id',this.state.post.post_id)
+    
+            await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
+            .then((res)=>{
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
+                this.props.navigation.goBack();
+                this.props.route.params.OnGoback();
+            })
+            .catch((error)=>{
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
+            })
+             
+         }
     }
     commentWrite= ()=>{
-        this.setState({replying:false, cmt_id:'', cmt_content:''});
-        this.refs.commentInput.blur();
-        console.log(this.refs);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             this.setState({replying:false, cmt_id:'', cmt_content:''});
+             this.refs.commentInput.blur();
+             console.log(this.refs);
+
+         }
+
     }
     postscrap = async()=>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        
-        await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
-        .then(response=>{
-            if(response.data.success)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
-            else if (response.data.error)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, replying:false, resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+
+            var formdata = new FormData();
+            formdata.append('post_id',this.state.post.post_id)
+            
+            await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+            .then(response=>{
+                if(response.data.success)
+                    this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
+                else if (response.data.error)
+                    this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
+            })
+            .catch(error=>{
+                this.setState({resultModalVisible:true, replying:false, resultText:error.message});
+            })
+        }
     }
     
     commentUpload= async()=>{
-        const {cmt_content,post,cmt_id}=this.state;
-        var formdata = new FormData();
-        formdata.append("post_id",post.post_id);
-        formdata.append("cmt_content",cmt_content);
-        cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             const {cmt_content,post,cmt_id}=this.state;
+             var formdata = new FormData();
+             formdata.append("post_id",post.post_id);
+             formdata.append("cmt_content",cmt_content);
+             cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+             
+             Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
+             .then(response=>{
+                 const {status, message}=response.data;
+                 if(status=='200'){
+                     Keyboard.dismiss();
+                     this.getCommentData(post.post_id);
+                     this.setState({cmt_id:'', cmt_content:'', replying:false});
+ 
+                     this.refs.pstcmtlist.scrollToEnd();
+                 }else if(status=='500'){
+                     this.setState({resultModalVisible:true, resultText:message});
+                 }
+             })
+             .catch(error=>{
+                 alert(error);
+             })
         
-        Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
-        .then(response=>{
-            const {status, message}=response.data;
-            if(status=='200'){
-                Keyboard.dismiss();
-                this.getCommentData(post.post_id);
-                this.setState({cmt_id:'', cmt_content:'', replying:false});
-
-                this.refs.pstcmtlist.scrollToEnd();
-            }else if(status=='500'){
-                this.setState({resultModalVisible:true, resultText:message});
-            }
-        })
-        .catch(error=>{
-            alert(error);
-        })
+        }
     }
     
     commentValid =async() =>{
@@ -185,87 +206,120 @@ class GominContent extends React.Component{
         this.componentDidMount()    
     }
     postBlame = async () =>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
 
-        await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
-        .then(response=>{
-            if(response.data.status == 500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }else{
-                this.getPostData(this.state.post.post_id)
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+     
+             await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
+             .then(response=>{
+                 if(response.data.status == 500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }else{
+                     this.getPostData(this.state.post.post_id)
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+         }
     }
     cmtBlame = () =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id);
+     
+             Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+        }
 
-        Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
     }
     cmtDelete = () =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id);
+     
+             Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
+             })
+        
+        }
 
-        Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
-        })
     }
     postLike = () =>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        formdata.append('like_type',1)
         
-        Axios.post(`https://dev.unyict.org/api/postact/${this.state.post.is_liked?'cancel_post_like':'post_like'}`,formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.getPostData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, resultText : error.message});
-        })
+        //console.info('global.mem_id',global.mem_id);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+           
+        }else {
+
+            var formdata = new FormData();
+            formdata.append('post_id',this.state.post.post_id)
+            formdata.append('like_type',1)
+            
+            Axios.post(`https://dev.unyict.org/api/postact/${this.state.post.is_liked?'cancel_post_like':'post_like'}`,formdata)
+            .then(response=>{
+                if(response.data.status ==500){
+                    this.setState({resultModalVisible:true, resultText : response.data.message});
+                }else{
+                    this.getPostData(this.state.post.post_id)
+                }
+            })
+            .catch(error=>{
+                this.setState({resultModalVisible:true, resultText : error.message});
+            })
+        }
     }
     cmtLike = (cmt_id, is_liked) =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',cmt_id)
-        formdata.append('like_type',1)
-        Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                alert(`${JSON.stringify(response.data.message)}`)
-            }else{
-            this.getCommentData(this.state.post.post_id)}
-        })
-        .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('cmt_id',cmt_id)
+             formdata.append('like_type',1)
+             Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     alert(`${JSON.stringify(response.data.message)}`)
+                 }else{
+                 this.getCommentData(this.state.post.post_id)}
+             })
+             .catch(error=>{
+                 alert(`${JSON.stringify(error)}`)
+             })
+
+
+         }
+         
     }
     
     getCommentData = async (post_id)=>{
@@ -724,51 +778,69 @@ class MarketContent extends React.Component {
     )
     
     postscrap = async()=>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        
-        Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
-        .then(response=>{
-            if(response.data.success)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
-            else if (response.data.error)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, replying:false, resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             
+             Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+             .then(response=>{
+                 if(response.data.success)
+                     this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
+                 else if (response.data.error)
+                     this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
+             })
+             .catch(error=>{
+                 this.setState({resultModalVisible:true, replying:false, resultText:error.message});
+             })
+        }
+
     }
     
     postBlame = ()=>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             
+             Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }else{
+                     this.getPostData(this.state.post.post_id)
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
         
-        Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }else{
-                this.getPostData(this.state.post.post_id)
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
+        }
+
     }
 
     postDelete = async () => {
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
-        .then(res=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
-            this.props.navigation.goBack();
-            this.props.route.params.OnGoback();
-        })
-        .catch(err=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
+             .then(res=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
+                 this.props.navigation.goBack();
+                 this.props.route.params.OnGoback();
+             })
+             .catch(err=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
+             })
+         }
+         
     }
 
     BackAction = () =>(
@@ -791,37 +863,47 @@ class MarketContent extends React.Component {
     }
 
     commentWrite= ()=>{
-        this.setState({replying:false,cmt_id:'', cmt_content:''})
-        this.refs.commentInput.blur()
-        console.log(this.refs)
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             this.setState({replying:false,cmt_id:'', cmt_content:''})
+             this.refs.commentInput.blur()
+             console.log(this.refs)
+         }
     }
     
     commentUpload= async()=>{
-        const {cmt_content,post,cmt_id, revise}=this.state;
-        var formdata = new FormData();
-        formdata.append("post_id",post.post_id);
-        formdata.append("cmt_content",cmt_content);
-        cmt_id==''? null : formdata.append("cmt_id",cmt_id);
-        revise? formdata.append("cmt_id",cmt_id):null;
-        revise? formdata.append("mode",'cu'):null;
-        // this.commentWrite()
-        
-        await Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
-        .then(response=>{
-            const {status,message}=response.data;
-            if(status=='200'){
-                Keyboard.dismiss();
-                this.getCommentData(post.post_id);
-                this.setState({cmt_id:'', cmt_content:'', replying:false});
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             const {cmt_content,post,cmt_id, revise}=this.state;
+             var formdata = new FormData();
+             formdata.append("post_id",post.post_id);
+             formdata.append("cmt_content",cmt_content);
+             cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+             revise? formdata.append("cmt_id",cmt_id):null;
+             revise? formdata.append("mode",'cu'):null;
+             // this.commentWrite()
+             
+             await Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
+             .then(response=>{
+                 const {status,message}=response.data;
+                 if(status=='200'){
+                     Keyboard.dismiss();
+                     this.getCommentData(post.post_id);
+                     this.setState({cmt_id:'', cmt_content:'', replying:false});
+     
+                     this.refs.pstcmtlist.scrollToEnd();
+                 }else if(status=="500"){
+                     this.setState({resultModalVisible:true, resultText:message});
+                 }
+             })
+             .catch(error=>{
+                 alert(error);
+             })
+         
+        }
 
-                this.refs.pstcmtlist.scrollToEnd();
-            }else if(status=="500"){
-                this.setState({resultModalVisible:true, resultText:message});
-            }
-        })
-        .catch(error=>{
-            alert(error);
-        })
     }
     
     commentValid =async() =>{
@@ -850,54 +932,71 @@ class MarketContent extends React.Component {
     )
     
     cmtBlame = ()=>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id);
-        
-        Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id);
+             
+             Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+         
+        }
+
     }
     cmtDelete = () =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id)
-        
-        Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id)
+             
+             Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
+             })
+        }
+
     }
     cmtLike = (cmt_id, is_liked) =>{
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',cmt_id)
+             formdata.append('like_type',1)
+             Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.getCommentData(this.state.post.post_id)}
+             })
+             .catch(error=>{
+                 this.setState({resultModalVisible:true, resultText : error.message});
+             })
+        }
 
-        var formdata = new FormData();
-        formdata.append('cmt_id',cmt_id)
-        formdata.append('like_type',1)
-        Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.getCommentData(this.state.post.post_id)}
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, resultText : error.message});
-        })
     }
 
     onRefresh=()=>{
@@ -1373,37 +1472,48 @@ class AlbaContent extends React.Component {
     )
     
     postscrap = async()=>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        
-        await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
-        .then(response=>{
-            if(response.data.success)
-                this.setState({resultModalVisible:true, resultText:response.data.success});
-            else if (response.data.error)
-                this.setState({resultModalVisible:true, resultText:response.data.error});
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             
+             await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+             .then(response=>{
+                 if(response.data.success)
+                     this.setState({resultModalVisible:true, resultText:response.data.success});
+                 else if (response.data.error)
+                     this.setState({resultModalVisible:true, resultText:response.data.error});
+             })
+             .catch(error=>{
+                 this.setState({resultModalVisible:true, resultText:error.message});
+             })
+         }
+         
     }
 
     postBlame = async () =>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-
-        await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
-        .then(response=>{
-            if(response.data.status == 500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }else{
-                this.getPostData(this.state.post.post_id);
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+     
+             await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
+             .then(response=>{
+                 if(response.data.status == 500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }else{
+                     this.getPostData(this.state.post.post_id);
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+         
+        }
     }
     
     statefunction=(str)=>{
@@ -1412,18 +1522,23 @@ class AlbaContent extends React.Component {
     }
 
     postDelete = async () => {
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-
-        await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
-        .then((res)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
-            this.props.navigation.goBack();
-            this.props.route.params.OnGoback();
-        })
-        .catch((error)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+     
+             await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
+             .then((res)=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
+                 this.props.navigation.goBack();
+                 this.props.route.params.OnGoback();
+             })
+             .catch((error)=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
+             })
+        }
     }
 
     modalList = [
@@ -1685,67 +1800,91 @@ class IlbanContent extends Component {
     static contextType = Signing;
 
     postDelete = async () => {
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+     
+             await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
+             .then((res)=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
+                 this.props.navigation.goBack();
+                 this.props.route.params.OnGoback();
+             })
+             .catch((error)=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
+             })
+         
+        }
 
-        await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
-        .then((res)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
-            this.props.navigation.goBack();
-            this.props.route.params.OnGoback();
-        })
-        .catch((error)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
-        })
     }
     commentWrite= ()=>{
-        this.setState({replying:false, cmt_id:'', cmt_content:''});
-        this.refs.commentInput.blur();
-        console.log(this.refs);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             this.setState({replying:false, cmt_id:'', cmt_content:''});
+             this.refs.commentInput.blur();
+             console.log(this.refs);
+        }
+
     }
     postscrap = async()=>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        
-        await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
-        .then(response=>{
-            if(response.data.success)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
-            else if (response.data.error)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, replying:false, resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             
+             await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+             .then(response=>{
+                 if(response.data.success)
+                     this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
+                 else if (response.data.error)
+                     this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
+             })
+             .catch(error=>{
+                 this.setState({resultModalVisible:true, replying:false, resultText:error.message});
+             })
+        }
+
     }
     
     commentUpload= async()=>{
-        const {cmt_content,post,cmt_id, revise}=this.state;
-        var formdata = new FormData();
-        formdata.append("post_id",post.post_id);
-        formdata.append("cmt_content",cmt_content);
-        cmt_id==''? null : formdata.append("cmt_id",cmt_id);
-        revise? formdata.append("cmt_id",cmt_id):null;
-        revise? formdata.append("mode",'cu'):null;
-        
-        // this.commentWrite()
-        
-        Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
-        .then(response=>{
-            const {status, message}=response.data;
-            if(status=='200'){
-                Keyboard.dismiss();
-                this.getCommentData(post.post_id);
-                this.setState({cmt_id:'', cmt_content:'', replying:false, revise:false});
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             const {cmt_content,post,cmt_id, revise}=this.state;
+             var formdata = new FormData();
+             formdata.append("post_id",post.post_id);
+             formdata.append("cmt_content",cmt_content);
+             cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+             revise? formdata.append("cmt_id",cmt_id):null;
+             revise? formdata.append("mode",'cu'):null;
+             
+             // this.commentWrite()
+             
+             Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
+             .then(response=>{
+                 const {status, message}=response.data;
+                 if(status=='200'){
+                     Keyboard.dismiss();
+                     this.getCommentData(post.post_id);
+                     this.setState({cmt_id:'', cmt_content:'', replying:false, revise:false});
+     
+                     this.refs.pstcmtlist.scrollToEnd();
+                 }else if(status=='500'){
+                     this.setState({resultModalVisible:true, resultText:message});
+                 }
+             })
+             .catch(error=>{
+                 alert(error);
+             })
+        }
 
-                this.refs.pstcmtlist.scrollToEnd();
-            }else if(status=='500'){
-                this.setState({resultModalVisible:true, resultText:message});
-            }
-        })
-        .catch(error=>{
-            alert(error);
-        })
     }
 
     commentValid =async() =>{
@@ -1787,86 +1926,117 @@ class IlbanContent extends Component {
         this.componentDidMount()    
     }
     postBlame = async () =>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+     
+             await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
+             .then(response=>{
+                 if(response.data.status == 500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }else{
+                     this.getPostData(this.state.post.post_id)
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+         
+        }
 
-        await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
-        .then(response=>{
-            if(response.data.status == 500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }else{
-                this.getPostData(this.state.post.post_id)
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
     }
     cmtBlame = () =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id);
+     
+             Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+        }
 
-        Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
     }
     cmtDelete = () =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id);
+     
+             Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
+             })
+        }
 
-        Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
-        })
     }
     postLike = () =>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        formdata.append('like_type',1)
-        Axios.post(this.state.post.is_liked?'https://dev.unyict.org/api/postact/cancel_post_like':'https://dev.unyict.org/api/postact/post_like',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.getPostData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, resultText : error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             formdata.append('like_type',1)
+             Axios.post(this.state.post.is_liked?'https://dev.unyict.org/api/postact/cancel_post_like':'https://dev.unyict.org/api/postact/post_like',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.getPostData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({resultModalVisible:true, resultText : error.message});
+             })
+         
+        }
+
     }
     cmtLike = (cmt_id, is_liked) =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',cmt_id)
-        formdata.append('like_type',1)
-        Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({resultModalVisible:true, resultText : response.data.message});
-            }else{
-            this.getCommentData(this.state.post.post_id)}
-        })
-        .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',cmt_id)
+             formdata.append('like_type',1)
+             Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                 this.getCommentData(this.state.post.post_id)}
+             })
+             .catch(error=>{
+                 alert(`${JSON.stringify(error)}`)
+             })
+        
+        }
+
     }
     
     getCommentData = async (post_id)=>{

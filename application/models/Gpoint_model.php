@@ -54,22 +54,50 @@ class Gpoint_model extends CB_Model
 	}
 	public function ranking_list($gam_type = 'trex')
 	{
-		/* SELECT gp.*, member.mem_nickname nickname, member.mem_photo photo FROM cb_gpoint gp 
-		LEFT JOIN cb_member member ON gp.mem_id = member.mem_id */
-		$limit = 10;
+		/* SELECT 
+			RANK() OVER (PARTITION BY gp.gam_type ORDER BY gp.point_sum DESC) AS rank, 
+			gp.*, member.mem_nickname nickname, member.mem_photo photo
+			FROM 
+			(SELECT mem_id, gam_type, SUM(gam_point) point_sum FROM cb_gpoint GROUP BY mem_id, gam_type) gp
+			LEFT JOIN cb_member member ON gp.mem_id = member.mem_id 
+		*/
+/* 		$limit = 10;
 		$this->db->select('gpoint.*, member.mem_nickname nickname, member.mem_photo photo');
 		$this->db->join('member', 'gpoint.mem_id = member.mem_id', 'inner');
 		$this->db->where('member.mem_denied', 0);
-		//$this->db->where('member.mem_is_admin', 0);
+		$this->db->where('member.mem_is_admin', 0);
 		$this->db->where('gam_point >', 0);
 		$this->db->where('gam_type =', $gam_type);
-		/* $this->db->group_by('member.mem_id'); */
+		$this->db->group_by('member.mem_id');
 		$this->db->order_by('gam_point', 'DESC');
 		$this->db->limit($limit);
 		$qry = $this->db->get('gpoint');
 		$result = $qry->result_array();
 
+		return $result; */
+
+		$sql =<<<EOT
+		SELECT 
+			RANK() OVER (PARTITION BY gp.gam_type ORDER BY gp.gam_point DESC) AS rank, 
+			gp.*, member.mem_nickname nickname, member.mem_photo photo
+			FROM 
+			(SELECT mem_id, gam_type, SUM(gam_point) gam_point, max(gam_datetime) gam_datetime FROM cb_gpoint GROUP BY mem_id, gam_type) gp
+			LEFT JOIN cb_member member ON gp.mem_id = member.mem_id
+			WHERE gam_type ='trex'
+EOT;
+		$query = $this->db->query($sql);
+		$result = $query->result_array();
+
+	
 		return $result;
+
+
+
+
+
+
+
+
 
 	}
 
@@ -147,11 +175,41 @@ class Gpoint_model extends CB_Model
 
 		return $result;
 	}
-
 	public function get_highscore($gam_type='trex')
 	{
-		/* $this->db->select('MAX(gam_point) score'); */
-		$this->db->select("CONCAT(MAX(gam_point),'점 by ',(SELECT mem_nickname from cb_member member where member.mem_id = cb_gpoint.mem_id),'님') score");
+		
+		$sql =<<<EOT
+		SELECT CONCAT(gp.gam_point,'점 by ',(
+			SELECT mem_nickname
+			FROM cb_member member
+			WHERE member.mem_id = gp.mem_id),'님') score, gp.*
+			FROM 
+			(
+			SELECT mem_id, gam_type, SUM(gam_point) gam_point, MAX(gam_datetime) gam_datetime
+			FROM cb_gpoint
+			GROUP BY mem_id, gam_type
+			) gp
+			WHERE gp.gam_point = (
+			SELECT MAX(gg.gam_point)
+			FROM (
+			SELECT mem_id, gam_type, SUM(gam_point) gam_point, MAX(gam_datetime) gam_datetime
+			FROM cb_gpoint
+			GROUP BY mem_id, gam_type) gg 
+			
+			WHERE gam_type ='$gam_type'
+			)
+EOT;
+		$query = $this->db->query($sql);
+		foreach ($query->result() as $row)
+		{
+			$result = $row->score;
+		}
+	
+		return $result;
+	}
+	/* public function get_highscore($gam_type='trex')
+	{
+		$this->db->select("CONCAT( gp.gam_point),'점 by ',(SELECT mem_nickname from cb_member member where member.mem_id = gp.mem_id),'님') score");
 		$this->db->where('gam_type =', $gam_type);
 		$qry = $this->db->get('gpoint');
 
@@ -160,7 +218,7 @@ class Gpoint_model extends CB_Model
 			$result = $row->score;
 		}
 		return $result;
-	}
+	} */
 
 
 	public function member_list_by_point_count($point_count = 10, $datetime = '')

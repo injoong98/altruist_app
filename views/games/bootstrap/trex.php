@@ -40,7 +40,7 @@
         <thead> 
             <tr> 
                 <th>순위</th> 
-                <th>점수</th> 
+                <th>누적점수</th> 
                 <th>회원</th> 
                 <th>일자</th> 
             </tr> 

@@ -957,7 +957,15 @@ class AltQueType extends React.Component{
             <SafeAreaView style={{flex:1}}>
                 <TopNavigation title="질문 유형 선택" accessoryLeft={this.BackAction}/>
                 <View style={{flex:1 , justifyContent:'space-evenly', alignItems:'center'}}>
-                    <TouchableOpacity style={{flex:1,backgroundColor:'#A7D4DE',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{navigation.navigate('AltList');}}>
+                    <TouchableOpacity style={{flex:1,backgroundColor:'#A7D4DE',width:'100%',justifyContent:'center',alignItems:'center'}} 
+                        onPress={()=>{
+                            if(!global.mem_id) {
+                                this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                            }else {
+                                navigation.navigate('AltList');
+                            }
+                         }
+                        }>
                         <Text category ="h2" style={{fontSize:30}}>1대1 질문하기</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{flex:1,backgroundColor:'#EAB0B3',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{navigation.navigate('AltQuestionWrite',{anser_mem_id:false});}}>
