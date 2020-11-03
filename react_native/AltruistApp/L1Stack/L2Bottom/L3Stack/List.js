@@ -243,7 +243,7 @@ class AltListScreen extends React.Component{
                                         </View>
                                     </TouchableHighlight>
                                 ))}
-                        </ScrollView >
+                        </ScrollView>
                         :
                         <View style={{width:'100%',padding:5,justifyContent:'center',alignItems:'flex-start'}}>
                             <Text style={{fontSize:13,color:'#A897C2'}}>필터를 클릭하고 전문분야를 선택하세요!</Text>

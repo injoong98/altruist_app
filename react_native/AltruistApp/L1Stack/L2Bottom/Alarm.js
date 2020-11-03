@@ -91,6 +91,7 @@ export class AlarmNotices extends React.Component{
       }
     getNotiList=()=>{
         this.setState({isLoading:true});
+      //console.log('run getNotiList');
         axios.get(`http://dev.unyict.org/api/board_post/lists/${this.props.type}`)
         .then(res=>{
             this.setState({noti:res.data.view.list.data.list,isLoading:false})
@@ -113,7 +114,9 @@ export class AlarmNotices extends React.Component{
             this.getPostList, console.log(this.state.current_page))
         }
     }
+    
     componentDidMount(){
+        //console.info('componentDidMount event2');
         this.getNotiList();
     }
     render(){
@@ -350,6 +353,8 @@ export class AlarmScreen extends React.Component{
         })
     }
     componentDidMount(){
+       // console.info('componentDidMount event1');
+        this.getNotiList();
         this.setState({noti:this.context.noti},this.setState({isLoading:false}))
         messaging().onMessage(async remoteMessage => {
             this.getNotiList();
