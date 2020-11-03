@@ -37,6 +37,7 @@
         // Distance
         // 
         this.highestScore = 0;
+        this.myScore = 0;
 
        
         // console.info('highestScore',this.highestScore);
@@ -75,6 +76,7 @@
         }
         // set high score
         this.getHighScore(this);
+        this.getMyScore(this);
         this.getRankList(this);
 
 
@@ -769,7 +771,7 @@
         /**
          * Get High Score.
          */
-        getHighScore: function (_this) {
+         getHighScore: function (_this) {
             $.ajax({
                 url : '/api/games/get_highscore/',
                 type : 'get',
@@ -777,12 +779,28 @@
                 success : function(data) {
                     console.info('max score :',data);
                     _this.highestScore = data.score;
-                    $('#top-score').text(data.score);
+                   // $('#top-score').text(data.score);
                 }
             }); 
-         
-            
         },
+        
+        /**
+         * Get my Score.
+         */
+        getMyScore: function (_this) {
+            $.ajax({
+                url : '/api/games/get_myscore/',
+                type : 'get',
+                dataType : 'json',
+                success : function(data) {
+                    console.info('my score :',data);
+                    _this.myScore = data.score;
+                    $('#my-score').text(data.score);
+                    $('#my-nickname').text(data.nickname);
+                }
+            }); 
+        },
+
         /**
          * Get rank list.
          */
@@ -877,6 +895,7 @@
                 this.distanceMeter.setHighScore(this.highestScore);
 
             }
+            this.getMyScore(this);
 
             this.getHighScore(this);
             // Reset the time clock.

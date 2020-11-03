@@ -207,6 +207,28 @@ EOT;
 	
 		return $result;
 	}
+	public function get_myscore($mem_id=0,$gam_type='trex')
+	{
+
+		$sql =<<<EOT
+		SELECT sumpoint.gam_point score
+ FROM (SELECT mem_id, gam_type, SUM(gam_point) gam_point, MAX(gam_datetime) gam_datetime FROM cb_gpoint GROUP BY mem_id, gam_type) sumpoint
+ WHERE sumpoint.mem_id =$mem_id and gam_type ='$gam_type'
+
+
+         		
+			
+EOT;
+
+		$query = $this->db->query($sql);
+
+		foreach ($query->result() as $row)
+		{
+			$result = $row->score;
+		}
+	
+		return $result;
+	}
 	/* public function get_highscore($gam_type='trex')
 	{
 		$this->db->select("CONCAT( gp.gam_point),'점 by ',(SELECT mem_nickname from cb_member member where member.mem_id = gp.mem_id),'님') score");
