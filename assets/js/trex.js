@@ -888,21 +888,19 @@
             console.info('your score : ',MyScoreStr);
             this.distanceMeter.saveScore(MyScoreStr,this.distanceRan);
           
-            this.getRankList();
+           // this.getRankList();
             if (this.distanceRan > this.highestScore) {
 
                 this.highestScore = Math.ceil(this.distanceRan);
                 this.distanceMeter.setHighScore(this.highestScore);
 
             }
-            this.getMyScore(this);
-
+/*             this.getMyScore(this);
             this.getHighScore(this);
-            // Reset the time clock.
             this.time = getTimeStamp();
-           // this.getRankList();
-          
-
+            this.getRankList();
+ */          
+           
              
             
         },
@@ -2224,6 +2222,7 @@
 					if (data.status == 200) {
                         // reload rank list
                         console.info('save result ', data);
+                        location.reload();
                     }
 				},
 				error : function(data) {
