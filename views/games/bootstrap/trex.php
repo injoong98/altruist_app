@@ -9,7 +9,8 @@
 <body id="t" class="offline">
 <!-- <span class="badge badge-pill badge-primary">easter egg</span> -->
 
-<pre><b>이타주의자들 최고점수 : <kbd><span id="top-score">0000000 </span></kbd> </b></pre>
+<!-- <pre><b>어서오세요! <kbd><span id="top-score">0000000 </span></kbd> </b></pre> -->
+<pre><b>어서오세요! <kbd><span id="my-nickname"></span>님/<span id="my-score">0000000 </span>점</kbd> </b></pre>
 
    
     
@@ -33,14 +34,14 @@
         <hr>
         <p class="mb-0">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p>
     </div> -->
-    <div id="messageBox" class="sendmessage">
+    <div id="" class="sendmessage">
         <pre> 화면을 <kbd>터치</kbd> 하면 게임이 시작됩니다</pre>
     </div>
     <table class="table"> 
         <thead> 
             <tr> 
                 <th>순위</th> 
-                <th>점수</th> 
+                <th>누적점수</th> 
                 <th>회원</th> 
                 <th>일자</th> 
             </tr> 
@@ -63,7 +64,7 @@
     evt = evt || window.event;
     if (evt.keyCode == 32) {
         var box = document.getElementById("messageBox");
-        box.style.visibility="hidden";
+        //box.style.visibility="hidden";
     }
 };
 </script>

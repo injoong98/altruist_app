@@ -585,28 +585,18 @@ class Postact extends CB_Controller
 
 		if ($this->member->is_member() === false) {
 			response_result($view,'Err','로그인 후 이용해주세요');
-			//$result = array('error' => '로그인 후 이용해주세요');
-			//exit(json_encode($result));
 		}
 		$post_id = (int)$this->input->post('post_id');
-		//$post_id = (int) $post_id;
 		if (empty($post_id) OR $post_id < 1) {
 			response_result($view,'Err','잘못된 post_id 접근입니다('.$post_id.')');
-			/* 	$result = array('error' => '잘못된 접근입니다');
-			exit(json_encode($result)); */
 		}
-		//$like_type = (int) $like_type;
 		$like_type = (int)$this->input->post('like_type');
 		
 		if ($like_type !== 1 AND $like_type !== 2) {
 			response_result($view,'Err','잘못된 like_type 접근입니다('.$like_type.')');
-/* 			$result = array('error' => '잘못된 접근입니다');
-			exit(json_encode($result)); */
 		}
 		if ( ! $this->session->userdata('post_id_' . $post_id)) {
 			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
-/* 			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
-			exit(json_encode($result)); */
 		}
 
 		$mem_id = (int) $this->member->item('mem_id');
@@ -618,34 +608,24 @@ class Postact extends CB_Controller
 
 		if ( ! element('post_id', $post)) {
 			response_result($view,'Err','존재하지 않는 게시물입니다');
-/* 			$result = array('error' => '존재하지 않는 게시물입니다');
-			exit(json_encode($result)); */
 		}
 		if (element('post_del', $post)) {
 			response_result($view,'Err','삭제된 게시물입니다');
-/* 			$result = array('error' => '삭제된 게시물입니다');
-			exit(json_encode($result)); */
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
 
 		if ( ! element('use_post_like', $board) && $like_type === 1) {
 			response_result($view,'Err','이 게시판은 추천 기능을 사용하지 않습니다');
-/* 			$result = array('error' => '이 게시판은 추천 기능을 사용하지 않습니다');
-			exit(json_encode($result)); */
 		}
 
 		if ( ! element('use_post_dislike', $board) && $like_type === 2) {
 			response_result($view,'Err','이 게시판은 비추천 기능을 사용하지 않습니다');
-/* 			$result = array('error' => '이 게시판은 비추천 기능을 사용하지 않습니다');
-			exit(json_encode($result)); */
 		}
 
-		if (abs(element('mem_id', $post)) === $mem_id) {
+	/* 	if (abs(element('mem_id', $post)) === $mem_id) {
 			response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
-/* 			$result = array('error' => '본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
-			exit(json_encode($result)); */
-		}
+		} */
 
 		$select = 'lik_id, lik_type';
 		$where = array(
@@ -836,9 +816,9 @@ class Postact extends CB_Controller
 			response_result($view,'Err','이 게시판은 비추천 기능을 사용하지 않습니다');
 		}
 
-		if (abs(element('mem_id', $post)) === $mem_id) {
+	/* 	if (abs(element('mem_id', $post)) === $mem_id) {
 			response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
-		}
+		} */
 
 		$select = 'lik_id, lik_type';
 		$where = array(
@@ -976,7 +956,7 @@ class Postact extends CB_Controller
 		}
 
 		if (abs(element('mem_id', $comment)) === $mem_id) {
-			response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
+		//	response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
 		/* 	$result = array('error' => '본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
 			exit(json_encode($result)); */
 		}
@@ -1175,10 +1155,10 @@ class Postact extends CB_Controller
 			response_result($view,'Err','이 게시판은 비추천 기능을 사용하지 않습니다');
 		}
 
-		if (abs(element('mem_id', $comment)) === $mem_id) {
+		/* if (abs(element('mem_id', $comment)) === $mem_id) {
 			response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
 		}
-
+ */
 		$select = 'lik_id, lik_type';
 		$where = array(
 			'target_id' => $cmt_id,

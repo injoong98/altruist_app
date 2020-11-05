@@ -3,13 +3,12 @@ import {createBottomTabNavigator}from '@react-navigation/bottom-tabs';
 import {ComToptabNav} from './L3Toptab/ComToptabNav';
 import {AltStackNav} from './L3Stack/AltStackNav';
 import messaging from '@react-native-firebase/messaging'
-
 import {SafeAreaView,View, Image,Animated,StyleSheet} from 'react-native';
 import {Layout,Text,TopNavigation,Button,BottomNavigationTab,BottomNavigation, Card, Icon, styled} from '@ui-kitten/components';
-
+import RequireLoginScreen from '../../L1Stack/L2Bottom/L3Stack/Require_Login'
 import ToggleTune from '../../components/ToggleTune';
 import {MyStackNav} from './L3MyStack/MyStackNav'
-
+import LoginScreen from '../Login'
 import {AlarmToptab} from './Alarm'
 import Communitysvg from '../../assets/icons/community_svg.svg'
 import { Signing,Notice } from '../Context';
@@ -182,6 +181,72 @@ export class ComBottomNav extends React.Component{
                     <Screen 
                         name = "Prof"
                         component={MyStackNav}
+                        options={{
+                            tabBarIcon : (focused)=>(
+                                focused?
+                                <MyIcon style={{height:30,width:49}}/>
+                                :
+                                <MyGrayIcon style={{height:30,width:49}}/>
+                            )
+                        }}
+                    />
+                </Navigator>
+            </SafeAreaView>
+        )}
+}
+export class ComBottomNav_premembers extends React.Component{
+    constructor(props){
+        super(props)
+    }
+    static contextType = Signing
+
+    render(){
+        return(
+            <SafeAreaView style={{flex:1}}>
+                <Navigator 
+                    initialRouteName={this.context.isPushNoti() ?"Alarm": "Alt"}
+                    tabBar={props => <MyTabBar {...props}/>}
+                    lazy={false} 
+                >
+                    {/* <Screen name = "Home" component={FontScreen}/> */}
+                    <Screen 
+                        name = "Alt"
+                        component={AltStackNav}
+                        options={{
+                            tabBarIcon : (focused)=>{
+                                return(
+                                    focused?
+                                    <AltIcon style={{height:30,width:30}}/>
+                                    :
+                                    <AltGrayIcon style={{height:30,width:30}}/>
+                            )}
+                        }}
+                    />
+                    <Screen 
+                        name = "Commu"
+                        component={ComToptabNav}
+                        options={{
+                            tabBarIcon : (focused)=>(
+                                focused?
+                                <Communitysvg height={30} width={64}/>
+                                :
+                                <CommuIcon style={{height:30,width:48}}/>
+                            )
+                        }}
+                    />
+                    <Screen 
+                        name = "Alarm"
+                        
+                        component={RequireLoginScreen}
+                        options={{
+                            tabBarIcon : (focused)=>(
+                                <AlarmIcon focused={focused}/>
+                            )
+                        }}
+                    />
+                    <Screen 
+                        name = "Prof"
+                        component={RequireLoginScreen}
                         options={{
                             tabBarIcon : (focused)=>(
                                 focused?

@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
 import messaging from '@react-native-firebase/messaging'
-import {ComBottomNav} from './L2Bottom/ComBottomNav'
+import {ComBottomNav,ComBottomNav_premembers} from './L2Bottom/ComBottomNav'
 import {defaultContent, IlbanContent, GominContent, MarketContent, AlbaContent} from './Content'
 import {defaultWrite, MarketWrite, AlbaWrite,GominWrite, IlbanWrite} from './Write'
 import ApplyCompleteScreen from './L2Bottom/L3Stack/ApplyComplete'
@@ -27,7 +27,7 @@ import MainImg from '../assets/images/main-logo-img.png'
 import VersionCheck from "react-native-version-check";
 import { version } from '../package.json';
 import CommunitySearch from './CommunitySearch'
-
+import RequireLoginScreen from '../L1Stack/L2Bottom/L3Stack/Require_Login'
 
 
 const {width} = Dimensions.get('window')
@@ -43,6 +43,7 @@ class LoadingScreen extends React.Component{
             opacity:new Animated.Value(0),
             yourCurrentVersion : '',
         }
+        global.mem_id = 0; //global mem_id
     }
     
     fadeIn = () => {
@@ -234,6 +235,7 @@ export class StackNav extends React.Component{
                 console.log(`mem_id : ${mem_id} is_altruist : ${is_altruist} alt_id : ${alt_id}`)
                 this.setState({isSignedIn:true});
                 this.state.context.session_mem_id = mem_id;
+                global.mem_id = mem_id;
                 this.state.context.is_altruist = is_altruist;
                 is_altruist ?
                 this.state.context.alt_id =alt_id
@@ -252,6 +254,7 @@ export class StackNav extends React.Component{
             else if(res.data.status == 500)
             {
                 this.setState({isSignedIn:false});
+                global.mem_id = 0;
                 messaging().getToken()
                 .then(token=>{
                     this.syncPushToken(token,0)
@@ -346,10 +349,21 @@ export class StackNav extends React.Component{
             <Signing.Provider value={context}>
                 <Notice.Provider value={noticeContext}>
                     <Navigator headerMode="none">
-                        {
+                        { 
+                           
                             !isSignedIn ? 
                             <>
-                                <Screen name = "Login" component={LoginScreen}/>
+                                <Screen name = "Bottom" component={ComBottomNav_premembers}/>
+                                <Screen name = "Content" component={defaultContent}/>
+                                <Screen name = "IlbanContent" component={IlbanContent}/>
+                                <Screen name = "GominContent" component={GominContent}/>
+                                <Screen name = "MarketContent" component={MarketContent}/>
+                                <Screen name = "AlbaContent" component={AlbaContent}/>
+                                <Screen name = "RequireLoginScreen" component={RequireLoginScreen}/>
+                               
+                                <Screen name = "StckQueContent" component={AltQueContent}/>
+                                
+                                 <Screen name = "LoginScreen" component={LoginScreen}/>
                                 <Screen name = "FindPwScreen" component={FindPwScreen}/>
                                 <Screen name = "RegisterScreen" component={RegisterScreen}/>
                                 <Screen name = "ResendAuthmailScreen" component={ResendAuthmailScreen}/>
@@ -359,8 +373,11 @@ export class StackNav extends React.Component{
                                 <Screen name = "ResendAuthmailSuccessScreen" component={ResendAuthmailSuccessScreen}/>
                                 <Screen name = "QuestionScreen" component={QuestionScreen}/>
                                 <Screen name = "FinishScreen" component={FinishScreen}/>
+                                
                             </>
                             :
+                          
+                           
                             <>
                                 <Screen name = "Bottom" component={ComBottomNav}/>
                                 <Screen name = "Write" component={defaultWrite}/>

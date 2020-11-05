@@ -59,6 +59,28 @@ class Games extends CB_Controller
 		response_result($view, 'success', 'OK');
 	}
 	/**
+	 * 나의 포인트 가져오기
+	 */
+	public function get_myscore()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+
+		$view = array();
+		$result = array();
+
+		/* mem_nickname */
+        if($this->member->item('mem_id') ) {
+
+			$result = $this->Gpoint_model->get_myscore( $this->member->item('mem_id'),'trex');
+			$view['score'] = $result;
+			$view['nickname'] = $this->session->userdata('mem_nickname');
+			response_result($view, 'success', 'OK');
+		} else {
+			response_result($view, 'Err', '로그인이 필요합니다.');
+			
+		 }
+	}
+	/**
 	 *  이타주의자 프로필 목록입니다.
 	 */
 	public function lists($gam_type)

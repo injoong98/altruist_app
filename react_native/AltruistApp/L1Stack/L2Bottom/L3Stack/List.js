@@ -243,7 +243,7 @@ class AltListScreen extends React.Component{
                                         </View>
                                     </TouchableHighlight>
                                 ))}
-                        </ScrollView >
+                        </ScrollView>
                         :
                         <View style={{width:'100%',padding:5,justifyContent:'center',alignItems:'flex-start'}}>
                             <Text style={{fontSize:13,color:'#A897C2'}}>필터를 클릭하고 전문분야를 선택하세요!</Text>
@@ -328,7 +328,13 @@ class AltListScreen extends React.Component{
                 </View>
                 <Button 
                     style = {{height : 20}}
-                    onPress={()=>{this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:item.alt_profile.mem_id,title:this.props.route.params.title})}}>
+                    onPress={()=>{
+                        if(!global.mem_id) {
+                            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                        }else {
+                            this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:item.alt_profile.mem_id,title:this.props.route.params.title})
+                        }
+                    }}>
                     질문하기
                 </Button>
             </View>
@@ -343,7 +349,14 @@ class AltListScreen extends React.Component{
             <SafeAreaView style={{flex:1,backgroundColor:'#ffffff'}}>
                 <TopBarTune 
                     text="이타주의자들" 
-                    func={()=>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:''})} 
+                    func={()=>{
+                            if(!global.mem_id) {
+                                this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                            }else {
+                                this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:false,title:''})
+                            }
+                        }
+                    } 
                     right='opq'
                     gbckuse={true}
                     gbckfunc={()=>{this.props.navigation.goBack()}}                
