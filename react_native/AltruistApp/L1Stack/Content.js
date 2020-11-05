@@ -1931,7 +1931,9 @@ class IlbanContent extends Component {
     }
 
     componentWillUnmount(){
+        if(Platform.OS!=='ios'){
         StatusBar.setBackgroundColor('#B09BDE');
+        }
         StatusBar.setBarStyle('default');
         if(this.props.route.params.OnGoback){
             this.props.route.params.OnGoback();
