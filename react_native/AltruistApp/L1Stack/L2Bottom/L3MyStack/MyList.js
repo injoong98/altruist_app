@@ -110,7 +110,7 @@ export class MyList extends React.Component{
         )
     }
     getPostList = async() =>{
-        await axios.get(`http://dev.unyict.org/api/mypage/${this.state.type}?&page=${this.state.current_page}`)
+        await axios.get(`https://dev.unyict.org/api/mypage/${this.state.type}?&page=${this.state.current_page}`)
         .then((response)=>{
           if(response.data.view.data.list.length > 0){
             this.setState({
