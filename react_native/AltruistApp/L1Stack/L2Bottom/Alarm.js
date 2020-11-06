@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,SafeAreaView,FlatList,StyleSheet,TouchableOpacity,ActivityIndicator, Pressable} from 'react-native';
+import {View,SafeAreaView,FlatList,StyleSheet,TouchableOpacity,ActivityIndicator, Pressable,Image} from 'react-native';
 import axios from 'axios';
 import messaging from '@react-native-firebase/messaging'
 import {TabBar, Tab,Spinner,Modal,Text,Divider} from '@ui-kitten/components'
@@ -11,7 +11,47 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import Reloadsvg from '../../assets/icons/reload.svg'
 import Confirm from '../../components/confirm.component'
 
+import Viewsvg from '../../assets/icons/view.svg'
+import Timesvg from '../../assets/icons/Time.svg'
+
 const { Navigator, Screen } = createMaterialTopTabNavigator();
+
+const RenderNoticeItem = ({item,index,navigation,onRefresh}) => (
+    <TouchableOpacity 
+        key={index} 
+        style={styles.item} 
+        onPress={() => {navigation.navigate('IlbanContent',{OnGoback:() =>onRefresh(), post_id:item.post_id})}}
+    >
+        <View style={{width:100, justifyContent:'center', alignItems:'center'}}>
+            <Image 
+              source={item.thumb_url? {uri : item.thumb_url}:{uri : "http://dev.unyict.org/assets/images/noimage.png"}} 
+              style={{width:90, height:90, resizeMode:'cover', borderRadius:10}}
+            />
+        </View>
+        <View style={styles.textArea}>
+            <View style={{ paddingHorizontal:5, justifyContent:'space-between'}}>
+                <View style={styles.textTop}>
+                    <Text style={styles.text} numberOfLines={2} ellipsizeMode="tail" category='h4'>
+                        {item.title}
+                    </Text>
+                </View>
+            </View>
+            <View style={{flexDirection:'row',justifyContent:'flex-end',paddingRight:15,marginTop:5}}>
+                <View style={{flexDirection: 'row'}}>
+                    <View style={{justifyContent:'center', alignItems:'center', marginRight:10}}>
+                        <Viewsvg width='15' height='15'/>
+                        <Text style={{color:'#878787', fontSize:8}} category='p1'>{item.post_hit}</Text>
+                    </View>
+                    <View style={{justifyContent:'center', alignItems:'center', paddingTop:3}}>
+                        <Timesvg width='10' height='10'/>
+                        <PostTime style={{color:'#878787', fontSize:8, marginTop:2}} category='p1' datetime={item.post_datetime}/>
+                    </View>
+                </View>
+            </View>
+        </View>
+    </TouchableOpacity>
+  );
+
 const RenderNotis =({item,index,navigation,onRefresh}) => {
     return(
         <TouchableOpacity 
@@ -132,7 +172,12 @@ export class AlarmNotices extends React.Component{
                      <View style={{flex:1,paddingTop:10,backgroundColor:'#ffffff'}}>
                         <FlatList 
                         data={noti}
-                        renderItem={({item,index})=><RenderNotis item={item} index={index} navigation= {this.props.navigation} onRefresh ={this.onRefresh}/> }
+                        renderItem={({item,index})=>
+                        this.props.type =="notice" ?
+                        <RenderNoticeItem item={item} index={index} navigation= {this.props.navigation} onRefresh ={this.onRefresh}/> 
+                            :
+                        <RenderNotis item={item} index={index} navigation= {this.props.navigation} onRefresh ={this.onRefresh}/>   
+                        }
                         keyExtractor={(item,index)=>index.toString()}
                         style={{backgroundColor:'#ffffff'}}
                         onRefresh={this.onRefresh}
@@ -516,7 +561,34 @@ const styles = StyleSheet.create({
         fontSize:15
     },
     notiocontainer:{
-
-
     },
+    textArea: {
+        flex: 1,
+        paddingVertical: 7,
+        paddingRight: 5,
+        paddingLeft: 0,
+        maxHeight: 150,
+    },
+    textTop: {
+        backgroundColor:'#FFFFFF',
+        borderRadius:10,
+        justifyContent: 'center',
+        marginTop:5,
+        paddingVertical:5
+    },
+    textBottom: {
+    },
+    item: {
+        flex:1, 
+        flexDirection:'row', 
+        maxHeight:160, 
+        margin:5,
+        backgroundColor:'#F4F4F4',
+        borderRadius:10,
+    },
+    text:{
+        padding:6,
+        lineHeight:20,
+        fontSize:12
+    }
 })
