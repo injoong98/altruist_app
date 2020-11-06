@@ -230,7 +230,7 @@ export class ComBottomNav_premembers extends React.Component{
                                 focused?
                                 <Communitysvg height={30} width={64}/>
                                 :
-                                <CommuIcon style={{height:30,width:48}}/>
+                                <CommuIcon style={{height:26,width:48}}/>
                             )
                         }}
                     />
