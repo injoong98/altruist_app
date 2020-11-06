@@ -514,7 +514,7 @@ class GominContent extends React.Component{
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible} = this.state
          return(
             <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            behavior={Platform.OS == "ios" ? "padding" : ""}
             style={{flex:1}} 
          >
         <SafeAreaView style={{flex:1}}>
@@ -1202,7 +1202,7 @@ class MarketContent extends React.Component {
 
         return(
             <KeyboardAvoidingView
-               behavior={Platform.OS == "ios" ? "padding" : "height"}
+               behavior={Platform.OS == "ios" ? "padding" : ""}
                style={{flex:1}} 
             >
 
@@ -2273,11 +2273,10 @@ class IlbanContent extends Component {
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image} = this.state
         
         return(
-            <KeyboardAvoidingView
-               behavior={Platform.OS == "ios" ? "padding" : "height"}
-               style={{flex:1}} 
-            >
-
+        <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : ""}
+            style={{flex:1}} 
+        >
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {
@@ -2555,7 +2554,8 @@ const styles = StyleSheet.create({
     commentAndroid:{
         backgroundColor:'#f4f4f4',
         borderRadius:14,
-        fontSize:14
+        fontSize:14,
+        paddingRight:60,
     },
     commentiOS:{
         backgroundColor:'#f4f4f4',
