@@ -118,8 +118,8 @@ class GominWrite extends React.Component {
   submitPost = async () => {
     const url =
       this.props.route.params.mode == 'edit'
-        ? 'http://dev.unyict.org/api/board_write/modify'
-        : 'http://dev.unyict.org/api/board_write/write/b-a-1';
+        ? 'https://dev.unyict.org/api/board_write/modify'
+        : 'https://dev.unyict.org/api/board_write/write/b-a-1';
     const {
       post_title,
       post_content,
@@ -165,7 +165,7 @@ class GominWrite extends React.Component {
     Keyboard.dismiss();
 
     await axios
-      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .post('https://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
@@ -377,8 +377,8 @@ class MarketWrite extends React.Component {
     console.log(this.state);
     const url =
       this.props.route.params.mode == 'edit'
-        ? 'http://dev.unyict.org/api/board_write/modify'
-        : 'http://dev.unyict.org/api/board_write/write/b-a-2';
+        ? 'https://dev.unyict.org/api/board_write/modify'
+        : 'https://dev.unyict.org/api/board_write/write/b-a-2';
     const {
       post_title,
       post_content,
@@ -589,7 +589,7 @@ class MarketWrite extends React.Component {
     Keyboard.dismiss();
 
     await axios
-      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .post('https://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
@@ -939,8 +939,8 @@ class AlbaWrite extends React.Component {
   submitPost = async () => {
     const url =
       this.props.route.params.mode == 'edit'
-        ? 'http://dev.unyict.org/api/board_write/modify'
-        : 'http://dev.unyict.org/api/board_write/write/b-a-3';
+        ? 'https://dev.unyict.org/api/board_write/modify'
+        : 'https://dev.unyict.org/api/board_write/write/b-a-3';
 
     const { post_title, post_content, post_location, post_hp, alba_type, alba_salary_type,  alba_salary, images,post_thumb_use,	isFollowUp,} = this.state;
     let formdata = new FormData();
@@ -998,7 +998,7 @@ class AlbaWrite extends React.Component {
     Keyboard.dismiss();
 
     await axios
-      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .post('https://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
@@ -1356,8 +1356,8 @@ class IlbanWrite extends React.Component {
     const {post_title, post_content, post_category, images} = this.state;
     const url =
       this.props.route.params.mode == 'edit'
-        ? 'http://dev.unyict.org/api/board_write/modify'
-        : 'http://dev.unyict.org/api/board_write/write/ilban';
+        ? 'https://dev.unyict.org/api/board_write/modify'
+        : 'https://dev.unyict.org/api/board_write/write/ilban';
 
     let formdata = new FormData();
     formdata.append('brd_key', 'ilban');
@@ -1407,7 +1407,7 @@ class IlbanWrite extends React.Component {
     Keyboard.dismiss();
 
     await axios
-      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .post('https://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
