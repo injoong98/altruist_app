@@ -221,7 +221,7 @@ class GominWrite extends React.Component {
           <WriteContentToptab text="고민 작성"
             right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
             func={this.filterSpamKeyword}
-            gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
+            gbckfunc={()=>{Keyboard.dismiss(); this.setState({modalType : 1, modalVisible:true});}}
             gbckuse={true}/>
           <TextInput
             style={{
@@ -640,7 +640,7 @@ class MarketWrite extends React.Component {
             func={() => {
               this.filterSpamKeyword();
             }}
-            gbckfunc={() => {this.setState({modalType:1, modalVisible : true})}}
+            gbckfunc={() => {Keyboard.dismiss();this.setState({modalType:1, modalVisible : true})}}
             gbckuse={true}
           />
 
@@ -1140,7 +1140,7 @@ class AlbaWrite extends React.Component {
         <WriteContentToptab text="채용공고"
           right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
           func={this.filterSpamKeyword}
-          gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
+          gbckfunc={()=>{Keyboard.dismiss();this.setState({modalType : 1, modalVisible:true})}}
           gbckuse={true}
         />
         <Divider />
@@ -1593,7 +1593,7 @@ class IlbanWrite extends React.Component {
                 text="이타게시판"
                 right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
                 func={this.filterSpamKeyword}
-                gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
+                gbckfunc={()=>{Keyboard.dismiss();this.setState({modalType : 1, modalVisible:true})}}
                 gbckuse={true}
               />
             <View style = {{flexDirection:'row'}}>
