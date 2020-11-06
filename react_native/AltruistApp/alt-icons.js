@@ -16,7 +16,7 @@ export const AltIconsPack = {
     mypage: IconProvider(require('./assets/icons//my_png.png')),
     altruistgray: IconProvider(require('./assets/icons/alt-gray-png.png')),
     bellgray: IconProvider(require('./assets/icons/bell-gray-png.png')),
-    communitygray: IconProvider(require('./assets/icons/community-gray-png.png')),
+    communitygray: IconProvider(require('./assets/icons/communitygraypng.png')),
     mypagegray: IconProvider(require('./assets/icons//my_gray_png.png')),
     'heart-filled': IconProvider(require('./assets/icons/heart.svg')),
     home: IconProvider(require('./assets/icons/home.svg')),
