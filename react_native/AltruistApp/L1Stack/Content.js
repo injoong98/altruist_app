@@ -69,7 +69,7 @@ class GominContent extends React.Component{
             content:'',
             cmt_content:'',
             cmt_id:'',
-            mem_icon_url:'',
+            mem_photo_url:'',
             replying:false,
             isLoading:true,
             refreshing:false,
@@ -336,9 +336,9 @@ class GominContent extends React.Component{
         .then((response)=>{
             this.setState({
                 post:response.data.view.post, 
-                mem_icon_url:response.data.mem_icon=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
+                mem_photo_url:response.data.mem_photo=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
                 ?"https://dev.unyict.org/uploads/altwink-rect.png"
-                :response.data.mem_icon
+                :response.data.mem_photo
             });
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
@@ -416,7 +416,7 @@ class GominContent extends React.Component{
                 <View style={{display:"flex",flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
                     <View style={{flexDirection:'row'}}>
                         {post.post_anoymous_yn=='0'
-                        ?<Image source={{uri : this.state.mem_icon_url}} style={{width:22, height:22, marginRight:5}}/>
+                        ?<Image source={{uri : this.state.mem_photo_url}} style={{width:22, height:22, marginRight:5}}/>
                         :null
                         }
                         <View>
@@ -688,7 +688,7 @@ class MarketContent extends React.Component {
             comment : '',
             cmt_content : '',
             cmt_id:'',
-            mem_icon_url:'',
+            mem_photo_url:'',
             isLoading : true,
             refreshing : false,
             replying:false,
@@ -740,9 +740,9 @@ class MarketContent extends React.Component {
         .then((response)=>{
             this.setState({
                 post:response.data.view.post, 
-                mem_icon_url:response.data.mem_icon=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
+                mem_photo_url:response.data.mem_photo=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
                 ?"https://dev.unyict.org/uploads/altwink-rect.png"
-                :response.data.mem_icon
+                :response.data.mem_photo
             });
             if (response.data.view.file_image){
                 this.setState({image: response.data.view.file_image.map(function(item, index){
@@ -1146,7 +1146,7 @@ class MarketContent extends React.Component {
                     <Divider/>
                     <Layout style={{height:30,flexDirection:'row', marginTop:15}}>
                         <Layout style={{width:40}}>
-                            <Image source={{uri : this.state.mem_icon_url}} style={{flex : 1, width:40, height:40, borderRadius:5, resizeMode:'contain'}}/>
+                            <Image source={{uri : this.state.mem_photo_url}} style={{flex : 1, width:40, height:40, borderRadius:5, resizeMode:'contain'}}/>
                         </Layout>
                         <Layout style={{flex:1, justifyContent:'center', paddingLeft:5}}>
                             <Text category='h5'>{post.post_nickname}</Text>
@@ -1779,7 +1779,7 @@ class IlbanContent extends Component {
             cmt_content:'',
             cmt_id:'',
             image:[],
-            mem_icon_url:'',
+            mem_photo_url:'',
             replying:false,
             isLoading:true,
             refreshing:false,
@@ -2050,11 +2050,12 @@ class IlbanContent extends Component {
     getPostData = async (post_id)=>{
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
+            console.log('response.data.mem_photo : '+response.data.mem_photo)
             this.setState({
                 post:response.data.view.post, 
-                mem_icon_url:response.data.mem_icon=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
+                mem_photo_url:response.data.mem_photo=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
                 ?"https://dev.unyict.org/uploads/altwink-rect.png"
-                :response.data.mem_icon
+                :response.data.mem_photo
             });
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
@@ -2139,7 +2140,7 @@ class IlbanContent extends Component {
             <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:20, paddingTop:10}} >
                 <View style={{marginLeft:25,marginTop:10,marginBottom:13}}>
                     <View style={{display:"flex",flexDirection:'row'}}>
-                        <Image source={{uri : this.state.mem_icon_url}} style={{width:23, height:23, marginRight:5}}/>
+                        <Image source={{uri : this.state.mem_photo_url}} style={{width:23, height:23, marginRight:5}}/>
                         <View>
                             <Text category="s2" style={{fontSize:12}}>{post.display_name}</Text>
                             <View style={{display:"flex",flexDirection:'row'}}>
