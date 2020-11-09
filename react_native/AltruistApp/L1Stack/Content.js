@@ -590,7 +590,7 @@ class GominContent extends React.Component{
                         <Text style={{fontSize:20, color:'#63579D'}} category='h3'>신고</Text>
                     </TouchableOpacity>
                     <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    {this.context.session_mem_id==post.mem_id
+                    {this.context.session_mem_id== Math.abs(post.mem_id)
                     ?<View>
                         <TouchableOpacity 
                             onPress={()=>{
