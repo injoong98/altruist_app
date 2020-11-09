@@ -201,7 +201,7 @@ class GominContent extends React.Component{
         </TouchableOpacity>
     )
     BackAction = () =>(
-        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();}}/>
     )
     
     statefunction=(str)=>{
@@ -369,7 +369,6 @@ class GominContent extends React.Component{
     componentWillUnmount(){
         StatusBar.setBackgroundColor('#B09BDE');
         StatusBar.setBarStyle('default');
-        this.props.route.params.OnGoback();
     }
     modalList = [
         {
@@ -527,8 +526,8 @@ class GominContent extends React.Component{
                 gbckfunc={() => {if(Platform.OS!=='ios'){
                     StatusBar.setBackgroundColor('#B09BDE')
                     StatusBar.setBarStyle('default')}
-                    this.props.navigation.goBack()
-                    this.props.route.params.OnGoback()}}
+                    this.props.navigation.goBack()}
+                }
                 gbckuse={true}
                 right={<this.MoreAction/>}/>
             {this.state.isLoading ?
@@ -736,7 +735,6 @@ class MarketContent extends React.Component {
     componentWillUnmount(){
         StatusBar.setBackgroundColor('#B09BDE');
         StatusBar.setBarStyle('default');
-        this.props.route.params.OnGoback();
     }
 
     getPostData = async(post_id)=>{
@@ -1218,7 +1216,6 @@ class MarketContent extends React.Component {
                     backgroundColor='#F4F4F4'
                     gbckfunc={() => {
                         this.props.navigation.goBack();
-                        this.props.route.params.OnGoback();
                         if(Platform.OS!=='ios'){
                             StatusBar.setBackgroundColor('#B09BDE');
                             StatusBar.setBarStyle('default');}
@@ -1425,7 +1422,6 @@ class AlbaContent extends React.Component {
     componentWillUnmount(){
         StatusBar.setBackgroundColor('#B09BDE');
         StatusBar.setBarStyle('default');
-        this.props.route.params.OnGoback();
     }
 
     getPostData = async(post_id)=>{
@@ -1568,7 +1564,6 @@ class AlbaContent extends React.Component {
                 backgroundColor='#F4F4F4'
                 gbckfunc={() => {
                     this.props.navigation.goBack();
-                    this.props.route.params.OnGoback();
                     if(Platform.OS!=='ios'){
                         StatusBar.setBackgroundColor('#B09BDE');
                         StatusBar.setBarStyle('default');}}
@@ -1950,7 +1945,7 @@ class IlbanContent extends Component {
         </TouchableOpacity>
     )
     BackAction = () =>(
-        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();}}/>
     )
     
     statefunction=(str)=>{
@@ -2138,11 +2133,6 @@ class IlbanContent extends Component {
         StatusBar.setBackgroundColor('#B09BDE');
         }
         StatusBar.setBarStyle('default');
-        if(this.props.route.params.OnGoback){
-            this.props.route.params.OnGoback();
-        }
-        
-        null
     }
     
     modalList = [
