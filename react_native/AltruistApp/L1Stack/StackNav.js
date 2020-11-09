@@ -102,7 +102,7 @@ class LoadingScreen extends React.Component{
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
                     <Text category="s2" style={{backgroundColor: 'white', color: '#ffffff', textAlign:'center', includeFontPadding:true}}>CARP x UNYICT</Text>                    
                     <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'https://dev.unyict.org/uploads/main_png.png'}}/>
-                    <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`BETA ver. ${this.state.yourCurrentVersion}`}</Text>
+                    <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`V ${this.state.yourCurrentVersion}`}</Text>
                 </Animated.View> 
             : 
             <View style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:'#FFFFFF'}}>
