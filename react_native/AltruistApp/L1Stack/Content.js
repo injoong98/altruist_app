@@ -22,6 +22,9 @@ import PaperPlanesvg from '../assets/icons/paper-plane.svg'
 import Callsvg from '../assets/icons/call.svg'
 import Callmessagesvg from '../assets/icons/call-message.svg'
 import Emailsvg from '../assets/icons/Email.svg'
+import CallGraysvg from '../assets/icons/call-gray.svg'
+import CallmessageGraysvg from '../assets/icons/call-message-gray.svg'
+import EmailGraysvg from '../assets/icons/Email-gray.svg'
 import Viewsvg from '../assets/icons/view.svg'
 import Timesvg from '../assets/icons/Time.svg'
 import Heartsvg from '../assets/icons/heart.svg'
@@ -1663,29 +1666,54 @@ class AlbaContent extends React.Component {
                         backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
                         onBackdropPress={() => this.setState({visible:false})}>
                         <Card disabled={true} style={{borderRadius:20}}>
+                            {!post.post_email&&!post.post_hp?
+                                <View>
+                                    <Text style={{marginBottom:8}}>상세정보에 기재된</Text>
+                                    <Text >연락처로 지원해주세요.</Text>
+                                </View>
+                                :
                             <Layout style={{flexDirection:'row'}}>
                                 <View style={styles.modal_icons}>
+                                    {post.post_hp?
                                     <TouchableOpacity
                                         onPress={()=>{this.setState({visible:false});Linking.openURL(`tel:${post.post_hp}`)}}>
                                         <Callsvg width={40} height = {40}/>
                                     </TouchableOpacity>
+                                    :
+                                    <View>
+                                        <CallGraysvg width={40} height = {40}/>
+                                    </View>
+                                    }
                                     <Text>전화</Text>
                                 </View>
-                                    <View style={styles.modal_icons}>
+                                <View style={styles.modal_icons}>
+                                    {post.post_hp?
                                     <TouchableOpacity
                                         onPress={()=>{this.setState({visible:false});Linking.openURL(`sms:${post.post_hp}`)}}>
                                         <Callmessagesvg width={40} height = {40}/>
                                     </TouchableOpacity>
+                                    :
+                                    <View>
+                                        <CallmessageGraysvg width={40} height = {40}/>
+                                    </View>
+                                    }
                                     <Text>메시지</Text>
                                 </View>
                                 <View style={styles.modal_icons}>
+                                    {post.post_email?
                                     <TouchableOpacity
                                             onPress={()=>{this.setState({visible:false});Linking.openURL(`mailto:${post.post_email}`)}}>
                                             <Emailsvg width={40} height = {40}/>
                                     </TouchableOpacity>
+                                   :
+                                    <View>
+                                        <EmailGraysvg width={40} height = {40}/>
+                                    </View>
+                                    }
                                     <Text>이메일</Text>
                                 </View>
                             </Layout>
+                            }
                             <Button onPress={()=>this.setState({visible:false})} appearance='ghost' >
                                 취소
                             </Button>
