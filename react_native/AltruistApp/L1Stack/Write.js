@@ -212,6 +212,10 @@ class GominWrite extends React.Component {
     const {post_title, post_category, post_anoymous_yn, post_content, checked, content, modalVisible,
       spinnerVisible, resultVisible, } = this.state;
     return (
+      <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : ""}
+            style={{flex:1}} 
+        >
       <SafeAreaView style={{flex: 1}}>
         <Pressable
           style={{flex: 1}}
@@ -304,6 +308,7 @@ class GominWrite extends React.Component {
         </Modal>
         {/* </KeyboardAvoidingView> */}
       </SafeAreaView>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -1584,124 +1589,129 @@ class IlbanWrite extends React.Component {
 		const {post_title, post_content, post_category, resultVisible, modalVisible, spinnerVisible, resultText} = this.state;
 		return (
       <Root>
-        <SafeAreaView  style={{flex: 1}} >
-          <Pressable
-            style={{flex: 1}}
-            onPress={()=>Keyboard.dismiss()}
-          >
-            <WriteContentToptab
-                text="이타게시판"
-                right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-                func={this.filterSpamKeyword}
-                gbckfunc={()=>{Keyboard.dismiss();this.setState({modalType : 1, modalVisible:true})}}
-                gbckuse={true}
-              />
-            <View style = {{flexDirection:'row'}}>
-              <Popover
-                anchor={this.renderSelectItems}
-                visible={this.state.popoverVisible}
-                fullWidth={true}
-                placement='bottom start'
-                onBackdropPress={() => this.setState({popoverVisible:false})}>
-                  <View style={{borderRadius:10, backgroundColor:'#B09BDE'}}>
-                      {this.categoryList.map((val,index)=>(
-                        <TouchableOpacity key = {index} onPress = {()=>this.setState({post_category:index, popoverVisible:false})}>
-                          <Text category='h5' style={{color:'white', margin : 10}}>{val}</Text>
-                          {index==this.categoryList.length?null:<Divider/>}
-                        </TouchableOpacity>
-                      ))}
-                  </View>
-              </Popover>
+        <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : ""}
+            style={{flex:1}} 
+        >          
+          <SafeAreaView  style={{flex: 1}} >
+            <Pressable
+              style={{flex: 1}}
+              onPress={()=>Keyboard.dismiss()}
+            >
+              <WriteContentToptab
+                  text="이타게시판"
+                  right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+                  func={this.filterSpamKeyword}
+                  gbckfunc={()=>{Keyboard.dismiss();this.setState({modalType : 1, modalVisible:true})}}
+                  gbckuse={true}
+                />
+              <View style = {{flexDirection:'row'}}>
+                <Popover
+                  anchor={this.renderSelectItems}
+                  visible={this.state.popoverVisible}
+                  fullWidth={true}
+                  placement='bottom start'
+                  onBackdropPress={() => this.setState({popoverVisible:false})}>
+                    <View style={{borderRadius:10, backgroundColor:'#B09BDE'}}>
+                        {this.categoryList.map((val,index)=>(
+                          <TouchableOpacity key = {index} onPress = {()=>this.setState({post_category:index, popoverVisible:false})}>
+                            <Text category='h5' style={{color:'white', margin : 10}}>{val}</Text>
+                            {index==this.categoryList.length?null:<Divider/>}
+                          </TouchableOpacity>
+                        ))}
+                    </View>
+                </Popover>
+                <TextInput
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: 8.5,
+                    marginTop: 18,
+                    marginHorizontal: 12,
+                    marginBottom: 14,
+                    fontSize: 18,
+                    flex : 1,
+                    paddingHorizontal : 10
+                  }}
+                  placeholder="제목"
+                  onChangeText={(nextValue) => this.setState({post_title: nextValue})}
+                  placeholderTextColor="#A897C2"
+                  value={post_title}
+                />
+              </View>
               <TextInput
+                value={post_content}
                 style={{
+                  height: '80%',
+                  maxHeight: '50%',
                   backgroundColor: '#ffffff',
                   borderRadius: 8.5,
-                  marginTop: 18,
                   marginHorizontal: 12,
                   marginBottom: 14,
                   fontSize: 18,
-                  flex : 1,
                   paddingHorizontal : 10
                 }}
-                placeholder="제목"
-                onChangeText={(nextValue) => this.setState({post_title: nextValue})}
+                placeholder="내용"
+                onChangeText={(nextValue) => this.setState({post_content: nextValue})}
+                multiline={true}
+                textAlignVertical="top"
+                textStyle={{minHeight: 100}}
                 placeholderTextColor="#A897C2"
-                value={post_title}
               />
-            </View>
-            <TextInput
-              value={post_content}
-              style={{
-                height: '80%',
-                maxHeight: '50%',
-                backgroundColor: '#ffffff',
-                borderRadius: 8.5,
-                marginHorizontal: 12,
-                marginBottom: 14,
-                fontSize: 18,
-                paddingHorizontal : 10
-              }}
-              placeholder="내용"
-              onChangeText={(nextValue) => this.setState({post_content: nextValue})}
-              multiline={true}
-              textAlignVertical="top"
-              textStyle={{minHeight: 100}}
-              placeholderTextColor="#A897C2"
-            />
-            <Layout style={{...styles.picture, flex:1}}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginVertical: 10,
-                }}>
-                <Text category="h4" style={{color:'#63579D', fontSize:18}}> 사진</Text>
-                <TouchableOpacity onPress={() => this.onClickAddImage()}>
-                  <Camsvg />
-                </TouchableOpacity>
-              </View>
-              <ScrollView horizontal style={{height: 150}}>
-                {this.state.images
-                  ? this.state.images.map((item) => this.renderAsset(item))
-                  : null}
-              </ScrollView>
-            </Layout>
-          </Pressable>
-          <Modal
-            visible={modalVisible}
-            backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
-            onBackdropPress={() => this.setState({modalVisible: false})}>
-            <Confirm
-              confirmText={this.modalList[this.state.modalType].text}
-              frstText="예"
-              OnFrstPress={() => {
-                this.setState({modalVisible: false}, this.modalList[this.state.modalType].func);
-              }}
-              scndText="아니오"
-              OnScndPress={() => this.setState({modalVisible: false})}
-            />
-          </Modal>
-          <Modal
-            visible={resultVisible}
-            backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
-            onBackdropPress={() => this.setState({resultVisible: false})}>
-            <Confirm
-              type="result"
-              confirmText={this.state.resultText}
-              frstText="닫기"
-              OnFrstPress={() => {
-                this.setState({resultVisible: false});
-                this.gobackfunc();
-              }}
-            />
-          </Modal>
-          <Modal
-            visible={spinnerVisible}
-            backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
-            <Spinner size="giant" />
-          </Modal>
-        </SafeAreaView>
+              <Layout style={{...styles.picture, flex:1}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginVertical: 10,
+                  }}>
+                  <Text category="h4" style={{color:'#63579D', fontSize:18}}> 사진</Text>
+                  <TouchableOpacity onPress={() => this.onClickAddImage()}>
+                    <Camsvg />
+                  </TouchableOpacity>
+                </View>
+                <ScrollView horizontal style={{height: 150}}>
+                  {this.state.images
+                    ? this.state.images.map((item) => this.renderAsset(item))
+                    : null}
+                </ScrollView>
+              </Layout>
+            </Pressable>
+            <Modal
+              visible={modalVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+              onBackdropPress={() => this.setState({modalVisible: false})}>
+              <Confirm
+                confirmText={this.modalList[this.state.modalType].text}
+                frstText="예"
+                OnFrstPress={() => {
+                  this.setState({modalVisible: false}, this.modalList[this.state.modalType].func);
+                }}
+                scndText="아니오"
+                OnScndPress={() => this.setState({modalVisible: false})}
+              />
+            </Modal>
+            <Modal
+              visible={resultVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+              onBackdropPress={() => this.setState({resultVisible: false})}>
+              <Confirm
+                type="result"
+                confirmText={this.state.resultText}
+                frstText="닫기"
+                OnFrstPress={() => {
+                  this.setState({resultVisible: false});
+                  this.gobackfunc();
+                }}
+              />
+            </Modal>
+            <Modal
+              visible={spinnerVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
+              <Spinner size="giant" />
+            </Modal>
+          </SafeAreaView>
+        </KeyboardAvoidingView>
       </Root>
     );
   }
