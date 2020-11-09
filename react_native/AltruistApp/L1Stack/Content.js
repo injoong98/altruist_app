@@ -489,8 +489,10 @@ class GominContent extends React.Component{
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
-                            <MoreSsvg/>
+                        <TouchableOpacity 
+                            onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} 
+                            style={{alignItems:'flex-end'}}>
+                            <MoreSsvg width={16} height={16}/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -1099,8 +1101,10 @@ class MarketContent extends React.Component {
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} style={{width:10,alignItems:'flex-end'}}>
-                            <MoreSsvg/>
+                        <TouchableOpacity 
+                            onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} 
+                            style={{alignItems:'flex-end'}}>
+                            <MoreSsvg width={16} height={16}/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -2273,8 +2277,11 @@ class IlbanContent extends Component {
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} style={{width:10,alignItems:'flex-end'}}>
-                            <MoreSsvg/>
+                        <TouchableOpacity 
+                            onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} 
+                            style={{alignItems:'flex-end'}}
+                        >
+                            <MoreSsvg width={16} height={16}/>
                         </TouchableOpacity>
                     </View>
                 </View>
