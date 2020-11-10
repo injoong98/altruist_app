@@ -161,9 +161,9 @@ class GominContent extends React.Component{
                      this.setState({commentWrited:!revise&&this.state.cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false});
                      this.getCommentData(post.post_id);
                      formdata.append('cmt_id',cmt_id)
-                     Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
-                     .then(res=>{})
-                     .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+                    //  Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
+                    //  .then(res=>{})
+                    //  .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
                  }else if(status=='500'){
                      this.setState({resultModalVisible:true, resultText:message});
                  }
@@ -653,6 +653,12 @@ class GominContent extends React.Component{
                             <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
                         </TouchableOpacity>
                         <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
+                            style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
                     </>
                     :null}
                     <TouchableOpacity 
@@ -660,12 +666,6 @@ class GominContent extends React.Component{
                         style={{padding : 10, paddingHorizontal:20, margin:5}}>
                         <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 신고</Text>
                     </TouchableOpacity> 
-                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    <TouchableOpacity 
-                        onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
-                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
-                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
-                    </TouchableOpacity>
                 </View>   
             </Modal>
             <Modal
@@ -922,9 +922,9 @@ class MarketContent extends React.Component {
                      this.setState({commentWrited:!revise&&this.state.cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false,});
                      this.getCommentData(post.post_id);
                      formdata.append('cmt_id',cmt_id)
-                     Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
-                     .then(res=>{})
-                     .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+                    //  Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
+                    //  .then(res=>{})
+                    //  .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
                  }else if(status=="500"){
                      this.setState({resultModalVisible:true, resultText:message});
                  }
@@ -1945,9 +1945,9 @@ class IlbanContent extends Component {
                      this.setState({commentWrited:!revise&&this.state.cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false, revise:false,});
                      this.getCommentData(post.post_id);
                     formdata.append('cmt_id',cmt_id)
-                    Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
-                    .then(res=>{})
-                    .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+                    // Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
+                    // .then(res=>{})
+                    // .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
                  }else if(status=='500'){
                      this.setState({resultModalVisible:true, resultText:message,cmt_id:''});
                  }
