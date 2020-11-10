@@ -18,6 +18,7 @@ import {
   CheckBox,
   Radio,
   RadioGroup,
+  Spinner
 } from '@ui-kitten/components';
 import {
   ScrollView,
@@ -59,7 +60,8 @@ class RegisterScreen extends Component {
       EmailIcon: false,
       goNext: true,
       date: new Date(),
-      checked : true
+      checked : true,
+      isLoading : false
     };
   }
 
@@ -76,8 +78,10 @@ class RegisterScreen extends Component {
   //다른 input 다 적으면 abled
 
   checkInputs = (e) => {
+    
     console.log('checkInputs, submit전에');
     // this.state.goNext = 'true';
+    this.setState({isLoading:true})
     this.state.goNext = false;
     if (!this.state.mem_userid) {
       return;
@@ -275,6 +279,7 @@ class RegisterScreen extends Component {
     await axios
       .post('https://dev.unyict.org/api/register/form', formdata)
       .then((res) => {
+        this.setState({isLoading:false})
         console.log('response', res);
         console.log('status', res.data.status);
         console.log('data', res.data);
@@ -606,8 +611,6 @@ class RegisterScreen extends Component {
       <Text
         category="p2"
         style={{
-          paddingTop: 15,
-          paddingBottom: 60,
           color: '#63579D',
         }}>
         {`다 음  `}
@@ -616,14 +619,38 @@ class RegisterScreen extends Component {
     </TouchableOpacity>
   );
 
+ 
+  clicktest = () =>{
+    
+
+    }
+
+  componentDidMount(){
+    console.log(this.state.isLoading)
+  }
+
   render() {
     console.log(this.state);
     console.log('this.state.checked', this.state.checked);
     return (
+      this.state.isLoading 
+      ?
       <SafeAreaView
-        style={{
-          flex: 1,
-        }}>
+      style={{
+        flex: 1,
+        justifyContent:'center',
+        alignItems:'center'  
+      }}>
+          <Spinner size="giant" />
+          <Text style={{padding:20}}> 
+          회원님의 정보를 저장중입니다 ... 
+          </Text>
+      </SafeAreaView>
+      :      
+      <SafeAreaView
+      style={{
+        flex: 1,
+      }}>
         <TopNavigation
           title={() => <Text category="h2">회원가입</Text>}
           alignment="center"
@@ -637,6 +664,16 @@ class RegisterScreen extends Component {
             paddingStart: 45,
             paddingTop: 30,
           }}>
+        {
+        this.state.isLoading&&
+            <View style={{
+              flex: 1,
+              justifyContent:'center',
+              alignItems:'center'}}>
+               <Spinner size="giant"/>
+               <Text> 회원님의 정보를 저장중입니다 ... </Text>
+            </View>
+  } 
           {/* 필수 */}
           <Input
             style={
@@ -908,6 +945,7 @@ class RegisterScreen extends Component {
           <View
             style={{
               flexDirection: 'row',
+              justifyContent: 'center'
             }}>
             <TouchableOpacity
               onPress={() =>
@@ -976,7 +1014,7 @@ class RegisterScreen extends Component {
             ) : (
               <this.nextStep />
             )}
-          </View>
+          </View>       
         </ScrollView>
       </SafeAreaView>
     );
