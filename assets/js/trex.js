@@ -22,6 +22,7 @@
         this.containerEl = null;
         this.snackbarEl = null;
         this.detailsButton = this.outerContainerEl.querySelector('#details-button');
+        this.startButton = this.outerContainerEl.querySelector('#start_btn-button');
 
         this.config = opt_config || Runner.config;
 
@@ -668,13 +669,32 @@
                 document.removeEventListener(Runner.events.MOUSEUP, this);
             }
         },
-
+       
         /**
          * Process keydown.
          * @param {Event} e
          */
         onKeyDown: function (e) {
             // Prevent native page scrolling whilst tapping on mobile.
+            console.info('event',e.target.id);
+            //alert(e.target.id);
+            if (e.target != this.startButton) {
+                if (!this.playing) {
+                        this.loadSounds();
+                        this.playing = true;
+                        this.update();
+                        if (window.errorPageController) {
+                            errorPageController.trackEasterEgg();
+                        }
+                        $("#start_btn").text('점프하기');
+                    }
+                    //  Play sound effect and jump on starting the game for the first time.
+                    if (!this.tRex.jumping && !this.tRex.ducking) {
+                        this.playSound(this.soundFx.BUTTON_PRESS);
+                        this.tRex.startJump(this.currentSpeed);
+                    }
+
+        }
             if (IS_MOBILE && this.playing) {
                 e.preventDefault();
             }
@@ -682,14 +702,14 @@
             if (e.target != this.detailsButton) {
                 if (!this.crashed && (Runner.keycodes.JUMP[e.keyCode] ||
                     e.type == Runner.events.TOUCHSTART)) {
-                    if (!this.playing) {
+                    /* if (!this.playing) {
                         this.loadSounds();
                         this.playing = true;
                         this.update();
                         if (window.errorPageController) {
                             errorPageController.trackEasterEgg();
                         }
-                    }
+                    } */
                     //  Play sound effect and jump on starting the game for the first time.
                     if (!this.tRex.jumping && !this.tRex.ducking) {
                         this.playSound(this.soundFx.BUTTON_PRESS);
@@ -865,8 +885,8 @@
             this.stop();
             this.crashed = true;
             this.distanceMeter.acheivement = false;
-
             this.tRex.update(100, Trex.status.CRASHED);
+            $("#start_btn").text('점프하기');
 
             // Game over panel.
             if (!this.gameOverPanel) {
@@ -2222,7 +2242,7 @@
 					if (data.status == 200) {
                         // reload rank list
                         console.info('save result ', data);
-                        location.reload();
+                        //location.reload();
                     }
 				},
 				error : function(data) {

@@ -18,7 +18,7 @@ class Games extends CB_Controller
 	/**
 	 * 모델을 로딩합니다
 	 */
-	protected $models = array();
+	protected $models = array('Gpoint');
 
 	/**
 	 * 헬퍼를 로딩합니다
@@ -265,12 +265,14 @@ class Games extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before'] = Events::trigger('before', $eventname);
 
-		$this->load->model(array('Cmall_item_model'));
 	
 
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
-
+		$view['view']['mypoint'] = number_format($this->member->item('mem_point'));
+		$view['view']['mynickname'] = $this->member->item('mem_nickname');
+		$view['view']['myrank'] = $this->Gpoint_model->get_myrank($this->member->item('mem_id'));
+		$view['view']['myscore'] = $this->Gpoint_model->get_myscore($this->member->item('mem_id'),$gam_type='trex');
 		
 		$layoutconfig = array(
 			'path' => 'games',
