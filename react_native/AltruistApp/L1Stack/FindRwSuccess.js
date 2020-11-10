@@ -27,7 +27,7 @@ class FindRwSuccessScreen extends Component {
     <TopNavigationAction
       icon={BackIcon}
       onPress={() => {
-        this.props.navigation.navigate('Login');
+        this.props.navigation.navigate('RequireLoginScreen');
       }}
     />
   );
@@ -78,7 +78,7 @@ class FindRwSuccessScreen extends Component {
                 borderRadius: 6,
               }}
               onPress={() => {
-                this.props.navigation.navigate('Login');
+                this.props.navigation.navigate('RequireLoginScreen');
               }}>
               확인
             </Button>
