@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Verify class
@@ -33,7 +33,7 @@ class Verify extends CB_Controller
 		 * 라이브러리를 로딩합니다
 		 */
 		$this->load->library(array('querystring'));
-		if ( ! function_exists('password_hash')) {
+		if (!function_exists('password_hash')) {
 			$this->load->helper('password');
 		}
 	}
@@ -54,16 +54,16 @@ class Verify extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before'] = Events::trigger('before', $eventname);
 
-		if ( ! $this->input->get('code')) {
+		if (!$this->input->get('code')) {
 			show_404();
 		}
-		if ( ! $this->input->get('user')) {
+		if (!$this->input->get('user')) {
 			show_404();
 		}
 		if ($this->member->is_member()) {
 			redirect();
 		}
-		if ( ! $this->cbconfig->item('use_register_email_auth')) {
+		if (!$this->cbconfig->item('use_register_email_auth')) {
 			alert('이 웹사이트는 이메일 인증 기능을 사용하고 있지 않습니다');
 		}
 
@@ -72,13 +72,13 @@ class Verify extends CB_Controller
 		);
 		$result = $this->Member_auth_email_model->get_one('', '', $where);
 
-		if ( ! element('mae_id', $result)) {
+		if (!element('mae_id', $result)) {
 			$view['view']['message'] = '잘못된 접근입니다';
-		} elseif ( ! (element('mae_type', $result) === '1' OR element('mae_type', $result) === '2')) {
+		} elseif (!(element('mae_type', $result) === '1' or element('mae_type', $result) === '2')) {
 			$view['view']['message'] = '잘못된 접근입니다';
-		} elseif ( ! empty($result['mae_use_datetime']) && element('mae_use_datetime', $result) !== '0000-00-00 00:00:00') {
+		} elseif (!empty($result['mae_use_datetime']) && element('mae_use_datetime', $result) !== '0000-00-00 00:00:00') {
 			$view['view']['message'] = '회원님은 이미 인증을 받으셨습니다';
-		} elseif (strtotime(element('mae_generate_datetime', $result)) < ctimestamp()- 86400) {
+		} elseif (strtotime(element('mae_generate_datetime', $result)) < ctimestamp() - 86400) {
 			$view['view']['message'] = '24 시간 이내에 인증을 받으셔야 합니다';
 		} elseif (element('mae_expired', $result)) {
 			$view['view']['message'] = '잘못된 접근입니다';
@@ -87,7 +87,7 @@ class Verify extends CB_Controller
 			$select = 'mem_id, mem_userid, mem_denied, mem_email_cert';
 			$dbmember = $this->Member_model->get_by_memid(element('mem_id', $result), $select);
 
-			if ( ! element('mem_id', $dbmember)) {
+			if (!element('mem_id', $dbmember)) {
 				$view['view']['message'] = '잘못된 접근입니다';
 			} elseif (element('mem_userid', $dbmember) !== $this->input->get('user')) {
 				$view['view']['message'] = '잘못된 접근입니다';
@@ -160,10 +160,10 @@ class Verify extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		$view['view']['event']['before'] = Events::trigger('before', $eventname);
 
-		if ( ! $this->input->get('code')) {
+		if (!$this->input->get('code')) {
 			show_404();
 		}
-		if ( ! $this->input->get('user')) {
+		if (!$this->input->get('user')) {
 			show_404();
 		}
 		if ($this->member->is_member()) {
@@ -182,36 +182,35 @@ class Verify extends CB_Controller
 
 		$view['view']['error_message'] = '';
 		$view['view']['successs_message'] = '';
-		if ( ! element('mae_id', $result)) {
-			$view['view']['error_message'] = '잘못된 접근입니다';
-		} elseif ( ! empty($result['mae_use_datetime']) && element('mae_use_datetime', $result) !== '0000-00-00 00:00:00') {
-			$view['view']['error_message'] = '회원님은 이미 패스워드 변경을 하셨습니다';
-		} elseif (strtotime(element('mae_generate_datetime', $result)) < ctimestamp()- 86400) {
-			$view['view']['message'] = '24 시간 이내에 인증을 받으셔야 합니다';
+		if (!element('mae_id', $result)) {
+			$view['view']['error_message'] = '잘못된 접근입니다. ';
+		} elseif (!empty($result['mae_use_datetime']) && element('mae_use_datetime', $result) !== '0000-00-00 00:00:00') {
+			$view['view']['error_message'] = '회원님은 이미 패스워드 변경을 하셨습니다. ';
+		} elseif (strtotime(element('mae_generate_datetime', $result)) < ctimestamp() - 86400) {
+			$view['view']['message'] = '24 시간 이내에 인증을 받으셔야 합니다. ';
 		} elseif (element('mae_type', $result) !== '3') {
-			$view['view']['error_message'] = '잘못된 접근입니다';
+			$view['view']['error_message'] = '잘못된 접근입니다. ';
 		} else {
 			$is_dormant_member = false;
 			$select = 'mem_id, mem_userid, mem_denied, mem_email_cert';
 			$dbmember = $this->Member_model->get_by_memid(element('mem_id', $result), $select);
-			if ( ! $dbmember) {
+			if (!$dbmember) {
 				$this->load->model('Member_dormant_model');
 				$dbmember = $this->Member_dormant_model->get_by_memid(element('mem_id', $result), $select);
 				if ($dbmember) {
 					$is_dormant_member = true;
 				}
 			}
-			if ( ! element('mem_id', $dbmember)) {
-				$view['view']['error_message'] = '잘못된 접근입니다';
+			if (!element('mem_id', $dbmember)) {
+				$view['view']['error_message'] = '잘못된 접근입니다.';
 			} elseif (element('mem_userid', $dbmember) !== $this->input->get('user')) {
-				$view['view']['error_message'] = '잘못된 접근입니다';
+				$view['view']['error_message'] = '잘못된 접근입니다.';
 			} elseif (element('mem_denied', $dbmember)) {
-				$view['view']['error_message'] = '회원님의 계정은 접근이 금지되어 있습니다';
-			} elseif ($this->cbconfig->item('use_register_email_auth') && ! element('mem_email_cert', $dbmember)) {
-				$view['view']['error_message'] = '회원님은 회원가입 후, 또는 이메일 정보 변경후 아직 이메일 인증을 받지 않으셨습니다';
+				$view['view']['error_message'] = '회원님의 계정은 접근이 금지되어 있습니다.';
+			} elseif ($this->cbconfig->item('use_register_email_auth') && !element('mem_email_cert', $dbmember)) {
+				$view['view']['error_message'] = '회원님은 회원가입 후, 또는 이메일 정보 변경후 아직 이메일 인증을 받지 않으셨습니다.';
 			}
 			$view['view']['mem_userid'] = element('mem_userid', $dbmember);
-
 		}
 
 		$config = array(
@@ -236,7 +235,6 @@ class Verify extends CB_Controller
 
 			// 이벤트가 존재하면 실행합니다
 			$view['view']['event']['formrunfalse'] = Events::trigger('formrunfalse', $eventname);
-
 		} else {
 
 			// 이벤트가 존재하면 실행합니다
@@ -265,7 +263,7 @@ class Verify extends CB_Controller
 				);
 				$this->Member_auth_email_model->update(element('mae_id', $result), $updateemail);
 
-				$view['view']['success_message'] = '회원님의 패스워드가 변경되었습니다.<br />감사합니다';
+				$view['view']['success_message'] =  '회원님의 패스워드가 변경되었습니다.<br />앱에서 다시 로그인해주세요. 감사합니다.';
 
 				$this->member->update_login_log(element('mem_id', $result), element('mem_userid', $result), 1, '패스워드 변경 후 로그인 성공');
 				$this->session->set_userdata('mem_id', element('mem_id', $result));
@@ -273,7 +271,7 @@ class Verify extends CB_Controller
 		}
 
 		$password_description = '비밀번호는 ' . $password_length . '자리 이상이어야 ';
-		if ($this->cbconfig->item('password_uppercase_length') OR $this->cbconfig->item('password_numbers_length') OR $this->cbconfig->item('password_specialchars_length')) {
+		if ($this->cbconfig->item('password_uppercase_length') or $this->cbconfig->item('password_numbers_length') or $this->cbconfig->item('password_specialchars_length')) {
 			$password_description .= '하며 ';
 			if ($this->cbconfig->item('password_uppercase_length')) {
 				$password_description .= ', ' . $this->cbconfig->item('password_uppercase_length') . '개의 대문자';
@@ -330,7 +328,7 @@ class Verify extends CB_Controller
 		$str_num = count_numbers($str);
 		$str_spc = count_specialchars($str);
 
-		if ($str_uc < $uppercase OR $str_num < $number OR $str_spc < $specialchar) {
+		if ($str_uc < $uppercase or $str_num < $number or $str_spc < $specialchar) {
 
 			$description = '비밀번호는 ';
 			if ($str_uc < $uppercase) {
