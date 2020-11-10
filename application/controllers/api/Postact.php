@@ -565,87 +565,11 @@ class Postact extends CB_Controller
 	}
 
 
+	
+	
 	/**
 	 * 게시물 추천/비추천 하기
 	 */
-	public function post_like_noti($post_id = 0, $like_type = 0)
-	{
-
-		// 이벤트 라이브러리를 로딩합니다
-		$eventname = 'event_postact_post_like';
-		$this->load->event($eventname);
-
-		// 이벤트가 존재하면 실행합니다
-		Events::trigger('before', $eventname);
-
-		$target_type = 1; //원글
-
-		$result = array();
-		
-		$post_id = (int)$this->input->post('post_id');
-		$like_type = (int)$this->input->post('like_type');
-
-		$mem_id = (int) $this->member->item('mem_id');
-
-		$this->load->model(array('Post_model'));
-
-		$select = 'post_id, brd_id, mem_id, post_del';
-		$post = $this->Post_model->get_one($post_id, $select);
-
-		$board = $this->board->item_all(element('brd_id', $post));
-		
-		//추천일경우 알림 및  푸시
-		if ($like_type == 1) {
-			
-			$mem_nickname = $this->member->item('mem_nickname');
-
-			//$not_message = $this->session->userdata('mem_nickname'). '님께서 당신의 글을 좋아합니다.';
-			$not_message = $mem_nickname. '님이 당신의 글을 좋아합니다.';
-			//알림 
-			if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
-				$this->load->library('notificationlib');
-				
-				$not_url = post_url(element('brd_key', $board), $post_id);
-				$this->notificationlib->set_noti(
-					abs(element('mem_id', $post)),
-					$mem_id,
-					'이타주의자들',
-					$post_id,
-					$not_message,
-					$not_url
-				);
-				//log_message('Error','알림 : '.$not_message );
-			}
-
-			//푸시
-			$push_type = 'token';
-			$topic_name = '';
-			if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_like_post')) {
-				$this->load->library('pushlib');
-				
-				$not_url = post_url(element('brd_key', $board), $post_id);
-				$this->pushlib->set_push(
-					abs(element('mem_id', $post)),
-					$mem_id,
-					'이타주의자들',
-					$post_id,
-					$not_message,
-					$not_url,
-					$push_type,
-					$topic_name
-				);
-				//log_message('Error',$not_message );
-			}
-		}
-
-		// 이벤트가 존재하면 실행합니다
-		Events::trigger('after', $eventname);
-
-		$result = array('count' => $count);
-		response_result($view,'success', $success);
-		//exit(json_encode($result));
-
-	}
 	public function post_like($post_id = 0, $like_type = 0)
 	{
 
@@ -701,7 +625,7 @@ class Postact extends CB_Controller
 			response_result($view,'Err','이 게시판은 비추천 기능을 사용하지 않습니다');
 		}
 
-	/* 	if (abs(element('mem_id', $post)) === $mem_id) {
+		/* 	if (abs(element('mem_id', $post)) === $mem_id) {
 			response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
 		} */
 
@@ -845,6 +769,87 @@ class Postact extends CB_Controller
 
 	}
 
+	/**
+	 * 게시물 추천/비추천에 대한 알림 보내기
+	 */
+	public function post_like_noti($post_id = 0, $like_type = 0)
+	{
+
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_postact_post_like';
+		$this->load->event($eventname);
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('before', $eventname);
+
+		$target_type = 1; //원글
+
+		$result = array();
+		
+		$post_id = (int)$this->input->post('post_id');
+		$like_type = (int)$this->input->post('like_type');
+
+		$mem_id = (int) $this->member->item('mem_id');
+
+		$this->load->model(array('Post_model'));
+
+		$select = 'post_id, brd_id, mem_id, post_del';
+		$post = $this->Post_model->get_one($post_id, $select);
+
+		$board = $this->board->item_all(element('brd_id', $post));
+		
+		//추천일경우 알림 및  푸시
+		if ($like_type == 1) {
+			
+			$mem_nickname = $this->member->item('mem_nickname');
+
+			//$not_message = $this->session->userdata('mem_nickname'). '님께서 당신의 글을 좋아합니다.';
+			$not_message = $mem_nickname. '님이 당신의 글을 좋아합니다.';
+			//알림 
+			if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
+				$this->load->library('notificationlib');
+				
+				$not_url = post_url(element('brd_key', $board), $post_id);
+				$this->notificationlib->set_noti(
+					abs(element('mem_id', $post)),
+					$mem_id,
+					'이타주의자들',
+					$post_id,
+					$not_message,
+					$not_url
+				);
+				//log_message('Error','알림 : '.$not_message );
+			}
+
+			//푸시
+			$push_type = 'token';
+			$topic_name = '';
+			if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_like_post')) {
+				$this->load->library('pushlib');
+				
+				$not_url = post_url(element('brd_key', $board), $post_id);
+				$this->pushlib->set_push(
+					abs(element('mem_id', $post)),
+					$mem_id,
+					'이타주의자들',
+					$post_id,
+					$not_message,
+					$not_url,
+					$push_type,
+					$topic_name
+				);
+				//log_message('Error',$not_message );
+			}
+		}
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('after', $eventname);
+
+		$result = array('count' => $count);
+		response_result($view,'success', $success);
+		//exit(json_encode($result));
+
+	}
 	/**
 	 * 게시물 추천/비추천 취소
 	 */
