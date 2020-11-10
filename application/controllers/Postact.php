@@ -707,7 +707,7 @@ class Postact extends CB_Controller
 			$topic_name = '';
 			if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_like_post')) {
 				$this->load->library('pushlib');
-				$not_message = $this->session->userdata('mem_nickname'). '님께서 당신의 글을 좋아합니다.';
+				$not_message = $this->session->userdata('mem_nickname'). '님이 당신의 글을 좋아합니다.';
 				$not_url = post_url(element('brd_key', $board), $post_id);
 				$this->pushlib->set_push(
 					abs(element('mem_id', $post)),
@@ -898,7 +898,7 @@ class Postact extends CB_Controller
 			$topic_name = '';
 			if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_like_post')) {
 				$this->load->library('pushlib');
-				$not_message = $this->session->userdata('mem_nickname'). '님께서 당신의 댓글을 좋아합니다.';
+				$not_message = $this->session->userdata('mem_nickname'). '님이 당신의 댓글을 좋아합니다.';
 				$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
 				$this->pushlib->set_push(
 					abs(element('mem_id', $post)),
