@@ -134,7 +134,13 @@ export class ComBottomNav extends React.Component{
         super(props)
     }
     static contextType = Signing
-
+    componentDidMount(){
+        messaging().onNotificationOpenedApp(async remoteMessage=>{
+            console.log('onNotificationOpenedApp on BottomNav'+remoteMessage);
+            this.context.getFirstNotiList()
+            this.props.navigation.navigate('Alarm')
+        });
+    }
     render(){
         return(
             <SafeAreaView style={{flex:1}}>
