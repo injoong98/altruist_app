@@ -22,6 +22,9 @@ import PaperPlanesvg from '../assets/icons/paper-plane.svg'
 import Callsvg from '../assets/icons/call.svg'
 import Callmessagesvg from '../assets/icons/call-message.svg'
 import Emailsvg from '../assets/icons/Email.svg'
+import CallGraysvg from '../assets/icons/call-gray.svg'
+import CallmessageGraysvg from '../assets/icons/call-message-gray.svg'
+import EmailGraysvg from '../assets/icons/Email-gray.svg'
 import Viewsvg from '../assets/icons/view.svg'
 import Timesvg from '../assets/icons/Time.svg'
 import Heartsvg from '../assets/icons/heart.svg'
@@ -198,7 +201,7 @@ class GominContent extends React.Component{
         </TouchableOpacity>
     )
     BackAction = () =>(
-        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();}}/>
     )
     
     statefunction=(str)=>{
@@ -366,7 +369,6 @@ class GominContent extends React.Component{
     componentWillUnmount(){
         StatusBar.setBackgroundColor('#B09BDE');
         StatusBar.setBarStyle('default');
-        this.props.route.params.OnGoback();
     }
     modalList = [
         {
@@ -486,8 +488,10 @@ class GominContent extends React.Component{
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
-                            <MoreSsvg/>
+                        <TouchableOpacity 
+                            onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} 
+                            style={{alignItems:'flex-end'}}>
+                            <MoreSsvg width={16} height={16}/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -522,8 +526,8 @@ class GominContent extends React.Component{
                 gbckfunc={() => {if(Platform.OS!=='ios'){
                     StatusBar.setBackgroundColor('#B09BDE')
                     StatusBar.setBarStyle('default')}
-                    this.props.navigation.goBack()
-                    this.props.route.params.OnGoback()}}
+                    this.props.navigation.goBack()}
+                }
                 gbckuse={true}
                 right={<this.MoreAction/>}/>
             {this.state.isLoading ?
@@ -585,7 +589,7 @@ class GominContent extends React.Component{
                         <Text style={{fontSize:20, color:'#63579D'}} category='h3'>신고</Text>
                     </TouchableOpacity>
                     <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    {this.context.session_mem_id==post.mem_id
+                    {this.context.session_mem_id== Math.abs(post.mem_id)
                     ?<View>
                         <TouchableOpacity 
                             onPress={()=>{
@@ -731,7 +735,6 @@ class MarketContent extends React.Component {
     componentWillUnmount(){
         StatusBar.setBackgroundColor('#B09BDE');
         StatusBar.setBarStyle('default');
-        this.props.route.params.OnGoback();
     }
 
     getPostData = async(post_id)=>{
@@ -1096,8 +1099,10 @@ class MarketContent extends React.Component {
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} style={{width:10,alignItems:'flex-end'}}>
-                            <MoreSsvg/>
+                        <TouchableOpacity 
+                            onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} 
+                            style={{alignItems:'flex-end'}}>
+                            <MoreSsvg width={16} height={16}/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -1211,7 +1216,6 @@ class MarketContent extends React.Component {
                     backgroundColor='#F4F4F4'
                     gbckfunc={() => {
                         this.props.navigation.goBack();
-                        this.props.route.params.OnGoback();
                         if(Platform.OS!=='ios'){
                             StatusBar.setBackgroundColor('#B09BDE');
                             StatusBar.setBarStyle('default');}
@@ -1418,7 +1422,6 @@ class AlbaContent extends React.Component {
     componentWillUnmount(){
         StatusBar.setBackgroundColor('#B09BDE');
         StatusBar.setBarStyle('default');
-        this.props.route.params.OnGoback();
     }
 
     getPostData = async(post_id)=>{
@@ -1561,7 +1564,6 @@ class AlbaContent extends React.Component {
                 backgroundColor='#F4F4F4'
                 gbckfunc={() => {
                     this.props.navigation.goBack();
-                    this.props.route.params.OnGoback();
                     if(Platform.OS!=='ios'){
                         StatusBar.setBackgroundColor('#B09BDE');
                         StatusBar.setBarStyle('default');}}
@@ -1663,29 +1665,54 @@ class AlbaContent extends React.Component {
                         backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
                         onBackdropPress={() => this.setState({visible:false})}>
                         <Card disabled={true} style={{borderRadius:20}}>
+                            {!post.post_email&&!post.post_hp?
+                                <View>
+                                    <Text style={{marginBottom:8}}>상세정보에 기재된</Text>
+                                    <Text >연락처로 지원해주세요.</Text>
+                                </View>
+                                :
                             <Layout style={{flexDirection:'row'}}>
                                 <View style={styles.modal_icons}>
+                                    {post.post_hp?
                                     <TouchableOpacity
                                         onPress={()=>{this.setState({visible:false});Linking.openURL(`tel:${post.post_hp}`)}}>
                                         <Callsvg width={40} height = {40}/>
                                     </TouchableOpacity>
+                                    :
+                                    <View>
+                                        <CallGraysvg width={40} height = {40}/>
+                                    </View>
+                                    }
                                     <Text>전화</Text>
                                 </View>
-                                    <View style={styles.modal_icons}>
+                                <View style={styles.modal_icons}>
+                                    {post.post_hp?
                                     <TouchableOpacity
                                         onPress={()=>{this.setState({visible:false});Linking.openURL(`sms:${post.post_hp}`)}}>
                                         <Callmessagesvg width={40} height = {40}/>
                                     </TouchableOpacity>
+                                    :
+                                    <View>
+                                        <CallmessageGraysvg width={40} height = {40}/>
+                                    </View>
+                                    }
                                     <Text>메시지</Text>
                                 </View>
                                 <View style={styles.modal_icons}>
+                                    {post.post_email?
                                     <TouchableOpacity
                                             onPress={()=>{this.setState({visible:false});Linking.openURL(`mailto:${post.post_email}`)}}>
                                             <Emailsvg width={40} height = {40}/>
                                     </TouchableOpacity>
+                                   :
+                                    <View>
+                                        <EmailGraysvg width={40} height = {40}/>
+                                    </View>
+                                    }
                                     <Text>이메일</Text>
                                 </View>
                             </Layout>
+                            }
                             <Button onPress={()=>this.setState({visible:false})} appearance='ghost' >
                                 취소
                             </Button>
@@ -1918,7 +1945,7 @@ class IlbanContent extends Component {
         </TouchableOpacity>
     )
     BackAction = () =>(
-        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();}}/>
     )
     
     statefunction=(str)=>{
@@ -2106,11 +2133,6 @@ class IlbanContent extends Component {
         StatusBar.setBackgroundColor('#B09BDE');
         }
         StatusBar.setBarStyle('default');
-        if(this.props.route.params.OnGoback){
-            this.props.route.params.OnGoback();
-        }
-        
-        null
     }
     
     modalList = [
@@ -2245,8 +2267,11 @@ class IlbanContent extends Component {
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} style={{width:10,alignItems:'flex-end'}}>
-                            <MoreSsvg/>
+                        <TouchableOpacity 
+                            onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} 
+                            style={{alignItems:'flex-end'}}
+                        >
+                            <MoreSsvg width={16} height={16}/>
                         </TouchableOpacity>
                     </View>
                 </View>

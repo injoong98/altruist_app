@@ -176,6 +176,10 @@ export class StackNav extends React.Component{
                 session_chk:()=>{
                     this.session_chk()
                 },
+                getFirstNotiList:()=>{
+                    console.log('getFirstNotiList run')
+                    this.getFirstNotiList()
+                },
                 session_mem_id:'',
                 is_altruist:false,
                 alt_id:'',

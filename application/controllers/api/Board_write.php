@@ -2492,6 +2492,11 @@ EOT;
 				&& $uploadfiledata
 				&& is_array($uploadfiledata)
 				&& count($uploadfiledata) > 0) {
+				// 파일 수정시에는 기존에 등록 된 파일을 삭제하고 다시 넣는다
+				$deletewhere = array(
+					'post_id' => $post_id,
+				);
+				$this->Post_file_model->delete_where($deletewhere);
 				foreach ($uploadfiledata as $pkey => $pval) {
 					if ($pval) {
 						$fileupdate = array(
@@ -2508,11 +2513,7 @@ EOT;
 							'pfi_datetime' => cdate('Y-m-d H:i:s'),
 							'pfi_ip' => $this->input->ip_address(),
 						);
-						// 파일 수정시에는 기존에 등록 된 파일을 삭제하고 다시 넣는다
-						$deletewhere = array(
-							'post_id' => $post_id,
-						);
-						$this->Post_file_model->delete_where($deletewhere);
+						
 
 						$file_id = $this->Post_file_model->insert($fileupdate);
 						if ( ! element('is_image', $pval)) {
