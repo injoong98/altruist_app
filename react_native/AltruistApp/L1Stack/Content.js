@@ -293,8 +293,13 @@ class GominContent extends React.Component{
             .then(response=>{
                 if(response.data.status ==500){
                     this.setState({resultModalVisible:true, resultText : response.data.message});
-                }else{
+                }else{                    
                     this.getPostData(this.state.post.post_id)
+                    !this.state.post.is_liked?
+                        Axios.post(`https://dev.unyict.org/api/postact/post_like_noti`,formdata)
+                        .then(res=>{})
+                        .catch(err=>{alert('좋아요 알림 오류가 발생하였습니다.')})
+                    :null
                 }
             })
             .catch(error=>{
@@ -314,7 +319,16 @@ class GominContent extends React.Component{
                  if(response.data.status ==500){
                      alert(`${JSON.stringify(response.data.message)}`)
                  }else{
-                 this.getCommentData(this.state.post.post_id)}
+                 this.getCommentData(this.state.post.post_id)
+                 !is_liked? 
+                        Axios.post(`https://dev.unyict.org/api/postact/comment_like_noti`,formdata)
+                        .then(response=>{
+                        })
+                        .catch(error=>{
+                            alert(`${JSON.stringify(error)}`)
+                        })
+                    : null
+                }
              })
              .catch(error=>{
                  alert(`${JSON.stringify(error)}`)
@@ -993,7 +1007,16 @@ class MarketContent extends React.Component {
                  if(response.data.status ==500){
                      this.setState({resultModalVisible:true, resultText : response.data.message});
                  }else{
-                     this.getCommentData(this.state.post.post_id)}
+                     this.getCommentData(this.state.post.post_id)
+                     !is_liked? 
+                     Axios.post(`https://dev.unyict.org/api/postact/comment_like_noti`,formdata)
+                     .then(response=>{
+                     })
+                     .catch(error=>{
+                         alert(`${JSON.stringify(error)}`)
+                     })
+                 : null
+                }
              })
              .catch(error=>{
                  this.setState({resultModalVisible:true, resultText : error.message});
@@ -2034,6 +2057,11 @@ class IlbanContent extends Component {
                      this.setState({resultModalVisible:true, resultText : response.data.message});
                  }else{
                      this.getPostData(this.state.post.post_id)
+                     !this.state.post.is_liked?
+                     Axios.post(`https://dev.unyict.org/api/postact/post_like_noti`,formdata)
+                     .then(res=>{})
+                     .catch(err=>{alert('좋아요 알림 오류가 발생하였습니다.')})
+                 :null
                  }
              })
              .catch(error=>{
@@ -2056,7 +2084,16 @@ class IlbanContent extends Component {
                  if(response.data.status ==500){
                      this.setState({resultModalVisible:true, resultText : response.data.message});
                  }else{
-                 this.getCommentData(this.state.post.post_id)}
+                 this.getCommentData(this.state.post.post_id)
+                    !is_liked? 
+                        Axios.post(`https://dev.unyict.org/api/postact/comment_like_noti`,formdata)
+                        .then(response=>{
+                        })
+                        .catch(error=>{
+                            alert(`${JSON.stringify(error)}`)
+                        })
+                    : null
+                }
              })
              .catch(error=>{
                  alert(`${JSON.stringify(error)}`)
