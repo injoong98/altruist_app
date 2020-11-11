@@ -50,3 +50,4 @@ application/config/config.php
 application/config/database.php
 
 app-files
+.favorites.json
