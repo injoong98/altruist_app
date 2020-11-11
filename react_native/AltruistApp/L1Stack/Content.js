@@ -83,6 +83,8 @@ class GominContent extends React.Component{
             popoverVisible:false,
             resultText : '',
             modalType : 0,
+            commentSession :0,
+            revise:false,
         }
     }
     
@@ -143,21 +145,25 @@ class GominContent extends React.Component{
         if(!global.mem_id) {
             this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
          }else {
-             const {cmt_content,post,cmt_id}=this.state;
+             const {cmt_content,post,cmt_id,revise}=this.state;
              var formdata = new FormData();
              formdata.append("post_id",post.post_id);
              formdata.append("cmt_content",cmt_content);
              cmt_id==''? null : formdata.append("cmt_id",cmt_id);
-             
+             revise? formdata.append("cmt_id",cmt_id):null;
+             revise? formdata.append("mode",'cu'):null;
+
              Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
              .then(response=>{
-                 const {status, message}=response.data;
+                 const {status, message,cmt_id}=response.data;
                  if(status=='200'){
                      Keyboard.dismiss();
+                     this.setState({commentWrited:!revise&&this.state.cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false});
                      this.getCommentData(post.post_id);
-                     this.setState({cmt_id:'', cmt_content:'', replying:false});
- 
-                     this.refs.pstcmtlist.scrollToEnd();
+                     formdata.append('cmt_id',cmt_id)
+                    //  Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
+                    //  .then(res=>{})
+                    //  .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
                  }else if(status=='500'){
                      this.setState({resultModalVisible:true, resultText:message});
                  }
@@ -503,7 +509,7 @@ class GominContent extends React.Component{
                             <BlameIcon />
                         </TouchableOpacity> */}
                         <TouchableOpacity 
-                            onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} 
+                            onPress={()=>{this.setState({modalVisible:true,cmt_id:item.cmt_id,commentSession : item.mem_id})}} 
                             style={{alignItems:'flex-end'}}>
                             <MoreSsvg width={16} height={16}/>
                         </TouchableOpacity>
@@ -529,7 +535,7 @@ class GominContent extends React.Component{
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible} = this.state
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible, commentWrited} = this.state
          return(
             <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : ""}
@@ -558,6 +564,12 @@ class GominContent extends React.Component{
                     onRefresh={this.onRefresh}
                     refreshing={this.state.refreshing}
                     style={{backgroundColor:'#ffffff'}}
+                    onContentSizeChange={()=>{
+                        commentWrited ? 
+                        this.setState({commentWrited:false},()=>{this.refs.pstcmtlist.scrollToEnd()})
+                        :
+                        null
+                    }}
                     />
                 </Layout>
             }
@@ -579,7 +591,7 @@ class GominContent extends React.Component{
                     multiline={true}
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                 />
-                <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
+                <TouchableOpacity onPress={()=>{Keyboard.dismiss();this.commentValid()}} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                     <Image 
                         style={{width:50,height:50}}
                         source={{uri:"https://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
@@ -633,27 +645,27 @@ class GominContent extends React.Component{
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                 onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})} >
                 <View style={{borderRadius:15, backgroundColor:'white'}}>
-                    {this.context.session_mem_id==comment.mem_id?
+                    {this.context.session_mem_id==this.state.commentSession?
                     <>
-                    <TouchableOpacity 
-                        onPress={()=>{this.setState({modalVisible:false}, [alert('댓글수정 준비중입니다'),Keyboard.dismiss()])}}
-                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
-                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
-                    </TouchableOpacity>
-                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({modalVisible:false, revise:true}, this.refs.commentInput.focus())}}
+                            style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
+                            style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
                     </>
                     :null}
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding : 10, paddingHorizontal:20, margin:5}}>
                         <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 신고</Text>
-                    </TouchableOpacity>
-                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    <TouchableOpacity 
-                        onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
-                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
-                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> 
                 </View>   
             </Modal>
             <Modal
@@ -907,10 +919,12 @@ class MarketContent extends React.Component {
                  const {status,message}=response.data;
                  if(status=='200'){
                      Keyboard.dismiss();
+                     this.setState({commentWrited:!revise&&this.state.cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false,});
                      this.getCommentData(post.post_id);
-                     this.setState({cmt_id:'', cmt_content:'', replying:false});
-     
-                     this.refs.pstcmtlist.scrollToEnd();
+                     formdata.append('cmt_id',cmt_id)
+                    //  Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
+                    //  .then(res=>{})
+                    //  .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
                  }else if(status=="500"){
                      this.setState({resultModalVisible:true, resultText:message});
                  }
@@ -1226,7 +1240,7 @@ class MarketContent extends React.Component {
     render(){
 
         const { width } = Dimensions.get("window");
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, popoverVisible, modalType} = this.state;
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, popoverVisible, modalType,commentWrited} = this.state;
 
         return(
             <KeyboardAvoidingView
@@ -1261,6 +1275,12 @@ class MarketContent extends React.Component {
                             onRefresh={this.onRefresh}
                             refreshing={this.state.refreshing}
                             style={{backgroundColor:'#F4F4F4'}}
+                            onContentSizeChange={()=>{
+                                commentWrited ? 
+                                this.setState({commentWrited:false},()=>{this.refs.pstcmtlist.scrollToEnd()})
+                                :
+                                null
+                            }}
                         />
                     </Layout>
                 }
@@ -1281,7 +1301,7 @@ class MarketContent extends React.Component {
                         multiline={true}
                         onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                     />
-                    <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
+                    <TouchableOpacity onPress={()=>{Keyboard.dismiss();this.commentValid()}} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                         <Image 
                             style={{width:50,height:50}}
                             source={{uri:"https://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
@@ -1917,17 +1937,19 @@ class IlbanContent extends Component {
              
              // this.commentWrite()
              
-             Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
+            await Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
              .then(response=>{
-                 const {status, message}=response.data;
+                 const {status, message,cmt_id}=response.data;
                  if(status=='200'){
                      Keyboard.dismiss();
+                     this.setState({commentWrited:!revise&&this.state.cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false, revise:false,});
                      this.getCommentData(post.post_id);
-                     this.setState({cmt_id:'', cmt_content:'', replying:false, revise:false});
-     
-                     this.refs.pstcmtlist.scrollToEnd();
+                    formdata.append('cmt_id',cmt_id)
+                    // Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
+                    // .then(res=>{})
+                    // .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
                  }else if(status=='500'){
-                     this.setState({resultModalVisible:true, resultText:message});
+                     this.setState({resultModalVisible:true, resultText:message,cmt_id:''});
                  }
              })
              .catch(error=>{
@@ -2009,14 +2031,14 @@ class IlbanContent extends Component {
              Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
              .then(response=>{
                  if(response.data.status ==500){
-                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message,cmt_id:''});
                  }else{
-                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message,cmt_id:''});
                      this.getCommentData(this.state.post.post_id)
                  }
              })
              .catch(error=>{
-                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error,cmt_id:''});
              })
         }
 
@@ -2028,18 +2050,17 @@ class IlbanContent extends Component {
          
              var formdata = new FormData();
              formdata.append('cmt_id',this.state.cmt_id);
-     
              Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
              .then(response=>{
                  if(response.data.status ==500){
-                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message,cmt_id:''});
                  }else{
-                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message,cmt_id:''});
                      this.getCommentData(this.state.post.post_id)
                  }
              })
              .catch(error=>{
-                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message,cmt_id:''});
              })
         }
 
@@ -2102,7 +2123,7 @@ class IlbanContent extends Component {
         }
 
     }
-    
+
     getCommentData = async (post_id)=>{
         await Axios.get(`https://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
@@ -2135,7 +2156,6 @@ class IlbanContent extends Component {
                     image_info['props']['title'] = item.pfi_originname;
                     image_info['props']['index'] = index;
                     image_info['props']['edit'] = true;
-                    console.log(image_info);
                     return image_info;
                 })});
             }
@@ -2333,8 +2353,8 @@ class IlbanContent extends Component {
      render(){
 
         const {navigation,route} =this.props
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image} = this.state
-        
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image,commentWrited} = this.state
+
         return(
         <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : ""}
@@ -2365,6 +2385,12 @@ class IlbanContent extends Component {
                         renderItem={this.renderCommentsList}
                         onRefresh={this.onRefresh}
                         refreshing={this.state.refreshing}
+                        onContentSizeChange={()=>{
+                            commentWrited ? 
+                            this.setState({commentWrited:false},()=>{this.refs.pstcmtlist.scrollToEnd()})
+                            :
+                            null
+                        }}
                         style={{backgroundColor:'#ffffff'}}
                     />
                 </Layout>
@@ -2387,7 +2413,7 @@ class IlbanContent extends Component {
                     multiline={true}
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                 />
-                <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
+                <TouchableOpacity onPress={()=>{Keyboard.dismiss();this.commentValid();}} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                     <Image 
                         style={{width:50,height:50}}
                         source={{uri:"https://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
@@ -2451,18 +2477,18 @@ class IlbanContent extends Component {
                             <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
                         </TouchableOpacity>
                         <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
+                            style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
                         </>
                     :null}
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding : 10, paddingHorizontal:20, margin:5}}>
                         <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 신고</Text>
-                    </TouchableOpacity>
-                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    <TouchableOpacity 
-                        onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
-                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
-                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
                     </TouchableOpacity>
                 </View>   
             </Modal>

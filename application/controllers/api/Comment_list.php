@@ -207,12 +207,18 @@ class Comment_list extends CB_Controller
 							($use_sideview ? 'Y' : 'N')
 						);
 					} else {
-						$bestresult[$key]['display_name'] = '익명사용자';
-					}
-					if(element('post_anoymous_yn', $post)) {// 익명글일경우에는 고민주의자로 표기
 						$bestresult[$key]['display_name'] = '익명';
-						$bestresult[$key]['cmt_nickname'] = '익명';
-						$bestresult[$key]['mem_nickname'] = '익명';
+					}
+					// 익명글일경우에는 익명 표기
+					// 익명의 구분을 위해서 익명1, 익명2, 익명3 .. 식별값 추가 
+
+					if(element('post_anoymous_yn', $post)) {
+
+						$my_comment_seq_info = $this->Comment_model->get_anoymous_seq(element('mem_id', $val),$post_id);
+						$display_name_anoymous = '익명'.$my_comment_seq_info[0]['seq'];
+						$bestresult[$key]['display_name'] = $display_name_anoymous;//'익명';
+						$bestresult[$key]['cmt_nickname'] = $display_name_anoymous;//'익명';
+						$bestresult[$key]['mem_nickname'] = $display_name_anoymous;//'익명';
 					}
 					$bestresult[$key]['display_datetime'] = display_datetime(
 						element('cmt_datetime', $val),
@@ -301,9 +307,16 @@ class Comment_list extends CB_Controller
 					$result['list'][$key]['display_name'] = '익명사용자';
 				}
 				if(element('post_anoymous_yn', $post)) {// 익명글일경우에는 익명으로 표기
-					$result['list'][$key]['display_name'] = '익명';
-					$result['list'][$key]['cmt_nickname'] = '익명';
-					$result['list'][$key]['mem_nickname'] = '익명';
+
+					$my_comment_seq_info = $this->Comment_model->get_anoymous_seq(element('mem_id', $val),$post_id);
+                    $display_name_anoymous = '익명'.$my_comment_seq_info[0]['seq'];
+
+                    $result['list'][$key]['display_name'] = $display_name_anoymous;//'익명';
+                    $result['list'][$key]['cmt_nickname'] = $display_name_anoymous;//'익명';
+                    $result['list'][$key]['mem_nickname'] = $display_name_anoymous;//'익명';
+
+
+
 				}
 				$result['list'][$key]['display_datetime'] = display_datetime(
 					element('cmt_datetime', $val),
