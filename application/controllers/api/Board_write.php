@@ -956,7 +956,7 @@ class Board_write extends CB_Controller
 				//알림 저장
 				if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_personal_question')) {
 					$this->load->library('notificationlib');
-					$not_message = $mem_nickname . '님께서 일대일 질문을 보내셨습니다.';
+					$not_message = $mem_nickname . '님이 일대일 질문을 보내셨습니다.';
 					$not_url = post_url(element('brd_id', $board), $post_id);
 					$this->notificationlib->set_noti(
 						$updatedata['answer_mem_id'],
@@ -971,7 +971,7 @@ class Board_write extends CB_Controller
 				//푸시 전송
 				if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_personal_question')) {
 					$this->load->library('pushlib');
-					$not_message = $mem_nickname . '님께서 일대일 질문을 보내셨습니다.';
+					$not_message = $mem_nickname . '님이 일대일 질문을 보내셨습니다.';
 					$not_url = post_url(element('brd_id', $board), $post_id);
 					$this->pushlib->set_push(
 						$updatedata['answer_mem_id'],
@@ -1011,7 +1011,7 @@ EOT;
 						//알림 
 						if ($this->cbconfig->item('use_notification') &&  $this->cbconfig->item('notification_open_question')) {
 							$this->load->library('notificationlib');
-							$not_message = $mem_nickname . '님께서 오픈 질문을 작성하셨습니다.';
+							$not_message = $mem_nickname . '님이 오픈 질문을 작성하셨습니다.';
 							$not_url = post_url(element('brd_id', $board), $post_id);
 							$this->notificationlib->set_noti(
 								$value->mem_id,
@@ -1027,7 +1027,7 @@ EOT;
 						if($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_open_question')) {
 
 							$this->load->library('pushlib');
-							$not_message = $mem_nickname . '님께서 오픈 질문을 작성하셨습니다.';
+							$not_message = $mem_nickname . '님이 오픈 질문을 작성하셨습니다.';
 							$not_url = post_url(element('brd_id', $board), $post_id);
 							$this->pushlib->set_push(
 								$value->mem_id,
@@ -1078,7 +1078,7 @@ EOT;
 							$error_msg = '';
 					}
 					//알림 
-					$not_message = $nickname . '님께서 '.$brd_name.'게시판에 새글을 작성하셨습니다.';
+					$not_message = $nickname . '님이 '.$brd_name.'게시판에 새글을 작성하셨습니다.';
 				/* 	if ($this->cbconfig->item('use_notification') ) {
 						$this->load->library('notificationlib');
 						$not_url = post_url(element('brd_id', $board), $post_id);
@@ -1095,7 +1095,7 @@ EOT;
 					//푸시 전송
 					if ($this->cbconfig->item('use_push') ) {
 						$this->load->library('pushlib');
-					//	$not_message = $nickname . '님께서 오픈 질문을 작성하셨습니다.';
+					//	$not_message = $nickname . '님이 오픈 질문을 작성하셨습니다.';
 						$not_url = post_url(element('brd_id', $board), $post_id);
 						$this->pushlib->set_push(
 							1,
@@ -1146,7 +1146,7 @@ EOT;
 
 			if ($reply && $origin && $this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_reply')) {
 				$this->load->library('notificationlib');
-				$not_message = $updatedata['post_nickname'] . '님께서 [' . element('post_title', $origin) . '] 에 답변을 남기셨습니다';
+				$not_message = $updatedata['post_nickname'] . '님이 [' . element('post_title', $origin) . '] 에 답변을 남기셨습니다';
 				$not_url = post_url(element('brd_key', $board), $post_id);
 				$this->notificationlib->set_noti(
 					element('mem_id', $origin),
@@ -1163,7 +1163,7 @@ EOT;
 			$topic_name = '';
 			if ($reply && $origin && $this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_reply')) {
 				$this->load->library('pushlib');
-				$not_message = $updatedata['post_nickname'] . '님께서 [' . element('post_title', $origin) . '] 에 답변을 남기셨습니다';
+				$not_message = $updatedata['post_nickname'] . '님이 [' . element('post_title', $origin) . '] 에 답변을 남기셨습니다';
 				$not_url = post_url(element('brd_key', $board), $post_id);
 				$this->notificationlib->set_noti(
 					element('mem_id', $origin),
@@ -2492,6 +2492,11 @@ EOT;
 				&& $uploadfiledata
 				&& is_array($uploadfiledata)
 				&& count($uploadfiledata) > 0) {
+				// 파일 수정시에는 기존에 등록 된 파일을 삭제하고 다시 넣는다
+				$deletewhere = array(
+					'post_id' => $post_id,
+				);
+				$this->Post_file_model->delete_where($deletewhere);
 				foreach ($uploadfiledata as $pkey => $pval) {
 					if ($pval) {
 						$fileupdate = array(
@@ -2508,11 +2513,7 @@ EOT;
 							'pfi_datetime' => cdate('Y-m-d H:i:s'),
 							'pfi_ip' => $this->input->ip_address(),
 						);
-						// 파일 수정시에는 기존에 등록 된 파일을 삭제하고 다시 넣는다
-						$deletewhere = array(
-							'post_id' => $post_id,
-						);
-						$this->Post_file_model->delete_where($deletewhere);
+						
 
 						$file_id = $this->Post_file_model->insert($fileupdate);
 						if ( ! element('is_image', $pval)) {

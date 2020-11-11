@@ -52,6 +52,22 @@ class Gpoint_model extends CB_Model
 
 		return $result['gam_point'];
 	}
+	public function get_myrank($mem_id = 0)
+	{
+		$mem_id = (int) $mem_id;
+		if (empty($mem_id) OR $mem_id < 1) {
+			return 0;
+		}
+		$sql =<<<EOT
+		SELECT RANK() OVER (PARTITION BY gp.gam_type ORDER BY gp.gam_point DESC) AS rank,  mem_id, gam_type, SUM(gam_point) point_sum FROM cb_gpoint gp 
+		WHERE mem_id = 1
+		GROUP BY mem_id, gam_type
+EOT;
+		$query = $this->db->query($sql);
+		$result = $query->row_array();
+
+		return $result['rank'];
+	}
 	public function ranking_list($gam_type = 'trex')
 	{
 		/* SELECT 
@@ -85,20 +101,11 @@ class Gpoint_model extends CB_Model
 			LEFT JOIN cb_member member ON gp.mem_id = member.mem_id
 			WHERE gam_type ='trex'
 EOT;
+
 		$query = $this->db->query($sql);
 		$result = $query->result_array();
-
 	
 		return $result;
-
-
-
-
-
-
-
-
-
 	}
 
 
@@ -214,10 +221,6 @@ EOT;
 		SELECT sumpoint.gam_point score
  FROM (SELECT mem_id, gam_type, SUM(gam_point) gam_point, MAX(gam_datetime) gam_datetime FROM cb_gpoint GROUP BY mem_id, gam_type) sumpoint
  WHERE sumpoint.mem_id =$mem_id and gam_type ='$gam_type'
-
-
-         		
-			
 EOT;
 
 		$query = $this->db->query($sql);

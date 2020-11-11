@@ -48,18 +48,15 @@ class Games extends CB_Controller
 	public function get_highscore()
 	{
 		// 이벤트 라이브러리를 로딩합니다
-
 		$view = array();
 		$result = array();
-
-	
 
 		$result = $this->Gpoint_model->get_highscore('trex');
 		$view['score'] = $result;
 		response_result($view, 'success', 'OK');
 	}
 	/**
-	 * 나의 포인트 가져오기
+	 * 나의 점수 가져오기
 	 */
 	public function get_myscore()
 	{
@@ -74,6 +71,24 @@ class Games extends CB_Controller
 			$result = $this->Gpoint_model->get_myscore( $this->member->item('mem_id'),'trex');
 			$view['score'] = $result;
 			$view['nickname'] = $this->session->userdata('mem_nickname');
+			response_result($view, 'success', 'OK');
+		} else {
+			response_result($view, 'Err', '로그인이 필요합니다.');
+			
+		 }
+	}
+	/**
+	 * 나의 포인트 가져오기
+	 */
+	public function get_mypoint()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$view = array();
+        if($this->member->item('mem_id') ) {
+			//||\\
+			//||\\
+			//====== 
+			$view['mypoint'] = number_format($this->member->item('mem_point'));
 			response_result($view, 'success', 'OK');
 		} else {
 			response_result($view, 'Err', '로그인이 필요합니다.');

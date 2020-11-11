@@ -358,7 +358,7 @@ class Comment_write extends CB_Controller
 				$reply_type = '댓글';
 				if( $brd_key == 'indi' || $brd_key == 'opq') $reply_type = '답변';
 
-				$not_message = $updatedata['cmt_nickname'] . '님께서 [' . element('post_title', $post) . '] 에'.$reply_type.'을 남기셨습니다';
+				$not_message = $updatedata['cmt_nickname'] . '님이 [' . element('post_title', $post) . '] 에'.$reply_type.'을 남기셨습니다';
 				if ($this->cbconfig->item('use_notification')
 					&& $this->cbconfig->item('notification_comment')) {
 					$this->load->library('notificationlib');
@@ -384,7 +384,7 @@ class Comment_write extends CB_Controller
 				$push_type = 'token';
 				if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_comment')) {
 					$this->load->library('pushlib');
-				//	$not_message = $updatedata['cmt_nickname'] . '님께서 [' . element('post_title', $post) . '] 에 댓글을 남기셨습니다';
+				//	$not_message = $updatedata['cmt_nickname'] . '님이 [' . element('post_title', $post) . '] 에 댓글을 남기셨습니다';
 					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
 					$this->pushlib->set_push(
 						abs(element('mem_id', $post)),
@@ -399,7 +399,7 @@ class Comment_write extends CB_Controller
 				}
 
 				// 답변글에 대한 알림 
-				$not_message = $updatedata['cmt_nickname'] . '님께서 [' . element('post_title', $post) . '] 글의 회원님의 '.$reply_type.'에 답변댓글을 남기셨습니다';
+				$not_message = $updatedata['cmt_nickname'] . '님이 [' . element('post_title', $post) . '] 글의 회원님의 '.$reply_type.'에 답변댓글을 남기셨습니다';
 				if ($origin
 					&& $cmt_reply
 					&& $this->cbconfig->item('use_notification')
@@ -422,7 +422,7 @@ class Comment_write extends CB_Controller
 				$topic_name = '';
 				if ($origin && $cmt_reply && $this->cbconfig->item('use_push') && $this->cbconfig->item('notification_comment_comment') && abs(element('mem_id', $post)) !== abs(element('mem_id', $origin))) {
 					$this->load->library('pushlib');
-				//	$not_message = $updatedata['cmt_nickname'] . '님께서 [' . element('post_title', $post) . '] 글의 회원님의 댓글에 답변댓글을 남기셨습니다';
+				//	$not_message = $updatedata['cmt_nickname'] . '님이 [' . element('post_title', $post) . '] 글의 회원님의 댓글에 답변댓글을 남기셨습니다';
 					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
 					
 					$this->pushlib->set_push(

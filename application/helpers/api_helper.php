@@ -80,6 +80,8 @@ if ( ! function_exists('response_result')) {
             }else{
                 $return_result['status'] ='500';
                 $return_result['message'] = $result_msg;
+                $return_result['postdata'] = $_POST;
+                $return_result['mem_id'] = $_SESSION['mem_id'];
                 log_message('error',json_encode($return_result ,JSON_UNESCAPED_UNICODE));
 
             } 

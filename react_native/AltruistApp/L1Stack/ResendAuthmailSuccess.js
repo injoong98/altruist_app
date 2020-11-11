@@ -27,7 +27,7 @@ class ResendAuthmailSuccessScreen extends Component {
     <TopNavigationAction
       icon={BackIcon}
       onPress={() => {
-        this.props.navigation.navigate('Login');
+        this.props.navigation.navigate('RequireLoginScreen');
       }}
     />
   );
@@ -68,7 +68,7 @@ class ResendAuthmailSuccessScreen extends Component {
                 borderRadius: 6,
               }}
               onPress={() => {
-                this.props.navigation.navigate('Login');
+                this.props.navigation.navigate('RequireLoginScreen');
               }}>
               확인
             </Button>
