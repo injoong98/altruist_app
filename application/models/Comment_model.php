@@ -194,6 +194,31 @@ class Comment_model extends CB_Model
 		return $result;
 	}
 
+	// 익명 글에 대한 익명 식별 코드 
+	public function get_anoymous_seq($mem_id = 0 , $post_id = 0)
+	{
+		$mem_id = (int) $mem_id;
+		if (empty($mem_id) OR $mem_id < 1) {
+			return 0;
+		}
+		$post_id = (int) $post_id;
+		if (empty($post_id) OR $post_id < 1) {
+			return 0;
+		}
+		$sql =<<<EOT
+		SELECT t.* FROM (
+			SELECT rank() over (PARTITION BY cmt_seq.post_id ORDER BY cmt_seq.dt ASC) AS seq,
+			cmt_seq.* FROM (SELECT post_id, mem_id, MIN(cmt_datetime) dt
+			FROM cb_comment WHERE post_id = $post_id GROUP BY post_id, mem_id) cmt_seq 
+			) t 
+		WHERE t.mem_id = $mem_id
+
+EOT;
+		$query = $this->db->query($sql);
+		$result =   $query->result_array();
+		return $result;
+	}
+
 
 	/**
 	 * List 페이지 커스테마이징 함수

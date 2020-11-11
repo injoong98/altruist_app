@@ -445,7 +445,7 @@ class Comment_write extends CB_Controller
 
 				if ($mem_id) {
 					if (element('use_anonymous', $board)) {
-						$updatedata['mem_id'] = (-1) * $mem_id;
+						$updatedata['mem_id'] = $mem_id;
 						$updatedata['cmt_userid'] = '';
 						$updatedata['cmt_username'] = '익명';
 						$updatedata['cmt_nickname'] = '익명';
