@@ -29,6 +29,7 @@ import Viewsvg from '../assets/icons/view.svg'
 import Timesvg from '../assets/icons/Time.svg'
 import Heartsvg from '../assets/icons/heart.svg'
 import Heartfillsvg from '../assets/icons/heartfill.svg'
+import { JauScreen } from './L2Bottom/L3Toptab/JauScreen';
 
 
 const BackIcon =  (props) =>(
@@ -171,7 +172,7 @@ class GominContent extends React.Component{
              .catch(error=>{
                  alert(error);
              })
-        
+             revise ? this.setState({revise:false}) : null
         }
     }
     
@@ -186,7 +187,6 @@ class GominContent extends React.Component{
             if(status=='500'){
                 this.setState({resultModalVisible:true,resultText:message});
             }else if(status=="200"){
-                console.log("valid check");
                 this.commentUpload();
             }
         })
@@ -257,6 +257,7 @@ class GominContent extends React.Component{
                  this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
              })
         }
+        this.setState({cmt_id:''})
 
     }
     cmtDelete = () =>{
@@ -281,6 +282,7 @@ class GominContent extends React.Component{
              })
         
         }
+        this.setState({cmt_id:''})
 
     }
     postLike = () =>{
@@ -290,6 +292,15 @@ class GominContent extends React.Component{
             this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
            
         }else {
+            const {post} = this.state 
+            this.setState(prevState=>({
+                post: {                  
+                    ...prevState.post,
+                    is_liked: !post.is_liked,
+                    post_like: post.is_liked? (post.post_like*1-1) : (post.post_like*1+1)
+                } 
+            })
+            )
 
             var formdata = new FormData();
             formdata.append('post_id',this.state.post.post_id)
@@ -313,10 +324,15 @@ class GominContent extends React.Component{
             })
         }
     }
-    cmtLike = (cmt_id, is_liked) =>{
+    cmtLike = (cmt_id, is_liked, index) =>{
         if(!global.mem_id) {
             this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
          }else {
+            const {comment} = this.state;
+            comment[index].cmt_like = is_liked ? comment[index].cmt_like*1-1 : comment[index].cmt_like*1+1;      
+            comment[index].is_liked = !is_liked;
+            this.setState({})
+
              var formdata = new FormData();
              formdata.append('cmt_id',cmt_id)
              formdata.append('like_type',1)
@@ -525,7 +541,7 @@ class GominContent extends React.Component{
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked,index)}>
                         {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
@@ -932,7 +948,7 @@ class MarketContent extends React.Component {
              .catch(error=>{
                  alert(error);
              })
-         
+             revise ? this.setState({revise:false}) : null
         }
 
     }
@@ -981,7 +997,7 @@ class MarketContent extends React.Component {
              .catch(error=>{
                  this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
              })
-         
+             this.setState({cmt_id:''});
         }
 
     }
@@ -1005,14 +1021,20 @@ class MarketContent extends React.Component {
              .catch(error=>{
                  this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
              })
+             this.setState({cmt_id:''});
+
         }
 
     }
-    cmtLike = (cmt_id, is_liked) =>{
+    cmtLike = (cmt_id, is_liked, index) =>{
         if(!global.mem_id) {
             this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
          }else {
-         
+            const {comment} = this.state;
+            comment[index].cmt_like = is_liked ? comment[index].cmt_like*1-1 : comment[index].cmt_like*1+1;      
+            comment[index].is_liked = !is_liked;
+            this.setState({})
+
              var formdata = new FormData();
              formdata.append('cmt_id',cmt_id)
              formdata.append('like_type',1)
@@ -1153,7 +1175,7 @@ class MarketContent extends React.Component {
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked, index)}>
                         {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
@@ -1955,7 +1977,8 @@ class IlbanContent extends Component {
              .catch(error=>{
                  alert(error);
              })
-        }
+             this.setState({revise:false})
+            }
 
     }
 
@@ -2031,16 +2054,17 @@ class IlbanContent extends Component {
              Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
              .then(response=>{
                  if(response.data.status ==500){
-                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message,cmt_id:''});
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
                  }else{
-                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message,cmt_id:''});
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
                      this.getCommentData(this.state.post.post_id)
                  }
              })
              .catch(error=>{
-                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error,cmt_id:''});
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
              })
-        }
+             this.setState({cmt_id:''});
+            }
 
     }
     cmtDelete = () =>{
@@ -2053,36 +2077,49 @@ class IlbanContent extends Component {
              Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
              .then(response=>{
                  if(response.data.status ==500){
-                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message,cmt_id:''});
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
                  }else{
-                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message,cmt_id:''});
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
                      this.getCommentData(this.state.post.post_id)
                  }
              })
              .catch(error=>{
-                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message,cmt_id:''});
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
              })
+             this.setState({cmt_id:''});
         }
 
     }
     postLike = () =>{
+        
         if(!global.mem_id) {
             this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
          }else {
+            const {post} = this.state 
+            this.setState(prevState=>({
+                post: {                  
+                    ...prevState.post,
+                    is_liked: !post.is_liked,
+                    post_like: post.is_liked? (post.post_like*1-1) : (post.post_like*1+1)
+                } 
+            })
+            )
+            
              var formdata = new FormData();
              formdata.append('post_id',this.state.post.post_id)
              formdata.append('like_type',1)
+             
              Axios.post(this.state.post.is_liked?'https://dev.unyict.org/api/postact/cancel_post_like':'https://dev.unyict.org/api/postact/post_like',formdata)
              .then(response=>{
-                 if(response.data.status ==500){
+                
+                if(response.data.status ==500){
                      this.setState({resultModalVisible:true, resultText : response.data.message});
                  }else{
-                     this.getPostData(this.state.post.post_id)
-                     !this.state.post.is_liked?
+                     !post.is_liked?
                      Axios.post(`https://dev.unyict.org/api/postact/post_like_noti`,formdata)
                      .then(res=>{})
                      .catch(err=>{alert('좋아요 알림 오류가 발생하였습니다.')})
-                 :null
+                    :null
                  }
              })
              .catch(error=>{
@@ -2092,11 +2129,15 @@ class IlbanContent extends Component {
         }
 
     }
-    cmtLike = (cmt_id, is_liked) =>{
+    cmtLike = (cmt_id, is_liked, index) =>{
         if(!global.mem_id) {
             this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
          }else {
-         
+            const {comment} = this.state;
+            comment[index].cmt_like = is_liked ? comment[index].cmt_like*1-1 : comment[index].cmt_like*1+1;      
+            comment[index].is_liked = !is_liked;
+            this.setState({})
+
              var formdata = new FormData();
              formdata.append('cmt_id',cmt_id)
              formdata.append('like_type',1)
@@ -2133,6 +2174,8 @@ class IlbanContent extends Component {
         })
     }
     getPostData = async (post_id)=>{
+        console.log('getPostData respond');
+
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             console.log('response.data.mem_photo : '+response.data.mem_photo)
@@ -2342,7 +2385,7 @@ class IlbanContent extends Component {
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked,index)}>
                         {item.is_liked?<Thumbfillsvg width='12' height='12'/>:<Thumbsvg width='12' height='12'/>}
                     </TouchableOpacity>
                     <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
