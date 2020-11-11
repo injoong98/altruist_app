@@ -1967,7 +1967,6 @@ class IlbanContent extends Component {
              .then(response=>{
                  const {status, message,new_cmt_id}=response.data;
                  if(status=='200'){
-                     Keyboard.dismiss();
                      this.setState({commentWrited:!revise&&cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false, revise:false,});
                      this.getCommentData(post.post_id);
                     if(!revise){
@@ -2259,6 +2258,11 @@ class IlbanContent extends Component {
             func : this.cmtDelete,
         },
     ]
+    scrollTo = (index) =>{
+        console.log('scrollTo ')
+        this.refs.pstcmtlist.scrollToIndex({index})
+
+    }
 
     renderPostBody = (post, image)=>{
         
@@ -2374,7 +2378,10 @@ class IlbanContent extends Component {
                             <BlameIcon />
                         </TouchableOpacity> */}
                         <TouchableOpacity 
-                            onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} 
+                            onPress={()=>{
+                                this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})
+                                this.scrollTo(index)
+                            }} 
                             style={{alignItems:'flex-end'}}
                         >
                             <MoreSsvg width={16} height={16}/>
@@ -2386,7 +2393,18 @@ class IlbanContent extends Component {
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                     {item.cmt_reply ==""?
-                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
+                    <TouchableOpacity 
+                        style= {{marginHorizontal:6}}
+                        onPress={() => {
+                            this.setState({replying:true, cmt_id:item.cmt_id},
+                                 ()=>{
+                                     this.refs.commentInput.focus();
+                                     setTimeout(()=> {this.scrollTo(index)},200)
+                                    }
+                                 );
+                            
+                        }}
+                    >
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>답글</Text>
                     </TouchableOpacity>
                     :null
