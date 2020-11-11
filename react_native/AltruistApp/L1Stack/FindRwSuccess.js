@@ -52,7 +52,7 @@ class FindRwSuccessScreen extends Component {
 
                 paddingBottom: 20,
               }}>
-              비밀번호 재설정 메일 전송
+              비밀번호 재설정 메일 전송 완료
             </Text>
             <Text
               style={{

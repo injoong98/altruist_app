@@ -9,6 +9,7 @@ import {
   Icon,
   Tab,
   TabBar,
+  Spinner,
 } from '@ui-kitten/components';
 import axios from 'axios';
 
@@ -54,6 +55,7 @@ class FindPwScreen extends Component {
       title: ['아이디', '휴대폰번호', '이메일'],
       indexClick: 0,
       findtype: 'findbyid',
+      isLoading: false
     };
   }
 
@@ -70,6 +72,7 @@ class FindPwScreen extends Component {
     let formdata = new FormData();
     const {idpw_hp, idpw_id, findtype, idpw_email} = this.state;
 
+    this.setState({isLoading : true})
     console.log(this.state);
     formdata.append('findtype', findtype);
 
@@ -98,6 +101,7 @@ class FindPwScreen extends Component {
       .then((res) => {
         console.log(res);
         if (res.data.status == 500) {
+          this.setState({isLoading : false})
           if (findtype == 'findbyhp') {
             Alert.alert(
               '메일 전송 실패',
@@ -122,12 +126,14 @@ class FindPwScreen extends Component {
             );
           }
         } else if (res.data.status == 200) {
+          this.setState({isLoading : false})
           this.props.navigation.navigate('FindRwSuccessScreen', {
             email: res.data.view.email,
           });
         }
       })
       .catch((error) => {
+        this.setState({isLoading : false})
         console.log('ERROR', error);
         console.error();
         //alert('')
@@ -282,11 +288,28 @@ class FindPwScreen extends Component {
   };
 
   render() {
-    const {title, indexClick, findtype} = this.state;
+    const {title, indexClick, findtype, isLoading} = this.state;
     // const title = this.state;
     console.log(this.state);
     // console.log('title -  ', title);
     return (
+      isLoading 
+        ? 
+        <SafeAreaView
+          style={{
+            flex: 1,
+            justifyContent:'center',
+            alignItems:'center',
+            backgroundColor: '#FFFFFF'
+          }}>
+            <Spinner size="giant" />
+            <Text style={{padding:20}}> 
+            회원님에게 
+            비밀번호 재설정 메일을 
+            보내는 중...
+            </Text>
+        </SafeAreaView>
+        :
       <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
         <TopNavigation
           title={() => <Text category="h2">비밀번호 재설정</Text>}
