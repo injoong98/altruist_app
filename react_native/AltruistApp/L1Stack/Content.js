@@ -156,15 +156,17 @@ class GominContent extends React.Component{
 
              Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
              .then(response=>{
-                 const {status, message,cmt_id}=response.data;
+                 const {status, message,new_cmt_id}=response.data;
                  if(status=='200'){
                      Keyboard.dismiss();
                      this.setState({commentWrited:!revise&&this.state.cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false});
                      this.getCommentData(post.post_id);
-                     formdata.append('cmt_id',cmt_id)
-                    //  Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
-                    //  .then(res=>{})
-                    //  .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+
+                     formdata.append('new_cmt_id',new_cmt_id)
+                    Axios.post('https://dev.unyict.org/api/comment_write/update_noti',formdata)
+                    .then(res=>{})
+                    .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+
                  }else if(status=='500'){
                      this.setState({resultModalVisible:true, resultText:message});
                  }
@@ -932,15 +934,17 @@ class MarketContent extends React.Component {
              
              await Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
              .then(response=>{
-                 const {status,message}=response.data;
+                 const {status,message,new_cmt_id}=response.data;
                  if(status=='200'){
                      Keyboard.dismiss();
                      this.setState({commentWrited:!revise&&this.state.cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false,});
                      this.getCommentData(post.post_id);
-                     formdata.append('cmt_id',cmt_id)
-                    //  Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
-                    //  .then(res=>{})
-                    //  .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+
+                    formdata.append('new_cmt_id',new_cmt_id)
+                    Axios.post('https://dev.unyict.org/api/comment_write/update_noti',formdata)
+                    .then(res=>{})
+                    .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+
                  }else if(status=="500"){
                      this.setState({resultModalVisible:true, resultText:message});
                  }
@@ -1961,15 +1965,17 @@ class IlbanContent extends Component {
              
             await Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
              .then(response=>{
-                 const {status, message,cmt_id}=response.data;
+                 const {status, message,new_cmt_id}=response.data;
                  if(status=='200'){
                      Keyboard.dismiss();
-                     this.setState({commentWrited:!revise&&this.state.cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false, revise:false,});
+                     this.setState({commentWrited:!revise&&cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false, revise:false,});
                      this.getCommentData(post.post_id);
-                    formdata.append('cmt_id',cmt_id)
-                    // Axios.post('https://dev.unyict.org/api/comment_write/comment_noti',formdata)
-                    // .then(res=>{})
-                    // .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+                    if(!revise){
+                        formdata.append('new_cmt_id',new_cmt_id)
+                        Axios.post('https://dev.unyict.org/api/comment_write/update_noti',formdata)
+                        .then(res=>{})
+                        .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+                    }
                  }else if(status=='500'){
                      this.setState({resultModalVisible:true, resultText:message,cmt_id:''});
                  }
