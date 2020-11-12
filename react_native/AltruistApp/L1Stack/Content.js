@@ -430,7 +430,11 @@ class GominContent extends React.Component{
 
         }
     ]
+    scrollTo = (index) =>{
+        console.log('scrollTo ')
+        this.refs.pstcmtlist.scrollToIndex({index})
 
+    }
     renderPostBody = (post)=>{
         
         const regex = /(<([^>]+)>)|&nbsp;/ig;
@@ -510,7 +514,9 @@ class GominContent extends React.Component{
                     borderRadius:8,
                     paddingRight:15,
                     marginRight:15,
-                    paddingVertical:10,
+                    marginBottom:8,
+                    paddingTop:10,
+                    paddingBottom:5,
                     paddingLeft: 15,
                     marginLeft:item.cmt_reply==""?15:50,
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
@@ -527,7 +533,10 @@ class GominContent extends React.Component{
                             <BlameIcon />
                         </TouchableOpacity> */}
                         <TouchableOpacity 
-                            onPress={()=>{this.setState({modalVisible:true,cmt_id:item.cmt_id,commentSession : item.mem_id})}} 
+                            onPress={()=>{
+                                this.setState({modalVisible:true,cmt_id:item.cmt_id,commentSession : item.mem_id})
+                                this.scrollTo(index)
+                            }} 
                             style={{alignItems:'flex-end'}}>
                             <MoreSsvg width={16} height={16}/>
                         </TouchableOpacity>
@@ -538,15 +547,27 @@ class GominContent extends React.Component{
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                     {item.cmt_reply ==""?
-                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
+                    <TouchableOpacity 
+                        style= {{marginHorizontal:12,padding:5}}
+                        onPress={() => 
+                        this.setState({replying:true, cmt_id:item.cmt_id}, 
+                            ()=>{
+                                this.refs.commentInput.focus()
+                                setTimeout(()=>{this.scrollTo(index)},200)
+                            }
+                            )}
+                    >
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>답글</Text>
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked,index)}>
+                    <TouchableOpacity 
+                        style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end',padding:5}}
+                        onPress={()=>this.cmtLike(item.cmt_id, item.is_liked,index)}
+                    >
                         {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10,marginLeft:6}}>{item.cmt_like}</Text>
                     </TouchableOpacity>
-                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
             </View>
         </View>
@@ -1142,8 +1163,12 @@ class MarketContent extends React.Component {
             <View 
                 style ={{
                     borderRadius:8,
-                    marginRight:5,
-                    padding:15,
+                    paddingRight:15,
+                    marginRight:15,
+                    marginBottom:8,
+                    paddingTop:10,
+                    paddingBottom:5,
+                    paddingLeft: 15,
                     marginLeft:item.cmt_reply==""?5:50,
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
@@ -1174,15 +1199,19 @@ class MarketContent extends React.Component {
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                     {item.cmt_reply ==""?
-                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
+                    <TouchableOpacity 
+                        style= {{marginHorizontal:12,padding:5}}
+                        onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>답글</Text>
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked, index)}>
+                    <TouchableOpacity 
+                        style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end',padding:5}}
+                        onPress={()=>this.cmtLike(item.cmt_id, item.is_liked, index)}>
                         {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10,marginLeft:6}}>{item.cmt_like}</Text>
                     </TouchableOpacity>
-                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
             </View>
         </View>
@@ -2357,7 +2386,9 @@ class IlbanContent extends Component {
                     borderRadius:8,
                     paddingRight:15,
                     marginRight:15,
-                    paddingVertical:10,
+                    marginBottom:8,
+                    paddingTop:10,
+                    paddingBottom:5,
                     paddingLeft: 15,
                     marginLeft:item.cmt_reply==""?15:50,
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
@@ -2394,7 +2425,7 @@ class IlbanContent extends Component {
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                     {item.cmt_reply ==""?
                     <TouchableOpacity 
-                        style= {{marginHorizontal:6}}
+                        style= {{marginHorizontal:12,padding:5}}
                         onPress={() => {
                             this.setState({replying:true, cmt_id:item.cmt_id},
                                  ()=>{
@@ -2409,10 +2440,13 @@ class IlbanContent extends Component {
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked,index)}>
+                    <TouchableOpacity 
+                        style= {{display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end',padding:5}}
+                        onPress={()=>this.cmtLike(item.cmt_id, item.is_liked,index)}
+                    >
                         {item.is_liked?<Thumbfillsvg width='12' height='12'/>:<Thumbsvg width='12' height='12'/>}
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10,marginLeft:6}}>{item.cmt_like}</Text>
                     </TouchableOpacity>
-                    <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
             </View>
         </View>
