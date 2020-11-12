@@ -1528,7 +1528,7 @@ class IlbanWrite extends React.Component {
     //console.log(image);
     // console.log(index);
     return (
-      <View key={image.props.id}>
+      <Pressable key={image.props.id}>
         <Image
           style={styles.market_RenderImage}
           source={
@@ -1542,7 +1542,7 @@ class IlbanWrite extends React.Component {
             <Icon style={{width:20, height:20}} fill='#63579D' name='close-outline'/>
           </TouchableWithoutFeedback>
         </View>
-      </View>
+      </Pressable>
     );
   }
 
@@ -1670,7 +1670,378 @@ class IlbanWrite extends React.Component {
                     <Camsvg />
                   </TouchableOpacity>
                 </View>
-                <ScrollView horizontal style={{height: 150}}>
+                <ScrollView horizontal={true} style={{height: 150}}>
+                  {this.state.images
+                    ? this.state.images.map((item) => this.renderAsset(item))
+                    : null}
+                </ScrollView>
+              </Layout>
+            </Pressable>
+            <Modal
+              visible={modalVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+              onBackdropPress={() => this.setState({modalVisible: false})}>
+              <Confirm
+                confirmText={this.modalList[this.state.modalType].text}
+                frstText="예"
+                OnFrstPress={() => {
+                  this.setState({modalVisible: false}, this.modalList[this.state.modalType].func);
+                }}
+                scndText="아니오"
+                OnScndPress={() => this.setState({modalVisible: false})}
+              />
+            </Modal>
+            <Modal
+              visible={resultVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+              onBackdropPress={() => this.setState({resultVisible: false})}>
+              <Confirm
+                type="result"
+                confirmText={this.state.resultText}
+                frstText="닫기"
+                OnFrstPress={() => {
+                  this.setState({resultVisible: false});
+                  this.gobackfunc();
+                }}
+              />
+            </Modal>
+            <Modal
+              visible={spinnerVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
+              <Spinner size="giant" />
+            </Modal>
+          </SafeAreaView>
+        </KeyboardAvoidingView>
+      </Root>
+    );
+  }
+}
+class BugWrite extends React.Component {
+  //get : 회원정보
+  //post : 포스트 글 업로드
+  //put : ~/{게시판이름}/:{글id}/
+
+  constructor(props) {
+    super(props);
+    const {mode, post} = this.props.route.params;
+    this.state = {
+      isLoading: true,
+      brd_key: 'ilban',
+      post_title: mode == 'edit'?post.post_title:'',
+      post_content: mode == 'edit'?post.post_content:'',
+      Image_index:
+        this.props.route.params.mode == 'edit'
+          ? this.props.route.params.image.length
+          : 0,
+      images:
+        this.props.route.params.mode == 'edit'
+          ? this.props.route.params.image
+          : [],
+      post_category: mode == 'edit'?post.post_category-1:0,
+      popoverVisible : false,
+      modalVisible : false,
+      resultVisible : false,
+      resultText : '',
+      spinnerVisible : false,
+      modalType : 0,
+    };
+  }
+
+  submitPost = async () => {
+    
+    const {post_title, post_content, post_category, images} = this.state;
+    const url =
+      this.props.route.params.mode == 'edit'
+        ? 'https://dev.unyict.org/api/board_write/modify'
+        : 'https://dev.unyict.org/api/board_write/write/bug_report';
+
+    let formdata = new FormData();
+    formdata.append('brd_key', 'bug_report');
+    formdata.append('post_title', post_title);
+    formdata.append('post_content', post_content);
+    images.map((item) => {
+      formdata.append('post_file[]', {
+        uri: item.props.path,
+        type: item.props.mime,
+        name: 'image.jpg',
+      });
+    });
+    
+    this.props.route.params.mode == 'edit'
+      ? formdata.append('post_id', this.props.route.params.post.post_id)
+      : null;
+    
+    console.log(formdata);
+
+    await axios
+      .post(url, formdata)
+      .then((response) => {
+        const {message, status} = response.data;
+        if (status == '500') {
+          this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
+        } else if (status == '200') {
+          this.setState({spinnerVisible: false, resultVisible: true, 
+            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'신고해주셔서 감사합니다. 신속히 조치할 수 있도록 하겠습니다.')});
+        }
+      })
+      .catch((error) => {
+        this.setState({spinnerVisible: false});
+        alert(JSON.stringify(error));
+      });
+  };
+
+  filterSpamKeyword = async () => {
+    const {post_title, post_content} = this.state;
+
+    var formdata = new FormData();
+    formdata.append('title', post_title);
+    formdata.append('content', post_content);
+    formdata.append('csrf_test_name', '');
+
+    //Keyboard
+    Keyboard.dismiss();
+
+    await axios
+      .post('https://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .then((response) => {
+        const {message, status} = response.data;
+        if (status == '500') {
+          alert(message);
+        } else if (status == '200') {
+          this.setState({modalVisible: true, modalType:0});
+        }
+      })
+      .catch((error) => {
+        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+      });
+  };
+
+  gobackfunc = () => {
+    this.cleanupImages();
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#B09BDE');
+      StatusBar.setBarStyle('default');
+    }
+
+    const {navigation} = this.props;
+    navigation.goBack();
+  };
+
+  cleanupImages() {
+    ImagePicker.clean()
+      .then(() => {
+        console.log('Temporary images history cleared');
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
+  //사진버튼 클릭했을 때
+  onClickAddImage() {
+    const buttons = ['카메라 촬영', '갤러리에서 선택', '취소'];
+    ActionSheet.show(
+      {options: buttons, cancelButtonIndex: 2, title: 'Select a photo'},
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            this.takePhotoFromCamera();
+            break;
+          case 1:
+            this.choosePhotoFromGallery();
+            break;
+          default:
+            break;
+        }
+      },
+    );
+  }
+
+  //카메라로 사진 찍기
+  takePhotoFromCamera() {
+    ImagePicker.openCamera({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then((image) => {
+      this.onSelectedImage(image);
+      //  console.log(image);
+    });
+  }
+
+  //갤러리에서 사진 가져오기
+  choosePhotoFromGallery() {
+    ImagePicker.openPicker({
+      multiple: true,
+      includeExif: false,
+    }).then((image) => {
+      image.map((item) => this.onSelectedImage(item));
+      //console.log(image);
+    });
+  }
+
+  //불러온 사진의 정보를 this.state에 저장
+  onSelectedImage(image) {
+    console.log(image);
+    let newImages = this.state.images;
+    const source = {uri: image.path};
+    let item = {
+      url: source,
+      props : {
+        id: Date.now(),
+        edit : false, 
+        index: this.state.Image_index,
+        mime: image.mime,
+        path: image.path,
+        content: image.data,
+      },
+    };
+    console.log(item);
+    this.setState({Image_index: this.state.Image_index + 1});
+    newImages.push(item);
+    this.setState({images: newImages});
+  }
+  
+  deleteImage(index) {
+    const {images, Image_index} = this.state;
+    images.splice(index,1);
+    images.map(i => i.props.index>index
+      ?i.props.index--
+      :null
+    );
+    this.setState({images: images, Image_index:Image_index-1});
+  }
+  
+
+  renderImage(image) {
+    //console.log(image);
+    // console.log(index);
+    return (
+      <Pressable key={image.props.id}>
+        <Image
+          style={styles.market_RenderImage}
+          source={
+            image.props.edit
+              ? {uri: image.url}
+              : image.url
+          }
+        />
+        <View style={{position:'absolute', right:0, zIndex:2, width:20, height:20}}>
+          <TouchableWithoutFeedback onPress={()=>this.deleteImage(image.props.index)}>
+            <Icon style={{width:20, height:20}} fill='#63579D' name='close-outline'/>
+          </TouchableWithoutFeedback>
+        </View>
+      </Pressable>
+    );
+  }
+
+  renderAsset(image) {
+    if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
+      return this.renderVideo(image);
+    }
+
+    return this.renderImage(image);
+  }
+
+
+  renderSelectItems = () => (
+    <View style = {{marginLeft : 12, marginVertical : 10, alignItems:'center', justifyContent:'center'}}>
+        <TouchableOpacity style={{flexDirection:'row', borderRadius:10, backgroundColor:'#978DC7', padding:15, width:80, justifyContent:'space-between'}} onPress={()=>this.setState({popoverVisible:true})}>    
+          <Text category='h5' style={{color:'white'}}>
+            {this.categoryList[this.state.post_category]}</Text>
+          <Text style={{color:'white'}}>▼</Text>
+        </TouchableOpacity>
+    </View>
+  );
+
+  componentDidMount() {
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#F4F4F4');
+      StatusBar.setBarStyle('dark-content');
+    }
+  }
+
+  modalList =[
+    {
+      text : this.props.route.params.mode == 'edit'? '버그 신고를 수정하시겠습니까?': '버그를 신고하시겠습니까?',
+      func : this.submitPost
+    },
+    {
+      text : '버그 신고를 그만하시겠습니까?',
+      func : this.gobackfunc
+    }
+  ]
+
+  //end: header
+	render() {
+		const {navigation} = this.props;
+		const {post_title, post_content, post_category, resultVisible, modalVisible, spinnerVisible, resultText} = this.state;
+		return (
+      <Root>
+        <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : ""}
+            style={{flex:1}} 
+        >          
+          <SafeAreaView  style={{flex: 1}} >
+            <Pressable
+              style={{flex: 1}}
+              onPress={()=>Keyboard.dismiss()}
+            >
+              <WriteContentToptab
+                  text="버그신고"
+                  right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+                  func={this.filterSpamKeyword}
+                  gbckfunc={()=>{Keyboard.dismiss();this.setState({modalType : 1, modalVisible:true})}}
+                  gbckuse={true}
+                />
+                <TextInput
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: 8.5,
+                    marginTop: 18,
+                    marginHorizontal: 12,
+                    marginBottom: 14,
+                    fontSize: 18,
+                    paddingHorizontal : 10
+                  }}
+                  placeholder="신고 제목을 적어주세요."
+                  onChangeText={(nextValue) => this.setState({post_title: nextValue})}
+                  placeholderTextColor="#A897C2"
+                  value={post_title}
+                />
+              <TextInput
+                value={post_content}
+                style={{
+                  height: '80%',
+                  maxHeight: '50%',
+                  backgroundColor: '#ffffff',
+                  borderRadius: 8.5,
+                  marginHorizontal: 12,
+                  marginBottom: 14,
+                  fontSize: 18,
+                  paddingHorizontal : 10
+                }}
+                placeholder="버그 내용을 적어주세요"
+                onChangeText={(nextValue) => this.setState({post_content: nextValue})}
+                multiline={true}
+                textAlignVertical="top"
+                textStyle={{minHeight: 100}}
+                placeholderTextColor="#A897C2"
+              />
+              <Layout style={{...styles.picture, flex:1}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginVertical: 10,
+                  }}>
+                  <Text category="h4" style={{color:'#63579D', fontSize:18}}> 사진(오류 화면을 캡쳐해주세요.)</Text>
+                  <TouchableOpacity onPress={() => this.onClickAddImage()}>
+                    <Camsvg />
+                  </TouchableOpacity>
+                </View>
+                <ScrollView horizontal={true} style={{height: 150}}>
                   {this.state.images
                     ? this.state.images.map((item) => this.renderAsset(item))
                     : null}
@@ -1796,4 +2167,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export {defaultWrite, MarketWrite, AlbaWrite, GominWrite, IlbanWrite};
+export {defaultWrite, MarketWrite, AlbaWrite, GominWrite, IlbanWrite,BugWrite};

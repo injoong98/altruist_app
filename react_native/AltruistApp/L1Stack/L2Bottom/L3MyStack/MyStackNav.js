@@ -3,6 +3,7 @@ import {SafeAreaView,TouchableWithoutFeedback,Linking} from 'react-native'
 import {createStackNavigator} from '@react-navigation/stack';
 import {Layout,Text,TopNavigation,Button,Icon, TopNavigationAction} from '@ui-kitten/components';
 import {IlbanContent, GominContent, MarketContent, AlbaContent} from '../../Content'
+import {BugWrite} from '../../Write'
 import {Mypage} from './Mypage';
 import {MyList} from './MyList';
 import {MyPoint} from './MyPoint';
@@ -66,5 +67,6 @@ export const MyStackNav = () =>(
         <Screen name = "MyLeave" component={MyLeave}/>
         <Screen name = "AboutApp" component={AboutApp}/>
         <Screen name = "MyGame" component={MyGame}/>
+        <Screen name = "BugWrite" component={BugWrite}/>
     </Navigator>
 )

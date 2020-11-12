@@ -201,6 +201,9 @@ class Mypage extends React.Component{
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyAlarmSetting');}}>
                         <Text style={styles.menuItem}>알림 설정</Text>
                       </TouchableOpacity>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('BugWrite',{mode:'upload'});}}>
+                        <Text style={styles.menuItem}>버그 신고</Text>
+                      </TouchableOpacity>
                       {
                         showGameCnt >7 ?
                       <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyGame');this.setState({showGameCnt:0})}}>
