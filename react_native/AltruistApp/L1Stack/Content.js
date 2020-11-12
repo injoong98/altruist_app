@@ -2337,11 +2337,15 @@ class IlbanContent extends Component {
                     <HTML 
                         baseFontStyle={{ fontFamily: "Roboto" }}
                         ignoredStyles={["font-family"]}
-                        html={post.content} 
-                        imagesMaxWidth={Dimensions.get('window').width}
+                        html={post.post_content}
+                        tagsStyles={{
+                            img:{maxWidth:Dimensions.get('window').width*0.8,maxHeight:Dimensions.get('window').width*0.8,resizeMode:'contain'},
+                        }}
+                        imagesMaxWidth={Dimensions.get('window').width*0.8}
                         onLinkPress={(event, href)=>{
                             Linking.openURL(href)
-                        }}/>
+                        }}                        
+                    />
                 </View>
                 <View style={{alignItems:'center', width:'100%', paddingHorizontal:15}}>
                     {image
