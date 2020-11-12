@@ -158,7 +158,6 @@ class Comment_write extends CB_Controller
 
 			
 	}
-	
 	/**
 	 * 댓글 작성시 업데이트하는 함수입니다
 	 */
@@ -479,7 +478,7 @@ class Comment_write extends CB_Controller
 				$updatedata['cmt_device'] = ($this->cbconfig->get_device_type() === 'mobile')
 					? 'mobile' : 'desktop';
 				$cmt_id = $this->Comment_model->insert($updatedata); //코멘트 insert
-				$view['cmt_id'] = $cmt_id;
+				$view['new_cmt_id'] = $cmt_id;
 				$this->Post_model->comment_updated($post_id, cdate('Y-m-d H:i:s'));
 				
 				
@@ -902,10 +901,10 @@ class Comment_write extends CB_Controller
 			}
 		}
 	}
-/**
+	/**
 	 * 댓글 작성시 알림을 보내는 함수입니다
 	 */
-	public function comment_noti()
+	public function update_noti()
 	{
 		// 이벤트 라이브러리를 로딩합니다
 		$eventname = 'event_comment_write_update';
@@ -914,19 +913,25 @@ class Comment_write extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
 
-		$cmt_id = (int) $this->input->post('cmt_id');
 		$post_id = (int) $this->input->post('post_id');
-		$post = $this->Post_model->get_one($post_id);
+		$new_cmt_id = (int) $this->input->post('new_cmt_id');
 
+		$post = $this->Post_model->get_one($post_id);
 		$board = $this->board->item_all(element('brd_id', $post));
+
 		$mem_id = (int) $this->member->item('mem_id');
 
 		$mode = ($this->input->post('mode') === 'cu') ? 'cu' : 'c';
 
-		$is_comment_name = ($this->member->is_member() === false) ? true : false;
-		$can_comment_secret = (element('use_comment_secret', $board) === '1' && $this->member->is_member()) ? true : false;
+		$origin = '';
+		$reply = '';
+		if ($this->input->post('cmt_id') && $mode === 'c') {
+			$parent_id = (int) $this->input->post('cmt_id');
+			$origin = $this->Comment_model->get_one($parent_id);
+		}
 
-
+		
+		
 			/**
 			 * 유효성 검사를 통과한 경우입니다.
 			 * 즉 데이터의 insert 나 update 의 process 처리가 필요한 상황입니다
@@ -936,10 +941,7 @@ class Comment_write extends CB_Controller
 			Events::trigger('formruntrue', $eventname);
 
 			$content_type = 0;
-			$cmt_content
-				= ($this->input->post('cmt_content') === '<p></p>' OR $this->input->post('cmt_content') === '<p>&nbsp;</p>')
-				? '' : $this->input->post('cmt_content');
-
+			
 			if ($mode === 'c') {
 				
 				$brd_key = element('brd_key', $board);
@@ -954,12 +956,12 @@ class Comment_write extends CB_Controller
 				if ($this->cbconfig->item('use_notification')
 					&& $this->cbconfig->item('notification_comment')) {
 					$this->load->library('notificationlib');
-					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
+					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $new_cmt_id;
 					$this->notificationlib->set_noti(
 						abs(element('mem_id', $post)),
 						$mem_id,
 						'comment',
-						$cmt_id,
+						$new_cmt_id,
 						$not_message,
 						$not_url
 					);
@@ -977,12 +979,12 @@ class Comment_write extends CB_Controller
 				if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_comment')) {
 					$this->load->library('pushlib');
 				//	$not_message = $updatedata['cmt_nickname'] . '님이 [' . element('post_title', $post) . '] 에 댓글을 남기셨습니다';
-					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
+					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $new_cmt_id;
 					$this->pushlib->set_push(
 						abs(element('mem_id', $post)),
 						$mem_id,
 						'이타주의자들',
-						$cmt_id,
+						$new_cmt_id,
 						$not_message,
 						$not_url,
 						$push_type,
@@ -993,19 +995,18 @@ class Comment_write extends CB_Controller
 
 					// 답변글에 대한 알림 
 				$not_message = $updatedata['cmt_nickname'] . '님이 [' . element('post_title', $post) . '] 글의 회원님의 '.$reply_type.'에 답변댓글을 남기셨습니다';
-				if ($origin
-					&& $cmt_reply
+				if ($origin!==''
 					&& $this->cbconfig->item('use_notification')
 					&& $this->cbconfig->item('notification_comment_comment')
 					&& abs(element('mem_id', $post)) !== abs(element('mem_id', $origin))) {
 					$this->load->library('notificationlib');
 					//$not_message = $updatedata['cmt_nickname'] . '님이 [' . element('post_title', $post) . '] 글의 회원님의 댓글에 답변댓글을 남기셨습니다';
-					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
+					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $new_cmt_id;
 					$this->notificationlib->set_noti(
 						abs(element('mem_id', $origin)),
 						$mem_id,
 						'comment_comment',
-						$cmt_id,
+						$new_cmt_id,
 						$not_message,
 						$not_url
 					);
@@ -1014,16 +1015,16 @@ class Comment_write extends CB_Controller
 				//대댓글 푸시
 				$push_type = 'token';
 				$topic_name = '';
-				if ($origin && $cmt_reply && $this->cbconfig->item('use_push') && $this->cbconfig->item('notification_comment_comment') && abs(element('mem_id', $post)) !== abs(element('mem_id', $origin))) {
+				if ($origin!=='' && $this->cbconfig->item('use_push') && $this->cbconfig->item('notification_comment_comment') && abs(element('mem_id', $post)) !== abs(element('mem_id', $origin))) {
 					$this->load->library('pushlib');
 				//	$not_message = $updatedata['cmt_nickname'] . '님이 [' . element('post_title', $post) . '] 글의 회원님의 댓글에 답변댓글을 남기셨습니다';
-					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
+					$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $new_cmt_id;
 					
 					$this->pushlib->set_push(
 						abs(element('mem_id', $origin)),
 						$mem_id,
 						'이타주의자들',
-						$cmt_id,
+						$new_cmt_id,
 						$not_message,
 						$not_url,
 						$push_type,
@@ -1031,8 +1032,8 @@ class Comment_write extends CB_Controller
 					);
 				}
 			}
-		
 	}
+
 
 	/**
 	 * 댓글입력시 비회원이 입력한 경우 닉네임을 체크합니다
