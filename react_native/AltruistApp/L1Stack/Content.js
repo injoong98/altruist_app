@@ -1237,7 +1237,7 @@ class MarketContent extends React.Component {
                         </Layout>
                         <Layout style={{marginVertical : 10, marginBottom:15, flexDirection:'row'}}>
                             <Text category='h5' style={{color:'#989898'}}>가격</Text>
-                            <Text category='h5' style={{marginLeft:10}}>{(post.deal_price+'원').replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                            <Text category='h5' style={{marginLeft:10}}>{()=>(post.deal_price+'원').replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                         </Layout>
                     </Layout>
                     <Divider/>
@@ -1297,6 +1297,8 @@ class MarketContent extends React.Component {
         const { width } = Dimensions.get("window");
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, popoverVisible, modalType,commentWrited} = this.state;
 
+        console.log('post.deal_status : ', post.deal_status)
+        console.log('post : ', post)
         return(
             <KeyboardAvoidingView
                behavior={Platform.OS == "ios" ? "padding" : ""}
