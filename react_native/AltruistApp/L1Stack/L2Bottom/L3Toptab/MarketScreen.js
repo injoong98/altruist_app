@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Image, ActivityIndicator, SafeAreaView, View, StyleSheet, TouchableOpacity,} from 'react-native';
+import {Image, ActivityIndicator, SafeAreaView, View, StyleSheet, TouchableOpacity,StatusBar} from 'react-native';
 import {Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction, Button, List, Card, Spinner} from '@ui-kitten/components';
 import axios from 'axios'
 import {PostTime} from '../../../components/PostTime'
@@ -61,6 +61,12 @@ class MarketScreen extends React.Component {
   componentDidMount(){
     this.setState({current_page:1, isNoMoreData : false,}, this.getPostFirst);
   } 
+  
+  
+  componentWillUnmount(){
+    this._ismounted = false;
+    console.log('marketScreen : componentwillunount')
+  }
 
   onRefresh= () =>{
     this.getPostFirst();

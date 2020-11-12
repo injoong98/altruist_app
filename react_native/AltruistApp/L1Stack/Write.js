@@ -196,6 +196,13 @@ class GominWrite extends React.Component {
     }
   }
 
+  
+  componentWillUnmount(){
+    this._ismounted = false;
+    console.log('Gomin : componentwillunount')
+  }
+
+
   modalList =[
     {
       text : this.props.route.params.mode == 'edit'? '게시글을 수정하시겠습니까?': '게시글을 작성하시겠습니까?',
@@ -340,9 +347,13 @@ class MarketWrite extends React.Component {
           : 0,
       deal_type:
         this.props.route.params.mode == 'edit'
-          ? this.props.route.params.post.deal_type
-          : 2, // 0: 직거래, 1: 배송, 2: 둘다가능
-      deal_status: 1, // 0: 판매완료, 1: 판매중
+        ? this.props.route.params.post.deal_type
+        : 2, // 0: 직거래, 1: 배송, 2: 둘다가능
+        deal_status: 1, // 0: 판매완료, 1: 판매중
+        // deal_status: 
+        // this.props.route.params.mode == 'edit'
+        // ? this.props.route.params.post.deal_status
+        // : 1, // 0: 판매완료, 1: 판매중
       post_thumb_use:
         this.props.route.params.mode == 'edit'
           ? this.props.route.params.post.post_thumb_use
@@ -371,11 +382,17 @@ class MarketWrite extends React.Component {
   }
 
   componentDidMount() {
+    this._ismounted = true;
     if(Platform.OS!=='ios'){
       StatusBar.setBackgroundColor('#F4F4F4');
       StatusBar.setBarStyle('dark-content');
     }
+    console.log('componentdidmount')
+  }
 
+  componentWillUnmount(){
+    this._ismounted = false;
+    console.log('Market : componentwillunount')
   }
 
   submitPost = async () => {
@@ -929,6 +946,13 @@ class AlbaWrite extends React.Component {
     }
   }
   
+
+  componentWillUnmount(){
+    this._ismounted = false;
+    console.log('Alba : componentwillunount')
+  }
+
+
   setTipVisible = (bool) => {
     this.setState({isTipVisible: bool});
   };
@@ -1571,6 +1595,13 @@ class IlbanWrite extends React.Component {
       StatusBar.setBarStyle('dark-content');
     }
   }
+
+  
+  componentWillUnmount(){
+    this._ismounted = false;
+    console.log('Ilban : componentwillunount')
+  }
+
 
   modalList =[
     {

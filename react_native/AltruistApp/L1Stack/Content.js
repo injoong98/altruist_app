@@ -394,19 +394,21 @@ class GominContent extends React.Component{
         this.getCommentData(post_id);
     } 
     async componentDidMount(){
-        if(Platform.OS!=='ios'){
-            StatusBar.setBackgroundColor('#FFFFFF');
-            StatusBar.setBarStyle('dark-content');        
-        }
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#FFFFFF');
+            StatusBar.setBarStyle('dark-content');        
+        }
     }
 
     componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+        }
     }
     modalList = [
         {
@@ -797,9 +799,14 @@ class MarketContent extends React.Component {
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
     }
+
     componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
+        this._ismounted = false;
+        console.log('Market : componentwillunount')
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+        }
     }
 
     getPostData = async(post_id)=>{
@@ -1237,7 +1244,7 @@ class MarketContent extends React.Component {
                         </Layout>
                         <Layout style={{marginVertical : 10, marginBottom:15, flexDirection:'row'}}>
                             <Text category='h5' style={{color:'#989898'}}>가격</Text>
-                            <Text category='h5' style={{marginLeft:10}}>{()=>(post.deal_price+'원').replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
+                            <Text category='h5' style={{marginLeft:10}}>{(post.deal_price+'원').replace(/\d(?=(\d{3})+\원)/g, '$&,')}</Text>
                         </Layout>
                     </Layout>
                     <Divider/>
@@ -1298,7 +1305,7 @@ class MarketContent extends React.Component {
         const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, popoverVisible, modalType,commentWrited} = this.state;
 
         console.log('post.deal_status : ', post.deal_status)
-        console.log('post : ', post)
+        console.log('MarketCotentLIST : ', post)
         return(
             <KeyboardAvoidingView
                behavior={Platform.OS == "ios" ? "padding" : ""}
@@ -1310,11 +1317,11 @@ class MarketContent extends React.Component {
                     backgroundColor='#F4F4F4'
                     gbckfunc={() => {
                         this.props.navigation.goBack();
-                        if(Platform.OS!=='ios'){
-                            StatusBar.setBackgroundColor('#B09BDE');
-                            StatusBar.setBarStyle('default');}
+                        // if(Platform.OS!=='ios'){
+                        //     StatusBar.setBackgroundColor('#B09BDE');
+                        //     StatusBar.setBarStyle('default');}
                         }
-                        }                        
+                    }                        
                     gbckuse={true}
                     right={<this.MoreAction/>}/>
                 {this.state.isLoading ?
@@ -1520,8 +1527,10 @@ class AlbaContent extends React.Component {
     }
 
     componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+        }
     }
 
     getPostData = async(post_id)=>{
@@ -2266,9 +2275,9 @@ class IlbanContent extends Component {
 
     componentWillUnmount(){
         if(Platform.OS!=='ios'){
-        StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
         }
-        StatusBar.setBarStyle('default');
     }
     
     modalList = [
