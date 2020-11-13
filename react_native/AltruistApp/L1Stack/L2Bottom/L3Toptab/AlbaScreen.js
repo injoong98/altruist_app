@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Image, Layout, ActivityIndicator, TouchableOpacity, LogBox} from 'react-native';
 import { Card, List, Text, Divider, Button, Spinner} from '@ui-kitten/components';
 import axios from 'axios';
-import {PostTime} from '../../../components/PostTime';
+import {PostTime,ExpireTime} from '../../../components/PostTime';
 import Writesvg from '../../../assets/icons/write.svg'
 import Viewsvg from '../../../assets/icons/view.svg';
 LogBox.ignoreLogs([
@@ -41,7 +41,7 @@ class AlbaScreen extends React.Component {
   // const renderItemFooter = (footerProps) => (
   //     <Text></Text>
   // );
-
+  
   getPostList = async() =>{
     await axios.get(`http://dev.unyict.org/api/board_post/lists/b-a-3?page=${this.state.current_page}`)
     .then((response)=>{
@@ -118,7 +118,19 @@ class AlbaScreen extends React.Component {
               <View style={{flex : 6.5}}>
                 <View style={{flexDirection:'row', marginVertical : 5, padding : 5, flex : 6, maxHeight:50}}>
                   <View style={{flex:2.5}}>
-                    <PostTime category='c1' style={{marginHorizontal:5}} datetime = {item.post_datetime}/>
+                    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                      <View  style={{flexDirection:'row'}}>
+                        <PostTime category='c1' style={{marginHorizontal:5}} datetime = {item.post_datetime}/>
+                        <Text category='c1'>등록</Text>
+                      </View>
+                      {
+                        item.answer_expire_date ? 
+                      <View  style={{flexDirection:'row'}}>
+                        <ExpireTime category='c1' style={{marginHorizontal:5}} datetime = {item.answer_expire_date}/>
+                      </View>
+                        :null
+                      }
+                    </View>
                     <Text category = 'h4' style={{margin:5 , borderRadius : 20}} 
                           numberOfLines={2} ellipsizeMode='tail'>{item.title}
                     </Text>

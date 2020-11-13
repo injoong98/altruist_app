@@ -24,3 +24,19 @@ export const PostTime = ({category, datetime, style}) =>{
 
     return (<Text category={category?category:"s2"} style={style?style:{}}>{`${res}`}</Text> )
 }
+export const ExpireTime = ({category, datetime, style}) =>{
+    const datetimestr = datetime.replace(' ','T');
+    const postdatetime = new Date(datetimestr)
+    const datetimeUTC = Date.parse(datetimestr);
+    const datetimenow = new Date() 
+    const now = Date.now()+(1000*60*60*9);
+    const timeDiff  = datetimeUTC-now;
+    var res;
+    if(timeDiff<0){
+        res = '모집 마감'
+    }else{
+        res = `마감일 ${(postdatetime.getMonth()+1)}/${(postdatetime.getDate()-1)}`
+    }
+
+    return (<Text category={category?category:"s2"} style={style?style:{}}>{`${res}`}</Text> )
+}

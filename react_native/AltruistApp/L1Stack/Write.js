@@ -905,7 +905,7 @@ class AlbaWrite extends React.Component {
           : '',
       answer_expire_date:
         this.props.route.params.mode == 'edit'
-          ? this.props.route.params.post.answer_expire_date
+          ? this.props.route.params.post.answer_expire_date.split(' ')[0]
           : '',
       post_hp:
         this.props.route.params.mode == 'edit'
@@ -1069,7 +1069,7 @@ class AlbaWrite extends React.Component {
       formdata.append('alba_type', alba_type);
       formdata.append('alba_salary_type', alba_salary_type);
       formdata.append('alba_salary', alba_salary);
-      formdata.append('answer_expire_date', answer_expire_date);
+      formdata.append('answer_expire_date', answer_expire_date+' 23:59:59');
       console.log(post_thumb_use ? 0 : 1);
       formdata.append('post_thumb_use', post_thumb_use ? 0 : 1);
 
