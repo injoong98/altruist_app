@@ -116,7 +116,8 @@ class GominWrite extends React.Component {
   }
 
   submitPost = async () => {
-    const url =
+      this.setState({spinnerVisible:true});
+      const url =
       this.props.route.params.mode == 'edit'
         ? 'https://dev.unyict.org/api/board_write/modify'
         : 'https://dev.unyict.org/api/board_write/write/b-a-1';
@@ -149,6 +150,7 @@ class GominWrite extends React.Component {
         }
       })
       .catch((error) => {
+        this.setState({spinnerVisible:false});
         alert(JSON.stringify(error));
       });
   };
@@ -170,11 +172,15 @@ class GominWrite extends React.Component {
         const {message, status} = response.data;
         if (status == '500') {
           alert(message);
+          this.setState({spinnerVisible:false});
         } else if (status == '200') {
+          this.setState({spinnerVisible:false});
           this.setState({modalVisible: true, modalType:0});
+
         }
       })
       .catch((error) => {
+        this.setState({spinnerVisible:false});
         alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
   };
@@ -231,7 +237,7 @@ class GominWrite extends React.Component {
 
           <WriteContentToptab text="고민 작성"
             right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-            func={this.filterSpamKeyword}
+            func={()=>{this.filterSpamKeyword();this.setState({spinnerVisible:true});}}
             gbckfunc={()=>{Keyboard.dismiss(); this.setState({modalType : 1, modalVisible:true});}}
             gbckuse={true}/>
           <TextInput
@@ -396,7 +402,7 @@ class MarketWrite extends React.Component {
   }
 
   submitPost = async () => {
-    console.log(this.state);
+    this.setState({spinnerVisible:true});
     const url =
       this.props.route.params.mode == 'edit'
         ? 'https://dev.unyict.org/api/board_write/modify'
@@ -616,12 +622,15 @@ class MarketWrite extends React.Component {
         const {message, status} = response.data;
         if (status == '500') {
           alert(message);
+          this.setState({spinnerVisible:false});
         } else if (status == '200') {
+          this.setState({spinnerVisible:false});
           this.setState({modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
-        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+          this.setState({spinnerVisible:false});
+          alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
   };
 
@@ -661,6 +670,7 @@ class MarketWrite extends React.Component {
             right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
             func={() => {
               this.filterSpamKeyword();
+              this.setState({spinnerVisible:true});
             }}
             gbckfunc={() => {Keyboard.dismiss();this.setState({modalType:1, modalVisible : true})}}
             gbckuse={true}
@@ -893,6 +903,10 @@ class AlbaWrite extends React.Component {
         this.props.route.params.mode == 'edit'
           ? this.props.route.params.post.post_location
           : '',
+      answer_expire_date:
+        this.props.route.params.mode == 'edit'
+          ? this.props.route.params.post.answer_expire_date
+          : '',
       post_hp:
         this.props.route.params.mode == 'edit'
           ? this.props.route.params.post.post_hp
@@ -952,6 +966,79 @@ class AlbaWrite extends React.Component {
     console.log('Alba : componentwillunount')
   }
 
+  dateCompare=(date1,date2)=>{
+    //날짜 비교함수
+    var frst = new Date(date1);
+    var scnd = new Date(date2);
+    console.log('frst : '+frst);
+    console.log('date2 : '+date2);
+    if(frst=='Invalid Date'||scnd=='Invalid Date'){
+      return 'error'
+    }
+    console.log('scnd : '+scnd);
+    return frst >= scnd
+  }
+  
+  dateValidation = (date) =>{
+    if(date==''){
+      this.setState({dateValid:true})
+      return true;
+    }
+    console.log("dateValidation running...");
+    var today = new Date();
+    var number = date.replace(/[^0-9]/g, '').substr(0,8);
+    
+    if(number.length!=8){
+      //입력한 숫자 수가 8자가 아닐 때
+      this.setState({dateValid:false,dateValidMessage:'알맞은 날짜 형식으로 입력해주세요.(ex 2021-02-13'})
+      return false
+    }else{
+      var validResult = this.dateCompare(`${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`,date+'T23:59');
+       
+      if(validResult!='error'){
+        if(!validResult){
+          this.setState({dateValid:true})
+          return true
+        }else{
+          this.setState({dateValid:false,dateValidMessage:'오늘 이후의 날짜만 입력가능합니다.'})
+          return false
+        }
+      }
+      else{
+        this.setState({dateValid:false,dateValidMessage:'알맞은 날짜를 입력해주세요.'})
+        return false
+      }
+    }
+  }
+
+  BdayHyphen = (date) => {
+    var number = date.replace(/[^0-9]/g, '').substr(0,8);
+    var dateWithHyphen = '';
+
+    if (number.length < 5) {
+      dateWithHyphen=number
+    } else if (number.length < 7) {
+     dateWithHyphen += number.substr(0, 4);
+     dateWithHyphen += '-';
+     dateWithHyphen += number.substr(4);
+    } else if (number.length < 11) {
+     dateWithHyphen += number.substr(0, 4);
+     dateWithHyphen += '-';
+     dateWithHyphen += number.substr(4, 2);
+     dateWithHyphen += '-';
+     dateWithHyphen += number.substr(6);
+    } else {
+     dateWithHyphen += number.substr(0, 4);
+     dateWithHyphen += '-';
+     dateWithHyphen += number.substr(4, 2);
+     dateWithHyphen += '-';
+     dateWithHyphen += number.substr(6);
+    }
+
+    var value = dateWithHyphen;
+
+    this.setState({answer_expire_date: value});
+  };
 
   setTipVisible = (bool) => {
     this.setState({isTipVisible: bool});
@@ -966,79 +1053,89 @@ class AlbaWrite extends React.Component {
     this.setState({post_thumb_use: nextChecked});
   };
   submitPost = async () => {
-    const url =
+      this.setState({spinnerVisible:true});
+      const url =
       this.props.route.params.mode == 'edit'
         ? 'https://dev.unyict.org/api/board_write/modify'
         : 'https://dev.unyict.org/api/board_write/write/b-a-3';
 
-    const { post_title, post_content, post_location, post_hp, alba_type, alba_salary_type,  alba_salary, images,post_thumb_use,	isFollowUp,} = this.state;
-    let formdata = new FormData();
-    formdata.append('brd_key', 'b-a-3');
-    formdata.append('post_title', post_title);
-    formdata.append('post_content', post_content);
-    formdata.append('post_location', post_location);
-    formdata.append('post_hp', post_hp);
-    formdata.append('alba_type', alba_type);
-    formdata.append('alba_salary_type', alba_salary_type);
-    formdata.append('alba_salary', alba_salary);
-    console.log(post_thumb_use ? 0 : 1);
-    formdata.append('post_thumb_use', post_thumb_use ? 0 : 1);
+      const { post_title, post_content, post_location, post_hp, alba_type, alba_salary_type,  alba_salary, images,post_thumb_use,	isFollowUp,answer_expire_date} = this.state;
+      let formdata = new FormData();
+      formdata.append('brd_key', 'b-a-3');
+      formdata.append('post_title', post_title);
+      formdata.append('post_content', post_content);
+      formdata.append('post_location', post_location);
+      formdata.append('post_hp', post_hp);
+      formdata.append('alba_type', alba_type);
+      formdata.append('alba_salary_type', alba_salary_type);
+      formdata.append('alba_salary', alba_salary);
+      formdata.append('answer_expire_date', answer_expire_date);
+      console.log(post_thumb_use ? 0 : 1);
+      formdata.append('post_thumb_use', post_thumb_use ? 0 : 1);
 
-    images.map((item) => {
-      formdata.append('post_file[]', {
-        uri: item.path,
-        type: item.mime,
-        name: 'image.jpg',
+      images.map((item) => {
+        formdata.append('post_file[]', {
+          uri: item.path,
+          type: item.mime,
+          name: 'image.jpg',
+        });
       });
-    });
-    this.props.route.params.mode == 'edit'
-      ? formdata.append('post_id', this.props.route.params.post.post_id)
-      : null;
+      this.props.route.params.mode == 'edit'
+        ? formdata.append('post_id', this.props.route.params.post.post_id)
+        : null;
 
-    console.log(formdata);
+      console.log(formdata);
 
-    await axios
-      .post(url, formdata)
-      .then((response) => {
-        const {message, status} = response.data;
-        if (status == '500') {
-          this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
-        } else if (status == '200') {
-          this.setState({spinnerVisible: false, resultVisible: true, 
-            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
-        }
-      })
-      .catch((error) => {
-        this.setState({spinnerVisible: false});
-        console.log(error);
-        alert(error);
-      });
+      await axios
+        .post(url, formdata)
+        .then((response) => {
+          const {message, status} = response.data;
+          if (status == '500') {
+            this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
+          } else if (status == '200') {
+            this.setState({spinnerVisible: false, resultVisible: true, 
+              resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+          }
+        })
+        .catch((error) => {
+          this.setState({spinnerVisible: false});
+          console.log(error);
+          alert(error);
+        });
+      
   };
 
   filterSpamKeyword = async () => {
-    const {post_title, post_content} = this.state;
+    if(this.state.dateValid!==false){
+      const {post_title, post_content} = this.state;
 
-    var formdata = new FormData();
-    formdata.append('title', post_title);
-    formdata.append('content', post_content);
-    formdata.append('csrf_test_name', '');
+      var formdata = new FormData();
+      formdata.append('title', post_title);
+      formdata.append('content', post_content);
+      formdata.append('csrf_test_name', '');
 
-    //Keyboard
-    Keyboard.dismiss();
+      //Keyboard
 
-    await axios
+      await axios
       .post('https://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
           alert(message);
+          this.setState({spinnerVisible:false});
         } else if (status == '200') {
+          this.setState({spinnerVisible:false});
           this.setState({modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
-        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+          this.setState({spinnerVisible:false});
+          alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
+    }else{
+      this.setState({spinnerVisible: false})
+      this.setState({resultVisibleNotGoback: true,resultVisibleNotGobackText : '모집 날짜를 알맞게 입력해주세요 '})
+    }
   };
   
 
@@ -1161,14 +1258,18 @@ class AlbaWrite extends React.Component {
   );
 
   render() {
-    const { post_title, post_content, post_location, post_hp, alba_salary, alba_salary_type,
-			alba_type, isFollowUp, modalVisible, resultVisible, spinnerVisible, } = this.state;
+    const { post_title, post_content, post_location, post_hp, alba_salary, alba_salary_type, answer_expire_date,
+			alba_type, isFollowUp, modalVisible, resultVisible, spinnerVisible,resultVisibleNotGoback } = this.state;
     const {navigation} = this.props;
     return (
       <SafeAreaView style={{flex: 1}}>
         <WriteContentToptab text="채용공고"
           right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-          func={this.filterSpamKeyword}
+          func={()=>{
+            Keyboard.dismiss(); 
+            this.setState({spinnerVisible:true});
+            this.filterSpamKeyword();
+          }}
           gbckfunc={()=>{Keyboard.dismiss();this.setState({modalType : 1, modalVisible:true})}}
           gbckuse={true}
         />
@@ -1251,6 +1352,25 @@ class AlbaWrite extends React.Component {
               </View>
             </View>
             <TextInput
+              value={answer_expire_date}
+              style={[styles.input, {fontSize: 16},{borderWidth:this.state.dateValid!==false? 0 : 1,borderColor:'red'}]}
+              placeholder="모집 마감(미입력 : 상시모집) (ex 2020-11-30)"
+              onChangeText={(nextText) => {
+                this.setState({answer_expire_date: nextText});
+                this.BdayHyphen(nextText);
+                this.dateValidation(nextText)
+              }}
+              keyboardType='number-pad'
+              onEndEditing={()=>{this.dateValidation(answer_expire_date)}}
+            />
+            {
+              this.state.dateValid!==false? null :
+              <View style={{paddingLeft:"5%",width:'100%'}}>
+                <Text style={{color:'red'}}>{this.state.dateValidMessage}</Text>
+              </View>
+            }
+
+            <TextInput
               value={post_location}
               style={[styles.input, {fontSize: 18}]}
               placeholder="근무지"
@@ -1258,6 +1378,7 @@ class AlbaWrite extends React.Component {
                 this.setState({post_location: nextText});
               }}
             />
+            
             <TextInput
               value={post_content}
               style={[styles.input, {fontSize: 18}]}
@@ -1338,6 +1459,19 @@ class AlbaWrite extends React.Component {
 						/>
 					</Modal>
 					<Modal
+						visible={resultVisibleNotGoback}
+						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+						onBackdropPress={() => this.setState({resultVisibleNotGoback: false})}>
+						<Confirm
+							type="result"
+							confirmText={this.state.resultVisibleNotGobackText}
+							frstText="닫기"
+							OnFrstPress={() => {
+								this.setState({resultVisibleNotGoback: false});
+							}}
+						/>
+					</Modal>
+					<Modal
 						visible={spinnerVisible}
 						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
 						<Spinner size="giant" />
@@ -1381,7 +1515,7 @@ class IlbanWrite extends React.Component {
   categoryList = ['자유', '게임', '소식', '정보'];
 
   submitPost = async () => {
-    
+    this.setState({spinnerVisible:true});
     const {post_title, post_content, post_category, images} = this.state;
     const url =
       this.props.route.params.mode == 'edit'
@@ -1441,12 +1575,15 @@ class IlbanWrite extends React.Component {
         const {message, status} = response.data;
         if (status == '500') {
           alert(message);
+          this.setState({spinnerVisible:false});
         } else if (status == '200') {
+          this.setState({spinnerVisible:false});
           this.setState({modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
-        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+          this.setState({spinnerVisible:false});
+          alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
   };
 
@@ -1632,7 +1769,8 @@ class IlbanWrite extends React.Component {
               <WriteContentToptab
                   text="이타게시판"
                   right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-                  func={this.filterSpamKeyword}
+                  func={()=>{this.filterSpamKeyword();
+                    this.setState({spinnerVisible:true});}}
                   gbckfunc={()=>{Keyboard.dismiss();this.setState({modalType : 1, modalVisible:true})}}
                   gbckuse={true}
                 />
@@ -1779,6 +1917,7 @@ class BugWrite extends React.Component {
   }
 
   submitPost = async () => {
+    this.setState({spinnerVisible:true});
     
     const {post_title, post_content, post_category, images} = this.state;
     const url =
@@ -1838,12 +1977,14 @@ class BugWrite extends React.Component {
         const {message, status} = response.data;
         if (status == '500') {
           alert(message);
+          this.setState({spinnerVisible:false});
         } else if (status == '200') {
-          this.setState({modalVisible: true, modalType:0});
+          this.setState({spinnerVisible:false,modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
         alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+        this.setState({spinnerVisible:false});
       });
   };
 
@@ -2021,7 +2162,8 @@ class BugWrite extends React.Component {
               <WriteContentToptab
                   text="버그신고"
                   right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-                  func={this.filterSpamKeyword}
+                  func={()=>{this.filterSpamKeyword();
+                    this.setState({spinnerVisible:true});}}
                   gbckfunc={()=>{Keyboard.dismiss();this.setState({modalType : 1, modalVisible:true})}}
                   gbckuse={true}
                 />
