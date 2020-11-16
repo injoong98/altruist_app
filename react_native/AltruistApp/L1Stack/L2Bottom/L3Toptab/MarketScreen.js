@@ -162,7 +162,6 @@ class MarketScreen extends React.Component {
     return (
       this.state.isLoading ?
       <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-          <Text>is Loading now...</Text>
           <Spinner size="giant"/>
       </View>
       :

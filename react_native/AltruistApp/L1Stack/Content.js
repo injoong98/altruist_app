@@ -593,7 +593,6 @@ class GominContent extends React.Component{
                 right={<this.MoreAction/>}/>
             {this.state.isLoading ?
                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                    <Text>is Loading now...</Text>
                     <Spinner size="giant"/>
                 </View>
                 :<Layout style={{flex:1}}>
@@ -1326,7 +1325,6 @@ class MarketContent extends React.Component {
                     right={<this.MoreAction/>}/>
                 {this.state.isLoading ?
                     <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                        <Text>is Loading now...</Text>
                         <Spinner size="giant"/>
                     </View>
                     :<Layout style={{flex:1}}>
@@ -2516,7 +2514,6 @@ class IlbanContent extends Component {
                 />
             {this.state.isLoading ?
                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                    <Text>is Loading now...</Text>
                     <Spinner size="giant"/>
                 </View>
                 :<Layout style={{flex:1}}>
