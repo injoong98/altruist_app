@@ -125,10 +125,13 @@ class AlbaScreen extends React.Component {
                       </View>
                       {
                         item.answer_expire_date ? 
-                      <View  style={{flexDirection:'row'}}>
+                        <View  style={{flexDirection:'row'}}>
                         <ExpireTime category='c1' style={{marginHorizontal:5}} datetime = {item.answer_expire_date}/>
                       </View>
-                        :null
+                        :
+                      <View>
+                        <Text category='c1'>상시모집</Text>
+                      </View>
                       }
                     </View>
                     <Text category = 'h4' style={{margin:5 , borderRadius : 20}} 

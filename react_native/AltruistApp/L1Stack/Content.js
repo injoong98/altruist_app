@@ -1532,14 +1532,18 @@ class AlbaContent extends React.Component {
     }
 
     expired = (datetime) =>{
-        const datetimestr = datetime.replace(' ','T');
-        const postdatetime = new Date(datetimestr)
-        const datetimeUTC = Date.parse(datetimestr);
-        const datetimenow = new Date() 
-        const now = Date.now()+(1000*60*60*9);
-        const timeDiff  = datetimeUTC-now;
-    
-        return timeDiff<0
+        if(datetime){
+            const datetimestr = datetime.replace(' ','T');
+            const postdatetime = new Date(datetimestr)
+            const datetimeUTC = Date.parse(datetimestr);
+            const datetimenow = new Date() 
+            const now = Date.now()+(1000*60*60*9);
+            const timeDiff  = datetimeUTC-now;
+        
+            return timeDiff<0
+        }else{
+            return true
+        }
     }
 
     getPostData = async(post_id)=>{
@@ -1713,9 +1717,13 @@ class AlbaContent extends React.Component {
                                 </View>
                             </View>
                             <View style={{flexDirection : 'row', justifyContent:'flex-end', position:'absolute', left:0, top:0}}>
-                                <View style={{alignItems:'center'}}>
-                                    <ExpireTime category='h2' style={{fontSize:14}} datetime = {post.answer_expire_date}/>
-                                </View>
+                                {
+                                    post.answer_expire_date? 
+                                    <View style={{alignItems:'center'}}>
+                                        <ExpireTime category='h2' style={{fontSize:14}} datetime = {post.answer_expire_date}/>
+                                    </View>
+                                    : null
+                                }
                             </View>
                         </Layout>
                         <View style={styles.title}>
