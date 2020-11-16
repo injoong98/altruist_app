@@ -15,36 +15,11 @@
 		/* src: local(※), url(NanumGothic.woff) format('ttf') */
 	}
 
-	/* 
-	.find-title {
-		font-family: '잘난', 'Jalnan', ng;
-	} */
 	.find-button {
 		align-items: flex-end;
-
 		background-color: #6460A7;
 		color: white;
 		float: right
-	}
-
-	@media only screen and (max-width : 321px) {
-		.find-title {
-
-			/* font-family: '잘난', 'Jalnan', ng; */
-			font-size: 2.3em;
-		}
-
-		.find-content {
-			font-size: 2.3em;
-		}
-
-		#new_password {
-			height: 3em;
-		}
-
-		#new_password_re {
-			height: 3em;
-		}
 	}
 
 	.row>div:first-child {
@@ -75,23 +50,50 @@
 	}
 
 	.alert-warning {
+		font-size: 1.3em;
 		color: #8680B9;
 		background-repeat: repeat-x !important;
 		border-color: #F2B1BA !important;
 		background-image: linear-gradient(to bottom, #EDCBCB 0, #EBB1B8 100%);
+	}
+
+	.alert-info {
+		font-size: 1.3em;
+		color: white;
+		background-repeat: repeat-x !important;
+		border-color: #706E92 !important;
+		background-image: linear-gradient(to bottom, #706E92 0, #635DA4 100%);
+	}
+
+	.find-title {
+		font-family: '잘난', 'Jalnan', ng;
+		font-size: 1em;
 	}
 </style>
 
 
 <?php
 echo validation_errors('<div class="alert alert-warning" role="alert">', '</div>');
-echo show_alert_message(element('error_message', $view), '<div class="alert alert-dismissible alert-warning"><button type="button" class="close alertclose" >&times;</button>', '
-<button class="gotoaltruists btn btn-md btn-pink">이타주의자로 가기</button>
-</div>');
-echo show_alert_message(element('success_message', $view), '<div class="alert alert-dismissible alert-info"><button type="button" class="close alertclose" >&times;</button>', '
-<div>
-<button class="gotoaltruists btn btn-md btn-purple">이타주의자로 가기</button>
-</div></div>');
+echo show_alert_message(
+	element('error_message', $view),
+	'<div class="alert alert-dismissible alert-warning">
+	<button type="button" class="close alertclose" >&times;</button>',
+	'
+		<div>
+		<button class="gotoaltruists btn btn-md btn-pink" style="padding:20px; text-align:center">이타주의자로 가기</button>
+		</div>
+	</div>
+	'
+);
+echo show_alert_message(
+	element('success_message', $view),
+	'<div class="alert alert-dismissible alert-info"><button type="button" class="close alertclose" >&times;</button>',
+	'
+		<div>
+			<button class="gotoaltruists btn btn-md btn-purple">이타주의자로 가기</button>
+		</div>
+	</div>'
+);
 if (!element('error_message', $view) && !element('success_message', $view)) {
 	echo show_alert_message(element('info', $view), '<div class="alert alert-info alert-custom">', '</div>');
 	$attributes = array('class' => 'form-horizontal', 'name' => 'fresetpw', 'id' => 'fresetpw');
@@ -100,11 +102,9 @@ if (!element('error_message', $view) && !element('success_message', $view)) {
 	<!-- <legend>패스워드 변경</legend> -->
 	<!-- <p>회원님의 패스워드를 변경합니다.</p> -->
 	<div class="form-group">
-		<label class="col-lg-3 control-label find-title" style="display:none">아이디</label>
-		<div class="col-lg-3">
-			<p>회원님의 아이디는 "</p>
+		<label class="col-lg-3 control-label find-title">아이디</label>
+		<div class="col-lg-4">
 			<p class="find-title" style="font-weight:bold"> <?php echo element('mem_userid', $view); ?></p>
-			<p>" 입니다.</p>
 		</div>
 	</div>
 	<div class="form-group">
