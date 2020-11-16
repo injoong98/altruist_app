@@ -7,7 +7,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import HTML from 'react-native-render-html';
 import {ActionSheet, Root, Container, Row} from 'native-base';
 import Slider from '../components/MarketSlider.component'
-import {PostTime} from '../components/PostTime'
+import {PostTime,ExpireTime} from '../components/PostTime'
 import Confirm from '../components/confirm.component'
 import { WriteContentToptab } from '../components/WriteContentTopBar'
 import ReplyLsvg from '../assets/icons/arrow-bended-large.svg'
@@ -1533,6 +1533,17 @@ class AlbaContent extends React.Component {
         }
     }
 
+    expired = (datetime) =>{
+        const datetimestr = datetime.replace(' ','T');
+        const postdatetime = new Date(datetimestr)
+        const datetimeUTC = Date.parse(datetimestr);
+        const datetimenow = new Date() 
+        const now = Date.now()+(1000*60*60*9);
+        const timeDiff  = datetimeUTC-now;
+    
+        return timeDiff<0
+    }
+
     getPostData = async(post_id)=>{
         await Axios.get(`https://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
@@ -1665,7 +1676,7 @@ class AlbaContent extends React.Component {
     ]
 
     render(){
-        const {post, confirmModalVisible, resultModalVisible, spinnerModalVisible, modalType, popoverVisible} = this.state;
+        const {post, confirmModalVisible, resultModalVisible, spinnerModalVisible, modalType, popoverVisible,isLoading} = this.state;
         
         return(
             <SafeAreaView style={{flex:1}}>
@@ -1679,9 +1690,8 @@ class AlbaContent extends React.Component {
                     }            
                 gbckuse={true}
                 right={<this.MoreAction/>}/>
-                {this.state.isLoading?
+                {isLoading?
                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                    <Text>is Loading now...</Text>
                     <Spinner size="giant"/>
                 </View>
                 :<ScrollView style={{backgroundColor : '#F4F4F4'}}>
@@ -1702,6 +1712,11 @@ class AlbaContent extends React.Component {
                                 <View style={{marginLeft:10, alignItems:'center'}}>
                                     <Timesvg width={15} height={15}/>
                                     <PostTime category='p1' style={{fontSize:10}} datetime = {post.post_datetime}/>
+                                </View>
+                            </View>
+                            <View style={{flexDirection : 'row', justifyContent:'flex-end', position:'absolute', left:0, top:0}}>
+                                <View style={{alignItems:'center'}}>
+                                    <ExpireTime category='h2' style={{fontSize:14}} datetime = {post.answer_expire_date}/>
                                 </View>
                             </View>
                         </Layout>
@@ -1765,10 +1780,21 @@ class AlbaContent extends React.Component {
                         {this.state.file_images ? this.state.file_images.map((i,index) => <View key={i.uri}>{this.renderImage(i,index)}</View>) : null} 
                     </Card>
                 </ScrollView>}
+                    {
+                    !isLoading ?
+                     this.expired(post.answer_expire_date)?
+
+                    <View style={[styles.bottomButton,{backgroundColor:'#c4c4c4'}]}>
+                        <PaperPlanesvg width = {42} height = {32}/>
+                        <Text category = 'h2' style={{color : 'white'}}>모집마감</Text>
+                    </View>
+                    :
                     <TouchableOpacity style={styles.bottomButton} onPress={()=>this.setState({visible:true})}>
                         <PaperPlanesvg width = {42} height = {32}/>
                         <Text category = 'h2' style={{color : 'white'}}>지원하기</Text>
                     </TouchableOpacity>
+                    :null
+                    }
                     <Modal
                         visible={this.state.visible}
                         backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
