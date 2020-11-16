@@ -147,6 +147,8 @@ class GominWrite extends React.Component {
         } else if (status == '200') {
           this.setState({spinnerVisible: false, resultVisible: true, 
             resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+            this.gobackfunc();
+
         }
       })
       .catch((error) => {
@@ -307,7 +309,6 @@ class GominWrite extends React.Component {
           <Confirm
             type="result"
             confirmText={this.state.resultText}
-            frstText="닫기"
             OnFrstPress={() => {
               this.setState({resultVisible: false});
               this.gobackfunc();
@@ -350,7 +351,7 @@ class MarketWrite extends React.Component {
       deal_price:
         this.props.route.params.mode == 'edit'
           ? this.props.route.params.post.deal_price
-          : 0,
+          : '',
       deal_type:
         this.props.route.params.mode == 'edit'
         ? this.props.route.params.post.deal_type
@@ -455,6 +456,7 @@ class MarketWrite extends React.Component {
         } else if (status == '200') {
           this.setState({spinnerVisible: false, resultVisible: true, 
             resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+            this.gobackfunc();
         }
       })
       .catch((error) => {
@@ -869,10 +871,8 @@ class MarketWrite extends React.Component {
 						<Confirm
 							type="result"
 							confirmText={this.state.resultText}
-							frstText="닫기"
 							OnFrstPress={() => {
 								this.setState({resultVisible: false});
-								this.gobackfunc();
 							}}
 						/>
 					</Modal>
@@ -1095,6 +1095,8 @@ class AlbaWrite extends React.Component {
           } else if (status == '200') {
             this.setState({spinnerVisible: false, resultVisible: true, 
               resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+              this.gobackfunc();
+
           }
         })
         .catch((error) => {
@@ -1451,10 +1453,8 @@ class AlbaWrite extends React.Component {
 						<Confirm
 							type="result"
 							confirmText={this.state.resultText}
-							frstText="닫기"
 							OnFrstPress={() => {
 								this.setState({resultVisible: false});
-								this.gobackfunc();
 							}}
 						/>
 					</Modal>
@@ -1550,6 +1550,7 @@ class IlbanWrite extends React.Component {
         } else if (status == '200') {
           this.setState({spinnerVisible: false, resultVisible: true, 
             resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+            this.gobackfunc();
         }
       })
       .catch((error) => {
@@ -1867,10 +1868,8 @@ class IlbanWrite extends React.Component {
               <Confirm
                 type="result"
                 confirmText={this.state.resultText}
-                frstText="닫기"
                 OnFrstPress={() => {
                   this.setState({resultVisible: false});
-                  this.gobackfunc();
                 }}
               />
             </Modal>
@@ -1953,6 +1952,7 @@ class BugWrite extends React.Component {
           this.setState({spinnerVisible: false, resultVisible: true, 
             resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'신고해주셔서 감사합니다. 신속히 조치할 수 있도록 하겠습니다.')});
         }
+        this.gobackfunc();
       })
       .catch((error) => {
         this.setState({spinnerVisible: false});
@@ -2242,10 +2242,8 @@ class BugWrite extends React.Component {
               <Confirm
                 type="result"
                 confirmText={this.state.resultText}
-                frstText="닫기"
                 OnFrstPress={() => {
                   this.setState({resultVisible: false});
-                  this.gobackfunc();
                 }}
               />
             </Modal>
