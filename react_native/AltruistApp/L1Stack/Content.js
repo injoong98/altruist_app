@@ -822,7 +822,10 @@ class MarketContent extends React.Component {
                 this.setState({image: response.data.view.file_image.map(function(item, index){
                     var image_info = {};
                     image_info['id'] = item.pfi_id;
+                    image_info['mime'] = "image/jpeg";
+                    image_info['type'] = item.pfi_type;
                     image_info['title'] = item.pfi_originname;
+                    image_info['path'] = item.origin_image_url;
                     image_info['url'] = item.origin_image_url;
                     image_info['index'] = index;
                     image_info['edit'] = true;
