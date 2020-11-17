@@ -338,7 +338,7 @@ class Register extends CB_Controller
 		$configbasic['mem_nickname'] = array(
 			'field' => 'mem_nickname',
 			'label' => '닉네임',
-			'rules' => 'trim|required|min_length[2]|max_length[20]|callback__mem_nickname_check',
+			'rules' => 'required|min_length[2]|max_length[20]|callback__mem_nickname_check',
 			'description' => '공백없이 한글, 영문, 숫자만 입력 가능 2글자 이상' . $nickname_description,
 		);
 		$configbasic['mem_email'] = array(
@@ -1596,10 +1596,10 @@ class Register extends CB_Controller
 	public function _mem_nickname_check($str)
 	{
 		$this->load->helper('chkstring');
-		if (chkstring($str, _HANGUL_ + _ALPHABETIC_ + _NUMERIC_) === false) {
+		if (chkstring($str, _HANGUL_ + _SPACE_ + _ALPHABETIC_ + _NUMERIC_) === false) {
 			$this->form_validation->set_message(
 				'_mem_nickname_check',
-				'닉네임은 공백없이 한글, 영문, 숫자만 입력 가능합니다'
+				'닉네임은 한글, 영문, 숫자만 입력 가능합니다. '
 			);
 			return false;
 		}
