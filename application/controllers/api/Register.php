@@ -1759,10 +1759,10 @@ class Register extends CB_Controller
 	public function _mem_nickname_check($str)
 	{
 		$this->load->helper('chkstring');
-		if (chkstring($str, _HANGUL_ + _ALPHABETIC_ + _NUMERIC_) === false) {
+		if (chkstring($str, _HANGUL_ + _SPACE_ + _ALPHABETIC_ + _NUMERIC_) === false) {
 			$this->form_validation->set_message(
 				'_mem_nickname_check',
-				'닉네임은 공백없이 한글, 영문, 숫자만 입력 가능합니다'
+				'닉네임은 한글, 영문, 숫자만 입력 가능합니다'
 			);
 			return false;
 		}

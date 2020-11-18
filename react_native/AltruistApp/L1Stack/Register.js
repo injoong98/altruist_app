@@ -112,9 +112,9 @@ class RegisterScreen extends Component {
       this.setState({pwreStyle: styles.inputDeny});
       return;
     }
-    if (!this.state.checked) {
-      return;
-    }
+    // if (!this.state.checked) {
+    //   return;
+    // }
     console.log('no');
     this.SubmitForm();
   };
@@ -124,7 +124,7 @@ class RegisterScreen extends Component {
     if (
       !this.state.mem_userid ||
       !this.state.mem_username ||
-      !this.state.mem_nickname ||
+      !this.state.mem_nickname || 
       !this.state.mem_sex ||
       !this.state.mem_email ||
       !this.state.mem_password ||
@@ -469,6 +469,7 @@ class RegisterScreen extends Component {
 
   //추천인 - userid API
   checkRecommend = async () => {
+    console.log('checkRecommend on');
     const {mem_recommend} = this.state;
 
     let formdata = new FormData();
@@ -477,13 +478,13 @@ class RegisterScreen extends Component {
     await axios
       .post(`https://dev.unyict.org/api/register/userid_check`, formdata)
       .then((res) => {
-        console.log(res.data);
+        console.log('res.data : ', res.data);
 
         if (res.data.message.includes('사용중')) {
           this.setState({recommendCaption: null});
         } else if (res.data.result == 'available') {
           this.setState({recommendCaption: '없는 아이디 입니다.'});
-        }
+        } 
       });
   };
 
@@ -732,9 +733,7 @@ class RegisterScreen extends Component {
             }
             placeholder="* ID"
             onChangeText={(mem_userid) => {
-              this.setState({
-                mem_userid: mem_userid,
-              });
+              this.setState({mem_userid});
             }}
             onEndEditing={() => {
               this.checkNotNull();
@@ -761,11 +760,9 @@ class RegisterScreen extends Component {
             keyboardType="email-address"
             textContentType="emailAddress" //ios
             placeholder="* 이메일"
+            
             onChangeText={(mem_email) => {
-              this.setState({
-                mem_email: mem_email,
-              });
-              this.checkEmail(mem_email);
+              this.setState({mem_email});
             }}
             onEndEditing={() => {
               this.checkNotNull();
@@ -798,7 +795,7 @@ class RegisterScreen extends Component {
             secureTextEntry={true}
             placeholder="* 비밀번호"
             onChangeText={(mem_password) => {
-              this.setState({mem_password: mem_password});
+              this.setState({mem_password});
               this.EqualPW(mem_password, this.state.mem_password_re);
             }}
             onEndEditing={() => {
@@ -834,7 +831,7 @@ class RegisterScreen extends Component {
             secureTextEntry={true}
             placeholder="* 비밀번호 확인"
             onChangeText={(mem_password_re) => {
-              this.setState({mem_password_re: mem_password_re});
+              this.setState({mem_password_re});
               this.EqualPW(this.state.mem_password, mem_password_re);
             }}
             onEndEditing={() => {
@@ -863,7 +860,7 @@ class RegisterScreen extends Component {
               dataDetectorTypes="phoneNumber"
               placeholder="휴대전화"
               onChangeText={(mem_phone) => {
-                this.setState({mem_phone: mem_phone});
+                this.setState({mem_phone});
                 this.NoString(mem_phone);
                 this.PhoneHyphen(mem_phone);
               }}
@@ -893,7 +890,7 @@ class RegisterScreen extends Component {
               dataDetectorTypes="phoneNumber"
               placeholder="생년월일 ( ex. 2000-01-01 ) "
               onChangeText={(mem_birthday) => {
-                this.setState({mem_birthday: mem_birthday});
+                this.setState({mem_birthday});
                 this.NoString2(mem_birthday);
                 this.BdayHyphen(mem_birthday);
               }}
@@ -906,7 +903,7 @@ class RegisterScreen extends Component {
               style={styles.inputs}
               placeholder="추천인 아이디"
               onChangeText={(mem_recommend) =>
-                this.setState({mem_recommend: mem_recommend})
+                this.setState({mem_recommend})
               }
               onEndEditing={() => {
                 this.checkNotNull();
