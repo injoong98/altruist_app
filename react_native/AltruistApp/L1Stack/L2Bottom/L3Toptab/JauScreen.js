@@ -139,7 +139,7 @@ class JauScreen extends React.Component {
 		const regex = /(<([^>]+)>)|&nbsp;/gi;
 		const post_remove_tags = item.post_content.replace(regex, '');
 		const imageData = item.file
-			?item.file.filter(i=>i.pfi_type=='jpg'||i.pfi_type=='png').map(function(image,index){
+			?item.file.filter(i=>i.pfi_type=='jpg'||i.pfi_type=='png'||i.pfi_type=='gif').map(function(image,index){
 				var image_info = {};
 				image_info['id'] = image.pfi_id;
 				image_info['url'] = image.origin_image_url;

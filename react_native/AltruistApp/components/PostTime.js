@@ -2,7 +2,6 @@ import React,{Component} from 'react'
 import {Text} from '@ui-kitten/components'
 
 export const PostTime = ({category, datetime, style}) =>{
-    console.log('PostTime datetime: '+datetime)
     if(datetime){
 
         const datetimestr = datetime.replace(' ','T');
@@ -33,7 +32,6 @@ export const PostTime = ({category, datetime, style}) =>{
     }
 }
 export const ExpireTime = ({category, datetime, style}) =>{
-    console.log('ExpireTime datetime: '+datetime)
     if(datetime){
         const datetimestr = datetime.replace(' ','T');
         const postdatetime = new Date(datetimestr)

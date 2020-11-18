@@ -48,6 +48,13 @@ const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CloseIcon = (props) => <Icon {...props} name="close" />;
 const UpIcon = (props) => <Icon {...props} name="arrow-circle-up-outline" />;
 
+const pathToName= (path) =>{
+  const pathSpliced = path.split('/');
+  const name=pathSpliced[pathSpliced.length-1]
+  console.log(pathSpliced)
+  console.log(name)
+  return name
+}
 const defaultWrite = ({navigation}) => {
   const BackAction = () => (
     <TopNavigationAction
@@ -436,7 +443,7 @@ class MarketWrite extends React.Component {
       formdata.append('post_file[]', {
         uri: item.path,
         type: item.mime,
-        name: 'image.jpg',
+        name: pathToName(item.props.path),
       });
     });
     
@@ -1077,7 +1084,7 @@ class AlbaWrite extends React.Component {
         formdata.append('post_file[]', {
           uri: item.path,
           type: item.mime,
-          name: 'image.jpg',
+          name: pathToName(item.props.path),
         });
       });
       this.props.route.params.mode == 'edit'
@@ -1531,7 +1538,7 @@ class IlbanWrite extends React.Component {
       formdata.append('post_file[]', {
         uri: item.props.path,
         type: item.props.mime,
-        name: 'image.jpg',
+        name: pathToName(item.props.path),
       });
     });
     
@@ -1648,6 +1655,7 @@ class IlbanWrite extends React.Component {
       multiple: true,
       includeExif: false,
     }).then((image) => {
+      console.log
       image.map((item) => this.onSelectedImage(item));
       //console.log(image);
     });
@@ -1932,7 +1940,7 @@ class BugWrite extends React.Component {
       formdata.append('post_file[]', {
         uri: item.props.path,
         type: item.props.mime,
-        name: 'image.jpg',
+        name: pathToName(item.props.path),
       });
     });
     
@@ -1949,10 +1957,8 @@ class BugWrite extends React.Component {
         if (status == '500') {
           this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
-          this.setState({spinnerVisible: false, resultVisible: true, 
-            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'신고해주셔서 감사합니다. 신속히 조치할 수 있도록 하겠습니다.')});
+          this.gobackfunc();
         }
-        this.gobackfunc();
       })
       .catch((error) => {
         this.setState({spinnerVisible: false});
@@ -2055,6 +2061,7 @@ class BugWrite extends React.Component {
   //불러온 사진의 정보를 this.state에 저장
   onSelectedImage(image) {
     console.log(image);
+    pathToName(image.path)
     let newImages = this.state.images;
     const source = {uri: image.path};
     let item = {
