@@ -152,10 +152,7 @@ class GominWrite extends React.Component {
         if (status == '500') {
           this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
-          this.setState({spinnerVisible: false, resultVisible: true, 
-            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
             this.gobackfunc();
-
         }
       })
       .catch((error) => {
@@ -461,8 +458,6 @@ class MarketWrite extends React.Component {
         if (status == '500') {
           this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
-          this.setState({spinnerVisible: false, resultVisible: true, 
-            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
             this.gobackfunc();
         }
       })
@@ -1100,8 +1095,6 @@ class AlbaWrite extends React.Component {
           if (status == '500') {
             this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
           } else if (status == '200') {
-            this.setState({spinnerVisible: false, resultVisible: true, 
-              resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
               this.gobackfunc();
 
           }
@@ -1555,8 +1548,6 @@ class IlbanWrite extends React.Component {
         if (status == '500') {
           this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
-          this.setState({spinnerVisible: false, resultVisible: true, 
-            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
             this.gobackfunc();
         }
       })
