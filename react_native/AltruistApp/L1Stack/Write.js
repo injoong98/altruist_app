@@ -1521,11 +1521,12 @@ class IlbanWrite extends React.Component {
       this.props.route.params.mode == 'edit'
         ? 'https://dev.unyict.org/api/board_write/modify'
         : 'https://dev.unyict.org/api/board_write/write/ilban';
-
+    
+    let real_postcategory = post_category + 1;
     let formdata = new FormData();
     formdata.append('brd_key', 'ilban');
     formdata.append('post_title', post_title);
-    formdata.append('post_category', post_category+1);
+    formdata.append('post_category', real_postcategory);
     formdata.append('post_content', post_content);
     images.map((item) => {
       formdata.append('post_file[]', {
@@ -1539,19 +1540,24 @@ class IlbanWrite extends React.Component {
       ? formdata.append('post_id', this.props.route.params.post.post_id)
       : null;
     
-    console.log(formdata);
+    console.log('liban_formdata : ', formdata);
 
     await axios
       .post(url, formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
+          console.log('fail : ', formdata)
           this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
-            this.gobackfunc();
+          console.log('success : ', formdata)
+          this.gobackfunc();
         }
       })
       .catch((error) => {
+        if(error.data){
+          console.log(error.data);
+        }
         this.setState({spinnerVisible: false});
         alert(JSON.stringify(error));
       });
