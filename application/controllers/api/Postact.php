@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Postact class
@@ -51,23 +51,23 @@ class Postact extends CB_Controller
 		$post_id = $this->input->post('post_id');
 		$post = $this->Post_model->get_one($post_id);
 
-		if ( ! element('post_id', $post)) {
-			response_result($view,'Err','post id 가 없습니다..');
+		if (!element('post_id', $post)) {
+			response_result($view, 'Err', 'post id 가 없습니다..');
 			//show_404();
 		}
-		if (empty($post_id) OR $post_id < 1) {
-			response_result($view,'Err','post_id에 숫자형이 입력되지 않았습니다');
+		if (empty($post_id) or $post_id < 1) {
+			response_result($view, 'Err', 'post_id에 숫자형이 입력되지 않았습니다');
 			//show_404();
 		}
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
-			response_result($view,'Err','해당 게시물에서만 접근 가능합니다.');
+		if (!$this->session->userdata('post_id_' . $post_id)) {
+			response_result($view, 'Err', '해당 게시물에서만 접근 가능합니다.');
 			//alert('해당 게시물에서만 접근 가능합니다');
 		}
-		
+
 		$post = $this->Post_model->get_one($post_id);
-		
-		if ( ! element('post_id', $post)) {
-			response_result($view,'Err',$post_id.'로 게시물이 조회되지 않았습니다.');
+
+		if (!element('post_id', $post)) {
+			response_result($view, 'Err', $post_id . '로 게시물이 조회되지 않았습니다.');
 			//show_404();
 		}
 
@@ -82,22 +82,22 @@ class Postact extends CB_Controller
 		);
 
 		if (element('block_delete', $board) && $is_admin === false) {
-			response_result($view,'Err','이 게시판의 글은 관리자에 의해서만 삭제가 가능합니다');
+			response_result($view, 'Err', '이 게시판의 글은 관리자에 의해서만 삭제가 가능합니다');
 			//alert('이 게시판의 글은 관리자에 의해서만 삭제가 가능합니다');
 			//return false;
 		}
 		if (element('protect_post_day', $board) > 0 && $is_admin === false) {
 			if (ctimestamp() - strtotime(element('post_datetime', $post)) >= element('protect_post_day', $board) * 86400) {
-				response_result($view,'Err','이 게시판은 ' . element('protect_post_day', $board) . '일 이상된 게시글의 삭제를 금지합니다');
+				response_result($view, 'Err', '이 게시판은 ' . element('protect_post_day', $board) . '일 이상된 게시글의 삭제를 금지합니다');
 				//alert('이 게시판은 ' . element('protect_post_day', $board) . '일 이상된 게시글의 삭제를 금지합니다');
 				//return false;
 			}
 		}
 		if (element('protect_comment_num', $board) > 0 && $is_admin === false) {
 			if (element('protect_comment_num', $board) <= element('post_comment_count', $post)) {
-				response_result($view,'Err',element('protect_comment_num', $board) . '개 이상의 댓글이 달린 게시글은 삭제할 수 없습니다');
-			//	alert(element('protect_comment_num', $board) . '개 이상의 댓글이 달린 게시글은 삭제할 수 없습니다');
-			//	return false;
+				response_result($view, 'Err', element('protect_comment_num', $board) . '개 이상의 댓글이 달린 게시글은 삭제할 수 없습니다');
+				//	alert(element('protect_comment_num', $board) . '개 이상의 댓글이 달린 게시글은 삭제할 수 없습니다');
+				//	return false;
 			}
 		}
 
@@ -105,15 +105,17 @@ class Postact extends CB_Controller
 		Events::trigger('step1', $eventname);
 
 		if (element('mem_id', $post)) {
-			if ($is_admin === false
-				AND $mem_id !== abs(element('mem_id', $post))) {
-					response_result($view,'Err','회원님은 이 글을 삭제할 권한이 없습니다');
+			if (
+				$is_admin === false
+				and $mem_id !== abs(element('mem_id', $post))
+			) {
+				response_result($view, 'Err', '회원님은 이 글을 삭제할 권한이 없습니다');
 				//	alert('회원님은 이 글을 삭제할 권한이 없습니다');
 				//return false;
 			}
 		} else {
 
-			$view= array();
+			$view = array();
 			$view['view'] = array();
 
 			// 이벤트가 존재하면 실행합니다
@@ -125,24 +127,26 @@ class Postact extends CB_Controller
 					'1'
 				);
 			}
-			if ( ! $this->session->userdata('can_delete_' . element('post_id', $post))
-				&& $this->input->post('modify_password')) {
+			if (
+				!$this->session->userdata('can_delete_' . element('post_id', $post))
+				&& $this->input->post('modify_password')
+			) {
 
-				if ( ! function_exists('password_hash')) {
+				if (!function_exists('password_hash')) {
 					$this->load->helper('password');
 				}
-				if ( password_verify($this->input->post('modify_password'), element('post_password', $post))) {
+				if (password_verify($this->input->post('modify_password'), element('post_password', $post))) {
 					$this->session->set_userdata(
 						'can_delete_' . element('post_id', $post),
 						'1'
 					);
 					//redirect(current_url());
 				} else {
-					response_result($view,'Err','패스워드가 잘못 입력되었습니다');
+					response_result($view, 'Err', '패스워드가 잘못 입력되었습니다');
 					//$view['view']['message'] = '패스워드가 잘못 입력되었습니다';
 				}
 			}
-			if ( ! $this->session->userdata('can_delete_' . element('post_id', $post))) {
+			if (!$this->session->userdata('can_delete_' . element('post_id', $post))) {
 
 				// 이벤트가 존재하면 실행합니다
 				$view['view']['event']['before_layout'] = Events::trigger('before_layout', $eventname);
@@ -173,8 +177,8 @@ class Postact extends CB_Controller
 				);
 				$view['layout'] = $this->managelayout->front($layoutconfig, $this->cbconfig->get_device_view_type());
 				$this->data = $view;
-				response_result($view,'success',$view['view']['info'] );
-			/* 	$this->layout = element('layout_skin_file', element('layout', $view));
+				response_result($view, 'success', $view['view']['info']);
+				/* 	$this->layout = element('layout_skin_file', element('layout', $view));
 				$this->view = element('view_skin_file', element('layout', $view));
 				return true; */
 			}
@@ -205,11 +209,11 @@ class Postact extends CB_Controller
 		Events::trigger('after', $eventname);
 		$view['redirectinfo']['brd_key'] = element('brd_key', $board);
 		$view['redirectinfo']['post_id'] = $post_id;
-	
+
 		//불필요한 값 제거 
 		unset($view['view']);
-		response_result($view,'success','게시물이 정상적으로 삭제되었습니다.' );
-	//	redirect(board_url(element('brd_key', $board)));
+		response_result($view, 'success', '게시물이 정상적으로 삭제되었습니다.');
+		//	redirect(board_url(element('brd_key', $board)));
 
 	}
 
@@ -238,7 +242,7 @@ class Postact extends CB_Controller
 
 		foreach ($post_ids as $post_id) {
 			$post_id = (int) $post_id;
-			if (empty($post_id) OR $post_id < 1) {
+			if (empty($post_id) or $post_id < 1) {
 				$result = array('error' => '잘못된 접근입니다');
 				exit(json_encode($result));
 			}
@@ -266,7 +270,6 @@ class Postact extends CB_Controller
 
 		$result = array('success' => '선택된 게시글이 삭제되었습니다');
 		exit(json_encode($result));
-
 	}
 
 
@@ -284,8 +287,8 @@ class Postact extends CB_Controller
 		Events::trigger('before', $eventname);
 
 		$cmt_id = (int) $this->input->post('cmt_id');
-		if (empty($cmt_id) OR $cmt_id < 1) {
-			response_result($view,'Err','잘못된 접근입니다' );
+		if (empty($cmt_id) or $cmt_id < 1) {
+			response_result($view, 'Err', '잘못된 접근입니다');
 			//$result = array('error' => '잘못된 접근입니다');
 			//exit(json_encode($result));
 		}
@@ -294,10 +297,9 @@ class Postact extends CB_Controller
 		Events::trigger('after', $eventname);
 
 		exit($this->board->delete_comment_check_api($cmt_id));
-	/* 	$result = $this->board->delete_comment_check($cmt_id);
+		/* 	$result = $this->board->delete_comment_check($cmt_id);
 		$view['error'] = $result['error'];
 		response_result($r,'success',$result ); */
-		
 	}
 
 
@@ -325,7 +327,7 @@ class Postact extends CB_Controller
 
 		foreach ($cmt_ids as $cmt_id) {
 			$cmt_id = (int) $cmt_id;
-			if (empty($cmt_id) OR $cmt_id < 1) {
+			if (empty($cmt_id) or $cmt_id < 1) {
 				$result = array('error' => '잘못된 접근입니다');
 				exit(json_encode($result));
 			}
@@ -359,7 +361,7 @@ class Postact extends CB_Controller
 		Events::trigger('before', $eventname);
 
 		$file_id = (int) $file_id;
-		if (empty($file_id) OR $file_id < 1) {
+		if (empty($file_id) or $file_id < 1) {
 			show_404();
 		}
 
@@ -367,10 +369,10 @@ class Postact extends CB_Controller
 
 		$file = $this->Post_file_model->get_one($file_id);
 
-		if ( ! element('pfi_id', $file)) {
+		if (!element('pfi_id', $file)) {
 			show_404();
 		}
-		if ( ! $this->session->userdata('post_id_' . element('post_id', $file))) {
+		if (!$this->session->userdata('post_id_' . element('post_id', $file))) {
 			alert('해당 게시물에서만 접근 가능합니다');
 		}
 		$post = $this->Post_model->get_one(element('post_id', $file));
@@ -400,8 +402,10 @@ class Postact extends CB_Controller
 
 		$mem_id = (int) $this->member->item('mem_id');
 
-		if (element('comment_to_download', $board) && $is_admin === false
-			&& $mem_id && $mem_id !== (int) element('mem_id', $post)) {
+		if (
+			element('comment_to_download', $board) && $is_admin === false
+			&& $mem_id && $mem_id !== (int) element('mem_id', $post)
+		) {
 			$where = array(
 				'post_id' => element('post_id', $post),
 				'mem_id' => $mem_id,
@@ -413,8 +417,10 @@ class Postact extends CB_Controller
 			}
 		}
 
-		if (element('like_to_download', $board) && $is_admin === false
-			&& $mem_id && $mem_id !== (int) element('mem_id', $post)) {
+		if (
+			element('like_to_download', $board) && $is_admin === false
+			&& $mem_id && $mem_id !== (int) element('mem_id', $post)
+		) {
 			$where = array(
 				'target_id' => element('post_id', $post),
 				'target_type' => 1,
@@ -438,9 +444,11 @@ class Postact extends CB_Controller
 				'파일 다운로드'
 			);
 
-			if (element('point_filedownload', $board) < 0
+			if (
+				element('point_filedownload', $board) < 0
 				&& $point < 0
-				&& $this->cbconfig->item('block_download_zeropoint')) {
+				&& $this->cbconfig->item('block_download_zeropoint')
+			) {
 				$this->point->delete_point(
 					$mem_id,
 					'filedownload',
@@ -463,7 +471,7 @@ class Postact extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('step1', $eventname);
 
-		if ( ! $this->session->userdata('post_file_download_' . element('pfi_id', $file))) {
+		if (!$this->session->userdata('post_file_download_' . element('pfi_id', $file))) {
 
 			$this->session->set_userdata(
 				'post_file_download_' . element('pfi_id', $file),
@@ -484,7 +492,6 @@ class Postact extends CB_Controller
 				$this->Post_file_download_log_model->insert($insertdata);
 			}
 			$this->Post_file_model->update_plus(element('pfi_id', $file), 'pfi_download', 1);
-
 		}
 
 		// 이벤트가 존재하면 실행합니다
@@ -496,7 +503,6 @@ class Postact extends CB_Controller
 		$data = file_get_contents(config_item('uploads_dir') . '/post/' . element('pfi_filename', $file));
 		$name = element('pfi_originname', $file);
 		force_download($name, $data);
-
 	}
 
 
@@ -514,7 +520,7 @@ class Postact extends CB_Controller
 		Events::trigger('before', $eventname);
 
 		$link_id = (int) $link_id;
-		if (empty($link_id) OR $link_id < 1) {
+		if (empty($link_id) or $link_id < 1) {
 			show_404();
 		}
 
@@ -524,17 +530,17 @@ class Postact extends CB_Controller
 
 		$link = $this->Post_link_model->get_one($link_id);
 
-		if ( ! element('pln_id', $link)) {
+		if (!element('pln_id', $link)) {
 			show_404();
 		}
-		if ( ! $this->session->userdata('post_id_' . element('post_id', $link))) {
+		if (!$this->session->userdata('post_id_' . element('post_id', $link))) {
 			alert('해당 게시물에서만 접근 가능합니다');
 		}
 
 		$post = $this->Post_model->get_one(element('post_id', $link));
 		$board = $this->board->item_all(element('brd_id', $post));
 
-		if ( ! $this->session->userdata('post_link_click_' . element('pln_id', $link))) {
+		if (!$this->session->userdata('post_link_click_' . element('pln_id', $link))) {
 
 			$this->session->set_userdata(
 				'post_link_click_' . element('pln_id', $link),
@@ -561,12 +567,11 @@ class Postact extends CB_Controller
 		Events::trigger('after', $eventname);
 
 		redirect(prep_url(strip_tags(element('pln_url', $link))));
-
 	}
 
 
-	
-	
+
+
 	/**
 	 * 게시물 추천/비추천 하기
 	 */
@@ -586,19 +591,19 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		if ($this->member->is_member() === false) {
-			response_result($view,'Err','로그인 후 이용해주세요');
+			response_result($view, 'Err', '로그인 후 이용해주세요');
 		}
 		$post_id = (int)$this->input->post('post_id');
-		if (empty($post_id) OR $post_id < 1) {
-			response_result($view,'Err','잘못된 post_id 접근입니다('.$post_id.')');
+		if (empty($post_id) or $post_id < 1) {
+			response_result($view, 'Err', '잘못된 post_id 접근입니다(' . $post_id . ')');
 		}
 		$like_type = (int)$this->input->post('like_type');
-		
-		if ($like_type !== 1 AND $like_type !== 2) {
-			response_result($view,'Err','잘못된 like_type 접근입니다('.$like_type.')');
+
+		if ($like_type !== 1 and $like_type !== 2) {
+			response_result($view, 'Err', '잘못된 like_type 접근입니다(' . $like_type . ')');
 		}
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
-			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
+		if (!$this->session->userdata('post_id_' . $post_id)) {
+			response_result($view, 'Err', '해당 게시물에서만 접근 가능합니다');
 		}
 
 		$mem_id = (int) $this->member->item('mem_id');
@@ -608,21 +613,21 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id, post_del';
 		$post = $this->Post_model->get_one($post_id, $select);
 
-		if ( ! element('post_id', $post)) {
-			response_result($view,'Err','존재하지 않는 게시물입니다');
+		if (!element('post_id', $post)) {
+			response_result($view, 'Err', '존재하지 않는 게시물입니다');
 		}
 		if (element('post_del', $post)) {
-			response_result($view,'Err','삭제된 게시물입니다');
+			response_result($view, 'Err', '삭제된 게시물입니다');
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
 
-		if ( ! element('use_post_like', $board) && $like_type === 1) {
-			response_result($view,'Err','이 게시판은 추천 기능을 사용하지 않습니다');
+		if (!element('use_post_like', $board) && $like_type === 1) {
+			response_result($view, 'Err', '이 게시판은 추천 기능을 사용하지 않습니다');
 		}
 
-		if ( ! element('use_post_dislike', $board) && $like_type === 2) {
-			response_result($view,'Err','이 게시판은 비추천 기능을 사용하지 않습니다');
+		if (!element('use_post_dislike', $board) && $like_type === 2) {
+			response_result($view, 'Err', '이 게시판은 비추천 기능을 사용하지 않습니다');
 		}
 
 		/* 	if (abs(element('mem_id', $post)) === $mem_id) {
@@ -639,7 +644,7 @@ class Postact extends CB_Controller
 
 		if (element('lik_id', $exist)) {
 			$status = element('lik_type', $exist) === '1' ? '추천' : '비추천';
-			response_result($view,'Err', '이미 이 글을 ' . $status . '하셨습니다');
+			response_result($view, 'Err', '이미 이 글을 ' . $status . '하셨습니다');
 		}
 
 		$insertdata = array(
@@ -702,8 +707,7 @@ class Postact extends CB_Controller
 
 		if ($like_type === 1) {
 			$field = 'post_like';
-		}
-		elseif ($like_type === 2) {
+		} elseif ($like_type === 2) {
 			$field = 'post_dislike';
 		}
 
@@ -715,18 +719,18 @@ class Postact extends CB_Controller
 		$status = $like_type === 1 ? '추천' : '비추천';
 		$success = '이 글을 ' . $status . ' 하셨습니다';
 
-		
+
 		// //추천일경우 알림 및  푸시
 		// if ($like_type == 1) {
-			
+
 		// 	$mem_nickname = $this->member->item('mem_nickname');
 
-			//$not_message = $this->session->userdata('mem_nickname'). '님이 당신의 글을 좋아합니다.';
-			// $not_message = $mem_nickname. '님이 당신의 글을 좋아합니다.';
-			//알림 
-			// if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
-			// 	$this->load->library('notificationlib');
-				
+		//$not_message = $this->session->userdata('mem_nickname'). '님이 당신의 글을 좋아합니다.';
+		// $not_message = $mem_nickname. '님이 당신의 글을 좋아합니다.';
+		//알림 
+		// if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
+		// 	$this->load->library('notificationlib');
+
 		// 		$not_url = post_url(element('brd_key', $board), $post_id);
 		// 		$this->notificationlib->set_noti(
 		// 			abs(element('mem_id', $post)),
@@ -744,7 +748,7 @@ class Postact extends CB_Controller
 		// 	$topic_name = '';
 		// 	if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_like_post')) {
 		// 		$this->load->library('pushlib');
-				
+
 		// 		$not_url = post_url(element('brd_key', $board), $post_id);
 		// 		$this->pushlib->set_push(
 		// 			abs(element('mem_id', $post)),
@@ -764,7 +768,7 @@ class Postact extends CB_Controller
 		Events::trigger('after', $eventname);
 
 		$result = array('count' => $count);
-		response_result($view,'success', $success);
+		response_result($view, 'success', $success);
 		//exit(json_encode($result));
 
 	}
@@ -785,7 +789,7 @@ class Postact extends CB_Controller
 		$target_type = 1; //원글
 
 		$result = array();
-		
+
 		$post_id = (int)$this->input->post('post_id');
 		$like_type = (int)$this->input->post('like_type');
 
@@ -797,18 +801,18 @@ class Postact extends CB_Controller
 		$post = $this->Post_model->get_one($post_id, $select);
 
 		$board = $this->board->item_all(element('brd_id', $post));
-		
+
 		//추천일경우 알림 및  푸시
 		if ($like_type == 1) {
-			
+
 			$mem_nickname = $this->member->item('mem_nickname');
 
 			//$not_message = $this->session->userdata('mem_nickname'). '님께서 당신의 글을 좋아합니다.';
-			$not_message = $mem_nickname. '님이 당신의 글을 좋아합니다.';
+			$not_message = $mem_nickname . '님이 당신의 글을 좋아합니다.';
 			//알림 
 			if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
 				$this->load->library('notificationlib');
-				
+
 				$not_url = post_url(element('brd_key', $board), $post_id);
 				$this->notificationlib->set_noti(
 					abs(element('mem_id', $post)),
@@ -826,7 +830,7 @@ class Postact extends CB_Controller
 			$topic_name = '';
 			if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_like_post')) {
 				$this->load->library('pushlib');
-				
+
 				$not_url = post_url(element('brd_key', $board), $post_id);
 				$this->pushlib->set_push(
 					abs(element('mem_id', $post)),
@@ -846,7 +850,7 @@ class Postact extends CB_Controller
 		Events::trigger('after', $eventname);
 
 		$result = array('count' => $count);
-		response_result($view,'success', $success);
+		response_result($view, 'success', $success);
 		//exit(json_encode($result));
 
 	}
@@ -860,19 +864,19 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		if ($this->member->is_member() === false) {
-			response_result($view,'Err','로그인 후 이용해주세요');
+			response_result($view, 'Err', '로그인 후 이용해주세요');
 		}
 		$post_id = (int)$this->input->post('post_id');
-		if (empty($post_id) OR $post_id < 1) {
-			response_result($view,'Err','잘못된 post_id 접근입니다('.$post_id.')');
+		if (empty($post_id) or $post_id < 1) {
+			response_result($view, 'Err', '잘못된 post_id 접근입니다(' . $post_id . ')');
 		}
 		$like_type = (int)$this->input->post('like_type');
-		
-		if ($like_type !== 1 AND $like_type !== 2) {
-			response_result($view,'Err','잘못된 like_type 접근입니다('.$like_type.')');
+
+		if ($like_type !== 1 and $like_type !== 2) {
+			response_result($view, 'Err', '잘못된 like_type 접근입니다(' . $like_type . ')');
 		}
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
-			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
+		if (!$this->session->userdata('post_id_' . $post_id)) {
+			response_result($view, 'Err', '해당 게시물에서만 접근 가능합니다');
 		}
 
 		$mem_id = (int) $this->member->item('mem_id');
@@ -882,24 +886,24 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id, post_del';
 		$post = $this->Post_model->get_one($post_id, $select);
 
-		if ( ! element('post_id', $post)) {
-			response_result($view,'Err','존재하지 않는 게시물입니다');
+		if (!element('post_id', $post)) {
+			response_result($view, 'Err', '존재하지 않는 게시물입니다');
 		}
 		if (element('post_del', $post)) {
-			response_result($view,'Err','삭제된 게시물입니다');
+			response_result($view, 'Err', '삭제된 게시물입니다');
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
 
-		if ( ! element('use_post_like', $board) && $like_type === 1) {
-			response_result($view,'Err','이 게시판은 추천 기능을 사용하지 않습니다');
+		if (!element('use_post_like', $board) && $like_type === 1) {
+			response_result($view, 'Err', '이 게시판은 추천 기능을 사용하지 않습니다');
 		}
 
-		if ( ! element('use_post_dislike', $board) && $like_type === 2) {
-			response_result($view,'Err','이 게시판은 비추천 기능을 사용하지 않습니다');
+		if (!element('use_post_dislike', $board) && $like_type === 2) {
+			response_result($view, 'Err', '이 게시판은 비추천 기능을 사용하지 않습니다');
 		}
 
-	/* 	if (abs(element('mem_id', $post)) === $mem_id) {
+		/* 	if (abs(element('mem_id', $post)) === $mem_id) {
 			response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
 		} */
 
@@ -913,10 +917,10 @@ class Postact extends CB_Controller
 
 		if (!element('lik_id', $exist)) {
 			$status = element('lik_type', $exist) === '1' ? '추천' : '비추천';
-			response_result($view,'Err', '이 글을 ' . $status . '하지 않았습니다.');
+			response_result($view, 'Err', '이 글을 ' . $status . '하지 않았습니다.');
 		}
 
-	
+
 		$delwhere = array(
 			'target_id' => $post_id,
 			'target_type' => $target_type,
@@ -939,8 +943,7 @@ class Postact extends CB_Controller
 
 		if ($like_type === 1) {
 			$field = 'post_like';
-		}
-		elseif ($like_type === 2) {
+		} elseif ($like_type === 2) {
 			$field = 'post_dislike';
 		}
 
@@ -951,9 +954,8 @@ class Postact extends CB_Controller
 
 		$status = $like_type === 1 ? '추천' : '비추천';
 		$success = '이 글을 ' . $status . '을 취소 하셨습니다';
-		
-		response_result($view,'success', $success);
 
+		response_result($view, 'success', $success);
 	}
 
 
@@ -980,20 +982,20 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		if ($this->member->is_member() === false) {
-			response_result($view,'Err','로그인 후 이용해주세요');
-		/* 	$result = array('error' => '로그인 후 이용해주세요');
+			response_result($view, 'Err', '로그인 후 이용해주세요');
+			/* 	$result = array('error' => '로그인 후 이용해주세요');
 			exit(json_encode($result)); */
 		}
 
-		if (empty($cmt_id) OR $cmt_id < 1) {
-			response_result($view,'Err','잘못된 cmt_id 접근입니다');
-		/* 	$result = array('error' => '잘못된 접근입니다');
+		if (empty($cmt_id) or $cmt_id < 1) {
+			response_result($view, 'Err', '잘못된 cmt_id 접근입니다');
+			/* 	$result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result)); */
 		}
 
-		if ($like_type !== 1 AND $like_type !== 2) {
-			response_result($view,'Err','잘못된 like_type 접근입니다.');
-		/* 	$result = array('error' => '잘못된 접근입니다');
+		if ($like_type !== 1 and $like_type !== 2) {
+			response_result($view, 'Err', '잘못된 like_type 접근입니다.');
+			/* 	$result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result)); */
 		}
 
@@ -1004,43 +1006,43 @@ class Postact extends CB_Controller
 		$select = 'cmt_id, post_id, mem_id, cmt_del';
 		$comment = $this->Comment_model->get_one($cmt_id, $select);
 
-		if ( ! element('cmt_id', $comment)) {
-			response_result($view,'Err','존재하지 않는 댓글입니다');
-		/* 	$result = array('error' => '존재하지 않는 댓글입니다');
+		if (!element('cmt_id', $comment)) {
+			response_result($view, 'Err', '존재하지 않는 댓글입니다');
+			/* 	$result = array('error' => '존재하지 않는 댓글입니다');
 			exit(json_encode($result)); */
 		}
 		if (element('cmt_del', $comment)) {
-			response_result($view,'Err','삭제된 댓글입니다');
-		/* 	$result = array('error' => '삭제된 댓글입니다');
+			response_result($view, 'Err', '삭제된 댓글입니다');
+			/* 	$result = array('error' => '삭제된 댓글입니다');
 			exit(json_encode($result)); */
 		}
 
 		$select = 'post_id, brd_id, mem_id, post_del';
 		$post = $this->Post_model->get_one(element('post_id', $comment), $select);
 
-		if ( ! $this->session->userdata('post_id_' . element('post_id', $comment))) {
-			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
+		if (!$this->session->userdata('post_id_' . element('post_id', $comment))) {
+			response_result($view, 'Err', '해당 게시물에서만 접근 가능합니다');
 			/* $result = array('error' => '해당 게시물에서만 접근 가능합니다');
 			exit(json_encode($result)); */
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
 
-		if ( ! element('use_comment_like', $board) && $like_type === 1) {
-			response_result($view,'Err','이 게시판은 추천 기능을 사용하지 않습니다');
-		/* 	$result = array('error' => '이 게시판은 추천 기능을 사용하지 않습니다');
+		if (!element('use_comment_like', $board) && $like_type === 1) {
+			response_result($view, 'Err', '이 게시판은 추천 기능을 사용하지 않습니다');
+			/* 	$result = array('error' => '이 게시판은 추천 기능을 사용하지 않습니다');
 			exit(json_encode($result)); */
 		}
 
-		if ( ! element('use_comment_dislike', $board) && $like_type === 2) {
-			response_result($view,'Err','이 게시판은 비추천 기능을 사용하지 않습니다');
+		if (!element('use_comment_dislike', $board) && $like_type === 2) {
+			response_result($view, 'Err', '이 게시판은 비추천 기능을 사용하지 않습니다');
 			/* $result = array('error' => '이 게시판은 비추천 기능을 사용하지 않습니다');
 			exit(json_encode($result)); */
 		}
 
 		if (abs(element('mem_id', $comment)) === $mem_id) {
-		//	response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
-		/* 	$result = array('error' => '본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
+			//	response_result($view,'Err','본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
+			/* 	$result = array('error' => '본인의 글에는 추천/비추천 기능을 사용할 수 없습니다');
 			exit(json_encode($result)); */
 		}
 
@@ -1054,8 +1056,8 @@ class Postact extends CB_Controller
 
 		if (element('lik_id', $exist)) {
 			$status = element('lik_type', $exist) === '1' ? '추천' : '비추천';
-			response_result($view,'Err','이미 이 글을 ' . $status . '하셨습니다');
-		/* 	$result = array('error' => '이미 이 글을 ' . $status . '하셨습니다');
+			response_result($view, 'Err', '이미 이 글을 ' . $status . '하셨습니다');
+			/* 	$result = array('error' => '이미 이 글을 ' . $status . '하셨습니다');
 			exit(json_encode($result)); */
 		}
 
@@ -1129,19 +1131,19 @@ class Postact extends CB_Controller
 
 		$status = $like_type === 1 ? '추천' : '비추천';
 		$success = '이 글을 ' . $status . ' 하셨습니다';
-		
+
 		$result = array('count' => $count);
-		response_result($result,'success', $success);
+		response_result($result, 'success', $success);
 
 		//추천일경우 푸시
 		// if ($like_type == 1) {
-			
+
 		// 	$mem_nickname = $this->member->item('mem_nickname');
 		// 	$not_message = $mem_nickname. '님께서 당신의 댓글을 좋아합니다.';
 		// 	//알림 
 		// 	if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
 		// 		$this->load->library('notificationlib');
-				
+
 		// 		$not_url = post_url(element('brd_key', $board), $post_id);
 		// 		$this->notificationlib->set_noti(
 		// 			abs(element('mem_id', $comment)),
@@ -1158,7 +1160,7 @@ class Postact extends CB_Controller
 		// 	$topic_name = '';
 		// 	if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_like_post')) {
 		// 		$this->load->library('pushlib');
-			
+
 		// 		$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
 		// 		$this->pushlib->set_push(
 		// 			abs(element('mem_id', $comment)),
@@ -1177,9 +1179,9 @@ class Postact extends CB_Controller
 		Events::trigger('after', $eventname);
 
 		//$result = array('success' => $success, 'count' => $count);
-		
-		
-	//	exit(json_encode($result));
+
+
+		//	exit(json_encode($result));
 
 	}
 	//댓글 좋아요 푸쉬 알림 
@@ -1198,7 +1200,7 @@ class Postact extends CB_Controller
 
 		$mem_id = (int) $this->member->item('mem_id');
 
-		$this->load->model(array('Comment_model','Post_model'));
+		$this->load->model(array('Comment_model', 'Post_model'));
 
 		$select = 'cmt_id, post_id, mem_id, cmt_del';
 		$comment = $this->Comment_model->get_one($cmt_id, $select);
@@ -1209,13 +1211,13 @@ class Postact extends CB_Controller
 
 		//추천일경우 푸시
 		if ($like_type == 1) {
-			
+
 			$mem_nickname = $this->member->item('mem_nickname');
-			$not_message = $mem_nickname. '님이 당신의 댓글을 좋아합니다.';
+			$not_message = $mem_nickname . '님이 당신의 댓글을 좋아합니다.';
 			//알림 
 			if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
 				$this->load->library('notificationlib');
-				
+
 				$not_url = post_url(element('brd_key', $board), $post_id);
 				$this->notificationlib->set_noti(
 					abs(element('mem_id', $comment)),
@@ -1223,7 +1225,7 @@ class Postact extends CB_Controller
 					'이타주의자들',
 					abs(element('post_id', $comment)),
 					$not_message,
-					$not_url.abs(element('post_id', $comment))
+					$not_url . abs(element('post_id', $comment))
 				);
 				//log_message('Error','알림 : '.$not_message );
 			}
@@ -1232,7 +1234,7 @@ class Postact extends CB_Controller
 			$topic_name = '';
 			if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_like_post')) {
 				$this->load->library('pushlib');
-			
+
 				$not_url = post_url(element('brd_key', $board), $post_id) . '#comment_' . $cmt_id;
 				$this->pushlib->set_push(
 					abs(element('mem_id', $comment)),
@@ -1246,8 +1248,8 @@ class Postact extends CB_Controller
 				);
 			}
 		}
-		
-	//	exit(json_encode($result));
+
+		//	exit(json_encode($result));
 
 	}
 	/**
@@ -1264,15 +1266,15 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		if ($this->member->is_member() === false) {
-			response_result($view,'Err','로그인 후 이용해주세요');
+			response_result($view, 'Err', '로그인 후 이용해주세요');
 		}
 
-		if (empty($cmt_id) OR $cmt_id < 1) {
-			response_result($view,'Err','잘못된 cmt_id 접근입니다');
+		if (empty($cmt_id) or $cmt_id < 1) {
+			response_result($view, 'Err', '잘못된 cmt_id 접근입니다');
 		}
 
-		if ($like_type !== 1 AND $like_type !== 2) {
-			response_result($view,'Err','잘못된 like_type 접근입니다.');
+		if ($like_type !== 1 and $like_type !== 2) {
+			response_result($view, 'Err', '잘못된 like_type 접근입니다.');
 		}
 
 		$mem_id = (int) $this->member->item('mem_id');
@@ -1282,28 +1284,28 @@ class Postact extends CB_Controller
 		$select = 'cmt_id, post_id, mem_id, cmt_del';
 		$comment = $this->Comment_model->get_one($cmt_id, $select);
 
-		if ( ! element('cmt_id', $comment)) {
-			response_result($view,'Err','존재하지 않는 댓글입니다');
+		if (!element('cmt_id', $comment)) {
+			response_result($view, 'Err', '존재하지 않는 댓글입니다');
 		}
 		if (element('cmt_del', $comment)) {
-			response_result($view,'Err','삭제된 댓글입니다');
+			response_result($view, 'Err', '삭제된 댓글입니다');
 		}
 
 		$select = 'post_id, brd_id, mem_id, post_del';
 		$post = $this->Post_model->get_one(element('post_id', $comment), $select);
 
-		if ( ! $this->session->userdata('post_id_' . element('post_id', $comment))) {
-			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
+		if (!$this->session->userdata('post_id_' . element('post_id', $comment))) {
+			response_result($view, 'Err', '해당 게시물에서만 접근 가능합니다');
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
 
-		if ( ! element('use_comment_like', $board) && $like_type === 1) {
-			response_result($view,'Err','이 게시판은 추천 기능을 사용하지 않습니다');
+		if (!element('use_comment_like', $board) && $like_type === 1) {
+			response_result($view, 'Err', '이 게시판은 추천 기능을 사용하지 않습니다');
 		}
 
-		if ( ! element('use_comment_dislike', $board) && $like_type === 2) {
-			response_result($view,'Err','이 게시판은 비추천 기능을 사용하지 않습니다');
+		if (!element('use_comment_dislike', $board) && $like_type === 2) {
+			response_result($view, 'Err', '이 게시판은 비추천 기능을 사용하지 않습니다');
 		}
 
 		/* if (abs(element('mem_id', $comment)) === $mem_id) {
@@ -1319,10 +1321,10 @@ class Postact extends CB_Controller
 		$exist = $this->Like_model->get_one('', $select, $where);
 
 		if (!element('lik_id', $exist)) {
-		
-			response_result($view,'Err','이 댓글을 추천/비추 하지 않으셨습니다');
+
+			response_result($view, 'Err', '이 댓글을 추천/비추 하지 않으셨습니다');
 		}
-	
+
 
 		$delete_where = array(
 			'target_id' => $cmt_id,
@@ -1330,7 +1332,7 @@ class Postact extends CB_Controller
 			'brd_id' => element('brd_id', $post),
 			'mem_id' => $mem_id,
 			'lik_type' => $like_type,
-			
+
 		);
 		$this->Like_model->delete_where($delete_where);
 
@@ -1341,7 +1343,7 @@ class Postact extends CB_Controller
 		if ($like_type === 2) {
 			$field = 'cmt_dislike';
 		}
-		
+
 		$where = array(
 			'target_id' => $cmt_id,
 			'target_type' => $target_type,
@@ -1356,8 +1358,8 @@ class Postact extends CB_Controller
 
 		$status = $like_type === 1 ? '추천' : '비추천';
 		$success = '이 댓글의 ' . $status . '을 취소 하셨습니다';
-	
-		response_result($result,'success', $success);
+
+		response_result($result, 'success', $success);
 	}
 
 
@@ -1378,15 +1380,15 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		if ($this->member->is_member() === false) {
-			response_result($view,'Err','로그인 후 이용해주세요');
+			response_result($view, 'Err', '로그인 후 이용해주세요');
 		}
 
 		$post_id = (int) $post_id;
-		if (empty($post_id) OR $post_id < 1) {
-			response_result($view,'Err','잘못된 접근입니다');
+		if (empty($post_id) or $post_id < 1) {
+			response_result($view, 'Err', '잘못된 접근입니다');
 		}
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
-			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
+		if (!$this->session->userdata('post_id_' . $post_id)) {
+			response_result($view, 'Err', '해당 게시물에서만 접근 가능합니다');
 		}
 
 		$mem_id = (int) $this->member->item('mem_id');
@@ -1396,17 +1398,17 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id, post_del';
 		$post = $this->Post_model->get_one($post_id, $select);
 
-		if ( ! element('post_id', $post)) {
-			response_result($view,'Err','존재하지 않는 게시물입니다');
+		if (!element('post_id', $post)) {
+			response_result($view, 'Err', '존재하지 않는 게시물입니다');
 		}
 		if (element('post_del', $post)) {
-			response_result($view,'Err','삭제된 게시물입니다');
+			response_result($view, 'Err', '삭제된 게시물입니다');
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
 
-		if ( ! element('use_scrap', $board)) {
-			response_result($view,'Err','이 게시판은 스크랩 기능을 사용하지 않습니다');
+		if (!element('use_scrap', $board)) {
+			response_result($view, 'Err', '이 게시판은 스크랩 기능을 사용하지 않습니다');
 		}
 
 		$where = array(
@@ -1416,7 +1418,7 @@ class Postact extends CB_Controller
 		$exist = $this->Scrap_model->get_one('', 'scr_id', $where);
 
 		if (element('scr_id', $exist)) {
-			response_result($view,'Err','이미 이 글을 스크랩 하셨습니다');
+			response_result($view, 'Err', '이미 이 글을 스크랩 하셨습니다');
 		}
 
 		$insertdata = array(
@@ -1438,8 +1440,7 @@ class Postact extends CB_Controller
 
 		$success = '이 글을 스크랩 하셨습니다';
 		$result = array('success' => $success, 'count' => $count);
-		response_result($result,'success',$success);
-
+		response_result($result, 'success', $success);
 	}
 	/**
 	 * 게시물 스크랩 취소
@@ -1448,18 +1449,18 @@ class Postact extends CB_Controller
 	{
 
 		if ($this->member->is_member() === false) {
-			response_result($view,'Err','로그인 후 이용해주세요');
+			response_result($view, 'Err', '로그인 후 이용해주세요');
 		}
 		//$post_id = (int)$this->input->post('post_id');
-		if (empty($post_id) OR $post_id < 1) {
-			response_result($view,'Err','잘못된 post_id 접근입니다('.$post_id.')');
+		if (empty($post_id) or $post_id < 1) {
+			response_result($view, 'Err', '잘못된 post_id 접근입니다(' . $post_id . ')');
 		}
 		$post_id = (int) $post_id;
-		if (empty($post_id) OR $post_id < 1) {
-			response_result($view,'Err','잘못된 접근입니다');
+		if (empty($post_id) or $post_id < 1) {
+			response_result($view, 'Err', '잘못된 접근입니다');
 		}
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
-			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
+		if (!$this->session->userdata('post_id_' . $post_id)) {
+			response_result($view, 'Err', '해당 게시물에서만 접근 가능합니다');
 		}
 
 		$mem_id = (int) $this->member->item('mem_id');
@@ -1469,11 +1470,11 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id, post_del';
 		$post = $this->Post_model->get_one($post_id, $select);
 
-		if ( ! element('post_id', $post)) {
-			response_result($view,'Err','존재하지 않는 게시물입니다');
+		if (!element('post_id', $post)) {
+			response_result($view, 'Err', '존재하지 않는 게시물입니다');
 		}
 		if (element('post_del', $post)) {
-			response_result($view,'Err','삭제된 게시물입니다');
+			response_result($view, 'Err', '삭제된 게시물입니다');
 		}
 
 		$where = array(
@@ -1483,7 +1484,7 @@ class Postact extends CB_Controller
 		$exist = $this->Scrap_model->get_one('', 'scr_id', $where);
 
 		if (!element('scr_id', $exist)) {
-			response_result($view,'Err','이 글을 스크랩 하지 않으셨습니다.');
+			response_result($view, 'Err', '이 글을 스크랩 하지 않으셨습니다.');
 		}
 
 		$insertdata = array(
@@ -1499,12 +1500,11 @@ class Postact extends CB_Controller
 		Events::trigger('after', $eventname);
 		if ($delete_result) {
 			$success = '이 글의 스크랩을 취소 하셨습니다';
-		}else {
+		} else {
 			$success = '이 글의 스크랩을 취소 하지 못했습니다.';
 		}
 		$result = array('success' => $success, 'count' => $count);
-		response_result($result,'success', $success);
-
+		response_result($result, 'success', $success);
 	}
 
 	/**
@@ -1527,19 +1527,19 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		if ($this->member->is_member() === false) {
-			response_result($view,'Err','로그인 후 이용해주세요');
-/* 			$result = array('error' => '로그인 후 이용해주세요');
+			response_result($view, 'Err', '로그인 후 이용해주세요');
+			/* 			$result = array('error' => '로그인 후 이용해주세요');
 			exit(json_encode($result)); */
 		}
 
-		if (empty($post_id) OR $post_id < 1) {
-			response_result($view,'Err','잘못된 post_id 접근입니다');
-/* 			$result = array('error' => '잘못된 접근입니다');
+		if (empty($post_id) or $post_id < 1) {
+			response_result($view, 'Err', '잘못된 post_id 접근입니다');
+			/* 			$result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result)); */
 		}
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
-			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
-/* 			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
+		if (!$this->session->userdata('post_id_' . $post_id)) {
+			response_result($view, 'Err', '해당 게시물에서만 접근 가능합니다');
+			/* 			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 			exit(json_encode($result)); */
 		}
 
@@ -1547,22 +1547,22 @@ class Postact extends CB_Controller
 
 		$post = $this->Post_model->get_one($post_id);
 
-		if ( ! element('post_id', $post)) {
-			response_result($view,'Err','존재하지 않는 게시물입니다');
-/* 			$result = array('error' => '존재하지 않는 게시물입니다');
+		if (!element('post_id', $post)) {
+			response_result($view, 'Err', '존재하지 않는 게시물입니다');
+			/* 			$result = array('error' => '존재하지 않는 게시물입니다');
 			exit(json_encode($result)); */
 		}
 		if (element('post_del', $post)) {
-			response_result($view,'Err','삭제된 게시물입니다');
-/* 			$result = array('error' => '삭제된 게시물입니다');
+			response_result($view, 'Err', '삭제된 게시물입니다');
+			/* 			$result = array('error' => '삭제된 게시물입니다');
 			exit(json_encode($result)); */
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
 
-		if ( ! element('use_blame', $board)) {
-			response_result($view,'Err','이 게시판은 신고 기능을 사용하지 않습니다');
-		/* 	$result = array('error' => '이 게시판은 신고 기능을 사용하지 않습니다');
+		if (!element('use_blame', $board)) {
+			response_result($view, 'Err', '이 게시판은 신고 기능을 사용하지 않습니다');
+			/* 	$result = array('error' => '이 게시판은 신고 기능을 사용하지 않습니다');
 			exit(json_encode($result)); */
 		}
 
@@ -1578,8 +1578,8 @@ class Postact extends CB_Controller
 		);
 
 		if ($can_blame === false) {
-			response_result($view,'Err','회원님은 신고할 수 있는 권한이 없습니다');
-		/* 	$result = array('error' => '회원님은 신고할 수 있는 권한이 없습니다');
+			response_result($view, 'Err', '회원님은 신고할 수 있는 권한이 없습니다');
+			/* 	$result = array('error' => '회원님은 신고할 수 있는 권한이 없습니다');
 			exit(json_encode($result)); */
 		}
 
@@ -1592,8 +1592,8 @@ class Postact extends CB_Controller
 		$exist = $this->Blame_model->get_one('', 'bla_id', $where);
 
 		if (element('bla_id', $exist)) {
-			response_result($view,'Err','이미 이 글을 신고 하셨습니다');
-		/* 	$result = array('error' => '이미 이 글을 신고 하셨습니다');
+			response_result($view, 'Err', '이미 이 글을 신고 하셨습니다');
+			/* 	$result = array('error' => '이미 이 글을 신고 하셨습니다');
 			exit(json_encode($result)); */
 		}
 
@@ -1621,23 +1621,29 @@ class Postact extends CB_Controller
 
 		$writer = $this->Member_model->get_one(abs(element('mem_id', $post)));
 
-		if (element('send_email_blame_super_admin', $board)
-			OR element('send_note_blame_super_admin', $board)
-			OR element('send_sms_blame_super_admin', $board)) {
+		if (
+			element('send_email_blame_super_admin', $board)
+			or element('send_note_blame_super_admin', $board)
+			or element('send_sms_blame_super_admin', $board)
+		) {
 			$mselect = 'mem_id, mem_email, mem_nickname, mem_phone';
 			$superadminlist = $this->Member_model
 				->get_superadmin_list($mselect);
 		}
-		if (element('send_email_blame_group_admin', $board)
-			OR element('send_note_blame_group_admin', $board)
-			OR element('send_sms_blame_group_admin', $board)) {
+		if (
+			element('send_email_blame_group_admin', $board)
+			or element('send_note_blame_group_admin', $board)
+			or element('send_sms_blame_group_admin', $board)
+		) {
 			$this->load->model('Board_group_admin_model');
 			$groupadminlist = $this->Board_group_admin_model
 				->get_board_group_admin_member(element('bgr_id', $board));
 		}
-		if (element('send_email_blame_board_admin', $board)
-			OR element('send_note_blame_board_admin', $board)
-			OR element('send_sms_blame_board_admin', $board)) {
+		if (
+			element('send_email_blame_board_admin', $board)
+			or element('send_note_blame_board_admin', $board)
+			or element('send_sms_blame_board_admin', $board)
+		) {
 			$this->load->model('Board_admin_model');
 			$boardadminlist = $this->Board_admin_model
 				->get_board_admin_member(element('brd_id', $board));
@@ -1658,8 +1664,10 @@ class Postact extends CB_Controller
 				$emailsendlistadmin[$value['mem_id']] = $value;
 			}
 		}
-		if (element('send_email_blame_post_writer', $board)
-			&& element('mem_receive_email', $writer)) {
+		if (
+			element('send_email_blame_post_writer', $board)
+			&& element('mem_receive_email', $writer)
+		) {
 			$emailsendlistpostwriter['mem_email'] = element('post_email', $post);
 		}
 		if (element('send_note_blame_super_admin', $board) && $superadminlist) {
@@ -1695,9 +1703,11 @@ class Postact extends CB_Controller
 				$smssendlistadmin[$value['mem_id']] = $value;
 			}
 		}
-		if (element('send_sms_blame_post_writer', $board)
+		if (
+			element('send_sms_blame_post_writer', $board)
 			&& element('mem_phone', $writer)
-			&& element('mem_receive_sms', $writer)) {
+			&& element('mem_receive_sms', $writer)
+		) {
 			$smssendlistpostwriter = $writer;
 		}
 
@@ -1862,13 +1872,13 @@ class Postact extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('after', $eventname);
 
-/* 		$result = array(
+		/* 		$result = array(
 			'success' => '이 글을 신고 하셨습니다',
 			'count' => $count,
 		);
 		 */
 		$result = array('count' => $count);
-		response_result($result,'success', '이 글을 신고 하셨습니다');
+		response_result($result, 'success', '이 글을 신고 하셨습니다');
 		//exit(json_encode($result));
 
 	}
@@ -1894,14 +1904,14 @@ class Postact extends CB_Controller
 		$cmt_id = (int)$this->input->post('cmt_id');
 
 		if ($this->member->is_member() === false) {
-			response_result($view,'Err','로그인 후 이용해주세요');
-		/* 	$result = array('error' => '로그인 후 이용해주세요');
+			response_result($view, 'Err', '로그인 후 이용해주세요');
+			/* 	$result = array('error' => '로그인 후 이용해주세요');
 			exit(json_encode($result)); */
 		}
 
 		$cmt_id = (int) $cmt_id;
-		if (empty($cmt_id) OR $cmt_id < 1) {
-			response_result($view,'Err','잘못된 접근입니다');
+		if (empty($cmt_id) or $cmt_id < 1) {
+			response_result($view, 'Err', '잘못된 접근입니다');
 			/* $result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result)); */
 		}
@@ -1912,29 +1922,29 @@ class Postact extends CB_Controller
 
 		$comment = $this->Comment_model->get_one($cmt_id);
 
-		if ( ! element('cmt_id', $comment)) {
-			response_result($view,'Err','존재하지 않는 댓글입니다');
-		/* 	$result = array('error' => '존재하지 않는 댓글입니다');
+		if (!element('cmt_id', $comment)) {
+			response_result($view, 'Err', '존재하지 않는 댓글입니다');
+			/* 	$result = array('error' => '존재하지 않는 댓글입니다');
 			exit(json_encode($result)); */
 		}
 		if (element('cmt_del', $comment)) {
-			response_result($view,'Err','삭제된 댓글입니다');
+			response_result($view, 'Err', '삭제된 댓글입니다');
 			/* $result = array('error' => '삭제된 댓글입니다');
 			exit(json_encode($result)); */
 		}
 
 		$post = $this->Post_model->get_one(element('post_id', $comment));
 
-		if ( ! $this->session->userdata('post_id_' . element('post_id', $comment))) {
-			response_result($view,'Err','해당 게시물에서만 접근 가능합니다');
-		/* 	$result = array('error' => '해당 게시물에서만 접근 가능합니다');
+		if (!$this->session->userdata('post_id_' . element('post_id', $comment))) {
+			response_result($view, 'Err', '해당 게시물에서만 접근 가능합니다');
+			/* 	$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 			exit(json_encode($result)); */
 		}
 
 		$board = $this->board->item_all(element('brd_id', $post));
 
-		if ( ! element('use_comment_blame', $board)) {
-			response_result($view,'Err','이 게시판은 댓글 신고 기능을 사용하지 않습니다');
+		if (!element('use_comment_blame', $board)) {
+			response_result($view, 'Err', '이 게시판은 댓글 신고 기능을 사용하지 않습니다');
 			/* $result = array('error' => '이 게시판은 댓글 신고 기능을 사용하지 않습니다');
 			exit(json_encode($result)); */
 		}
@@ -1951,8 +1961,8 @@ class Postact extends CB_Controller
 		);
 
 		if ($can_blame === false) {
-			response_result($view,'Err','회원님은 신고할 수 있는 권한이 없습니다');
-		/* 	$result = array('error' => '회원님은 신고할 수 있는 권한이 없습니다');
+			response_result($view, 'Err', '회원님은 신고할 수 있는 권한이 없습니다');
+			/* 	$result = array('error' => '회원님은 신고할 수 있는 권한이 없습니다');
 			exit(json_encode($result)); */
 		}
 
@@ -1965,8 +1975,8 @@ class Postact extends CB_Controller
 		$exist = $this->Blame_model->get_one('', 'bla_id', $where);
 
 		if (element('bla_id', $exist)) {
-			response_result($view,'Err','이미 이 댓글을 신고 하셨습니다');
-		/* 	$result = array('error' => '이미 이 댓글을 신고 하셨습니다');
+			response_result($view, 'Err', '이미 이 댓글을 신고 하셨습니다');
+			/* 	$result = array('error' => '이미 이 댓글을 신고 하셨습니다');
 			exit(json_encode($result)); */
 		}
 
@@ -1998,22 +2008,28 @@ class Postact extends CB_Controller
 		$comment_writer = $this->Member_model->get_one(abs(element('mem_id', $comment)));
 
 
-		if (element('send_email_comment_blame_super_admin', $board)
-			OR element('send_note_comment_blame_super_admin', $board)
-			OR element('send_sms_comment_blame_super_admin', $board)) {
+		if (
+			element('send_email_comment_blame_super_admin', $board)
+			or element('send_note_comment_blame_super_admin', $board)
+			or element('send_sms_comment_blame_super_admin', $board)
+		) {
 			$mselect = 'mem_id, mem_email, mem_nickname, mem_phone';
 			$superadminlist = $this->Member_model->get_superadmin_list($mselect);
 		}
-		if (element('send_email_comment_blame_group_admin', $board)
-			OR element('send_note_comment_blame_group_admin', $board)
-			OR element('send_sms_comment_blame_group_admin', $board)) {
+		if (
+			element('send_email_comment_blame_group_admin', $board)
+			or element('send_note_comment_blame_group_admin', $board)
+			or element('send_sms_comment_blame_group_admin', $board)
+		) {
 			$this->load->model('Board_group_admin_model');
 			$groupadminlist = $this->Board_group_admin_model
 				->get_board_group_admin_member(element('bgr_id', $board));
 		}
-		if (element('send_email_comment_blame_board_admin', $board)
-			OR element('send_note_comment_blame_board_admin', $board)
-			OR element('send_sms_comment_blame_board_admin', $board)) {
+		if (
+			element('send_email_comment_blame_board_admin', $board)
+			or element('send_note_comment_blame_board_admin', $board)
+			or element('send_sms_comment_blame_board_admin', $board)
+		) {
 			$this->load->model('Board_admin_model');
 			$boardadminlist = $this->Board_admin_model
 				->get_board_admin_member(element('brd_id', $board));
@@ -2034,7 +2050,8 @@ class Postact extends CB_Controller
 			}
 		}
 		if ((element('mem_email', $post_writer) && element('post_receive_email', $post))
-			OR (element('send_email_comment_blame_post_writer', $board) && element('mem_receive_email', $post_writer))) {
+			or (element('send_email_comment_blame_post_writer', $board) && element('mem_receive_email', $post_writer))
+		) {
 			$emailsendlistpostwriter['mem_email'] = $post['post_email'];
 		}
 		if (element('send_email_comment_blame_comment_writer', $board)) {
@@ -2055,12 +2072,16 @@ class Postact extends CB_Controller
 				$notesendlistadmin[$value['mem_id']] = $value;
 			}
 		}
-		if (element('send_note_comment_blame_post_writer', $board)
-			&& element('mem_use_note', $post_writer)) {
+		if (
+			element('send_note_comment_blame_post_writer', $board)
+			&& element('mem_use_note', $post_writer)
+		) {
 			$notesendlistpostwriter['mem_id'] = element('mem_id', $post_writer);
 		}
-		if (element('send_note_comment_blame_comment_writer', $board)
-			&& element('mem_use_note', $comment_writer)) {
+		if (
+			element('send_note_comment_blame_comment_writer', $board)
+			&& element('mem_use_note', $comment_writer)
+		) {
 			$notesendlistcmtwriter['mem_id'] = element('mem_id', $comment_writer);
 		}
 		if (element('send_sms_comment_blame_super_admin', $board) && $superadminlist) {
@@ -2078,16 +2099,20 @@ class Postact extends CB_Controller
 				$smssendlistadmin[$value['mem_id']] = $value;
 			}
 		}
-		if (element('send_sms_comment_blame_post_writer', $board)
+		if (
+			element('send_sms_comment_blame_post_writer', $board)
 			&& element('mem_phone', $post_writer)
-			&& element('mem_receive_sms', $post_writer)) {
+			&& element('mem_receive_sms', $post_writer)
+		) {
 			$smssendlistpostwriter['mem_id'] = element('mem_id', $post_writer);
 			$smssendlistpostwriter['mem_nickname'] = element('mem_nickname', $post_writer);
 			$smssendlistpostwriter['mem_phone'] = element('mem_phone', $post_writer);
 		}
-		if (element('send_sms_comment_blame_comment_writer', $board)
+		if (
+			element('send_sms_comment_blame_comment_writer', $board)
 			&& element('mem_phone', $comment_writer)
-			&& element('mem_receive_sms', $comment_writer)) {
+			&& element('mem_receive_sms', $comment_writer)
+		) {
 			$smssendlistcmtwriter['mem_id'] = element('mem_id', $comment_writer);
 			$smssendlistcmtwriter['mem_nickname'] = element('mem_nickname', $comment_writer);
 			$smssendlistcmtwriter['mem_phone'] = element('mem_phone', $comment_writer);
@@ -2324,14 +2349,13 @@ class Postact extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('after', $eventname);
 
-	/* 	$result = array(
+		/* 	$result = array(
 			'success' => '이 댓글을 신고 하셨습니다',
 			'count' => $count,
 		);
 		exit(json_encode($result)); */
 		$result = array('count' => $count);
-		response_result($result,'success', '이 글을 신고 하셨습니다');
-
+		response_result($result, 'success', '이 글을 신고 하셨습니다');
 	}
 
 
@@ -2352,13 +2376,13 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		$post_id = (int) $post_id;
-		if (empty($post_id) OR $post_id < 1) {
+		if (empty($post_id) or $post_id < 1) {
 			$result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result));
 		}
 		$flag = ((int) $flag === 1) ? 1 : 0;
 
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
+		if (!$this->session->userdata('post_id_' . $post_id)) {
 			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 			exit(json_encode($result));
 		}
@@ -2366,7 +2390,7 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id';
 		$post = $this->Post_model->get_one($post_id, $select);
 
-		if ( ! element('post_id', $post)) {
+		if (!element('post_id', $post)) {
 			$result = array('error' => '존재하지 않는 게시물입니다');
 			exit(json_encode($result));
 		}
@@ -2384,7 +2408,7 @@ class Postact extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		if ( ! element('use_post_secret', $board)) {
+		if (!element('use_post_secret', $board)) {
 			$result = array('error' => '이 게시판은 비밀글 기능을 사용하지 않습니다');
 			exit(json_encode($result));
 		}
@@ -2400,7 +2424,6 @@ class Postact extends CB_Controller
 		$success = ($flag) ? '게시물을 비밀글 처리하셨습니다' : '게시물을 비밀글을 해제하셨습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -2429,7 +2452,7 @@ class Postact extends CB_Controller
 
 		foreach ($post_ids as $post_id) {
 			$post_id = (int) $post_id;
-			if (empty($post_id) OR $post_id < 1) {
+			if (empty($post_id) or $post_id < 1) {
 				$result = array('error' => '잘못된 접근입니다');
 				exit(json_encode($result));
 			}
@@ -2437,7 +2460,7 @@ class Postact extends CB_Controller
 			$select = 'post_id, brd_id, mem_id';
 			$post = $this->Post_model->get_one($post_id, $select);
 
-			if ( ! element('post_id', $post)) {
+			if (!element('post_id', $post)) {
 				$result = array('error' => '존재하지 않는 게시물입니다');
 				exit(json_encode($result));
 			}
@@ -2455,7 +2478,7 @@ class Postact extends CB_Controller
 				exit(json_encode($result));
 			}
 
-			if ( ! element('use_post_secret', $board)) {
+			if (!element('use_post_secret', $board)) {
 				$result = array('error' => '이 게시판은 비밀글 기능을 사용하지 않습니다');
 				exit(json_encode($result));
 			}
@@ -2472,7 +2495,6 @@ class Postact extends CB_Controller
 		$success = ($flag) ? '게시물을 비밀글 처리하셨습니다' : '게시물을 비밀글을 해제하셨습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -2493,7 +2515,7 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		$cmt_id = (int) $cmt_id;
-		if (empty($cmt_id) OR $cmt_id < 1) {
+		if (empty($cmt_id) or $cmt_id < 1) {
 			$result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result));
 		}
@@ -2504,7 +2526,7 @@ class Postact extends CB_Controller
 		$select = 'cmt_id, post_id, mem_id, cmt_del';
 		$comment = $this->Comment_model->get_one($cmt_id, $select);
 
-		if ( ! element('cmt_id', $comment)) {
+		if (!element('cmt_id', $comment)) {
 			$result = array('error' => '존재하지 않는 댓글입니다');
 			exit(json_encode($result));
 		}
@@ -2512,12 +2534,12 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id, post_del';
 		$post = $this->Post_model->get_one(element('post_id', $comment), $select);
 
-		if ( ! $this->session->userdata('post_id_' . element('post_id', $comment))) {
+		if (!$this->session->userdata('post_id_' . element('post_id', $comment))) {
 			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 			exit(json_encode($result));
 		}
 
-		if ( ! element('post_id', $post)) {
+		if (!element('post_id', $post)) {
 			$result = array('error' => '존재하지 않는 게시물입니다');
 			exit(json_encode($result));
 		}
@@ -2535,7 +2557,7 @@ class Postact extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		if ( ! element('use_comment_secret', $board)) {
+		if (!element('use_comment_secret', $board)) {
 			$result = array('error' => '이 게시판은 댓글에 비밀글 기능을 사용하지 않습니다');
 			exit(json_encode($result));
 		}
@@ -2551,7 +2573,6 @@ class Postact extends CB_Controller
 		$success = ($flag) ? '댓글을 비밀글 처리하셨습니다' : '댓글을 비밀글을 해제하셨습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -2583,7 +2604,7 @@ class Postact extends CB_Controller
 		foreach ($cmt_ids as $cmt_id) {
 
 			$cmt_id = (int) $cmt_id;
-			if (empty($cmt_id) OR $cmt_id < 1) {
+			if (empty($cmt_id) or $cmt_id < 1) {
 				$result = array('error' => '잘못된 접근입니다');
 				exit(json_encode($result));
 			}
@@ -2591,7 +2612,7 @@ class Postact extends CB_Controller
 			$select = 'cmt_id, post_id, mem_id, cmt_del';
 			$comment = $this->Comment_model->get_one($cmt_id, $select);
 
-			if ( ! element('cmt_id', $comment)) {
+			if (!element('cmt_id', $comment)) {
 				$result = array('error' => '존재하지 않는 댓글입니다');
 				exit(json_encode($result));
 			}
@@ -2599,12 +2620,12 @@ class Postact extends CB_Controller
 			$select = 'post_id, brd_id, mem_id, post_del';
 			$post = $this->Post_model->get_one(element('post_id', $comment), $select);
 
-			if ( ! $this->session->userdata('post_id_' . element('post_id', $comment))) {
+			if (!$this->session->userdata('post_id_' . element('post_id', $comment))) {
 				$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 				exit(json_encode($result));
 			}
 
-			if ( ! element('post_id', $post)) {
+			if (!element('post_id', $post)) {
 				$result = array('error' => '존재하지 않는 게시물입니다');
 				exit(json_encode($result));
 			}
@@ -2622,7 +2643,7 @@ class Postact extends CB_Controller
 				exit(json_encode($result));
 			}
 
-			if ( ! element('use_comment_secret', $board)) {
+			if (!element('use_comment_secret', $board)) {
 				$result = array('error' => '이 게시판은 댓글에 비밀글 기능을 사용하지 않습니다');
 				exit(json_encode($result));
 			}
@@ -2639,7 +2660,6 @@ class Postact extends CB_Controller
 		$success = ($flag) ? '댓글을 비밀글 처리하셨습니다' : '댓글을 비밀글을 해제하셨습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -2660,13 +2680,13 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		$post_id = (int) $post_id;
-		if (empty($post_id) OR $post_id < 1) {
+		if (empty($post_id) or $post_id < 1) {
 			$result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result));
 		}
 		$flag = ((int) $flag === 1) ? 1 : 0;
 
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
+		if (!$this->session->userdata('post_id_' . $post_id)) {
 			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 			exit(json_encode($result));
 		}
@@ -2674,7 +2694,7 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id';
 		$post = $this->Post_model->get_one($post_id, $select);
 
-		if ( ! element('post_id', $post)) {
+		if (!element('post_id', $post)) {
 			$result = array('error' => '존재하지 않는 게시물입니다');
 			exit(json_encode($result));
 		}
@@ -2704,7 +2724,6 @@ class Postact extends CB_Controller
 		$success = ($flag) ? '댓글감춤 처리를 하였습니다' : '댓글감춤을 해제하셨습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -2725,14 +2744,14 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		$post_id = (int) $post_id;
-		if (empty($post_id) OR $post_id < 1) {
+		if (empty($post_id) or $post_id < 1) {
 			$result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result));
 		}
 
 		$flag = ((int) $flag === 1) ? 1 : 0;
 
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
+		if (!$this->session->userdata('post_id_' . $post_id)) {
 			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 			exit(json_encode($result));
 		}
@@ -2740,7 +2759,7 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id, post_del';
 		$post = $this->Post_model->get_one($post_id, $select);
 
-		if ( ! element('post_id', $post)) {
+		if (!element('post_id', $post)) {
 			$result = array('error' => '존재하지 않는 게시물입니다');
 			exit(json_encode($result));
 		}
@@ -2774,7 +2793,6 @@ class Postact extends CB_Controller
 		$success = ($flag) ? '이 게시글을 공지로 등록하였습니다' : '이 게시글을 공지에서 해제하셨습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -2803,7 +2821,7 @@ class Postact extends CB_Controller
 
 		foreach ($post_ids as $post_id) {
 			$post_id = (int) $post_id;
-			if (empty($post_id) OR $post_id < 1) {
+			if (empty($post_id) or $post_id < 1) {
 				$result = array('error' => '잘못된 접근입니다');
 				exit(json_encode($result));
 			}
@@ -2811,7 +2829,7 @@ class Postact extends CB_Controller
 			$select = 'post_id, brd_id, mem_id, post_del';
 			$post = $this->Post_model->get_one($post_id, $select);
 
-			if ( ! element('post_id', $post)) {
+			if (!element('post_id', $post)) {
 				$result = array('error' => '존재하지 않는 게시물입니다');
 				exit(json_encode($result));
 			}
@@ -2846,7 +2864,6 @@ class Postact extends CB_Controller
 		$success = ($flag) ? '이 게시글을 공지로 등록하였습니다' : '이 게시글을 공지에서 해제하셨습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -2867,13 +2884,13 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		$post_id = (int) $post_id;
-		if (empty($post_id) OR $post_id < 1) {
+		if (empty($post_id) or $post_id < 1) {
 			$result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result));
 		}
 		$flag = ((int) $flag === 1) ? 1 : 0;
 
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
+		if (!$this->session->userdata('post_id_' . $post_id)) {
 			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 			exit(json_encode($result));
 		}
@@ -2881,7 +2898,7 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id, post_blame, post_del';
 		$post = $this->Post_model->get_one($post_id, $select);
 
-		if ( ! element('post_id', $post)) {
+		if (!element('post_id', $post)) {
 			$result = array('error' => '존재하지 않는 게시물입니다');
 			exit(json_encode($result));
 		}
@@ -2904,12 +2921,12 @@ class Postact extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		if ( ! element('use_blame', $board)) {
+		if (!element('use_blame', $board)) {
 			$result = array('error' => '이 게시판은 신고 기능을 사용하지 않습니다');
 			exit(json_encode($result));
 		}
 
-		$blame_count = $flag ? element('blame_blind_count', $board): 0;
+		$blame_count = $flag ? element('blame_blind_count', $board) : 0;
 		$updatedata = array(
 			'post_blame' => $blame_count,
 		);
@@ -2921,7 +2938,6 @@ class Postact extends CB_Controller
 		$success = ($flag) ? '이 게시글을 블라인드 처리하였습니다' : '이 게시글을 블라인드 해제하셨습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -2950,7 +2966,7 @@ class Postact extends CB_Controller
 
 		foreach ($post_ids as $post_id) {
 			$post_id = (int) $post_id;
-			if (empty($post_id) OR $post_id < 1) {
+			if (empty($post_id) or $post_id < 1) {
 				$result = array('error' => '잘못된 접근입니다');
 				exit(json_encode($result));
 			}
@@ -2958,7 +2974,7 @@ class Postact extends CB_Controller
 			$select = 'post_id, brd_id, mem_id, post_blame, post_del';
 			$post = $this->Post_model->get_one($post_id, $select);
 
-			if ( ! element('post_id', $post)) {
+			if (!element('post_id', $post)) {
 				$result = array('error' => '존재하지 않는 게시물입니다');
 				exit(json_encode($result));
 			}
@@ -2981,12 +2997,12 @@ class Postact extends CB_Controller
 				exit(json_encode($result));
 			}
 
-			if ( ! element('use_blame', $board)) {
+			if (!element('use_blame', $board)) {
 				$result = array('error' => '이 게시판은 신고 기능을 사용하지 않습니다');
 				exit(json_encode($result));
 			}
 
-			$blame_count = $flag ? element('blame_blind_count', $board): 0;
+			$blame_count = $flag ? element('blame_blind_count', $board) : 0;
 			$updatedata = array(
 				'post_blame' => $blame_count,
 			);
@@ -2999,7 +3015,6 @@ class Postact extends CB_Controller
 		$success = ($flag) ? '이 게시글을 블라인드 처리하였습니다' : '이 게시글을 블라인드 해제하셨습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -3020,7 +3035,7 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		$cmt_id = (int) $cmt_id;
-		if (empty($cmt_id) OR $cmt_id < 1) {
+		if (empty($cmt_id) or $cmt_id < 1) {
 			$result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result));
 		}
@@ -3031,7 +3046,7 @@ class Postact extends CB_Controller
 		$select = 'cmt_id, post_id, mem_id, cmt_blame, cmt_del';
 		$comment = $this->Comment_model->get_one($cmt_id, $select);
 
-		if ( ! element('cmt_id', $comment)) {
+		if (!element('cmt_id', $comment)) {
 			$result = array('error' => '존재하지 않는 댓글입니다');
 			exit(json_encode($result));
 		}
@@ -3043,12 +3058,12 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id, post_blame, post_del';
 		$post = $this->Post_model->get_one(element('post_id', $comment), $select);
 
-		if ( ! $this->session->userdata('post_id_' . element('post_id', $comment))) {
+		if (!$this->session->userdata('post_id_' . element('post_id', $comment))) {
 			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 			exit(json_encode($result));
 		}
 
-		if ( ! element('post_id', $post)) {
+		if (!element('post_id', $post)) {
 			$result = array('error' => '존재하지 않는 게시물입니다');
 			exit(json_encode($result));
 		}
@@ -3071,12 +3086,12 @@ class Postact extends CB_Controller
 			exit(json_encode($result));
 		}
 
-		if ( ! element('use_comment_blame', $board)) {
+		if (!element('use_comment_blame', $board)) {
 			$result = array('error' => '이 게시판은 댓글에 신고 기능을 사용하지 않습니다');
 			exit(json_encode($result));
 		}
 
-		$blame_count = $flag ? element('blame_blind_count', $board): 0;
+		$blame_count = $flag ? element('blame_blind_count', $board) : 0;
 		$updatedata = array(
 			'cmt_blame' => $blame_count,
 		);
@@ -3088,7 +3103,6 @@ class Postact extends CB_Controller
 		$success = ($flag) ? '이 댓글을 블라인드 처리하였습니다' : '이 댓글을 블라인드 해제하셨습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -3119,7 +3133,7 @@ class Postact extends CB_Controller
 
 		foreach ($cmt_ids as $cmt_id) {
 			$cmt_id = (int) $cmt_id;
-			if (empty($cmt_id) OR $cmt_id < 1) {
+			if (empty($cmt_id) or $cmt_id < 1) {
 				$result = array('error' => '잘못된 접근입니다');
 				exit(json_encode($result));
 			}
@@ -3127,7 +3141,7 @@ class Postact extends CB_Controller
 			$select = 'cmt_id, post_id, mem_id, cmt_blame, cmt_del';
 			$comment = $this->Comment_model->get_one($cmt_id, $select);
 
-			if ( ! element('cmt_id', $comment)) {
+			if (!element('cmt_id', $comment)) {
 				$result = array('error' => '존재하지 않는 댓글입니다');
 				exit(json_encode($result));
 			}
@@ -3139,12 +3153,12 @@ class Postact extends CB_Controller
 			$select = 'post_id, brd_id, mem_id, post_blame, post_del';
 			$post = $this->Post_model->get_one(element('post_id', $comment), $select);
 
-			if ( ! $this->session->userdata('post_id_' . element('post_id', $comment))) {
+			if (!$this->session->userdata('post_id_' . element('post_id', $comment))) {
 				$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 				exit(json_encode($result));
 			}
 
-			if ( ! element('post_id', $post)) {
+			if (!element('post_id', $post)) {
 				$result = array('error' => '존재하지 않는 게시물입니다');
 				exit(json_encode($result));
 			}
@@ -3167,12 +3181,12 @@ class Postact extends CB_Controller
 				exit(json_encode($result));
 			}
 
-			if ( ! element('use_comment_blame', $board)) {
+			if (!element('use_comment_blame', $board)) {
 				$result = array('error' => '이 게시판은 댓글에 신고 기능을 사용하지 않습니다');
 				exit(json_encode($result));
 			}
 
-			$blame_count = $flag ? element('blame_blind_count', $board): 0;
+			$blame_count = $flag ? element('blame_blind_count', $board) : 0;
 			$updatedata = array(
 				'cmt_blame' => $blame_count,
 			);
@@ -3185,7 +3199,6 @@ class Postact extends CB_Controller
 		$success = ($flag) ? '이 댓글을 블라인드 처리하였습니다' : '이 댓글을 블라인드 해제하셨습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -3207,11 +3220,11 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		$post_id = (int) $post_id;
-		if (empty($post_id) OR $post_id < 1) {
+		if (empty($post_id) or $post_id < 1) {
 			$result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result));
 		}
-		if ( ! $this->session->userdata('post_id_' . $post_id)) {
+		if (!$this->session->userdata('post_id_' . $post_id)) {
 			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 			exit(json_encode($result));
 		}
@@ -3221,7 +3234,7 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id, post_del';
 		$post = $this->Post_model->get_one($post_id, $select);
 
-		if ( ! element('post_id', $post)) {
+		if (!element('post_id', $post)) {
 			$result = array('error' => '존재하지 않는 게시물입니다');
 			exit(json_encode($result));
 		}
@@ -3290,7 +3303,6 @@ class Postact extends CB_Controller
 			'url' => board_url(element('brd_key', $board)),
 		);
 		exit(json_encode($result));
-
 	}
 
 
@@ -3321,7 +3333,7 @@ class Postact extends CB_Controller
 		foreach ($post_ids as $post_id) {
 
 			$post_id = (int) $post_id;
-			if (empty($post_id) OR $post_id < 1) {
+			if (empty($post_id) or $post_id < 1) {
 				$result = array('error' => '잘못된 접근입니다');
 				exit(json_encode($result));
 			}
@@ -3329,7 +3341,7 @@ class Postact extends CB_Controller
 			$select = 'post_id, brd_id, mem_id, post_del';
 			$post = $this->Post_model->get_one($post_id, $select);
 
-			if ( ! element('post_id', $post)) {
+			if (!element('post_id', $post)) {
 				$result = array('error' => '존재하지 않는 게시물입니다');
 				exit(json_encode($result));
 			}
@@ -3395,7 +3407,6 @@ class Postact extends CB_Controller
 
 		$result = array('success' => '해당 게시글을 휴지통으로 이동하였습니다');
 		exit(json_encode($result));
-
 	}
 
 
@@ -3417,7 +3428,7 @@ class Postact extends CB_Controller
 		$this->output->set_content_type('application/json');
 
 		$cmt_id = (int) $cmt_id;
-		if (empty($cmt_id) OR $cmt_id < 1) {
+		if (empty($cmt_id) or $cmt_id < 1) {
 			$result = array('error' => '잘못된 접근입니다');
 			exit(json_encode($result));
 		}
@@ -3427,7 +3438,7 @@ class Postact extends CB_Controller
 		$select = 'cmt_id, post_id, mem_id, cmt_del';
 		$comment = $this->Comment_model->get_one($cmt_id, $select);
 
-		if ( ! element('cmt_id', $comment)) {
+		if (!element('cmt_id', $comment)) {
 			$result = array('error' => '존재하지 않는 댓글입니다');
 			exit(json_encode($result));
 		}
@@ -3443,12 +3454,12 @@ class Postact extends CB_Controller
 		$select = 'post_id, brd_id, mem_id, post_del';
 		$post = $this->Post_model->get_one(element('post_id', $comment), $select);
 
-		if ( ! $this->session->userdata('post_id_' . element('post_id', $comment))) {
+		if (!$this->session->userdata('post_id_' . element('post_id', $comment))) {
 			$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 			exit(json_encode($result));
 		}
 
-		if ( ! element('post_id', $post)) {
+		if (!element('post_id', $post)) {
 			$result = array('error' => '존재하지 않는 게시물입니다');
 			exit(json_encode($result));
 		}
@@ -3489,7 +3500,6 @@ class Postact extends CB_Controller
 			'url' => post_url(element('brd_key', $board), element('post_id', $post)),
 		);
 		exit(json_encode($result));
-
 	}
 
 
@@ -3520,7 +3530,7 @@ class Postact extends CB_Controller
 		foreach ($cmt_ids as $cmt_id) {
 
 			$cmt_id = (int) $cmt_id;
-			if (empty($cmt_id) OR $cmt_id < 1) {
+			if (empty($cmt_id) or $cmt_id < 1) {
 				$result = array('error' => '잘못된 접근입니다');
 				exit(json_encode($result));
 			}
@@ -3528,7 +3538,7 @@ class Postact extends CB_Controller
 			$select = 'cmt_id, post_id, mem_id, cmt_del';
 			$comment = $this->Comment_model->get_one($cmt_id, $select);
 
-			if ( ! element('cmt_id', $comment)) {
+			if (!element('cmt_id', $comment)) {
 				$result = array('error' => '존재하지 않는 댓글입니다');
 				exit(json_encode($result));
 			}
@@ -3544,12 +3554,12 @@ class Postact extends CB_Controller
 			$select = 'post_id, brd_id, mem_id, post_del';
 			$post = $this->Post_model->get_one(element('post_id', $comment), $select);
 
-			if ( ! $this->session->userdata('post_id_' . element('post_id', $comment))) {
+			if (!$this->session->userdata('post_id_' . element('post_id', $comment))) {
 				$result = array('error' => '해당 게시물에서만 접근 가능합니다');
 				exit(json_encode($result));
 			}
 
-			if ( ! element('post_id', $post)) {
+			if (!element('post_id', $post)) {
 				$result = array('error' => '존재하지 않는 게시물입니다');
 				exit(json_encode($result));
 			}
@@ -3588,7 +3598,6 @@ class Postact extends CB_Controller
 		$success = '선택하신 댓글을 휴지통으로 이동하였습니다';
 		$result = array('success' => $success);
 		exit(json_encode($result));
-
 	}
 
 
@@ -3619,16 +3628,29 @@ class Postact extends CB_Controller
 				$str = trim($spam_word[$i]);
 				if ($title) {
 					$pos = stripos($title, $str);
+
 					if ($pos !== false) {
-						$return_title = $str;
-						break;
+						if ($str == '18년') {
+							if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '2118년') {
+								null;
+							}
+						} else {
+							$return_title = $str;
+							break;
+						}
 					}
 				}
 				if ($content) {
 					$pos = stripos($content, $str);
 					if ($pos !== false) {
-						$return_content = $str;
-						break;
+						if ($str == '18년') {
+							if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '2118년') {
+								null;
+							}
+						} else {
+							$return_content = $str;
+							break;
+						}
 					}
 				}
 			}
@@ -3640,12 +3662,11 @@ class Postact extends CB_Controller
 			'title' => $return_title,
 			'content' => $return_content,
 		);
-		if($return_content) {
-			response_result($return,'Err','내용에 금지단어('.$return_content.')가 포함되어있습니다');
-		}else if($return_title){
-			response_result($return,'Err','제목에 금지단어('.$return_title.')가 포함되어있습니다');
-		}
-		else{
+		if ($return_content) {
+			response_result($return, 'Err', '내용에 금지단어(' . $return_content . ')가 포함되어있습니다');
+		} else if ($return_title) {
+			response_result($return, 'Err', '제목에 금지단어(' . $return_title . ')가 포함되어있습니다');
+		} else {
 			response_result($return);
 		}
 		//$json = json_encode($return);
@@ -3676,10 +3697,12 @@ class Postact extends CB_Controller
 		if (empty($brd_id)) {
 			exit();
 		}
-		if (empty($post_content)
-			OR $post_content === '<p>&nbsp;</p>'
-			OR $post_content === '<div>&nbsp;</div>'
-			OR $post_content === '&nbsp;') {
+		if (
+			empty($post_content)
+			or $post_content === '<p>&nbsp;</p>'
+			or $post_content === '<div>&nbsp;</div>'
+			or $post_content === '&nbsp;'
+		) {
 			exit();
 		}
 		if ($this->member->is_member() === false) {
@@ -3781,17 +3804,17 @@ class Postact extends CB_Controller
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('before', $eventname);
 
-		if ( ! $this->cbconfig->item('naver_syndi_key')) {
+		if (!$this->cbconfig->item('naver_syndi_key')) {
 			die('신디케이션 키가 입력되지 않았습니다');
 		}
 		$post_id = (int) $post_id;
-		if (empty($post_id) OR $post_id < 1) {
+		if (empty($post_id) or $post_id < 1) {
 			show_404();
 		}
 
 		$post = $this->Post_model->get_one($post_id);
 
-		if ( ! element('post_id', $post)) {
+		if (!element('post_id', $post)) {
 			show_404();
 		}
 		if (element('post_del', $post)) {
@@ -3800,11 +3823,11 @@ class Postact extends CB_Controller
 
 		$board = $this->board->item_all(element('brd_id', $post));
 
-		if ( ! element('brd_id', $board)) {
+		if (!element('brd_id', $board)) {
 			show_404();
 		}
 
-		if ( ! element('use_naver_syndi', $board)) {
+		if (!element('use_naver_syndi', $board)) {
 			die('이 게시판은 신디케이션 기능을 사용하지 않습니다');
 		}
 		if (element('access_view', $board)) {
@@ -3853,7 +3876,7 @@ class Postact extends CB_Controller
 		$xml .= "<author>\n";
 		$xml .= "<name>" . html_escape(element('post_nickname', $post)) . "</name>\n";
 		$xml .= "</author>\n";
-		$xml .= "<updated>" .date('Y-m-d\TH:i:s\+09:00', strtotime(element('post_updated_datetime', $post))) . "</updated>\n";
+		$xml .= "<updated>" . date('Y-m-d\TH:i:s\+09:00', strtotime(element('post_updated_datetime', $post))) . "</updated>\n";
 		$xml .= "<published>" . date('Y-m-d\TH:i:s\+09:00', strtotime(element('post_datetime', $post))) . "</published>\n";
 		$xml .= "<link rel=\"via\" href=\"" . board_url(element('brd_key', $board)) . "\" title=\"" . html_escape(element('brd_name', $board)) . "\" />\n";
 		$xml .= "<link rel=\"mobile\" href=\"" . post_url(element('brd_key', $board), $post_id) . "\" />\n";
