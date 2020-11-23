@@ -154,7 +154,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         versionCode code
         // Major Version.Minor Version.Build or Maintenance Version
-        versionName "1.2.4"
+        versionName "1.2.5"
     }
     splits {
         abi {
