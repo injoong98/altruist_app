@@ -3604,6 +3604,14 @@ class Postact extends CB_Controller
 
 	/**
 	 * 스팸 키워드 체크하기
+	 * 
+	 * 2020-11-23 
+	 * 금지어 안내
+	 * : '18년'때문에 2018년도 금지어로 처리되어서
+	 * 해당 부분 구분해서 처리하도록 함
+	 * 2018년 포함, 1618년, 1718년, 1818년, 1918년, 2118년까지의 
+	 * 년도는 가능하도록 함
+	 * 나머지 연도는 그대로 금지어로 처리될 예정
 	 */
 	public function filter_spam_keyword()
 	{
@@ -3631,7 +3639,7 @@ class Postact extends CB_Controller
 
 					if ($pos !== false) {
 						if ($str == '18년') {
-							if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '2118년') {
+							if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '1718년' || $str == '1618년' || $str == '2118년') {
 								null;
 							} else {
 								$return_title = $str;
@@ -3647,7 +3655,7 @@ class Postact extends CB_Controller
 					$pos = stripos($content, $str);
 					if ($pos !== false) {
 						if ($str == '18년') {
-							if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '2118년') {
+							if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '1718년' || $str == '1618년' || $str == '2118년') {
 								null;
 							} else {
 								$return_title = $str;
