@@ -3633,6 +3633,9 @@ class Postact extends CB_Controller
 						if ($str == '18년') {
 							if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '2118년') {
 								null;
+							} else {
+								$return_title = $str;
+								break;
 							}
 						} else {
 							$return_title = $str;
@@ -3646,6 +3649,9 @@ class Postact extends CB_Controller
 						if ($str == '18년') {
 							if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '2118년') {
 								null;
+							} else {
+								$return_title = $str;
+								break;
 							}
 						} else {
 							$return_content = $str;
