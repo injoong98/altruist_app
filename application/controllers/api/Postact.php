@@ -3636,40 +3636,78 @@ class Postact extends CB_Controller
 				$str = trim($spam_word[$i]);
 				if ($title) {
 					$pos = stripos($title, $str);
-
 					if ($pos !== false) {
 						if ($str == '18년') {
+							$return_title = $str;
 							if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '1718년' || $str == '1618년' || $str == '2118년') {
-								null;
-							} else {
-								$return_title = $str;
-								break;
+								$return_title = '';
 							}
+							break;
 						} else {
 							$return_title = $str;
 							break;
 						}
 					}
 				}
+				// if ($title)  끝
+
 				if ($content) {
 					$pos = stripos($content, $str);
 					if ($pos !== false) {
 						if ($str == '18년') {
+							$return_content = $str;
 							if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '1718년' || $str == '1618년' || $str == '2118년') {
-								null;
-							} else {
-								$return_title = $str;
-								break;
+								$return_content = '';
 							}
+							break;
 						} else {
 							$return_content = $str;
 							break;
 						}
 					}
 				}
+				// if ($content)  끝
 			}
 		}
 
+		// if ($spam_word) {
+		// 	for ($i = 0; $i < count($spam_word); $i++) {
+		// 		$str = trim($spam_word[$i]);
+		// 		if ($title) {
+		// 			$pos = stripos($title, $str);
+		// 			if ($pos !== false) {
+		// 				if ($str == '18년') {
+		// 					$return_title = $str;
+		// 					if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '1718년' || $str == '1618년' || $str == '2118년') {
+		// 						$return_title = '';
+		// 					}
+		// 					break;
+		// 				} else {
+		// 					$return_title = $str;
+		// 					break;
+		// 				}
+		// 			}
+		// 		}
+		// 		// if ($title)  끝
+
+		// 		if ($content) {
+		// 			$pos = stripos($content, $str);
+		// 			if ($pos !== false) {
+		// 				if ($str == '18년') {
+		// 					$return_content = $str;
+		// 					if ($str == '2018년' || $str == '1918년' || $str == '1818년' || $str == '1718년' || $str == '1618년' || $str == '2118년') {
+		// 						$return_content = '';
+		// 					}
+		// 					break;
+		// 				} else {
+		// 					$return_content = $str;
+		// 					break;
+		// 				}
+		// 			}
+		// 		}
+		// 		// if ($content)  끝
+		// 	}
+		// }
 		// 이벤트가 존재하면 실행합니다
 		Events::trigger('after', $eventname);
 		$return = array(
