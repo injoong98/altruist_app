@@ -656,7 +656,7 @@ class MarketWrite extends React.Component {
                   style={
                     Platform.OS == 'ios'
                     ?
-                    {...styles.input, height: 40}  
+                    {...styles.input, height: 30}  
                     :
                     {...styles.input, height: 60, fontSize: 20}
                   }
@@ -672,7 +672,7 @@ class MarketWrite extends React.Component {
                     style={
                       Platform.OS == 'ios'
                       ?
-                      {...styles.input, height: 40}  
+                      {...styles.input, height: 30}  
                       :
                       {...styles.input}
                     }
@@ -688,7 +688,7 @@ class MarketWrite extends React.Component {
                     style={
                       Platform.OS == 'ios'
                       ?
-                      {...styles.input, height: 40}  
+                      {...styles.input, height: 30}  
                       :
                       {...styles.input}
                     }
@@ -723,7 +723,7 @@ class MarketWrite extends React.Component {
                   style={
                     Platform.OS == 'ios'
                     ?
-                    {...styles.input, height: 40}  
+                    {...styles.input, height: 30}  
                     :
                     {...styles.input}
                   }
@@ -786,15 +786,10 @@ class MarketWrite extends React.Component {
                     justifyContent: 'space-between',
                     marginVertical: 10,
                   }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    flex: 1,
-                    alignItems: 'center',
-                  }}>
+                  <View>
                     <Text category="h4" style={{color:'#63579D'}}> 사진</Text>
-                    <Text style={{color:'#63579D', fontSize:12}}>(제품과 함께 '이타주의자'와 본인 아이디를 적은 쪽지가 있는 사진 첨부)</Text>
-                  </View>
+                    <Text style={{color:'#63579D', fontSize:8}}> (하나 이상의 사진에 '이타주의자'와 본인 아이디를 적은 쪽지가 있는 사진 첨부)</Text>  
+                  </View>    
                   <TouchableOpacity onPress={() => this.onClickAddImage()}>
                     <Camsvg />
                   </TouchableOpacity>
