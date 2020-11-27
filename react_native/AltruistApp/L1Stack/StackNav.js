@@ -57,7 +57,7 @@ class LoadingScreen extends React.Component{
     fadeOut = () =>{
         Animated.timing(this.state.opacity,{
             toValue:0, 
-            delay:10000
+            delay:100
         }).reset()
     }
 
@@ -67,10 +67,9 @@ class LoadingScreen extends React.Component{
     }
     
     
-   
     componentDidMount(){
+        console.log('StackNav LoadingScreen ComponentDidMount')
         
-
         // // Platform.OS === 'ios' ?  
         // // null
         // //     // VersionCheck.setAppID(APP_ID);
@@ -80,14 +79,21 @@ class LoadingScreen extends React.Component{
         // //     this.fadeIn();
         // //     VersionCheck.getLatestVersion()
         // //     .then(latestVersion => {
-        // //       console.log('latestVersion : ', latestVersion);
-        // //       // 2.0.0
-        // //     })
-        this.fadeIn(); this.VersionChkAndroid();
-    }
-
+            // //       console.log('latestVersion : ', latestVersion);
+            // //       // 2.0.0
+            // //     })
+            
+            if(Platform.OS != 'ios'){
+                this.fadeIn(); 
+                this.VersionChkAndroid();
+            }
+        }
+        
     componentWillUnmount(){
-        this.fadeOut()
+        console.log('StackNav LoadingScreen WillUnmount')
+        if(Platform.OS != 'ios'){
+            this.fadeOut()
+        }
     }
 
 
@@ -314,13 +320,11 @@ export class StackNav extends React.Component{
         })
     }
     componentDidMount(){
-        setTimeout(
-            ()=>
-            {
-                // this.VersionUpdateChk();
-            this.session_chk();
-        }
-            ,600);
+
+        console.log('StackNav LoadingScreen WillUnmount')
+
+        setTimeout( ()=> {// this.VersionUpdateChk(); 
+                this.session_chk();} ,600);
         messaging()
             .getInitialNotification()
             .then(async remoteMessage=>{
@@ -342,6 +346,7 @@ export class StackNav extends React.Component{
             
     }
     render(){
+        console.log('StackNavRendering')
         const {context,isLoading,isSignedIn,noticeContext, versionOk} = this.state
         return(
             isLoading ?
