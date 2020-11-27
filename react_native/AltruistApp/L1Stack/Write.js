@@ -824,7 +824,7 @@ class MarketWrite extends React.Component {
                   }}>
                   <View>
                     <Text category="h4" style={{color:'#63579D'}}> 사진</Text>
-                    <Text style={{color:'#63579D', fontSize:8}}> (하나 이상의 사진에 '이타주의자'와 본인 아이디를 적은 쪽지가 있는 사진 첨부)</Text>  
+                    <Text style={{color:'#63579D', fontSize:10}}> (하나 이상의 사진에 '이타주의자'와 본인 아이디를 적은 쪽지가 있는 사진 첨부)</Text>  
                   </View>    
                   <TouchableOpacity onPress={() => this.onClickAddImage()}>
                     <Camsvg />
