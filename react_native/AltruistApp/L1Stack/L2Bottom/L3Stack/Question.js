@@ -646,8 +646,7 @@ class AltQueContent extends React.Component{
             this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({isLoading:true,resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
     onRefresh=()=>{
@@ -720,6 +719,7 @@ class AltQueContent extends React.Component{
                     OnFrstPress={
                         () =>{ 
                             this.setState({resultModalVisible:false, });
+                            this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
                         }}
                 />
             </Modal>
@@ -799,10 +799,15 @@ class AltQueList extends React.Component{
             modalVisible:false,
             list:[],
             list_showing:[],
+            refreshing:false
         }
     }
     static contextType = Signing;
 
+    
+    onRefresh= () =>{
+        this.getQuestions();
+    }
     getQuestions = ()=>{
         const {type,scndType} = this.props
         axios.get(`http://dev.unyict.org/api/board_post/lists/${type}?type=${scndType}`)
@@ -927,6 +932,8 @@ class AltQueList extends React.Component{
                             data={list}
                             renderItem={this.renderQueList }
                             style={{backgroundColor:'#ffffff',}}
+                            onRefresh={this.onRefresh}
+                            refreshing={this.state.refreshing}
                         />
                 </View>
             :
@@ -950,7 +957,15 @@ class AltQueType extends React.Component{
             <SafeAreaView style={{flex:1}}>
                 <TopNavigation title="질문 유형 선택" accessoryLeft={this.BackAction}/>
                 <View style={{flex:1 , justifyContent:'space-evenly', alignItems:'center'}}>
-                    <TouchableOpacity style={{flex:1,backgroundColor:'#A7D4DE',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{navigation.navigate('AltList');}}>
+                    <TouchableOpacity style={{flex:1,backgroundColor:'#A7D4DE',width:'100%',justifyContent:'center',alignItems:'center'}} 
+                        onPress={()=>{
+                            if(!global.mem_id) {
+                                this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                            }else {
+                                navigation.navigate('AltList');
+                            }
+                         }
+                        }>
                         <Text category ="h2" style={{fontSize:30}}>1대1 질문하기</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{flex:1,backgroundColor:'#EAB0B3',width:'100%',justifyContent:'center',alignItems:'center'}} onPress={()=>{navigation.navigate('AltQuestionWrite',{anser_mem_id:false});}}>

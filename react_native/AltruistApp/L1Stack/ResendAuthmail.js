@@ -42,7 +42,7 @@ class ResendAuthmailScreen extends Component {
     console.info('form', this.state);
 
     await axios
-      .post(`http://dev.unyict.org/api/findaccount/verifyemail`, formdata)
+      .post(`https://dev.unyict.org/api/findaccount/verifyemail`, formdata)
       .then((res) => {
         if (res.data.status == 500) {
           Alert.alert(
@@ -74,7 +74,7 @@ class ResendAuthmailScreen extends Component {
     formdata.append('email', mem_email);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/email_check `, formdata)
+      .post(`https://dev.unyict.org/api/register/email_check `, formdata)
       .then((res) => {
         if (!res.data.message.includes('이미 사용중')) {
           this.setState({

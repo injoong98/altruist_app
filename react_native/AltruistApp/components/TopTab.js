@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,StyleSheet,TouchableOpacity} from 'react-native';
+import {View,StyleSheet,TouchableOpacity,Pressable} from 'react-native';
 
 import {Text} from '@ui-kitten/components';
 
@@ -28,8 +28,8 @@ export function MyTabBar({ state, descriptors, navigation, position }) {
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const label =
-            options.tabBarLabel !== undefined
-              ? options.tabBarLabel
+            options.tabBarIcon !== undefined
+              ? options.tabBarIcon
               : options.title !== undefined
               ? options.title
               : route.name;
@@ -37,11 +37,16 @@ export function MyTabBar({ state, descriptors, navigation, position }) {
           const isFocused = state.index === index;
   
           const onPress = () => {
-            const event = navigation.emit({
+            const event = 
+            isFocused ?
+            navigation.emit({
               type: 'tabPress',
               target: route.key,
               canPreventDefault: true,
-            });
+            })
+            :
+            ()=>{}
+            ;
   
             if (!isFocused && !event.defaultPrevented) {
               navigation.navigate(route.name);
@@ -56,7 +61,7 @@ export function MyTabBar({ state, descriptors, navigation, position }) {
           };
   
           return (
-            <TouchableOpacity
+            <Pressable
               key={index}
               accessibilityRole="button"
               accessibilityStates={isFocused ? ['selected'] : []}
@@ -64,12 +69,10 @@ export function MyTabBar({ state, descriptors, navigation, position }) {
               testID={options.tabBarTestID}
               onPress={onPress}
               onLongPress={onLongPress}
-              style={{ flex: 1, alignItems:'center',justifyContent:'center',backgroundColor:isFocused ? '#ffffff' : '#DEDEDE', borderTopLeftRadius:21,borderTopRightRadius:21,paddingVertical:8}}
+              style={{ flex: 1, alignItems:'center',justifyContent:'center',backgroundColor: '#ffffff' ,paddingVertical:10}}
             >
-              <Text  category='h1' style={{fontSize:14,color :isFocused ? '#63579D' : '#6A6A6A',}}>
-                {label}
-              </Text>
-            </TouchableOpacity>
+                {label(isFocused)}
+            </Pressable>
           );
         })}
       </View>

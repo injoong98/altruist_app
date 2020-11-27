@@ -72,13 +72,19 @@ class Login extends CB_Controller
 			$this->load->event($eventname);
 			
 			$view['session'] = '';
-			
+			//세션 정보 없을 때 토큰 확인
 			if($_SESSION['mem_id'] == ""||$_SESSION['mem_id'] == 0){
 				$token = $this->input->post('token');
 				$token_saved = $this->db->get_where('cb_push_token',array('ptk_token'=>$token))->row_array();
-				if(!$token_saved){
+				
+				if(!$token_saved||$token_saved['mem_id']==0){
+					//토큰이 없거나, 토큰 mem_id가 0 일 경우 로그인 실패, 리턴
+
 					$view['session'] = 'N';
+					response_result($view,'Err','로그인 정보가 없습니다.');
 				}else{	
+					//토큰 정보가 있을 경우 해당 mem_id로 정보 불러와 세션에 userinfo 저장
+
 					$userinfo = $this->Member_model->get_by_memid($token_saved['mem_id'], 'mem_id, mem_userid,mem_nickname,mem_is_admin, mem_username');
 					
 					$this->member->update_login_log(element('mem_id', $userinfo), element('mem_userid', $userinfo), 1, '토큰 로그인 성공');
@@ -101,21 +107,18 @@ class Login extends CB_Controller
 				}
 			}
 
-			if($_SESSION['mem_id'] == ""||$_SESSION['mem_id'] == 0){
-				response_result($view,'Err','로그인 정보가 없습니다.');
+			//이타주의자 정보 (이타주의자 지원 상태, 멘토 아이디) 세션에 저장
+			$alt_prof =$this->is_altruist($_SESSION['mem_id']);
+			if($alt_prof){
+				$_SESSION['alt_id'] = $alt_prof['alt_id'];
+				$_SESSION['is_altruist'] = $alt_prof['alt_status'] ? $alt_prof['alt_status']: false ;
+			}else{
+				$_SESSION['is_altruist']=false;
 			}
-			else{
-				$alt_prof =$this->is_altruist($_SESSION['mem_id']);
-				if($alt_prof){
-					$_SESSION['alt_id'] = $alt_prof['alt_id'];
-					$_SESSION['is_altruist'] = $alt_prof['alt_status'] ? $alt_prof['alt_status']: false ;
-				}else{
-					$_SESSION['is_altruist']=false;
-				}
-				
-				$view['session'] = $_SESSION;
-				response_result($view,'success','로그인 상태 입니다.');
-			}
+			
+			$view['session'] = $_SESSION;
+			response_result($view,'success','로그인 상태 입니다.');
+			
 				
 		}
 	/**

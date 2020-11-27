@@ -59,7 +59,6 @@ class AltProfileScreen extends React.Component {
     const {altruist} = this.state;
     return this.state.isLoading ? (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>is Loading now...</Text>
         <Spinner size="giant" />
       </View>
     ) : (
@@ -104,7 +103,15 @@ class AltProfileScreen extends React.Component {
               </View>
                 <TouchableOpacity 
                   style={{borderRadius:7, backgroundColor:'#63579D',paddingVertical:8,paddingHorizontal:16}} 
-                  onPress={() =>this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:altruist.alt_profile.mem_id,altruist})}>
+                  onPress={() =>{
+                      if(!global.mem_id) {
+                          this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                      }else {
+                        this.props.navigation.navigate('AltQuestionWrite',{answer_mem_id:altruist.alt_profile.mem_id,altruist})
+                      }
+                    }
+                  }>
+                    
                   <Text style={{fontSize:18,fontWeight:'bold',color:'#ffffff'}}>
                     질문하기
                   </Text>

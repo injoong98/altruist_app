@@ -172,7 +172,7 @@ class Notelib extends CI_Controller
 		if ($this->CI->cbconfig->item('use_notification') && $this->CI->cbconfig->item('notification_note')) {
 			$this->CI->load->library('notificationlib');
 			$sender_name = $sender ? element('mem_nickname', $send_member) : '알림';
-			$not_message = $sender_name . '님께서 [' . $title . '] 쪽지를 남기셨습니다';
+			$not_message = $sender_name . '님이 [' . $title . '] 쪽지를 남기셨습니다';
 			$not_url = site_url('note/view/recv/' . $note_id);
 			$return = $this->CI->notificationlib->set_noti(
 				$receiver,
@@ -188,7 +188,7 @@ class Notelib extends CI_Controller
 		if ($this->cbconfig->item('use_push') && $this->cbconfig->item('notification_note')) {
 			$this->load->library('pushlib');
 			$sender_name = $sender ? element('mem_nickname', $send_member) : '알림';
-			$not_message = $sender_name . '님께서 [' . $title . '] 쪽지를 남기셨습니다';
+			$not_message = $sender_name . '님이 [' . $title . '] 쪽지를 남기셨습니다';
 			$not_url = site_url('note/view/recv/' . $note_id);
 			$this->pushlib->set_push(
 				$receiver,

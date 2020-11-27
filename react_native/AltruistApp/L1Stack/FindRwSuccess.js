@@ -27,7 +27,7 @@ class FindRwSuccessScreen extends Component {
     <TopNavigationAction
       icon={BackIcon}
       onPress={() => {
-        this.props.navigation.navigate('Login');
+        this.props.navigation.navigate('RequireLoginScreen');
       }}
     />
   );
@@ -52,7 +52,7 @@ class FindRwSuccessScreen extends Component {
 
                 paddingBottom: 20,
               }}>
-              비밀번호 재설정 메일 전송
+              비밀번호 재설정 메일 전송 완료
             </Text>
             <Text
               style={{
@@ -78,7 +78,7 @@ class FindRwSuccessScreen extends Component {
                 borderRadius: 6,
               }}
               onPress={() => {
-                this.props.navigation.navigate('Login');
+                this.props.navigation.navigate('RequireLoginScreen');
               }}>
               확인
             </Button>

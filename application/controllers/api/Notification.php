@@ -390,6 +390,47 @@ class Notification extends CB_Controller
 
 
 	/**
+	 * 알림 전체 삭제 입니다
+	 */
+	public function delete_all()
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_notification_delete_all';
+		$this->load->event($eventname);
+
+		/**
+		 * 로그인이 필요한 페이지입니다
+		 */
+		if ($this->member->is_member() === false) {
+			response_result($view,'Err','로그인 후 이용해주세요');
+		}
+		$mem_id = (int) $this->member->item('mem_id');
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('before', $eventname);
+
+		if (empty($mem_id) OR $mem_id < 1) {
+			response_result($view,'Err','mem_id 값이 없거나 비어 있습니다.');
+		}
+		$delete_where = array(
+			'mem_id' => $mem_id,
+		);
+		$result =$this->Notification_model->delete_where($delete_where);
+
+		// 이벤트가 존재하면 실행합니다
+		Events::trigger('after', $eventname);
+
+		/**
+		 * 삭제가 끝난 후 목록페이지로 이동합니다
+		 */
+		if($result) {
+			response_result($view,'Success','전체 알람이 삭제 처리 되었습니다.');
+		}else{
+			response_result($view,'Err','처리 하지 못했습니다..');
+		}
+
+	}
+	/**
 	 * 알림삭제 입니다
 	 */
 	public function delete($not_id = 0)

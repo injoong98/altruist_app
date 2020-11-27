@@ -110,7 +110,6 @@ class AltMainScreen extends React.Component{
     componentDidMount(){
         this.getAltruistsList();
         this.getBanners()
-
     }
 
     renderHeadSection = () =>{
@@ -142,7 +141,18 @@ class AltMainScreen extends React.Component{
                                 icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'http://dev.unyict.org/uploads/icons/find_altruist.png'}}/>}
                             />
                             <MainButton
-                                onPress={()=>navigation.navigate('AltQuestionWrite',{title})} 
+                                onPress={()=>{
+
+                                    if(!global.mem_id) {
+                                        this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                                    }else {
+                                        navigation.navigate('AltQuestionWrite',{title})
+                                    }
+
+                                }
+                                } 
+                                
+                                
                                 style={styles.mainbtn}
                                 text='오픈질문 하기'
                                 icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'http://dev.unyict.org/uploads/icons/open_question.png'}}/>}
@@ -150,14 +160,30 @@ class AltMainScreen extends React.Component{
                             <MainButton 
                                 style={styles.mainbtn}
                                 text='질문함'
-                                onPress={()=>navigation.navigate('AltQueToptab',{title})}
+                                onPress={()=>{
+                                        if(!global.mem_id) {
+                                            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                                        }else {
+                                            navigation.navigate('AltQueToptab',{title})
+                                        }
+                                    }
+                                }
                                 icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'http://dev.unyict.org/uploads/icons/question_box_btn.png'}}/>}
                             />
                             <MainButton 
                                 style={styles.mainbtn}
                                 text='지원하기'
                                 icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'http://dev.unyict.org/uploads/icons/apply_btn.png'}}/>}
-                                onPress={()=>this.context.is_altruist =='Y'?null:navigation.navigate(this.context.is_altruist =='R'?'AltApplyStatus':'AltApply')}
+                                onPress={()=>{
+                                    
+                                    if(!global.mem_id) {
+                                        this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                                    }else {
+                                    
+                                        this.context.is_altruist =='Y'?null:navigation.navigate(this.context.is_altruist =='R'?'AltApplyStatus':'AltApply')}
+                                    }    
+
+                                }
                             />
                         </View>    
                         

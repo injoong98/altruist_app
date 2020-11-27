@@ -34,7 +34,7 @@ const App = () => {
         formdata.append('token',token);
         formdata.append('mem_id',mem_id);
         console.log(mem_id)
-        await axios.post('http://dev.unyict.org/api/login/sync_push_token',formdata)
+        await axios.post('https://dev.unyict.org/api/login/sync_push_token',formdata)
         .then(res=>{
             console.log('token refresh success!')
         })

@@ -1,17 +1,57 @@
 import React from 'react';
-import {View,SafeAreaView,Text,FlatList,StyleSheet,TouchableOpacity,ActivityIndicator} from 'react-native';
+import {View,SafeAreaView,FlatList,StyleSheet,TouchableOpacity,ActivityIndicator, Pressable,Image} from 'react-native';
 import axios from 'axios';
 import messaging from '@react-native-firebase/messaging'
-import {TabBar, Tab,Spinner,Button} from '@ui-kitten/components'
+import {TabBar, Tab,Spinner,Modal,Text,Divider} from '@ui-kitten/components'
 import {MyTabBar,TopTab} from '../../components/TopTab'
 import {PostTime} from '../../components/PostTime'
 import {TopBarTune} from '../../components/TopBarTune'
 import {Notice} from '../Context'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Reloadsvg from '../../assets/icons/reload.svg'
+import Confirm from '../../components/confirm.component'
 
+import Viewsvg from '../../assets/icons/view.svg'
+import Timesvg from '../../assets/icons/Time.svg'
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
+
+const RenderNoticeItem = ({item,index,navigation,onRefresh}) => (
+    <TouchableOpacity 
+        key={index} 
+        style={styles.item} 
+        onPress={() => {navigation.navigate('IlbanContent',{OnGoback:() =>onRefresh(), post_id:item.post_id})}}
+    >
+        <View style={{width:100, justifyContent:'center', alignItems:'center'}}>
+            <Image 
+              source={item.thumb_url? {uri : item.thumb_url}:{uri : "http://dev.unyict.org/assets/images/noimage.png"}} 
+              style={{width:90, height:90, resizeMode:'cover', borderRadius:10}}
+            />
+        </View>
+        <View style={styles.textArea}>
+            <View style={{ paddingHorizontal:5, justifyContent:'space-between'}}>
+                <View style={styles.textTop}>
+                    <Text style={styles.text} numberOfLines={2} ellipsizeMode="tail" category='h4'>
+                        {item.title}
+                    </Text>
+                </View>
+            </View>
+            <View style={{flexDirection:'row',justifyContent:'flex-end',paddingRight:15,marginTop:5}}>
+                <View style={{flexDirection: 'row'}}>
+                    <View style={{justifyContent:'center', alignItems:'center', marginRight:10}}>
+                        <Viewsvg width='15' height='15'/>
+                        <Text style={{color:'#878787', fontSize:8}} category='p1'>{item.post_hit}</Text>
+                    </View>
+                    <View style={{justifyContent:'center', alignItems:'center', paddingTop:3}}>
+                        <Timesvg width='10' height='10'/>
+                        <PostTime style={{color:'#878787', fontSize:8, marginTop:2}} category='p1' datetime={item.post_datetime}/>
+                    </View>
+                </View>
+            </View>
+        </View>
+    </TouchableOpacity>
+  );
+
 const RenderNotis =({item,index,navigation,onRefresh}) => {
     return(
         <TouchableOpacity 
@@ -91,6 +131,7 @@ export class AlarmNotices extends React.Component{
       }
     getNotiList=()=>{
         this.setState({isLoading:true});
+      //console.log('run getNotiList');
         axios.get(`http://dev.unyict.org/api/board_post/lists/${this.props.type}`)
         .then(res=>{
             this.setState({noti:res.data.view.list.data.list,isLoading:false})
@@ -113,7 +154,9 @@ export class AlarmNotices extends React.Component{
             this.getPostList, console.log(this.state.current_page))
         }
     }
+    
     componentDidMount(){
+        //console.info('componentDidMount event2');
         this.getNotiList();
     }
     render(){
@@ -129,7 +172,12 @@ export class AlarmNotices extends React.Component{
                      <View style={{flex:1,paddingTop:10,backgroundColor:'#ffffff'}}>
                         <FlatList 
                         data={noti}
-                        renderItem={({item,index})=><RenderNotis item={item} index={index} navigation= {this.props.navigation} onRefresh ={this.onRefresh}/> }
+                        renderItem={({item,index})=>
+                        this.props.type =="notice" ?
+                        <RenderNoticeItem item={item} index={index} navigation= {this.props.navigation} onRefresh ={this.onRefresh}/> 
+                            :
+                        <RenderNotis item={item} index={index} navigation= {this.props.navigation} onRefresh ={this.onRefresh}/>   
+                        }
                         keyExtractor={(item,index)=>index.toString()}
                         style={{backgroundColor:'#ffffff'}}
                         onRefresh={this.onRefresh}
@@ -154,10 +202,26 @@ export class AlarmScreen extends React.Component{
             isNoMoreData:false,
             noti:[],
             current_page:1,
-            isListLoading:false
+            isListLoading:false,
+            modalVisible:false,
+            confirmModalVisible:false,
+            resultModalVisible:false,
+            spinnerModalVisible:false,
+            modalType:0,
+            longPressId:'',
+            longPressIndex:'',
+            
         }
     }
     static contextType = Notice
+    
+    modalList = [
+        {
+            text : '모든 알림을 삭제하시겠습니까?',
+            func : ()=> this.notDelAll(),
+        },
+            
+    ]
     navigateToPost=(post_id,brd_id)=>{
         const {navigate} =this.props.navigation
         console.log(`brd_id ::: ${brd_id}`)
@@ -242,6 +306,15 @@ export class AlarmScreen extends React.Component{
     onRefresh = () =>{
         this.getNotiList();
     }
+    readall=async()=>{
+        await axios.get(`http://dev.unyict.org/api/notification/readall`)
+        .then(res=>{
+            this.context.reloadUnreadCount();
+            this.context.getFirstNotiList();
+        })
+        .catch(err=>{
+        })
+    }
     readNoti = (item) =>{
         console.log('item.not_id'+item.not_id)
         axios.get(`http://dev.unyict.org/api/notification/read?not_id=${item.not_id}`)
@@ -273,6 +346,8 @@ export class AlarmScreen extends React.Component{
                 <TouchableOpacity 
                     key={index} 
                     onPress={()=>{this.readNoti(item);}}
+                    onPressIn={()=>{console.log(' Press in')}}
+                    onLongPress={()=>{console.log('item.not_id : '+item.not_id+' longPressIndex : '+index);this.setState({longPressId:item.not_id,longPressIndex:index,modalVisible:true})}}
                     style={[styles.notiContainer,{backgroundColor: item.not_read_datetime != null ||notice.unreadCount==0? '#c4c4c4' : '#f4f4f4'}]} 
                 >
                     <View style={{flexDirection:"row",justifyContent:'space-evenly'}}>
@@ -288,7 +363,31 @@ export class AlarmScreen extends React.Component{
         </Notice.Consumer>
     )
     }
-
+    notDelAll=async()=>{
+        await axios.get(`http://dev.unyict.org/api/notification/delete_all/`)
+        .then(res=>{
+            res.status == 200 ?
+            this.setState({resultModalVisible:true,resultText:'성공적으로 삭제했습니다.',spinnerModalVisible:false},()=>{this.getNotiList();this.context.reloadUnreadCount()},)            
+            :
+            this.setState({resultModalVisible:true,resultText:'전체 알림을 삭제하지 못했습니다.',spinnerModalVisible:false})
+        })
+        .catch(err=>{
+            console.log(JSON.stringify(err))
+        })
+    }
+    notDel = async()=>{
+        const {noti,longPressId,longPressIndex} =this.state;
+        noti.splice(longPressIndex,1);
+        this.setState({noti})
+        await axios.get(`http://dev.unyict.org/api/notification/delete/${longPressId}`)
+        .then(res =>{
+            console.log(JSON.stringify(res))
+        })
+        .catch(err=>{
+            console.log(JSON.stringify(err))
+        })
+        
+    }
     getNotiList=()=>{
         this.setState({isLoading:true});
         axios.get('http://dev.unyict.org/api/notification')
@@ -299,6 +398,8 @@ export class AlarmScreen extends React.Component{
         })
     }
     componentDidMount(){
+       // console.info('componentDidMount event1');
+        this.getNotiList();
         this.setState({noti:this.context.noti},this.setState({isLoading:false}))
         messaging().onMessage(async remoteMessage => {
             this.getNotiList();
@@ -306,7 +407,7 @@ export class AlarmScreen extends React.Component{
     }
 
     render(){
-        const {isLoading,noti} = this.state
+        const {isLoading,noti,modalVisible,confirmModalVisible,resultModalVisible,spinnerModalVisible,resultText,modalType} = this.state
         return(
             <View  style={styles.container} style={{flex:1}}>
                 {
@@ -334,11 +435,60 @@ export class AlarmScreen extends React.Component{
                     <Text>
                         알림 내역이 없습니다.
                     </Text>
-                    <Reloadsvg height={15} width={15} fill="#A9C"/>
-
+                    <Pressable onPress={() =>this.getNotiList() }>
+                        <Reloadsvg height={15} width={15} fill="#A9C"/>
+                    </Pressable>
                 </View>
 
                 }
+                <Modal
+                    visible={modalVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                    onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})}>
+                    <View style={{borderRadius:15, backgroundColor:'white'}}>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({modalVisible:false},this.notDel)}}
+                            style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                            <Text style={{fontSize:16, color:'#63579D'}} category='h3'>알림 삭제</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({modalVisible:false, modalType : 0, confirmModalVisible :true})}}
+                            style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                            <Text style={{fontSize:16, color:'#63579D'}} category='h3'>알림 전체 삭제</Text>
+                        </TouchableOpacity>
+                    </View>   
+                </Modal>
+                <Modal
+                    visible={confirmModalVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                    onBackdropPress={() => this.setState({confirmModalVisible:false})}>
+                    <Confirm 
+                        confirmText={this.modalList[modalType].text}
+                        frstText="예"
+                        OnFrstPress={() =>{this.setState({confirmModalVisible:false,spinnerModalVisible:true});this.modalList[modalType].func();}}
+                        scndText="아니오"
+                        OnScndPress={() => this.setState({confirmModalVisible:false})}/>
+                </Modal>
+                <Modal
+                    visible={spinnerModalVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}>
+                    <Spinner size='giant'/>
+                </Modal>
+                <Modal
+                    visible={resultModalVisible}
+                    backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                    onBackdropPress={() => this.setState({resultModalVisible:false})}
+                    >
+                    <Confirm 
+                        type = 'result'
+                        confirmText={resultText}
+                        frstText="닫기"
+                        OnFrstPress={() =>{
+                            this.setState({resultModalVisible:false});
+                        }}
+                    />
+                </Modal>
             </View>
         )
     }
@@ -411,7 +561,34 @@ const styles = StyleSheet.create({
         fontSize:15
     },
     notiocontainer:{
-
-
     },
+    textArea: {
+        flex: 1,
+        paddingVertical: 7,
+        paddingRight: 5,
+        paddingLeft: 0,
+        maxHeight: 150,
+    },
+    textTop: {
+        backgroundColor:'#FFFFFF',
+        borderRadius:10,
+        justifyContent: 'center',
+        marginTop:5,
+        paddingVertical:5
+    },
+    textBottom: {
+    },
+    item: {
+        flex:1, 
+        flexDirection:'row', 
+        maxHeight:160, 
+        margin:5,
+        backgroundColor:'#F4F4F4',
+        borderRadius:10,
+    },
+    text:{
+        padding:6,
+        lineHeight:20,
+        fontSize:12
+    }
 })

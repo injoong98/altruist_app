@@ -7,7 +7,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import HTML from 'react-native-render-html';
 import {ActionSheet, Root, Container, Row} from 'native-base';
 import Slider from '../components/MarketSlider.component'
-import {PostTime} from '../components/PostTime'
+import {PostTime,ExpireTime} from '../components/PostTime'
 import Confirm from '../components/confirm.component'
 import { WriteContentToptab } from '../components/WriteContentTopBar'
 import ReplyLsvg from '../assets/icons/arrow-bended-large.svg'
@@ -22,10 +22,14 @@ import PaperPlanesvg from '../assets/icons/paper-plane.svg'
 import Callsvg from '../assets/icons/call.svg'
 import Callmessagesvg from '../assets/icons/call-message.svg'
 import Emailsvg from '../assets/icons/Email.svg'
+import CallGraysvg from '../assets/icons/call-gray.svg'
+import CallmessageGraysvg from '../assets/icons/call-message-gray.svg'
+import EmailGraysvg from '../assets/icons/Email-gray.svg'
 import Viewsvg from '../assets/icons/view.svg'
 import Timesvg from '../assets/icons/Time.svg'
 import Heartsvg from '../assets/icons/heart.svg'
 import Heartfillsvg from '../assets/icons/heartfill.svg'
+import { JauScreen } from './L2Bottom/L3Toptab/JauScreen';
 
 
 const BackIcon =  (props) =>(
@@ -69,7 +73,7 @@ class GominContent extends React.Component{
             content:'',
             cmt_content:'',
             cmt_id:'',
-            mem_icon_url:'',
+            mem_photo_url:'',
             replying:false,
             isLoading:true,
             refreshing:false,
@@ -80,69 +84,98 @@ class GominContent extends React.Component{
             popoverVisible:false,
             resultText : '',
             modalType : 0,
+            commentSession :0,
+            revise:false,
         }
     }
     
     static contextType = Signing;
 
     postDelete = async () => {
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-
-        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
-        .then((res)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
-            this.props.navigation.goBack();
-            this.props.route.params.OnGoback();
-        })
-        .catch((error)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
-        })
+         if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+            var formdata = new FormData();
+            formdata.append('post_id',this.state.post.post_id)
+    
+            await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
+            .then((res)=>{
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
+                this.props.navigation.goBack();
+                this.props.route.params.OnGoback();
+            })
+            .catch((error)=>{
+                this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
+            })
+             
+         }
     }
     commentWrite= ()=>{
-        this.setState({replying:false, cmt_id:'', cmt_content:''});
-        this.refs.commentInput.blur();
-        console.log(this.refs);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             this.setState({replying:false, cmt_id:'', cmt_content:''});
+             this.refs.commentInput.blur();
+             console.log(this.refs);
+
+         }
+
     }
     postscrap = async()=>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        
-        await Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
-        .then(response=>{
-            if(response.data.success)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
-            else if (response.data.error)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, replying:false, resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+
+            var formdata = new FormData();
+            formdata.append('post_id',this.state.post.post_id)
+            
+            await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+            .then(response=>{
+                if(response.data.success)
+                    this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
+                else if (response.data.error)
+                    this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
+            })
+            .catch(error=>{
+                this.setState({resultModalVisible:true, replying:false, resultText:error.message});
+            })
+        }
     }
     
     commentUpload= async()=>{
-        const {cmt_content,post,cmt_id}=this.state;
-        var formdata = new FormData();
-        formdata.append("post_id",post.post_id);
-        formdata.append("cmt_content",cmt_content);
-        cmt_id==''? null : formdata.append("cmt_id",cmt_id);
-        
-        Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
-        .then(response=>{
-            const {status, message}=response.data;
-            if(status=='200'){
-                Keyboard.dismiss();
-                this.getCommentData(post.post_id);
-                this.setState({cmt_id:'', cmt_content:'', replying:false});
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             const {cmt_content,post,cmt_id,revise}=this.state;
+             var formdata = new FormData();
+             formdata.append("post_id",post.post_id);
+             formdata.append("cmt_content",cmt_content);
+             cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+             revise? formdata.append("cmt_id",cmt_id):null;
+             revise? formdata.append("mode",'cu'):null;
 
-                this.refs.pstcmtlist.scrollToEnd();
-            }else if(status=='500'){
-                this.setState({resultModalVisible:true, resultText:message});
-            }
-        })
-        .catch(error=>{
-            alert(error);
-        })
+             Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
+             .then(response=>{
+                 const {status, message,new_cmt_id}=response.data;
+                 if(status=='200'){
+                     Keyboard.dismiss();
+                     this.setState({commentWrited:!revise&&this.state.cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false});
+                     this.getCommentData(post.post_id);
+
+                     formdata.append('new_cmt_id',new_cmt_id)
+                    Axios.post('https://dev.unyict.org/api/comment_write/update_noti',formdata)
+                    .then(res=>{})
+                    .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+
+                 }else if(status=='500'){
+                     this.setState({resultModalVisible:true, resultText:message});
+                 }
+             })
+             .catch(error=>{
+                 alert(error);
+             })
+             revise ? this.setState({revise:false}) : null
+        }
     }
     
     commentValid =async() =>{
@@ -150,13 +183,12 @@ class GominContent extends React.Component{
         var formdata = new FormData();
         formdata.append("content",cmt_content);
         
-        await Axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {status,message} = response.data;
             if(status=='500'){
                 this.setState({resultModalVisible:true,resultText:message});
             }else if(status=="200"){
-                console.log("valid check");
                 this.commentUpload();
             }
         })
@@ -177,7 +209,7 @@ class GominContent extends React.Component{
         </TouchableOpacity>
     )
     BackAction = () =>(
-        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();}}/>
     )
     
     statefunction=(str)=>{
@@ -185,91 +217,154 @@ class GominContent extends React.Component{
         this.componentDidMount()    
     }
     postBlame = async () =>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
 
-        await Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
-        .then(response=>{
-            if(response.data.status == 500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }else{
-                this.getPostData(this.state.post.post_id)
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+     
+             await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
+             .then(response=>{
+                 if(response.data.status == 500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }else{
+                     this.getPostData(this.state.post.post_id)
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+         }
     }
     cmtBlame = () =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id);
+     
+             Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+        }
+        this.setState({cmt_id:''})
 
-        Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
     }
     cmtDelete = () =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id);
+     
+             Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
+             })
+        
+        }
+        this.setState({cmt_id:''})
 
-        Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
-        })
     }
     postLike = () =>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        formdata.append('like_type',1)
         
-        Axios.post(`http://dev.unyict.org/api/postact/${this.state.post.is_liked?'cancel_post_like':'post_like'}`,formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.getPostData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, resultText : error.message});
-        })
+        //console.info('global.mem_id',global.mem_id);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+           
+        }else {
+            const {post} = this.state 
+            this.setState(prevState=>({
+                post: {                  
+                    ...prevState.post,
+                    is_liked: !post.is_liked,
+                    post_like: post.is_liked? (post.post_like*1-1) : (post.post_like*1+1)
+                } 
+            })
+            )
+
+            var formdata = new FormData();
+            formdata.append('post_id',this.state.post.post_id)
+            formdata.append('like_type',1)
+            
+            Axios.post(`https://dev.unyict.org/api/postact/${this.state.post.is_liked?'cancel_post_like':'post_like'}`,formdata)
+            .then(response=>{
+                if(response.data.status ==500){
+                    this.setState({resultModalVisible:true, resultText : response.data.message});
+                }else{                    
+                    this.getPostData(this.state.post.post_id)
+                    !this.state.post.is_liked?
+                        Axios.post(`https://dev.unyict.org/api/postact/post_like_noti`,formdata)
+                        .then(res=>{})
+                        .catch(err=>{alert('좋아요 알림 오류가 발생하였습니다.')})
+                    :null
+                }
+            })
+            .catch(error=>{
+                this.setState({resultModalVisible:true, resultText : error.message});
+            })
+        }
     }
-    cmtLike = (cmt_id, is_liked) =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',cmt_id)
-        formdata.append('like_type',1)
-        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                alert(`${JSON.stringify(response.data.message)}`)
-            }else{
-            this.getCommentData(this.state.post.post_id)}
-        })
-        .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
-        })
+    cmtLike = (cmt_id, is_liked, index) =>{
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+            const {comment} = this.state;
+            comment[index].cmt_like = is_liked ? comment[index].cmt_like*1-1 : comment[index].cmt_like*1+1;      
+            comment[index].is_liked = !is_liked;
+            this.setState({})
+
+             var formdata = new FormData();
+             formdata.append('cmt_id',cmt_id)
+             formdata.append('like_type',1)
+             Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     alert(`${JSON.stringify(response.data.message)}`)
+                 }else{
+                 this.getCommentData(this.state.post.post_id)
+                 !is_liked? 
+                        Axios.post(`https://dev.unyict.org/api/postact/comment_like_noti`,formdata)
+                        .then(response=>{
+                        })
+                        .catch(error=>{
+                            alert(`${JSON.stringify(error)}`)
+                        })
+                    : null
+                }
+             })
+             .catch(error=>{
+                 alert(`${JSON.stringify(error)}`)
+             })
+
+
+         }
+         
     }
     
     getCommentData = async (post_id)=>{
-        await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
         })
@@ -278,16 +373,20 @@ class GominContent extends React.Component{
         })
     }
     getPostData = async (post_id)=>{
-        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_icon});
+            this.setState({
+                post:response.data.view.post, 
+                mem_photo_url:response.data.mem_photo=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
+                ?"https://dev.unyict.org/uploads/altwink-rect.png"
+                :response.data.mem_photo
+            });
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
             this.setState({content:post_remove_tagsf})
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
     onRefresh=()=>{
@@ -295,20 +394,21 @@ class GominContent extends React.Component{
         this.getCommentData(post_id);
     } 
     async componentDidMount(){
-        if(Platform.OS!=='ios'){
-            StatusBar.setBackgroundColor('#FFFFFF');
-            StatusBar.setBarStyle('dark-content');        
-        }
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#FFFFFF');
+            StatusBar.setBarStyle('dark-content');        
+        }
     }
 
     componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
-        this.props.route.params.OnGoback();
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+        }
     }
     modalList = [
         {
@@ -332,7 +432,11 @@ class GominContent extends React.Component{
 
         }
     ]
+    scrollTo = (index) =>{
+        console.log('scrollTo ')
+        this.refs.pstcmtlist.scrollToIndex({index})
 
+    }
     renderPostBody = (post)=>{
         
         const regex = /(<([^>]+)>)|&nbsp;/ig;
@@ -358,7 +462,7 @@ class GominContent extends React.Component{
                 <View style={{display:"flex",flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
                     <View style={{flexDirection:'row'}}>
                         {post.post_anoymous_yn=='0'
-                        ?<Image source={{uri : this.state.mem_icon_url}} style={{width:22, height:22, marginRight:5}}/>
+                        ?<Image source={{uri : this.state.mem_photo_url}} style={{width:22, height:22, marginRight:5}}/>
                         :null
                         }
                         <View>
@@ -412,7 +516,9 @@ class GominContent extends React.Component{
                     borderRadius:8,
                     paddingRight:15,
                     marginRight:15,
-                    paddingVertical:10,
+                    marginBottom:8,
+                    paddingTop:10,
+                    paddingBottom:5,
                     paddingLeft: 15,
                     marginLeft:item.cmt_reply==""?15:50,
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
@@ -428,8 +534,13 @@ class GominContent extends React.Component{
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id})} style={{width:10,alignItems:'flex-end'}}>
-                            <MoreSsvg/>
+                        <TouchableOpacity 
+                            onPress={()=>{
+                                this.setState({modalVisible:true,cmt_id:item.cmt_id,commentSession : item.mem_id})
+                                this.scrollTo(index)
+                            }} 
+                            style={{alignItems:'flex-end'}}>
+                            <MoreSsvg width={16} height={16}/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -438,25 +549,37 @@ class GominContent extends React.Component{
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                     {item.cmt_reply ==""?
-                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
+                    <TouchableOpacity 
+                        style= {{marginHorizontal:12,padding:5}}
+                        onPress={() => 
+                        this.setState({replying:true, cmt_id:item.cmt_id}, 
+                            ()=>{
+                                this.refs.commentInput.focus()
+                                setTimeout(()=>{this.scrollTo(index)},200)
+                            }
+                            )}
+                    >
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>답글</Text>
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                    <TouchableOpacity 
+                        style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end',padding:5}}
+                        onPress={()=>this.cmtLike(item.cmt_id, item.is_liked,index)}
+                    >
                         {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10,marginLeft:6}}>{item.cmt_like}</Text>
                     </TouchableOpacity>
-                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
             </View>
         </View>
     )
      render(){
         const {navigation,route} =this.props
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible} = this.state
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, popoverVisible, commentWrited} = this.state
          return(
             <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            behavior={Platform.OS == "ios" ? "padding" : ""}
             style={{flex:1}} 
          >
         <SafeAreaView style={{flex:1}}>
@@ -464,13 +587,12 @@ class GominContent extends React.Component{
                 gbckfunc={() => {if(Platform.OS!=='ios'){
                     StatusBar.setBackgroundColor('#B09BDE')
                     StatusBar.setBarStyle('default')}
-                    this.props.navigation.goBack()
-                    this.props.route.params.OnGoback()}}
+                    this.props.navigation.goBack()}
+                }
                 gbckuse={true}
                 right={<this.MoreAction/>}/>
             {this.state.isLoading ?
                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                    <Text>is Loading now...</Text>
                     <Spinner size="giant"/>
                 </View>
                 :<Layout style={{flex:1}}>
@@ -482,6 +604,12 @@ class GominContent extends React.Component{
                     onRefresh={this.onRefresh}
                     refreshing={this.state.refreshing}
                     style={{backgroundColor:'#ffffff'}}
+                    onContentSizeChange={()=>{
+                        commentWrited ? 
+                        this.setState({commentWrited:false},()=>{this.refs.pstcmtlist.scrollToEnd()})
+                        :
+                        null
+                    }}
                     />
                 </Layout>
             }
@@ -503,10 +631,10 @@ class GominContent extends React.Component{
                     multiline={true}
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                 />
-                <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
+                <TouchableOpacity onPress={()=>{Keyboard.dismiss();this.commentValid()}} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                     <Image 
                         style={{width:50,height:50}}
-                        source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                        source={{uri:"https://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
                     />
                 </TouchableOpacity>
             </View>
@@ -527,7 +655,7 @@ class GominContent extends React.Component{
                         <Text style={{fontSize:20, color:'#63579D'}} category='h3'>신고</Text>
                     </TouchableOpacity>
                     <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    {this.context.session_mem_id==post.mem_id
+                    {this.context.session_mem_id== Math.abs(post.mem_id)
                     ?<View>
                         <TouchableOpacity 
                             onPress={()=>{
@@ -557,27 +685,27 @@ class GominContent extends React.Component{
                 backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
                 onBackdropPress={() => this.setState({modalVisible:false,cmt_id:''})} >
                 <View style={{borderRadius:15, backgroundColor:'white'}}>
-                    {this.context.session_mem_id==comment.mem_id?
+                    {this.context.session_mem_id==this.state.commentSession?
                     <>
-                    <TouchableOpacity 
-                        onPress={()=>{this.setState({modalVisible:false}, [alert('댓글수정 준비중입니다'),Keyboard.dismiss()])}}
-                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
-                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
-                    </TouchableOpacity>
-                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({modalVisible:false, revise:true}, this.refs.commentInput.focus())}}
+                            style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
+                            style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
                     </>
                     :null}
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding : 10, paddingHorizontal:20, margin:5}}>
                         <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 신고</Text>
-                    </TouchableOpacity>
-                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    <TouchableOpacity 
-                        onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
-                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
-                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> 
                 </View>   
             </Modal>
             <Modal
@@ -588,7 +716,10 @@ class GominContent extends React.Component{
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false})}
+                    OnFrstPress={() => {
+                        this.setState({resultModalVisible:false});
+                        this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                    }}
                 />
             </Modal>
             <Modal
@@ -627,7 +758,7 @@ class MarketContent extends React.Component {
             comment : '',
             cmt_content : '',
             cmt_id:'',
-            mem_icon_url:'',
+            mem_photo_url:'',
             isLoading : true,
             refreshing : false,
             replying:false,
@@ -667,22 +798,34 @@ class MarketContent extends React.Component {
         .then(()=>this.getCommentData(post_id))
         .then(()=>{this.setState({isLoading:false})})
     }
+
     componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
-        this.props.route.params.OnGoback();
+        this._ismounted = false;
+        console.log('Market : componentwillunount')
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+        }
     }
 
     getPostData = async(post_id)=>{
         
-        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_icon})
+            this.setState({
+                post:response.data.view.post, 
+                mem_photo_url:response.data.mem_photo=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
+                ?"https://dev.unyict.org/uploads/altwink-rect.png"
+                :response.data.mem_photo
+            });
             if (response.data.view.file_image){
                 this.setState({image: response.data.view.file_image.map(function(item, index){
                     var image_info = {};
                     image_info['id'] = item.pfi_id;
+                    image_info['mime'] = "image/jpeg";
+                    image_info['type'] = item.pfi_type;
                     image_info['title'] = item.pfi_originname;
+                    image_info['path'] = item.origin_image_url;
                     image_info['url'] = item.origin_image_url;
                     image_info['index'] = index;
                     image_info['edit'] = true;
@@ -691,13 +834,12 @@ class MarketContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
     
     getCommentData = async (post_id)=>{
-        await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
         })
@@ -713,51 +855,69 @@ class MarketContent extends React.Component {
     )
     
     postscrap = async()=>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        
-        Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
-        .then(response=>{
-            if(response.data.success)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
-            else if (response.data.error)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, replying:false, resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             
+             Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+             .then(response=>{
+                 if(response.data.success)
+                     this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
+                 else if (response.data.error)
+                     this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
+             })
+             .catch(error=>{
+                 this.setState({resultModalVisible:true, replying:false, resultText:error.message});
+             })
+        }
+
     }
     
     postBlame = ()=>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             
+             Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }else{
+                     this.getPostData(this.state.post.post_id)
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
         
-        Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }else{
-                this.getPostData(this.state.post.post_id)
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
+        }
+
     }
 
     postDelete = async () => {
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
-        .then(res=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
-            this.props.navigation.goBack();
-            this.props.route.params.OnGoback();
-        })
-        .catch(err=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
+             .then(res=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
+                 this.props.navigation.goBack();
+                 this.props.route.params.OnGoback();
+             })
+             .catch(err=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
+             })
+         }
+         
     }
 
     BackAction = () =>(
@@ -767,7 +927,7 @@ class MarketContent extends React.Component {
     renderImage = ({item}) => {
         console.log(item.url)
         return (
-        <Image source={{uri : 'http://dev.unyict.org/'+item.url}} style={{flex : 1, width:394, resizeMode:'cover'}}/>
+        <Image source={{uri : 'https://dev.unyict.org/'+item.url}} style={{flex : 1, width:394, resizeMode:'cover'}}/>
         );
     }
 
@@ -780,37 +940,51 @@ class MarketContent extends React.Component {
     }
 
     commentWrite= ()=>{
-        this.setState({replying:false,cmt_id:'', cmt_content:''})
-        this.refs.commentInput.blur()
-        console.log(this.refs)
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             this.setState({replying:false,cmt_id:'', cmt_content:''})
+             this.refs.commentInput.blur()
+             console.log(this.refs)
+         }
     }
     
     commentUpload= async()=>{
-        const {cmt_content,post,cmt_id, revise}=this.state;
-        var formdata = new FormData();
-        formdata.append("post_id",post.post_id);
-        formdata.append("cmt_content",cmt_content);
-        cmt_id==''? null : formdata.append("cmt_id",cmt_id);
-        revise? formdata.append("cmt_id",cmt_id):null;
-        revise? formdata.append("mode",'cu'):null;
-        // this.commentWrite()
-        
-        await Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
-        .then(response=>{
-            const {status,message}=response.data;
-            if(status=='200'){
-                Keyboard.dismiss();
-                this.getCommentData(post.post_id);
-                this.setState({cmt_id:'', cmt_content:'', replying:false});
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             const {cmt_content,post,cmt_id, revise}=this.state;
+             var formdata = new FormData();
+             formdata.append("post_id",post.post_id);
+             formdata.append("cmt_content",cmt_content);
+             cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+             revise? formdata.append("cmt_id",cmt_id):null;
+             revise? formdata.append("mode",'cu'):null;
+             // this.commentWrite()
+             
+             await Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
+             .then(response=>{
+                 const {status,message,new_cmt_id}=response.data;
+                 if(status=='200'){
+                     Keyboard.dismiss();
+                     this.setState({commentWrited:!revise&&this.state.cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false,});
+                     this.getCommentData(post.post_id);
 
-                this.refs.pstcmtlist.scrollToEnd();
-            }else if(status=="500"){
-                this.setState({resultModalVisible:true, resultText:message});
-            }
-        })
-        .catch(error=>{
-            alert(error);
-        })
+                    formdata.append('new_cmt_id',new_cmt_id)
+                    Axios.post('https://dev.unyict.org/api/comment_write/update_noti',formdata)
+                    .then(res=>{})
+                    .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+
+                 }else if(status=="500"){
+                     this.setState({resultModalVisible:true, resultText:message});
+                 }
+             })
+             .catch(error=>{
+                 alert(error);
+             })
+             revise ? this.setState({revise:false}) : null
+        }
+
     }
     
     commentValid =async() =>{
@@ -818,7 +992,7 @@ class MarketContent extends React.Component {
         var formdata = new FormData();
         formdata.append("content",cmt_content);
         
-        await Axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {status,message} = response.data;
             if(status=='500'){
@@ -839,54 +1013,86 @@ class MarketContent extends React.Component {
     )
     
     cmtBlame = ()=>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id);
-        
-        Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id);
+             
+             Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+             this.setState({cmt_id:''});
+        }
+
     }
     cmtDelete = () =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id)
-        
-        Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
-        })
-    }
-    cmtLike = (cmt_id, is_liked) =>{
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id)
+             
+             Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
+             })
+             this.setState({cmt_id:''});
 
-        var formdata = new FormData();
-        formdata.append('cmt_id',cmt_id)
-        formdata.append('like_type',1)
-        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.getCommentData(this.state.post.post_id)}
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, resultText : error.message});
-        })
+        }
+
+    }
+    cmtLike = (cmt_id, is_liked, index) =>{
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+            const {comment} = this.state;
+            comment[index].cmt_like = is_liked ? comment[index].cmt_like*1-1 : comment[index].cmt_like*1+1;      
+            comment[index].is_liked = !is_liked;
+            this.setState({})
+
+             var formdata = new FormData();
+             formdata.append('cmt_id',cmt_id)
+             formdata.append('like_type',1)
+             Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.getCommentData(this.state.post.post_id)
+                     !is_liked? 
+                     Axios.post(`https://dev.unyict.org/api/postact/comment_like_noti`,formdata)
+                     .then(response=>{
+                     })
+                     .catch(error=>{
+                         alert(`${JSON.stringify(error)}`)
+                     })
+                 : null
+                }
+             })
+             .catch(error=>{
+                 this.setState({resultModalVisible:true, resultText : error.message});
+             })
+        }
+
     }
 
     onRefresh=()=>{
@@ -900,7 +1106,7 @@ class MarketContent extends React.Component {
         formdata.append('post_id', post.post_id);
         formdata.append('deal_status', 0)
         console.log(formdata);
-        await Axios.post('http://dev.unyict.org/api/board_write/finish_deal',formdata)
+        await Axios.post('https://dev.unyict.org/api/board_write/finish_deal',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
@@ -966,13 +1172,21 @@ class MarketContent extends React.Component {
             <View 
                 style ={{
                     borderRadius:8,
-                    marginRight:5,
-                    padding:15,
+                    paddingRight:15,
+                    marginRight:15,
+                    marginBottom:8,
+                    paddingTop:10,
+                    paddingBottom:5,
+                    paddingLeft: 15,
                     marginLeft:item.cmt_reply==""?5:50,
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
-                        <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/>
+                        <Image source={{
+                            uri : item.member_photo_url=="https://dev.unyict.org/assets/images/member_default.gif"
+                            ?"https://dev.unyict.org/uploads/altwink-rect.png"
+                            :item.member_photo_url}} 
+                            style={{width:20, height:20, marginRight:5}}/>
                         <View>
                             <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
                             <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
@@ -982,8 +1196,10 @@ class MarketContent extends React.Component {
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} style={{width:10,alignItems:'flex-end'}}>
-                            <MoreSsvg/>
+                        <TouchableOpacity 
+                            onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} 
+                            style={{alignItems:'flex-end'}}>
+                            <MoreSsvg width={16} height={16}/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -992,15 +1208,19 @@ class MarketContent extends React.Component {
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                     {item.cmt_reply ==""?
-                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
+                    <TouchableOpacity 
+                        style= {{marginHorizontal:12,padding:5}}
+                        onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>답글</Text>
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                    <TouchableOpacity 
+                        style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end',padding:5}}
+                        onPress={()=>this.cmtLike(item.cmt_id, item.is_liked, index)}>
                         {item.is_liked?<Thumbfillsvg width={12} height={12}/>:<Thumbsvg width='12' height='12'/>}
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10,marginLeft:6}}>{item.cmt_like}</Text>
                     </TouchableOpacity>
-                        <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
             </View>
         </View>
@@ -1032,7 +1252,7 @@ class MarketContent extends React.Component {
                     <Divider/>
                     <Layout style={{height:30,flexDirection:'row', marginTop:15}}>
                         <Layout style={{width:40}}>
-                            <Image source={{uri : this.state.mem_icon_url}} style={{flex : 1, width:40, height:40, borderRadius:5, resizeMode:'contain'}}/>
+                            <Image source={{uri : this.state.mem_photo_url}} style={{flex : 1, width:40, height:40, borderRadius:5, resizeMode:'contain'}}/>
                         </Layout>
                         <Layout style={{flex:1, justifyContent:'center', paddingLeft:5}}>
                             <Text category='h5'>{post.post_nickname}</Text>
@@ -1084,11 +1304,13 @@ class MarketContent extends React.Component {
     render(){
 
         const { width } = Dimensions.get("window");
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, popoverVisible, modalType} = this.state;
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, popoverVisible, modalType,commentWrited} = this.state;
 
+        console.log('post.deal_status : ', post.deal_status)
+        console.log('MarketCotentLIST : ', post)
         return(
             <KeyboardAvoidingView
-               behavior={Platform.OS == "ios" ? "padding" : "height"}
+               behavior={Platform.OS == "ios" ? "padding" : ""}
                style={{flex:1}} 
             >
 
@@ -1097,17 +1319,15 @@ class MarketContent extends React.Component {
                     backgroundColor='#F4F4F4'
                     gbckfunc={() => {
                         this.props.navigation.goBack();
-                        this.props.route.params.OnGoback();
-                        if(Platform.OS!=='ios'){
-                            StatusBar.setBackgroundColor('#B09BDE');
-                            StatusBar.setBarStyle('default');}
+                        // if(Platform.OS!=='ios'){
+                        //     StatusBar.setBackgroundColor('#B09BDE');
+                        //     StatusBar.setBarStyle('default');}
                         }
-                        }                        
+                    }                        
                     gbckuse={true}
                     right={<this.MoreAction/>}/>
                 {this.state.isLoading ?
                     <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                        <Text>is Loading now...</Text>
                         <Spinner size="giant"/>
                     </View>
                     :<Layout style={{flex:1}}>
@@ -1120,6 +1340,12 @@ class MarketContent extends React.Component {
                             onRefresh={this.onRefresh}
                             refreshing={this.state.refreshing}
                             style={{backgroundColor:'#F4F4F4'}}
+                            onContentSizeChange={()=>{
+                                commentWrited ? 
+                                this.setState({commentWrited:false},()=>{this.refs.pstcmtlist.scrollToEnd()})
+                                :
+                                null
+                            }}
                         />
                     </Layout>
                 }
@@ -1140,10 +1366,10 @@ class MarketContent extends React.Component {
                         multiline={true}
                         onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                     />
-                    <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
+                    <TouchableOpacity onPress={()=>{Keyboard.dismiss();this.commentValid()}} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                         <Image 
                             style={{width:50,height:50}}
-                            source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                            source={{uri:"https://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
                         />
                     </TouchableOpacity>
                 </View>
@@ -1234,7 +1460,10 @@ class MarketContent extends React.Component {
                         type = 'result'
                         confirmText={this.state.resultText}
                         frstText="닫기"
-                        OnFrstPress={() => this.setState({resultModalVisible:false})}
+                        OnFrstPress={() =>{
+                            this.setState({resultModalVisible:false})
+                            this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                        }}
                     />
                 </Modal>
                 <Modal
@@ -1299,13 +1528,29 @@ class AlbaContent extends React.Component {
     }
 
     componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
-        this.props.route.params.OnGoback();
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+        }
+    }
+
+    expired = (datetime) =>{
+        if(datetime){
+            const datetimestr = datetime.replace(' ','T');
+            const postdatetime = new Date(datetimestr)
+            const datetimeUTC = Date.parse(datetimestr);
+            const datetimenow = new Date() 
+            const now = Date.now()+(1000*60*60*9);
+            const timeDiff  = datetimeUTC-now;
+        
+            return timeDiff<0
+        }else{
+            return true
+        }
     }
 
     getPostData = async(post_id)=>{
-        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({post:response.data.view.post})
             if (response.data.view.file_image){
@@ -1325,8 +1570,7 @@ class AlbaContent extends React.Component {
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'})
         })
     }
 
@@ -1356,37 +1600,48 @@ class AlbaContent extends React.Component {
     )
     
     postscrap = async()=>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        
-        await Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
-        .then(response=>{
-            if(response.data.success)
-                this.setState({resultModalVisible:true, resultText:response.data.success});
-            else if (response.data.error)
-                this.setState({resultModalVisible:true, resultText:response.data.error});
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             
+             await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+             .then(response=>{
+                 if(response.data.success)
+                     this.setState({resultModalVisible:true, resultText:response.data.success});
+                 else if (response.data.error)
+                     this.setState({resultModalVisible:true, resultText:response.data.error});
+             })
+             .catch(error=>{
+                 this.setState({resultModalVisible:true, resultText:error.message});
+             })
+         }
+         
     }
 
     postBlame = async () =>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-
-        await Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
-        .then(response=>{
-            if(response.data.status == 500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }else{
-                this.getPostData(this.state.post.post_id);
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+     
+             await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
+             .then(response=>{
+                 if(response.data.status == 500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }else{
+                     this.getPostData(this.state.post.post_id);
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+         
+        }
     }
     
     statefunction=(str)=>{
@@ -1395,18 +1650,23 @@ class AlbaContent extends React.Component {
     }
 
     postDelete = async () => {
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-
-        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
-        .then((res)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
-            this.props.navigation.goBack();
-            this.props.route.params.OnGoback();
-        })
-        .catch((error)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+     
+             await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
+             .then((res)=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
+                 this.props.navigation.goBack();
+                 this.props.route.params.OnGoback();
+             })
+             .catch((error)=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
+             })
+        }
     }
 
     modalList = [
@@ -1421,7 +1681,7 @@ class AlbaContent extends React.Component {
     ]
 
     render(){
-        const {post, confirmModalVisible, resultModalVisible, spinnerModalVisible, modalType, popoverVisible} = this.state;
+        const {post, confirmModalVisible, resultModalVisible, spinnerModalVisible, modalType, popoverVisible,isLoading} = this.state;
         
         return(
             <SafeAreaView style={{flex:1}}>
@@ -1429,16 +1689,14 @@ class AlbaContent extends React.Component {
                 backgroundColor='#F4F4F4'
                 gbckfunc={() => {
                     this.props.navigation.goBack();
-                    this.props.route.params.OnGoback();
                     if(Platform.OS!=='ios'){
                         StatusBar.setBackgroundColor('#B09BDE');
                         StatusBar.setBarStyle('default');}}
                     }            
                 gbckuse={true}
                 right={<this.MoreAction/>}/>
-                {this.state.isLoading?
+                {isLoading?
                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                    <Text>is Loading now...</Text>
                     <Spinner size="giant"/>
                 </View>
                 :<ScrollView style={{backgroundColor : '#F4F4F4'}}>
@@ -1460,6 +1718,15 @@ class AlbaContent extends React.Component {
                                     <Timesvg width={15} height={15}/>
                                     <PostTime category='p1' style={{fontSize:10}} datetime = {post.post_datetime}/>
                                 </View>
+                            </View>
+                            <View style={{flexDirection : 'row', justifyContent:'flex-end', position:'absolute', left:0, top:0}}>
+                                {
+                                    post.answer_expire_date? 
+                                    <View style={{alignItems:'center'}}>
+                                        <ExpireTime category='h2' style={{fontSize:14}} datetime = {post.answer_expire_date}/>
+                                    </View>
+                                    : null
+                                }
                             </View>
                         </Layout>
                         <View style={styles.title}>
@@ -1522,38 +1789,74 @@ class AlbaContent extends React.Component {
                         {this.state.file_images ? this.state.file_images.map((i,index) => <View key={i.uri}>{this.renderImage(i,index)}</View>) : null} 
                     </Card>
                 </ScrollView>}
+                    {
+                    !isLoading ?
+                     this.expired(post.answer_expire_date)?
+
+                    <View style={[styles.bottomButton,{backgroundColor:'#c4c4c4'}]}>
+                        <PaperPlanesvg width = {42} height = {32}/>
+                        <Text category = 'h2' style={{color : 'white'}}>모집마감</Text>
+                    </View>
+                    :
                     <TouchableOpacity style={styles.bottomButton} onPress={()=>this.setState({visible:true})}>
                         <PaperPlanesvg width = {42} height = {32}/>
                         <Text category = 'h2' style={{color : 'white'}}>지원하기</Text>
                     </TouchableOpacity>
+                    :null
+                    }
                     <Modal
                         visible={this.state.visible}
                         backdropStyle={{backgroundColor:'rgba(0, 0, 0, 0.5)'}}
                         onBackdropPress={() => this.setState({visible:false})}>
                         <Card disabled={true} style={{borderRadius:20}}>
+                            {!post.post_email&&!post.post_hp?
+                                <View>
+                                    <Text style={{marginBottom:8}}>상세정보에 기재된</Text>
+                                    <Text >연락처로 지원해주세요.</Text>
+                                </View>
+                                :
                             <Layout style={{flexDirection:'row'}}>
                                 <View style={styles.modal_icons}>
+                                    {post.post_hp?
                                     <TouchableOpacity
                                         onPress={()=>{this.setState({visible:false});Linking.openURL(`tel:${post.post_hp}`)}}>
                                         <Callsvg width={40} height = {40}/>
                                     </TouchableOpacity>
+                                    :
+                                    <View>
+                                        <CallGraysvg width={40} height = {40}/>
+                                    </View>
+                                    }
                                     <Text>전화</Text>
                                 </View>
-                                    <View style={styles.modal_icons}>
+                                <View style={styles.modal_icons}>
+                                    {post.post_hp?
                                     <TouchableOpacity
                                         onPress={()=>{this.setState({visible:false});Linking.openURL(`sms:${post.post_hp}`)}}>
                                         <Callmessagesvg width={40} height = {40}/>
                                     </TouchableOpacity>
+                                    :
+                                    <View>
+                                        <CallmessageGraysvg width={40} height = {40}/>
+                                    </View>
+                                    }
                                     <Text>메시지</Text>
                                 </View>
                                 <View style={styles.modal_icons}>
+                                    {post.post_email?
                                     <TouchableOpacity
                                             onPress={()=>{this.setState({visible:false});Linking.openURL(`mailto:${post.post_email}`)}}>
                                             <Emailsvg width={40} height = {40}/>
                                     </TouchableOpacity>
+                                   :
+                                    <View>
+                                        <EmailGraysvg width={40} height = {40}/>
+                                    </View>
+                                    }
                                     <Text>이메일</Text>
                                 </View>
                             </Layout>
+                            }
                             <Button onPress={()=>this.setState({visible:false})} appearance='ghost' >
                                 취소
                             </Button>
@@ -1610,7 +1913,10 @@ class AlbaContent extends React.Component {
                             type = 'result'
                             confirmText={this.state.resultText}
                             frstText="닫기"
-                            OnFrstPress={() => this.setState({resultModalVisible:false})}
+                            OnFrstPress={() =>{    
+                                this.setState({resultModalVisible:false})
+                                this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                            }}
                         />
                     </Modal>
                     <Modal
@@ -1644,7 +1950,7 @@ class IlbanContent extends Component {
             cmt_content:'',
             cmt_id:'',
             image:[],
-            mem_icon_url:'',
+            mem_photo_url:'',
             replying:false,
             isLoading:true,
             refreshing:false,
@@ -1665,67 +1971,95 @@ class IlbanContent extends Component {
     static contextType = Signing;
 
     postDelete = async () => {
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+     
+             await Axios.post('https://dev.unyict.org/api/postact/delete',formdata)
+             .then((res)=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
+                 this.props.navigation.goBack();
+                 this.props.route.params.OnGoback();
+             })
+             .catch((error)=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
+             })
+         
+        }
 
-        await Axios.post('http://dev.unyict.org/api/postact/delete',formdata)
-        .then((res)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
-            this.props.navigation.goBack();
-            this.props.route.params.OnGoback();
-        })
-        .catch((error)=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, replying:false ,resultText:error.message});
-        })
     }
     commentWrite= ()=>{
-        this.setState({replying:false, cmt_id:'', cmt_content:''});
-        this.refs.commentInput.blur();
-        console.log(this.refs);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             this.setState({replying:false, cmt_id:'', cmt_content:''});
+             this.refs.commentInput.blur();
+             console.log(this.refs);
+        }
+
     }
     postscrap = async()=>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        
-        await Axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
-        .then(response=>{
-            if(response.data.success)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
-            else if (response.data.error)
-                this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, replying:false, resultText:error.message});
-        })
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             
+             await Axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+             .then(response=>{
+                 if(response.data.success)
+                     this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
+                 else if (response.data.error)
+                     this.setState({resultModalVisible:true, replying:false, resultText:response.data.error});
+             })
+             .catch(error=>{
+                 this.setState({resultModalVisible:true, replying:false, resultText:error.message});
+             })
+        }
+
     }
     
     commentUpload= async()=>{
-        const {cmt_content,post,cmt_id, revise}=this.state;
-        var formdata = new FormData();
-        formdata.append("post_id",post.post_id);
-        formdata.append("cmt_content",cmt_content);
-        cmt_id==''? null : formdata.append("cmt_id",cmt_id);
-        revise? formdata.append("cmt_id",cmt_id):null;
-        revise? formdata.append("mode",'cu'):null;
-        
-        // this.commentWrite()
-        
-        Axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
-        .then(response=>{
-            const {status, message}=response.data;
-            if(status=='200'){
-                Keyboard.dismiss();
-                this.getCommentData(post.post_id);
-                this.setState({cmt_id:'', cmt_content:'', replying:false, revise:false});
-
-                this.refs.pstcmtlist.scrollToEnd();
-            }else if(status=='500'){
-                this.setState({resultModalVisible:true, resultText:message});
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             const {cmt_content,post,cmt_id, revise}=this.state;
+             var formdata = new FormData();
+             formdata.append("post_id",post.post_id);
+             formdata.append("cmt_content",cmt_content);
+             cmt_id==''? null : formdata.append("cmt_id",cmt_id);
+             revise? formdata.append("cmt_id",cmt_id):null;
+             revise? formdata.append("mode",'cu'):null;
+             
+             // this.commentWrite()
+             
+            await Axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
+             .then(response=>{
+                 const {status, message,new_cmt_id}=response.data;
+                 if(status=='200'){
+                     this.setState({commentWrited:!revise&&cmt_id=='' ? true :false,cmt_id:'', cmt_content:'', replying:false, revise:false,});
+                     this.getCommentData(post.post_id);
+                    if(!revise){
+                        formdata.append('new_cmt_id',new_cmt_id)
+                        Axios.post('https://dev.unyict.org/api/comment_write/update_noti',formdata)
+                        .then(res=>{})
+                        .catch(err=>{alert('댓글 알림 오류가 발생했습니다.')})
+                    }
+                 }else if(status=='500'){
+                     this.setState({resultModalVisible:true, resultText:message,cmt_id:''});
+                 }
+             })
+             .catch(error=>{
+                 alert(error);
+             })
+             this.setState({revise:false})
             }
-        })
-        .catch(error=>{
-            alert(error);
-        })
+
     }
 
     commentValid =async() =>{
@@ -1733,7 +2067,7 @@ class IlbanContent extends Component {
         var formdata = new FormData();
         formdata.append("content",cmt_content);
         
-        await Axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        await Axios.post('https://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {status,message} = response.data;
             if(status=='500'){
@@ -1759,7 +2093,7 @@ class IlbanContent extends Component {
         </TouchableOpacity>
     )
     BackAction = () =>(
-        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();this.props.route.params.OnGoback();}}/>
+        <TopNavigationAction icon={()=><Backsvg width={26} height={26}/>} onPress={() =>{this.props.navigation.goBack();}}/>
     )
     
     statefunction=(str)=>{
@@ -1767,101 +2101,170 @@ class IlbanContent extends Component {
         this.componentDidMount()    
     }
     postBlame = async () =>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+     
+             await Axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
+             .then(response=>{
+                 if(response.data.status == 500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }else{
+                     this.getPostData(this.state.post.post_id)
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+         
+        }
 
-        await Axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
-        .then(response=>{
-            if(response.data.status == 500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }else{
-                this.getPostData(this.state.post.post_id)
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
     }
     cmtBlame = () =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id);
-
-        Axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id);
+     
+             Axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
+             })
+             this.setState({cmt_id:''});
             }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error});
-        })
+
     }
     cmtDelete = () =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',this.state.cmt_id);
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+         
+             var formdata = new FormData();
+             formdata.append('cmt_id',this.state.cmt_id);
+             Axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
+                     this.getCommentData(this.state.post.post_id)
+                 }
+             })
+             .catch(error=>{
+                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
+             })
+             this.setState({cmt_id:''});
+        }
 
-        Axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
-                this.getCommentData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : error.message});
-        })
     }
     postLike = () =>{
-        var formdata = new FormData();
-        formdata.append('post_id',this.state.post.post_id)
-        formdata.append('like_type',1)
-        Axios.post(this.state.post.is_liked?'http://dev.unyict.org/api/postact/cancel_post_like':'http://dev.unyict.org/api/postact/post_like',formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({resultModalVisible:true, resultText : response.data.message});
-            }else{
-                this.getPostData(this.state.post.post_id)
-            }
-        })
-        .catch(error=>{
-            this.setState({resultModalVisible:true, resultText : error.message});
-        })
+        
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+            const {post} = this.state 
+            this.setState(prevState=>({
+                post: {                  
+                    ...prevState.post,
+                    is_liked: !post.is_liked,
+                    post_like: post.is_liked? (post.post_like*1-1) : (post.post_like*1+1)
+                } 
+            })
+            )
+            
+             var formdata = new FormData();
+             formdata.append('post_id',this.state.post.post_id)
+             formdata.append('like_type',1)
+             
+             Axios.post(this.state.post.is_liked?'https://dev.unyict.org/api/postact/cancel_post_like':'https://dev.unyict.org/api/postact/post_like',formdata)
+             .then(response=>{
+                
+                if(response.data.status ==500){
+                     this.setState({resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                     !post.is_liked?
+                     Axios.post(`https://dev.unyict.org/api/postact/post_like_noti`,formdata)
+                     .then(res=>{})
+                     .catch(err=>{alert('좋아요 알림 오류가 발생하였습니다.')})
+                    :null
+                 }
+             })
+             .catch(error=>{
+                 this.setState({resultModalVisible:true, resultText : error.message});
+             })
+         
+        }
+
     }
-    cmtLike = (cmt_id, is_liked) =>{
-        var formdata = new FormData();
-        formdata.append('cmt_id',cmt_id)
-        formdata.append('like_type',1)
-        Axios.post(`http://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
-        .then(response=>{
-            if(response.data.status ==500){
-                this.setState({resultModalVisible:true, resultText : response.data.message});
-            }else{
-            this.getCommentData(this.state.post.post_id)}
-        })
-        .catch(error=>{
-            alert(`${JSON.stringify(error)}`)
-        })
+    cmtLike = (cmt_id, is_liked, index) =>{
+        if(!global.mem_id) {
+            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+         }else {
+            const {comment} = this.state;
+            comment[index].cmt_like = is_liked ? comment[index].cmt_like*1-1 : comment[index].cmt_like*1+1;      
+            comment[index].is_liked = !is_liked;
+            this.setState({})
+
+             var formdata = new FormData();
+             formdata.append('cmt_id',cmt_id)
+             formdata.append('like_type',1)
+             Axios.post(`https://dev.unyict.org/api/postact/${is_liked?'cancel_comment_like':'comment_like'}`,formdata)
+             .then(response=>{
+                 if(response.data.status ==500){
+                     this.setState({resultModalVisible:true, resultText : response.data.message});
+                 }else{
+                 this.getCommentData(this.state.post.post_id)
+                    !is_liked? 
+                        Axios.post(`https://dev.unyict.org/api/postact/comment_like_noti`,formdata)
+                        .then(response=>{
+                        })
+                        .catch(error=>{
+                            alert(`${JSON.stringify(error)}`)
+                        })
+                    : null
+                }
+             })
+             .catch(error=>{
+                 alert(`${JSON.stringify(error)}`)
+             })
+        
+        }
+
     }
-    
+
     getCommentData = async (post_id)=>{
-        await Axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment:response.data.view.data.list})
         })
         .catch((error)=>{
-            alert('error')
         })
     }
     getPostData = async (post_id)=>{
+        console.log('getPostData respond');
+
         await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
-            this.setState({post:response.data.view.post, mem_icon_url:response.data.mem_photo});
+            console.log('response.data.mem_photo : '+response.data.mem_photo)
+            this.setState({
+                post:response.data.view.post, 
+                mem_photo_url:response.data.mem_photo=="https://dev.unyict.org/uploads/cache/thumb-noimage_30x0.png"
+                ?"https://dev.unyict.org/uploads/altwink-rect.png"
+                :response.data.mem_photo
+            });
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
             const post_remove_tagsf = response.data.view.post.post_content.replace(regexf, '\n');
             this.setState({content:post_remove_tagsf})
@@ -1876,14 +2279,12 @@ class IlbanContent extends Component {
                     image_info['props']['title'] = item.pfi_originname;
                     image_info['props']['index'] = index;
                     image_info['props']['edit'] = true;
-                    console.log(image_info);
                     return image_info;
                 })});
             }
         })
         .catch((error)=>{
-            alert('글이 존재 하지 않습니다.');
-            this.props.navigate.goBack()
+            this.setState({resultModalVisible:true,resultText:'게시글이 존재 하지 않습니다.'});
         })
     }
     
@@ -1898,16 +2299,20 @@ class IlbanContent extends Component {
             StatusBar.setBarStyle('dark-content');
         }
 
+        this.setState({isLoading:true})
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
-        .then(()=>{this.setState({isLoading:false})})
+        .then(()=>{
+            this.setState({isLoading:false})
+        })
     }
 
     componentWillUnmount(){
-        StatusBar.setBackgroundColor('#B09BDE');
-        StatusBar.setBarStyle('default');
-        this.props.route.params.OnGoback();
+        if(Platform.OS!=='ios'){
+            StatusBar.setBackgroundColor('#B09BDE');
+            StatusBar.setBarStyle('default');
+        }
     }
     
     modalList = [
@@ -1928,6 +2333,11 @@ class IlbanContent extends Component {
             func : this.cmtDelete,
         },
     ]
+    scrollTo = (index) =>{
+        console.log('scrollTo ')
+        this.refs.pstcmtlist.scrollToIndex({index})
+
+    }
 
     renderPostBody = (post, image)=>{
         
@@ -1937,7 +2347,7 @@ class IlbanContent extends Component {
             <View style={{backgroundColor:'#F4F4F4', marginHorizontal:15,borderRadius:8,marginTop:5,marginBottom:20, paddingTop:10}} >
                 <View style={{marginLeft:25,marginTop:10,marginBottom:13}}>
                     <View style={{display:"flex",flexDirection:'row'}}>
-                        <Image source={{uri : this.state.mem_icon_url}} style={{width:23, height:23, marginRight:5}}/>
+                        <Image source={{uri : this.state.mem_photo_url}} style={{width:23, height:23, marginRight:5}}/>
                         <View>
                             <Text category="s2" style={{fontSize:12}}>{post.display_name}</Text>
                             <View style={{display:"flex",flexDirection:'row'}}>
@@ -1962,11 +2372,15 @@ class IlbanContent extends Component {
                     <HTML 
                         baseFontStyle={{ fontFamily: "Roboto" }}
                         ignoredStyles={["font-family"]}
-                        html={post.content} 
-                        imagesMaxWidth={Dimensions.get('window').width}
+                        html={post.post_content}
+                        tagsStyles={{
+                            img:{maxWidth:Dimensions.get('window').width*0.8,maxHeight:Dimensions.get('window').width*0.8,resizeMode:'contain'},
+                        }}
+                        imagesMaxWidth={Dimensions.get('window').width*0.8}
                         onLinkPress={(event, href)=>{
                             Linking.openURL(href)
-                        }}/>
+                        }}                        
+                    />
                 </View>
                 <View style={{alignItems:'center', width:'100%', paddingHorizontal:15}}>
                     {image
@@ -2022,13 +2436,19 @@ class IlbanContent extends Component {
                     borderRadius:8,
                     paddingRight:15,
                     marginRight:15,
-                    paddingVertical:10,
+                    marginBottom:8,
+                    paddingTop:10,
+                    paddingBottom:5,
                     paddingLeft: 15,
                     marginLeft:item.cmt_reply==""?15:50,
                     backgroundColor:item.cmt_id==this.state.cmt_id?'#EAB0B3': item.cmt_reply==""?  '#ffffff':'#f4f4f4'}}>
                 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                     <View style={{flexDirection:"row"}}>
-                        <Image source={{uri : item.member_photo_url}} style={{width:20, height:20, marginRight:5}}/>
+                        <Image source={{
+                            uri : item.member_photo_url=="https://dev.unyict.org/assets/images/member_default.gif"
+                            ?"https://dev.unyict.org/uploads/altwink-rect.png"
+                            :item.member_photo_url}} 
+                            style={{width:20, height:20, marginRight:5}}/>
                         <View>
                             <Text category="s2" style={{fontSize:12}}>{item.cmt_nickname}</Text>
                             <PostTime style={{color:'#878787', fontSize:8}} datetime={item.cmt_datetime}/>
@@ -2038,8 +2458,14 @@ class IlbanContent extends Component {
                         {/* <TouchableOpacity onPress={()=>this.cmtBlameConfirm(item.cmt_id)}>
                             <BlameIcon />
                         </TouchableOpacity> */}
-                        <TouchableOpacity onPress={()=>this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})} style={{width:10,alignItems:'flex-end'}}>
-                            <MoreSsvg/>
+                        <TouchableOpacity 
+                            onPress={()=>{
+                                this.setState({modalVisible:true,cmt_id:item.cmt_id, commentSession : item.mem_id})
+                                this.scrollTo(index)
+                            }} 
+                            style={{alignItems:'flex-end'}}
+                        >
+                            <MoreSsvg width={16} height={16}/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -2048,15 +2474,29 @@ class IlbanContent extends Component {
                 </View>
                 <View style={{display:"flex", justifyContent:"flex-end",flexDirection:"row",alignItems:"flex-end"}}>
                     {item.cmt_reply ==""?
-                    <TouchableOpacity style= {{marginHorizontal:6}}onPress={() => this.setState({replying:true, cmt_id:item.cmt_id}, this.refs.commentInput.focus())}>
+                    <TouchableOpacity 
+                        style= {{marginHorizontal:12,padding:5}}
+                        onPress={() => {
+                            this.setState({replying:true, cmt_id:item.cmt_id},
+                                 ()=>{
+                                     this.refs.commentInput.focus();
+                                     setTimeout(()=> {this.scrollTo(index)},200)
+                                    }
+                                 );
+                            
+                        }}
+                    >
                         <Text category="s1" style={{color:'#A897C2', fontSize:10}}>답글</Text>
                     </TouchableOpacity>
                     :null
                     }
-                    <TouchableOpacity style= {{marginHorizontal:6,display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end'}}onPress={()=>this.cmtLike(item.cmt_id, item.is_liked)}>
+                    <TouchableOpacity 
+                        style= {{display:'flex',flexDirection:'row',justifyContent:'flex-end', alignItems:'flex-end',padding:5}}
+                        onPress={()=>this.cmtLike(item.cmt_id, item.is_liked,index)}
+                    >
                         {item.is_liked?<Thumbfillsvg width='12' height='12'/>:<Thumbsvg width='12' height='12'/>}
+                        <Text category="s1" style={{color:'#A897C2', fontSize:10,marginLeft:6}}>{item.cmt_like}</Text>
                     </TouchableOpacity>
-                    <Text category="s1" style={{color:'#A897C2', fontSize:10}}>{item.cmt_like}</Text>
                 </View>
             </View>
         </View>
@@ -2064,27 +2504,27 @@ class IlbanContent extends Component {
      render(){
 
         const {navigation,route} =this.props
-        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image} = this.state
-        
-        return(
-            <KeyboardAvoidingView
-               behavior={Platform.OS == "ios" ? "padding" : "height"}
-               style={{flex:1}} 
-            >
+        const {cmt_id,cmt_content,post,comment,modalVisible,replying,resultModalVisible,confirmModalVisible,spinnerModalVisible, modalType, imageModalVisible, popoverVisible, imageIndex, image,commentWrited} = this.state
 
+        return(
+        <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : ""}
+            style={{flex:1}} 
+        >
         <SafeAreaView style={{flex:1}}>
             <WriteContentToptab
                 gbckfunc={() => {
                     this.props.navigation.goBack();
                     if(Platform.OS!=='ios'){
                         StatusBar.setBackgroundColor('#B09BDE');
-                        StatusBar.setBarStyle('default');}}
+                        StatusBar.setBarStyle('default');}
+                    }
                     }
                 gbckuse={true}
-                right={<this.MoreAction/>}/>
+                right={<this.MoreAction/>}
+                />
             {this.state.isLoading ?
                 <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                    <Text>is Loading now...</Text>
                     <Spinner size="giant"/>
                 </View>
                 :<Layout style={{flex:1}}>
@@ -2095,6 +2535,12 @@ class IlbanContent extends Component {
                         renderItem={this.renderCommentsList}
                         onRefresh={this.onRefresh}
                         refreshing={this.state.refreshing}
+                        onContentSizeChange={()=>{
+                            commentWrited ? 
+                            this.setState({commentWrited:false},()=>{this.refs.pstcmtlist.scrollToEnd()})
+                            :
+                            null
+                        }}
                         style={{backgroundColor:'#ffffff'}}
                     />
                 </Layout>
@@ -2117,10 +2563,10 @@ class IlbanContent extends Component {
                     multiline={true}
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                 />
-                <TouchableOpacity onPress={this.commentValid} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
+                <TouchableOpacity onPress={()=>{Keyboard.dismiss();this.commentValid();}} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                     <Image 
                         style={{width:50,height:50}}
-                        source={{uri:"http://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
+                        source={{uri:"https://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
                      />
                 </TouchableOpacity>
             </View>
@@ -2181,18 +2627,18 @@ class IlbanContent extends Component {
                             <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 수정</Text>
                         </TouchableOpacity>
                         <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
+                        <TouchableOpacity 
+                            onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
+                            style={{padding : 10, paddingHorizontal:20, margin:5}}>
+                            <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
+                        </TouchableOpacity>
+                        <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
                         </>
                     :null}
                     <TouchableOpacity 
                         onPress={()=>{this.setState({modalVisible:false, modalType : 2, confirmModalVisible :true}, Keyboard.dismiss())}}
                         style={{padding : 10, paddingHorizontal:20, margin:5}}>
                         <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 신고</Text>
-                    </TouchableOpacity>
-                    <Divider style={{marginHorizontal : 10, color:'#F4F4F4'}}/>
-                    <TouchableOpacity 
-                        onPress={()=>{this.setState({modalVisible:false, modalType : 3, confirmModalVisible :true}, Keyboard.dismiss())}}
-                        style={{padding : 10, paddingHorizontal:20, margin:5}}>
-                        <Text style={{fontSize:20, color:'#63579D'}} category='h3'>댓글 삭제</Text>
                     </TouchableOpacity>
                 </View>   
             </Modal>
@@ -2205,7 +2651,10 @@ class IlbanContent extends Component {
                     type = 'result'
                     confirmText={this.state.resultText}
                     frstText="닫기"
-                    OnFrstPress={() => this.setState({resultModalVisible:false})}
+                    OnFrstPress={() =>{
+                        this.setState({resultModalVisible:false});
+                        this.state.resultText.includes('존재') ? this.props.navigation.goBack() : null
+                    }}
                 />
             </Modal>
             <Modal
@@ -2344,7 +2793,8 @@ const styles = StyleSheet.create({
     commentAndroid:{
         backgroundColor:'#f4f4f4',
         borderRadius:14,
-        fontSize:14
+        fontSize:14,
+        paddingRight:60,
     },
     commentiOS:{
         backgroundColor:'#f4f4f4',

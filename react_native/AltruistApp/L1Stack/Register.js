@@ -18,6 +18,7 @@ import {
   CheckBox,
   Radio,
   RadioGroup,
+  Spinner
 } from '@ui-kitten/components';
 import {
   ScrollView,
@@ -59,6 +60,8 @@ class RegisterScreen extends Component {
       EmailIcon: false,
       goNext: true,
       date: new Date(),
+      checked : true,
+      isLoading : false
     };
   }
 
@@ -75,8 +78,10 @@ class RegisterScreen extends Component {
   //다른 input 다 적으면 abled
 
   checkInputs = (e) => {
+    
     console.log('checkInputs, submit전에');
     // this.state.goNext = 'true';
+    this.setState({isLoading:true})
     this.state.goNext = false;
     if (!this.state.mem_userid) {
       return;
@@ -107,9 +112,9 @@ class RegisterScreen extends Component {
       this.setState({pwreStyle: styles.inputDeny});
       return;
     }
-    if (!this.state.checked) {
-      return;
-    }
+    // if (!this.state.checked) {
+    //   return;
+    // }
     console.log('no');
     this.SubmitForm();
   };
@@ -119,7 +124,7 @@ class RegisterScreen extends Component {
     if (
       !this.state.mem_userid ||
       !this.state.mem_username ||
-      !this.state.mem_nickname ||
+      !this.state.mem_nickname || 
       !this.state.mem_sex ||
       !this.state.mem_email ||
       !this.state.mem_password ||
@@ -272,8 +277,9 @@ class RegisterScreen extends Component {
     console.info('form', this.state);
 
     await axios
-      .post('http://dev.unyict.org/api/register/form', formdata)
+      .post('https://dev.unyict.org/api/register/form', formdata)
       .then((res) => {
+        this.setState({isLoading:false})
         console.log('response', res);
         console.log('status', res.data.status);
         console.log('data', res.data);
@@ -429,7 +435,7 @@ class RegisterScreen extends Component {
     formdata.append('email', mem_email);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/email_check`, formdata)
+      .post(`https://dev.unyict.org/api/register/email_check`, formdata)
       .then((res) => {
         console.log(res.data);
         if (res.data.message.includes('예약어')) {
@@ -453,7 +459,7 @@ class RegisterScreen extends Component {
     formdata.append('password', mem_password);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/password_check`, formdata)
+      .post(`https://dev.unyict.org/api/register/password_check`, formdata)
       .then((res) => {
         console.log(res.data);
         const pwmessage = res.data.message;
@@ -463,21 +469,22 @@ class RegisterScreen extends Component {
 
   //추천인 - userid API
   checkRecommend = async () => {
+    console.log('checkRecommend on');
     const {mem_recommend} = this.state;
 
     let formdata = new FormData();
     formdata.append('userid', mem_recommend);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .post(`https://dev.unyict.org/api/register/userid_check`, formdata)
       .then((res) => {
-        console.log(res.data);
+        console.log('res.data : ', res.data);
 
         if (res.data.message.includes('사용중')) {
           this.setState({recommendCaption: null});
         } else if (res.data.result == 'available') {
           this.setState({recommendCaption: '없는 아이디 입니다.'});
-        }
+        } 
       });
   };
 
@@ -489,7 +496,7 @@ class RegisterScreen extends Component {
     formdata.append('userid', mem_userid);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/userid_check`, formdata)
+      .post(`https://dev.unyict.org/api/register/userid_check`, formdata)
       .then((res) => {
         console.log(res.data);
 
@@ -508,7 +515,7 @@ class RegisterScreen extends Component {
     formdata.append('nickname', mem_nickname);
 
     await axios
-      .post(`http://dev.unyict.org/api/register/nickname_check`, formdata)
+      .post(`https://dev.unyict.org/api/register/nickname_check`, formdata)
       .then((res) => {
         console.log(res.data);
         if (res.data.reason == '닉네임값이 넘어오지 않았습니다') {
@@ -570,6 +577,11 @@ class RegisterScreen extends Component {
             여자
           </Text>
         </Radio>
+        <Radio>
+          <Text style={{color: '#63579D'}} category="p1">
+            공개안함
+          </Text>
+        </Radio>
       </RadioGroup>
     );
   };
@@ -600,8 +612,6 @@ class RegisterScreen extends Component {
       <Text
         category="p2"
         style={{
-          paddingTop: 15,
-          paddingBottom: 60,
           color: '#63579D',
         }}>
         {`다 음  `}
@@ -610,14 +620,38 @@ class RegisterScreen extends Component {
     </TouchableOpacity>
   );
 
+ 
+  clicktest = () =>{
+    
+
+    }
+
+  componentDidMount(){
+    console.log(this.state.isLoading)
+  }
+
   render() {
     console.log(this.state);
     console.log('this.state.checked', this.state.checked);
     return (
+      this.state.isLoading 
+      ?
       <SafeAreaView
-        style={{
-          flex: 1,
-        }}>
+      style={{
+        flex: 1,
+        justifyContent:'center',
+        alignItems:'center'  
+      }}>
+          <Spinner size="giant" />
+          <Text style={{padding:20}}> 
+          회원님의 정보를 저장중입니다 ... 
+          </Text>
+      </SafeAreaView>
+      :      
+      <SafeAreaView
+      style={{
+        flex: 1,
+      }}>
         <TopNavigation
           title={() => <Text category="h2">회원가입</Text>}
           alignment="center"
@@ -631,6 +665,16 @@ class RegisterScreen extends Component {
             paddingStart: 45,
             paddingTop: 30,
           }}>
+        {
+        this.state.isLoading&&
+            <View style={{
+              flex: 1,
+              justifyContent:'center',
+              alignItems:'center'}}>
+               <Spinner size="giant"/>
+               <Text> 회원님의 정보를 저장중입니다 ... </Text>
+            </View>
+  } 
           {/* 필수 */}
           <Input
             style={
@@ -689,9 +733,7 @@ class RegisterScreen extends Component {
             }
             placeholder="* ID"
             onChangeText={(mem_userid) => {
-              this.setState({
-                mem_userid: mem_userid,
-              });
+              this.setState({mem_userid});
             }}
             onEndEditing={() => {
               this.checkNotNull();
@@ -718,11 +760,9 @@ class RegisterScreen extends Component {
             keyboardType="email-address"
             textContentType="emailAddress" //ios
             placeholder="* 이메일"
+            
             onChangeText={(mem_email) => {
-              this.setState({
-                mem_email: mem_email,
-              });
-              this.checkEmail(mem_email);
+              this.setState({mem_email});
             }}
             onEndEditing={() => {
               this.checkNotNull();
@@ -755,7 +795,7 @@ class RegisterScreen extends Component {
             secureTextEntry={true}
             placeholder="* 비밀번호"
             onChangeText={(mem_password) => {
-              this.setState({mem_password: mem_password});
+              this.setState({mem_password});
               this.EqualPW(mem_password, this.state.mem_password_re);
             }}
             onEndEditing={() => {
@@ -791,7 +831,7 @@ class RegisterScreen extends Component {
             secureTextEntry={true}
             placeholder="* 비밀번호 확인"
             onChangeText={(mem_password_re) => {
-              this.setState({mem_password_re: mem_password_re});
+              this.setState({mem_password_re});
               this.EqualPW(this.state.mem_password, mem_password_re);
             }}
             onEndEditing={() => {
@@ -820,7 +860,7 @@ class RegisterScreen extends Component {
               dataDetectorTypes="phoneNumber"
               placeholder="휴대전화"
               onChangeText={(mem_phone) => {
-                this.setState({mem_phone: mem_phone});
+                this.setState({mem_phone});
                 this.NoString(mem_phone);
                 this.PhoneHyphen(mem_phone);
               }}
@@ -850,7 +890,7 @@ class RegisterScreen extends Component {
               dataDetectorTypes="phoneNumber"
               placeholder="생년월일 ( ex. 2000-01-01 ) "
               onChangeText={(mem_birthday) => {
-                this.setState({mem_birthday: mem_birthday});
+                this.setState({mem_birthday});
                 this.NoString2(mem_birthday);
                 this.BdayHyphen(mem_birthday);
               }}
@@ -863,7 +903,7 @@ class RegisterScreen extends Component {
               style={styles.inputs}
               placeholder="추천인 아이디"
               onChangeText={(mem_recommend) =>
-                this.setState({mem_recommend: mem_recommend})
+                this.setState({mem_recommend})
               }
               onEndEditing={() => {
                 this.checkNotNull();
@@ -891,7 +931,7 @@ class RegisterScreen extends Component {
               textDecorationColor: '#63579D',
               flexDirection: 'row',
             }}>
-            <this.CheckboxKitten />
+            {/* <this.CheckboxKitten /> */}
             <Text category="s1" style={{color: '#63579D'}}>
               {` `} * 하늘 부모님 성회 아래
               {`\n`} {` `}
@@ -902,6 +942,7 @@ class RegisterScreen extends Component {
           <View
             style={{
               flexDirection: 'row',
+              justifyContent: 'center'
             }}>
             <TouchableOpacity
               onPress={() =>
@@ -970,7 +1011,7 @@ class RegisterScreen extends Component {
             ) : (
               <this.nextStep />
             )}
-          </View>
+          </View>       
         </ScrollView>
       </SafeAreaView>
     );

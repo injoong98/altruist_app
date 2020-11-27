@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
 import messaging from '@react-native-firebase/messaging'
-import {ComBottomNav} from './L2Bottom/ComBottomNav'
+import {ComBottomNav,ComBottomNav_premembers} from './L2Bottom/ComBottomNav'
 import {defaultContent, IlbanContent, GominContent, MarketContent, AlbaContent} from './Content'
 import {defaultWrite, MarketWrite, AlbaWrite,GominWrite, IlbanWrite} from './Write'
 import ApplyCompleteScreen from './L2Bottom/L3Stack/ApplyComplete'
@@ -27,7 +27,7 @@ import MainImg from '../assets/images/main-logo-img.png'
 import VersionCheck from "react-native-version-check";
 import { version } from '../package.json';
 import CommunitySearch from './CommunitySearch'
-
+import RequireLoginScreen from '../L1Stack/L2Bottom/L3Stack/Require_Login'
 
 
 const {width} = Dimensions.get('window')
@@ -43,9 +43,8 @@ class LoadingScreen extends React.Component{
             opacity:new Animated.Value(0),
             yourCurrentVersion : '',
         }
+        global.mem_id = 0; //global mem_id
     }
-
-    
     
     fadeIn = () => {
         Animated.timing(this.state.opacity,{
@@ -58,7 +57,7 @@ class LoadingScreen extends React.Component{
     fadeOut = () =>{
         Animated.timing(this.state.opacity,{
             toValue:0, 
-            delay:10000
+            delay:100
         }).reset()
     }
 
@@ -68,27 +67,21 @@ class LoadingScreen extends React.Component{
     }
     
     
-   
     componentDidMount(){
+        console.log('StackNav LoadingScreen ComponentDidMount')
+            
+            if(Platform.OS != 'ios'){
+                this.fadeIn(); 
+            }
+            //can use ios and and
+            this.VersionChkAndroid();
+        }
         
-
-        // // Platform.OS === 'ios' ?  
-        // // null
-        // //     // VersionCheck.setAppID(APP_ID);
-        // //     // VersionCheck.setAppName(APP_NAME);
-        // // : 
-        // //     console.log('            this.fadeIn();')
-        // //     this.fadeIn();
-        // //     VersionCheck.getLatestVersion()
-        // //     .then(latestVersion => {
-        // //       console.log('latestVersion : ', latestVersion);
-        // //       // 2.0.0
-        // //     })
-        Platform.OS === 'ios' ? null : this.fadeIn(); this.VersionChkAndroid();
-    }
-
     componentWillUnmount(){
-        Platform.OS === 'ios' ?  null : this.fadeOut()
+        console.log('StackNav LoadingScreen WillUnmount')
+        if(Platform.OS != 'ios'){
+            this.fadeOut()
+        }
     }
 
 
@@ -97,15 +90,24 @@ class LoadingScreen extends React.Component{
         
         return(
             <SafeAreaView style={{flex:1,}}>
+                {Platform.OS == 'android'?  
                 <Animated.View 
                     style={{flex:1, justifyContent:"space-between", alignItems:"center", backgroundColor:"#ffffff",opacity:this.state.opacity}}>
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
-                    <Text category="s2" style={{backgroundColor: 'white', color: '#ffffff', textAlign:'center', includeFontPadding:true}}>CARP x UNYICT</Text>
-                    <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
-                {Platform.OS === 'android'?  
-                <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`BETA ver. ${this.state.yourCurrentVersion}`}</Text>
-            : null }
+                    <Text category="s2" style={{backgroundColor: 'white', color: '#ffffff', textAlign:'center', includeFontPadding:true}}>CARP x UNYICT</Text>                    
+                    <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'https://dev.unyict.org/uploads/main_png.png'}}/>
+                    <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`V ${this.state.yourCurrentVersion}`}</Text>
                 </Animated.View> 
+            : 
+            <View style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:'#FFFFFF'}}>
+                {/* <Text category="p2" style={{lineHeight:25, textAlign:'center', padding: 50}}>
+                    우리는 
+                   {`\n`} 더불어 사는 이타주의자들 
+                   {`\n`} 입니다!
+                    </Text> */}
+                <Text category="p2" style={{backgroundColor: 'white', textAlign:'center', color:'#ACACAC', includeFontPadding:true}}>{`v ${this.state.yourCurrentVersion}`}</Text>
+            </View>
+            }
             </SafeAreaView>
     )}
 }
@@ -128,7 +130,7 @@ export class StackNav extends React.Component{
                     formdata.append('autologin',autologin)
                     :null
                     
-                    axios.post('http://dev.unyict.org/api/login',formdata)
+                    axios.post('https://dev.unyict.org/api/login',formdata)
                     .then(response=>{
                         console.log('sign in res:'+JSON.stringify(response.data.status))
                         if(response.data.status == 200 )
@@ -153,7 +155,7 @@ export class StackNav extends React.Component{
                     .then(token=>{
                         var formdata = new FormData();
                         formdata.append('token',token);
-                        axios.post('http://dev.unyict.org/api/login/logout/',formdata)
+                        axios.post('https://dev.unyict.org/api/login/logout/',formdata)
                         .then(response=>{
                             this.setState({isSignedOut:true})
                             this.session_chk()
@@ -167,6 +169,10 @@ export class StackNav extends React.Component{
                 },
                 session_chk:()=>{
                     this.session_chk()
+                },
+                getFirstNotiList:()=>{
+                    console.log('getFirstNotiList run')
+                    this.getFirstNotiList()
                 },
                 session_mem_id:'',
                 is_altruist:false,
@@ -190,44 +196,6 @@ export class StackNav extends React.Component{
         
     }
 
-    latestVersionChk = () =>{
-       
-
-    }
-
-    VersionUpdateChk = () => {
-        VersionCheck.getLatestVersion().then(latestVersion => {
-            console.log(latestVersion);
-            });
-
-
-        VersionCheck.getLatestVersion({
-            forceUpdate: true,
-            provider: () => fetch(`https://play.google.com/store/apps/details?id=com.everytime.v2`)
-            .then(r =>{ r.json();
-            console.log('r',r)}
-            )
-            .then(({version}) => 
-                console.log('version:', version))
-            }).then(latestVersion =>{
-            console.log(latestVersion);
-            });
-
-
-            // VersionCheck.getLatestVersion({
-            //     forceUpdate: true,
-            //     provider: () => fetch('')
-            //       .then(r => r.json())
-            //       .then(({version}) => version),   // You can get latest version from your own api.
-            //   }).then(latestVersion =>{
-            //     console.log(latestVersion);
-            //   });
-
-
-
-        
-    }
-
     static contextType = Signing
     syncPushToken = async (token,mem_id) =>{
         console.log('synchPushToken token :'+token)
@@ -236,7 +204,7 @@ export class StackNav extends React.Component{
         formdata.append('token',token);
         formdata.append('mem_id',mem_id);
         
-        await axios.post('http://dev.unyict.org/api/login/sync_push_token',formdata)
+        await axios.post('https://dev.unyict.org/api/login/sync_push_token',formdata)
         .then(res=>{
             console.log('success!')
         })
@@ -254,7 +222,7 @@ export class StackNav extends React.Component{
             formdata.append('token',token);
         });
         
-        await axios.post('http://dev.unyict.org/api/login/session_check',formdata)
+        await axios.post('https://dev.unyict.org/api/login/session_check',formdata)
         .then(async res=>{
             console.log('session_checking')
             if(res.data.status == 200){
@@ -265,6 +233,7 @@ export class StackNav extends React.Component{
                 console.log(`mem_id : ${mem_id} is_altruist : ${is_altruist} alt_id : ${alt_id}`)
                 this.setState({isSignedIn:true});
                 this.state.context.session_mem_id = mem_id;
+                global.mem_id = mem_id;
                 this.state.context.is_altruist = is_altruist;
                 is_altruist ?
                 this.state.context.alt_id =alt_id
@@ -283,6 +252,7 @@ export class StackNav extends React.Component{
             else if(res.data.status == 500)
             {
                 this.setState({isSignedIn:false});
+                global.mem_id = 0;
                 messaging().getToken()
                 .then(token=>{
                     this.syncPushToken(token,0)
@@ -305,7 +275,7 @@ export class StackNav extends React.Component{
         })
     }
     getFirstNotiList=()=>{
-        axios.get('http://dev.unyict.org/api/notification')
+        axios.get('https://dev.unyict.org/api/notification')
         .then(res=>{
            console.log('getFirstNotiList success! : '+res.data.view.data.total_rows)   
            this.setState(prevState=>({
@@ -321,7 +291,7 @@ export class StackNav extends React.Component{
         })
     }
     getNotiList=()=>{
-        axios.get('http://dev.unyict.org/api/notification?read=N')
+        axios.get('https://dev.unyict.org/api/notification?read=N')
         .then(res=>{
            console.log('getNotiList success! : '+res.data.view.data.total_rows)   
            this.setState(prevState=>({
@@ -338,13 +308,11 @@ export class StackNav extends React.Component{
         })
     }
     componentDidMount(){
-        setTimeout(
-            ()=>
-            {
-                // this.VersionUpdateChk();
-            this.session_chk();
-        }
-            ,600);
+
+        console.log('StackNav LoadingScreen WillUnmount')
+
+        setTimeout( ()=> {// this.VersionUpdateChk(); 
+                this.session_chk();} ,600);
         messaging()
             .getInitialNotification()
             .then(async remoteMessage=>{
@@ -366,20 +334,33 @@ export class StackNav extends React.Component{
             
     }
     render(){
+        console.log('StackNavRendering')
         const {context,isLoading,isSignedIn,noticeContext, versionOk} = this.state
         return(
-            Platform.OS === 'android' && isLoading ? 
+            isLoading ?
             <LoadingScreen />
             :
+            // Platform.OS == 'ios' || !isLoading
             !versionOk ? 
             null : 
             <Signing.Provider value={context}>
                 <Notice.Provider value={noticeContext}>
                     <Navigator headerMode="none">
-                        {
+                        { 
+                           
                             !isSignedIn ? 
                             <>
-                                <Screen name = "Login" component={LoginScreen}/>
+                                <Screen name = "Bottom" component={ComBottomNav_premembers}/>
+                                <Screen name = "Content" component={defaultContent}/>
+                                <Screen name = "IlbanContent" component={IlbanContent}/>
+                                <Screen name = "GominContent" component={GominContent}/>
+                                <Screen name = "MarketContent" component={MarketContent}/>
+                                <Screen name = "AlbaContent" component={AlbaContent}/>
+                                <Screen name = "RequireLoginScreen" component={RequireLoginScreen}/>
+                               
+                                <Screen name = "StckQueContent" component={AltQueContent}/>
+                                
+                                 <Screen name = "LoginScreen" component={LoginScreen}/>
                                 <Screen name = "FindPwScreen" component={FindPwScreen}/>
                                 <Screen name = "RegisterScreen" component={RegisterScreen}/>
                                 <Screen name = "ResendAuthmailScreen" component={ResendAuthmailScreen}/>
@@ -389,6 +370,7 @@ export class StackNav extends React.Component{
                                 <Screen name = "ResendAuthmailSuccessScreen" component={ResendAuthmailSuccessScreen}/>
                                 <Screen name = "QuestionScreen" component={QuestionScreen}/>
                                 <Screen name = "FinishScreen" component={FinishScreen}/>
+                                
                             </>
                             :
                             <>

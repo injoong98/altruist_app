@@ -129,14 +129,32 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+
+    def versionPropsFile = file('version.properties')
+    def Properties versionProps = new Properties()
+
+    if (versionPropsFile.canRead()) {
+        versionProps.load(new FileInputStream(versionPropsFile))
+    }
+    else {
+        versionProps['VERSION_CODE']='0'
+    }
+
+    def code = versionProps['VERSION_CODE'].toInteger() + 1
+
+    versionProps['VERSION_CODE']=code.toString()
+    versionProps.store(versionPropsFile.newWriter(), null)
+
+
     defaultConfig {
         applicationId "com.testaltruistapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-        versionCode 3200016
-        versionName "0.16"
+        versionCode code
+        // Major Version.Minor Version.Build or Maintenance Version
+        versionName "1.2.5"
     }
     splits {
         abi {
@@ -204,10 +222,12 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.facebook.fresco:animated-gif:2.0.0'
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
-
+    
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
         exclude group:'com.squareup.okhttp3', module:'okhttp'

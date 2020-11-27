@@ -126,12 +126,37 @@ class Search extends CB_Controller
 				}
 				$result['list'][$key]['images'] = $images;
 				$result['list'][$key]['post_url'] = post_url(element('brd_key', $val), element('post_id', $val));
-				$result['list'][$key]['display_name'] = display_username(
+
+				if (element('mem_id', $val) >= 0) {
+					if(element('post_anoymous_yn', $val)) {// 익명글일경우에는 익명 표기
+						$result['list'][$key]['display_name'] = '익명';
+						$result['list'][$key]['post_nickname'] = '익명';
+						$result['list'][$key]['post_username'] = '익명';
+					}else {
+						$result['list'][$key]['display_name'] = element('post_nickname', $val);
+						// display_username(
+						// 	element('post_userid', $val),
+						// 	element('post_nickname', $val),
+						// 	($use_sideview_icon ? element('mem_icon', $val) : ''),
+						// 	($use_sideview ? 'Y' : 'N')
+						// );
+					}
+				} else {
+					$result['list'][$key]['display_name'] = '익명';
+				}
+
+
+
+
+
+
+
+				/* $result['list'][$key]['display_name'] = display_username(
 					element('post_userid', $val),
 					element('post_nickname', $val),
 					element('mem_icon', $val),
 					'Y'
-				);
+				); */
 				$result['list'][$key]['display_datetime'] = display_datetime(element('post_datetime', $val), 'user', 'Y-m-d H:i');
 				$result['list'][$key]['content'] = cut_str(strip_tags(element('post_content', $val)),200);
 				$result['list'][$key]['is_mobile'] = (element('post_device', $val) === 'mobile') ? true : false;

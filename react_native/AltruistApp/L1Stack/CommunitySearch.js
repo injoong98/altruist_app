@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {SafeAreaView, View, Image, TextInput, StyleSheet,TouchableOpacity, AsyncStorage, Keyboard} from 'react-native'
+import {SafeAreaView, View, Image, TextInput, StyleSheet,TouchableOpacity, AsyncStorage, Keyboard, ScrollView} from 'react-native'
 import {Layout,Text,Icon, TopNavigationAction, Modal, List, Spinner } from '@ui-kitten/components'
 import {WriteContentToptab} from '../components/WriteContentTopBar';
 import Axios from 'axios';
@@ -9,7 +9,7 @@ import { PostTime } from '../components/PostTime';
 import Heartsvg from '../assets/icons/heart.svg'
 import Viewsvg from '../assets/icons/view.svg'
 import Commentsvg from '../assets/icons/comment.svg'
-
+import Reloadsvg from '../assets/icons/reload.svg'
 const BackIcon =  (props) =>(
     <Icon {...props} name = "arrow-back"/>
 )
@@ -35,13 +35,16 @@ class CommunitySearch extends React.Component{
         var brd = brd_id == 1 ? 'GominContent' : brd_id == 2 ? 'MarketContent': brd_id == 3 ?'AlbaContent': 'IlbanContent' 
         this.props.navigation.navigate(brd,{post_id:post_id, OnGoback:() =>this.onRefresh()})
     }
+
     componentDidMount = () =>  {
         // this.getSearch();
     }
 
     getSearch = async() => {
         const {skeyword, current_category} = this.state;
-        await Axios.get(`https://dev.unyict.org/api/search?group_id=${current_category}&sfield=post_both&skeyword=${skeyword}`)
+        const group_id = 0;
+
+        await Axios.get(`https://dev.unyict.org/api/search?group_id=${group_id}&sfield=post_both&skeyword=${skeyword}`)
         .then((response) =>{
             const {status, message} = response;
             if(status=='200'){
@@ -81,8 +84,12 @@ class CommunitySearch extends React.Component{
         return brd
     }
 
-    renderItem = ({item}) => (
-        <TouchableOpacity style={styles.item} onPress={() => {this.navigateToContent(item.brd_id,item.post_id)}}>
+    renderItem = ({item, index}) => {
+        
+        const regex = /(<([^>]+)>)|&nbsp;/gi;
+        const post_remove_tags = item.post_content.replace(regex, '');
+        
+        return (<TouchableOpacity style={styles.item} onPress={() => {this.navigateToContent(item.brd_id,item.post_id)}}>
             {item.images?
             <View style={{width:90, justifyContent:'center', alignItems:'center'}}>
                 <Image 
@@ -94,20 +101,21 @@ class CommunitySearch extends React.Component{
                 <View style={{flex:1, padding:5}}>
                     <View style={{flexDirection:'row', justifyContent : 'space-between', marginHorizontal : 4}}>
                         <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{ this.brdNm(item.brd_id)}</Text>
-                        <PostTime datetime = {item.post_datetime}/>
                     </View>
                     <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail" category='h4'>
                         {item.post_title}
                     </Text>
                     <View style={styles.textBottom}>
                         <Text style={{...styles.text, color:'#878787', fontSize:10}} numberOfLines={1} ellipsizeMode="tail" category='h4'>
-                            {item.post_content}
+                            {post_remove_tags}
+
                         </Text>
                     </View>
                 </View>
                 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-                    <View>
-                        {/* <PostTime style={{alignItems:'center', marginLeft : 5}}datetime = {item.post_datetime}/> */}
+                    <View style={{flex:4,display:'flex',flexDirection:'row',alignItems:'flex-end', margin:4, paddingLeft : 5}}>
+                        <Text category="s2" style={{fontSize:10, color:'#63579D', marginRight:5}}>{item.post_nickname}</Text>
+                        <PostTime style={{alignItems:'center', marginLeft : 5, color:'#63579D'}}datetime = {item.post_datetime}/>
                     </View>
                     <View style={styles.infocontainer}>
                         <View style={{alignItems:'center',}}>
@@ -125,8 +133,8 @@ class CommunitySearch extends React.Component{
                     </View>
                 </View>
             </View>
-        </TouchableOpacity>
-    );
+        </TouchableOpacity>);
+    }
 
     renderFooter=()=>{
         return(
@@ -138,7 +146,8 @@ class CommunitySearch extends React.Component{
     }
 
     render(){ 
-        const {isLoading, spinnerVisible, current_category} = this.state;
+        const {isLoading, spinnerVisible, current_category, lists} = this.state;
+
         return(
             <SafeAreaView style={{flex: 1, backgroundColor : '#FFFFFF'}}>
                 <Layout style={{backgroundColor:'#ffffff',height:49, flexDirection:'row', }}>
@@ -163,23 +172,23 @@ class CommunitySearch extends React.Component{
                         </TouchableOpacity>
                     </View>
                 </Layout>
-				<View style={{flexDirection:'row', marginHorizontal : 20, marginVertical: 4,backgroundColor:'#B09BDE', borderRadius:10}}>
+				<ScrollView horizontal={true} style={{flex:1, flexDirection:'row', marginHorizontal : 20, marginVertical: 4,backgroundColor:'#B09BDE', borderRadius:10}}>
 					{this.category.map((str,index) => (
 					<TouchableOpacity 
 						key={index}
 						style={{alignItems:'center', justifyContent:'center', marginHorizontal:5}}
-                        // onPress={async()=>{this.setState({current_category:index, current_page:1},this.getPostFirst)}}
-                        >
+                        onPress={()=>{this.setState({current_category:index});}}>
 						<Text category='h6' key={index} style={{color:(current_category==index?'white':'#543D78')}}> {'#'+str} </Text>
 					</TouchableOpacity>))}
-				</View>
-                <View style={{flex : 1}}>
+				</ScrollView>
+                <View style={{flex : 20}}>
                     {isLoading?
                         <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                             <Searchsvg height={100} width={100} fill='#A9C' />
                             <Text category = 'h1' style = {{margin : 20}}>게시판의 글을 검색해보세요</Text>
                         </View>
-                    :<List
+                    : lists.length > 0 ?
+                    <List
                         style={styles.container}
                         contentContainerStyle={styles.contentContainer}
                         data={this.state.lists}
@@ -188,8 +197,14 @@ class CommunitySearch extends React.Component{
                         // onEndReached={this.load_more_data}
                         // onEndReachedThreshold = {0.9}
                         ListFooterComponent={this.renderFooter}
-                        onRefresh={this.onRefresh}
-                    />}
+                        onRefresh={this.onRefresh}/>
+                    : <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                        <TouchableOpacity onPress={()=>{this.setState({spinnerVisible:true},Keyboard.dismiss());this.getSearch();}}>
+                            <Reloadsvg height={50} width={50} fill='#A9C' />
+                        </TouchableOpacity>
+                        <Text category = 'h1' style = {{margin : 20}}>검색 결과가 없습니다</Text>
+                    </View>
+                    }
                     <Modal
                         visible={spinnerVisible}>
                         <View style={{backgroundColor: 'rgba(0,0,0,0.7)', width : 100, height :100, borderRadius:20, justifyContent: 'center', alignItems:'center'}}>
@@ -247,7 +262,7 @@ const styles = StyleSheet.create({
         display:"flex",flexDirection:"row",justifyContent:'space-evenly',
         borderTopLeftRadius:20,
         width:100,
-        backgroundColor:"#ffffff",
+        // backgroundColor:"#ffffff",
         position:"relative",bottom:0,right:0,
     },
   });

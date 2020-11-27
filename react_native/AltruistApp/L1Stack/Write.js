@@ -48,6 +48,13 @@ const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CloseIcon = (props) => <Icon {...props} name="close" />;
 const UpIcon = (props) => <Icon {...props} name="arrow-circle-up-outline" />;
 
+const pathToName= (path) =>{
+  const pathSpliced = path.split('/');
+  const name=pathSpliced[pathSpliced.length-1]
+  console.log(pathSpliced)
+  console.log(name)
+  return name
+}
 const defaultWrite = ({navigation}) => {
   const BackAction = () => (
     <TopNavigationAction
@@ -116,10 +123,11 @@ class GominWrite extends React.Component {
   }
 
   submitPost = async () => {
-    const url =
+      this.setState({spinnerVisible:true});
+      const url =
       this.props.route.params.mode == 'edit'
-        ? 'http://dev.unyict.org/api/board_write/modify'
-        : 'http://dev.unyict.org/api/board_write/write/b-a-1';
+        ? 'https://dev.unyict.org/api/board_write/modify'
+        : 'https://dev.unyict.org/api/board_write/write/b-a-1';
     const {
       post_title,
       post_content,
@@ -144,11 +152,11 @@ class GominWrite extends React.Component {
         if (status == '500') {
           this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
-          this.setState({spinnerVisible: false, resultVisible: true, 
-            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+            this.gobackfunc();
         }
       })
       .catch((error) => {
+        this.setState({spinnerVisible:false});
         alert(JSON.stringify(error));
       });
   };
@@ -165,16 +173,20 @@ class GominWrite extends React.Component {
     Keyboard.dismiss();
 
     await axios
-      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .post('https://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
           alert(message);
+          this.setState({spinnerVisible:false});
         } else if (status == '200') {
+          this.setState({spinnerVisible:false});
           this.setState({modalVisible: true, modalType:0});
+
         }
       })
       .catch((error) => {
+        this.setState({spinnerVisible:false});
         alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
   };
@@ -196,6 +208,13 @@ class GominWrite extends React.Component {
     }
   }
 
+  
+  componentWillUnmount(){
+    this._ismounted = false;
+    console.log('Gomin : componentwillunount')
+  }
+
+
   modalList =[
     {
       text : this.props.route.params.mode == 'edit'? '게시글을 수정하시겠습니까?': '게시글을 작성하시겠습니까?',
@@ -212,6 +231,10 @@ class GominWrite extends React.Component {
     const {post_title, post_category, post_anoymous_yn, post_content, checked, content, modalVisible,
       spinnerVisible, resultVisible, } = this.state;
     return (
+      <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : ""}
+            style={{flex:1}} 
+        >
       <SafeAreaView style={{flex: 1}}>
         <Pressable
           style={{flex: 1}}
@@ -220,8 +243,8 @@ class GominWrite extends React.Component {
 
           <WriteContentToptab text="고민 작성"
             right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-            func={this.filterSpamKeyword}
-            gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
+            func={()=>{this.filterSpamKeyword();this.setState({spinnerVisible:true});}}
+            gbckfunc={()=>{Keyboard.dismiss(); this.setState({modalType : 1, modalVisible:true});}}
             gbckuse={true}/>
           <TextInput
             style={{
@@ -290,7 +313,6 @@ class GominWrite extends React.Component {
           <Confirm
             type="result"
             confirmText={this.state.resultText}
-            frstText="닫기"
             OnFrstPress={() => {
               this.setState({resultVisible: false});
               this.gobackfunc();
@@ -304,6 +326,7 @@ class GominWrite extends React.Component {
         </Modal>
         {/* </KeyboardAvoidingView> */}
       </SafeAreaView>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -332,12 +355,16 @@ class MarketWrite extends React.Component {
       deal_price:
         this.props.route.params.mode == 'edit'
           ? this.props.route.params.post.deal_price
-          : 0,
+          : '',
       deal_type:
         this.props.route.params.mode == 'edit'
-          ? this.props.route.params.post.deal_type
-          : 2, // 0: 직거래, 1: 배송, 2: 둘다가능
-      deal_status: 1, // 0: 판매완료, 1: 판매중
+        ? this.props.route.params.post.deal_type
+        : 2, // 0: 직거래, 1: 배송, 2: 둘다가능
+        deal_status: 1, // 0: 판매완료, 1: 판매중
+        // deal_status: 
+        // this.props.route.params.mode == 'edit'
+        // ? this.props.route.params.post.deal_status
+        // : 1, // 0: 판매완료, 1: 판매중
       post_thumb_use:
         this.props.route.params.mode == 'edit'
           ? this.props.route.params.post.post_thumb_use
@@ -366,19 +393,25 @@ class MarketWrite extends React.Component {
   }
 
   componentDidMount() {
+    this._ismounted = true;
     if(Platform.OS!=='ios'){
       StatusBar.setBackgroundColor('#F4F4F4');
       StatusBar.setBarStyle('dark-content');
     }
+    console.log('componentdidmount')
+  }
 
+  componentWillUnmount(){
+    this._ismounted = false;
+    console.log('Market : componentwillunount')
   }
 
   submitPost = async () => {
-    console.log(this.state);
+    this.setState({spinnerVisible:true});
     const url =
       this.props.route.params.mode == 'edit'
-        ? 'http://dev.unyict.org/api/board_write/modify'
-        : 'http://dev.unyict.org/api/board_write/write/b-a-2';
+        ? 'https://dev.unyict.org/api/board_write/modify'
+        : 'https://dev.unyict.org/api/board_write/write/b-a-2';
     const {
       post_title,
       post_content,
@@ -407,7 +440,7 @@ class MarketWrite extends React.Component {
       formdata.append('post_file[]', {
         uri: item.path,
         type: item.mime,
-        name: 'image.jpg',
+        name: pathToName(item.props.path),
       });
     });
     
@@ -425,8 +458,7 @@ class MarketWrite extends React.Component {
         if (status == '500') {
           this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
-          this.setState({spinnerVisible: false, resultVisible: true, 
-            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+            this.gobackfunc();
         }
       })
       .catch((error) => {
@@ -589,17 +621,20 @@ class MarketWrite extends React.Component {
     Keyboard.dismiss();
 
     await axios
-      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .post('https://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
           alert(message);
+          this.setState({spinnerVisible:false});
         } else if (status == '200') {
+          this.setState({spinnerVisible:false});
           this.setState({modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
-        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+          this.setState({spinnerVisible:false});
+          alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
   };
 
@@ -639,8 +674,9 @@ class MarketWrite extends React.Component {
             right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
             func={() => {
               this.filterSpamKeyword();
+              this.setState({spinnerVisible:true});
             }}
-            gbckfunc={() => {this.setState({modalType:1, modalVisible : true})}}
+            gbckfunc={() => {Keyboard.dismiss();this.setState({modalType:1, modalVisible : true})}}
             gbckuse={true}
           />
 
@@ -653,6 +689,7 @@ class MarketWrite extends React.Component {
               <View style={styles.container}>
                 {/* <Text>상품명</Text> */}
                 <TextInput
+<<<<<<< HEAD
                   style={
                     Platform.OS == 'ios'
                     ?
@@ -660,6 +697,14 @@ class MarketWrite extends React.Component {
                     :
                     {...styles.input, height: 60, fontSize: 20}
                   }
+=======
+                  style={ 
+                    Platform.OS == 'ios' ?
+                    {...styles.input, height: 40, fontSize: 20}   
+                     : 
+                    {...styles.input,height: 60, fontSize: 20}
+                }
+>>>>>>> c8e2713344dd23ea11a582e07e41b33157cf5d01
                   onChangeText={(text) => this.setState({post_title: text})}
                   value={post_title}
                   placeholder="상품명"
@@ -670,12 +715,19 @@ class MarketWrite extends React.Component {
                   {/* <Text>판매가격</Text> */}
                   <TextInput
                     style={
+<<<<<<< HEAD
                       Platform.OS == 'ios'
                       ?
                       {...styles.input, height: 30}  
                       :
                       {...styles.input}
                     }
+=======
+                      Platform.OS == 'ios' ?
+                    {...styles.input, height: 40, fontSize: 20} 
+                  :{...styles.input}    
+                  }
+>>>>>>> c8e2713344dd23ea11a582e07e41b33157cf5d01
                     keyboardType="numeric"
                     onChangeText={(text) => this.setState({deal_price: text})}
                     value={deal_price.toString()}
@@ -686,12 +738,19 @@ class MarketWrite extends React.Component {
                   {/* <Text>연락처</Text> */}
                   <TextInput
                     style={
+<<<<<<< HEAD
                       Platform.OS == 'ios'
                       ?
                       {...styles.input, height: 30}  
                       :
                       {...styles.input}
                     }
+=======
+                      Platform.OS == 'ios' ?
+                    {...styles.input, height: 40, fontSize: 20} 
+                  :{...styles.input}    
+                  }
+>>>>>>> c8e2713344dd23ea11a582e07e41b33157cf5d01
                     keyboardType="numeric"
                     onChangeText={(text) => this.setState({post_hp: text})}
                     value={post_hp}
@@ -703,12 +762,19 @@ class MarketWrite extends React.Component {
                 {/* <Text>상세정보</Text> */}
                 <TextInput
                   style={
+<<<<<<< HEAD
                     Platform.OS == 'ios'
                     ?
                     {...styles.input, height: 100}  
                     :
                     {...styles.input}
                   }
+=======
+                    Platform.OS == 'ios' ?
+                  {...styles.input, height: 100, fontSize: 20} 
+                :{...styles.input}    
+                }
+>>>>>>> c8e2713344dd23ea11a582e07e41b33157cf5d01
                   onChangeText={(text) => this.setState({post_content: text})}
                   value={post_content}
                   placeholder="상세정보"
@@ -721,12 +787,19 @@ class MarketWrite extends React.Component {
                 {/* <Text>거래희망지역</Text> */}
                 <TextInput
                   style={
+<<<<<<< HEAD
                     Platform.OS == 'ios'
                     ?
                     {...styles.input, height: 30}  
                     :
                     {...styles.input}
                   }
+=======
+                    Platform.OS == 'ios' ?
+                  {...styles.input, height: 40, fontSize: 20} 
+                :{...styles.input}    
+                }
+>>>>>>> c8e2713344dd23ea11a582e07e41b33157cf5d01
                   onChangeText={(text) => this.setState({post_location: text})}
                   value={post_location}
                   placeholder="거래희망지역"
@@ -870,10 +943,8 @@ class MarketWrite extends React.Component {
 						<Confirm
 							type="result"
 							confirmText={this.state.resultText}
-							frstText="닫기"
 							OnFrstPress={() => {
 								this.setState({resultVisible: false});
-								this.gobackfunc();
 							}}
 						/>
 					</Modal>
@@ -903,6 +974,10 @@ class AlbaWrite extends React.Component {
       post_location:
         this.props.route.params.mode == 'edit'
           ? this.props.route.params.post.post_location
+          : '',
+      answer_expire_date:
+        this.props.route.params.mode == 'edit'
+          ? this.props.route.params.post.answer_expire_date.split(' ')[0]
           : '',
       post_hp:
         this.props.route.params.mode == 'edit'
@@ -957,6 +1032,86 @@ class AlbaWrite extends React.Component {
     }
   }
   
+
+  componentWillUnmount(){
+    this._ismounted = false;
+    console.log('Alba : componentwillunount')
+  }
+
+  dateCompare=(date1,date2)=>{
+    //날짜 비교함수
+    var frst = new Date(date1);
+    var scnd = new Date(date2);
+    console.log('frst : '+frst);
+    console.log('date2 : '+date2);
+    if(frst=='Invalid Date'||scnd=='Invalid Date'){
+      return 'error'
+    }
+    console.log('scnd : '+scnd);
+    return frst >= scnd
+  }
+  
+  dateValidation = (date) =>{
+    if(date==''){
+      this.setState({dateValid:true})
+      return true;
+    }
+    console.log("dateValidation running...");
+    var today = new Date();
+    var number = date.replace(/[^0-9]/g, '').substr(0,8);
+    
+    if(number.length!=8){
+      //입력한 숫자 수가 8자가 아닐 때
+      this.setState({dateValid:false,dateValidMessage:'알맞은 날짜 형식으로 입력해주세요.(ex 2021-02-13'})
+      return false
+    }else{
+      var validResult = this.dateCompare(`${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`,date+'T23:59');
+       
+      if(validResult!='error'){
+        if(!validResult){
+          this.setState({dateValid:true})
+          return true
+        }else{
+          this.setState({dateValid:false,dateValidMessage:'오늘 이후의 날짜만 입력가능합니다.'})
+          return false
+        }
+      }
+      else{
+        this.setState({dateValid:false,dateValidMessage:'알맞은 날짜를 입력해주세요.'})
+        return false
+      }
+    }
+  }
+
+  BdayHyphen = (date) => {
+    var number = date.replace(/[^0-9]/g, '').substr(0,8);
+    var dateWithHyphen = '';
+
+    if (number.length < 5) {
+      dateWithHyphen=number
+    } else if (number.length < 7) {
+     dateWithHyphen += number.substr(0, 4);
+     dateWithHyphen += '-';
+     dateWithHyphen += number.substr(4);
+    } else if (number.length < 11) {
+     dateWithHyphen += number.substr(0, 4);
+     dateWithHyphen += '-';
+     dateWithHyphen += number.substr(4, 2);
+     dateWithHyphen += '-';
+     dateWithHyphen += number.substr(6);
+    } else {
+     dateWithHyphen += number.substr(0, 4);
+     dateWithHyphen += '-';
+     dateWithHyphen += number.substr(4, 2);
+     dateWithHyphen += '-';
+     dateWithHyphen += number.substr(6);
+    }
+
+    var value = dateWithHyphen;
+
+    this.setState({answer_expire_date: value});
+  };
+
   setTipVisible = (bool) => {
     this.setState({isTipVisible: bool});
   };
@@ -970,79 +1125,89 @@ class AlbaWrite extends React.Component {
     this.setState({post_thumb_use: nextChecked});
   };
   submitPost = async () => {
-    const url =
+      this.setState({spinnerVisible:true});
+      const url =
       this.props.route.params.mode == 'edit'
-        ? 'http://dev.unyict.org/api/board_write/modify'
-        : 'http://dev.unyict.org/api/board_write/write/b-a-3';
+        ? 'https://dev.unyict.org/api/board_write/modify'
+        : 'https://dev.unyict.org/api/board_write/write/b-a-3';
 
-    const { post_title, post_content, post_location, post_hp, alba_type, alba_salary_type,  alba_salary, images,post_thumb_use,	isFollowUp,} = this.state;
-    let formdata = new FormData();
-    formdata.append('brd_key', 'b-a-3');
-    formdata.append('post_title', post_title);
-    formdata.append('post_content', post_content);
-    formdata.append('post_location', post_location);
-    formdata.append('post_hp', post_hp);
-    formdata.append('alba_type', alba_type);
-    formdata.append('alba_salary_type', alba_salary_type);
-    formdata.append('alba_salary', alba_salary);
-    console.log(post_thumb_use ? 0 : 1);
-    formdata.append('post_thumb_use', post_thumb_use ? 0 : 1);
+      const { post_title, post_content, post_location, post_hp, alba_type, alba_salary_type,  alba_salary, images,post_thumb_use,	isFollowUp,answer_expire_date} = this.state;
+      let formdata = new FormData();
+      formdata.append('brd_key', 'b-a-3');
+      formdata.append('post_title', post_title);
+      formdata.append('post_content', post_content);
+      formdata.append('post_location', post_location);
+      formdata.append('post_hp', post_hp);
+      formdata.append('alba_type', alba_type);
+      formdata.append('alba_salary_type', alba_salary_type);
+      formdata.append('alba_salary', alba_salary);
+      formdata.append('answer_expire_date', answer_expire_date+' 23:59:59');
+      console.log(post_thumb_use ? 0 : 1);
+      formdata.append('post_thumb_use', post_thumb_use ? 0 : 1);
 
-    images.map((item) => {
-      formdata.append('post_file[]', {
-        uri: item.path,
-        type: item.mime,
-        name: 'image.jpg',
+      images.map((item) => {
+        formdata.append('post_file[]', {
+          uri: item.path,
+          type: item.mime,
+          name: pathToName(item.props.path),
+        });
       });
-    });
-    this.props.route.params.mode == 'edit'
-      ? formdata.append('post_id', this.props.route.params.post.post_id)
-      : null;
+      this.props.route.params.mode == 'edit'
+        ? formdata.append('post_id', this.props.route.params.post.post_id)
+        : null;
 
-    console.log(formdata);
+      console.log(formdata);
 
-    await axios
-      .post(url, formdata)
-      .then((response) => {
-        const {message, status} = response.data;
-        if (status == '500') {
-          this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
-        } else if (status == '200') {
-          this.setState({spinnerVisible: false, resultVisible: true, 
-            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
-        }
-      })
-      .catch((error) => {
-        this.setState({spinnerVisible: false});
-        console.log(error);
-        alert(error);
-      });
+      await axios
+        .post(url, formdata)
+        .then((response) => {
+          const {message, status} = response.data;
+          if (status == '500') {
+            this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
+          } else if (status == '200') {
+              this.gobackfunc();
+
+          }
+        })
+        .catch((error) => {
+          this.setState({spinnerVisible: false});
+          console.log(error);
+          alert(error);
+        });
+      
   };
 
   filterSpamKeyword = async () => {
-    const {post_title, post_content} = this.state;
+    if(this.state.dateValid!==false){
+      const {post_title, post_content} = this.state;
 
-    var formdata = new FormData();
-    formdata.append('title', post_title);
-    formdata.append('content', post_content);
-    formdata.append('csrf_test_name', '');
+      var formdata = new FormData();
+      formdata.append('title', post_title);
+      formdata.append('content', post_content);
+      formdata.append('csrf_test_name', '');
 
-    //Keyboard
-    Keyboard.dismiss();
+      //Keyboard
 
-    await axios
-      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      await axios
+      .post('https://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
           alert(message);
+          this.setState({spinnerVisible:false});
         } else if (status == '200') {
+          this.setState({spinnerVisible:false});
           this.setState({modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
-        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+          this.setState({spinnerVisible:false});
+          alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
+    }else{
+      this.setState({spinnerVisible: false})
+      this.setState({resultVisibleNotGoback: true,resultVisibleNotGobackText : '모집 날짜를 알맞게 입력해주세요 '})
+    }
   };
   
 
@@ -1165,15 +1330,19 @@ class AlbaWrite extends React.Component {
   );
 
   render() {
-    const { post_title, post_content, post_location, post_hp, alba_salary, alba_salary_type,
-			alba_type, isFollowUp, modalVisible, resultVisible, spinnerVisible, } = this.state;
+    const { post_title, post_content, post_location, post_hp, alba_salary, alba_salary_type, answer_expire_date,
+			alba_type, isFollowUp, modalVisible, resultVisible, spinnerVisible,resultVisibleNotGoback } = this.state;
     const {navigation} = this.props;
     return (
       <SafeAreaView style={{flex: 1}}>
         <WriteContentToptab text="채용공고"
           right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-          func={this.filterSpamKeyword}
-          gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
+          func={()=>{
+            Keyboard.dismiss(); 
+            this.setState({spinnerVisible:true});
+            this.filterSpamKeyword();
+          }}
+          gbckfunc={()=>{Keyboard.dismiss();this.setState({modalType : 1, modalVisible:true})}}
           gbckuse={true}
         />
         <Divider />
@@ -1255,6 +1424,25 @@ class AlbaWrite extends React.Component {
               </View>
             </View>
             <TextInput
+              value={answer_expire_date}
+              style={[styles.input, {fontSize: 16},{borderWidth:this.state.dateValid!==false? 0 : 1,borderColor:'red'}]}
+              placeholder="모집 마감(미입력 : 상시모집) (ex 2020-11-30)"
+              onChangeText={(nextText) => {
+                this.setState({answer_expire_date: nextText});
+                this.BdayHyphen(nextText);
+                this.dateValidation(nextText)
+              }}
+              keyboardType='number-pad'
+              onEndEditing={()=>{this.dateValidation(answer_expire_date)}}
+            />
+            {
+              this.state.dateValid!==false? null :
+              <View style={{paddingLeft:"5%",width:'100%'}}>
+                <Text style={{color:'red'}}>{this.state.dateValidMessage}</Text>
+              </View>
+            }
+
+            <TextInput
               value={post_location}
               style={[styles.input, {fontSize: 18}]}
               placeholder="근무지"
@@ -1262,6 +1450,7 @@ class AlbaWrite extends React.Component {
                 this.setState({post_location: nextText});
               }}
             />
+            
             <TextInput
               value={post_content}
               style={[styles.input, {fontSize: 18}]}
@@ -1334,10 +1523,21 @@ class AlbaWrite extends React.Component {
 						<Confirm
 							type="result"
 							confirmText={this.state.resultText}
-							frstText="닫기"
 							OnFrstPress={() => {
 								this.setState({resultVisible: false});
-								this.gobackfunc();
+							}}
+						/>
+					</Modal>
+					<Modal
+						visible={resultVisibleNotGoback}
+						backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+						onBackdropPress={() => this.setState({resultVisibleNotGoback: false})}>
+						<Confirm
+							type="result"
+							confirmText={this.state.resultVisibleNotGobackText}
+							frstText="닫기"
+							OnFrstPress={() => {
+								this.setState({resultVisibleNotGoback: false});
 							}}
 						/>
 					</Modal>
@@ -1385,23 +1585,24 @@ class IlbanWrite extends React.Component {
   categoryList = ['자유', '게임', '소식', '정보'];
 
   submitPost = async () => {
-    
+    this.setState({spinnerVisible:true});
     const {post_title, post_content, post_category, images} = this.state;
     const url =
       this.props.route.params.mode == 'edit'
-        ? 'http://dev.unyict.org/api/board_write/modify'
-        : 'http://dev.unyict.org/api/board_write/write/ilban';
-
+        ? 'https://dev.unyict.org/api/board_write/modify'
+        : 'https://dev.unyict.org/api/board_write/write/ilban';
+    
+    let real_postcategory = post_category + 1;
     let formdata = new FormData();
     formdata.append('brd_key', 'ilban');
     formdata.append('post_title', post_title);
-    formdata.append('post_category', post_category+1);
+    formdata.append('post_category', real_postcategory);
     formdata.append('post_content', post_content);
     images.map((item) => {
       formdata.append('post_file[]', {
         uri: item.props.path,
         type: item.props.mime,
-        name: 'image.jpg',
+        name: pathToName(item.props.path),
       });
     });
     
@@ -1409,20 +1610,24 @@ class IlbanWrite extends React.Component {
       ? formdata.append('post_id', this.props.route.params.post.post_id)
       : null;
     
-    console.log(formdata);
+    console.log('liban_formdata : ', formdata);
 
     await axios
       .post(url, formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
+          console.log('fail : ', formdata)
           this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
-          this.setState({spinnerVisible: false, resultVisible: true, 
-            resultText : (this.props.route.params.mode == 'edit'?'게시글 수정 완료':'게시글 작성 완료')});
+          console.log('success : ', formdata)
+          this.gobackfunc();
         }
       })
       .catch((error) => {
+        if(error.data){
+          console.log(error.data);
+        }
         this.setState({spinnerVisible: false});
         alert(JSON.stringify(error));
       });
@@ -1440,17 +1645,20 @@ class IlbanWrite extends React.Component {
     Keyboard.dismiss();
 
     await axios
-      .post('http://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .post('https://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
           alert(message);
+          this.setState({spinnerVisible:false});
         } else if (status == '200') {
+          this.setState({spinnerVisible:false});
           this.setState({modalVisible: true, modalType:0});
         }
       })
       .catch((error) => {
-        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+          this.setState({spinnerVisible:false});
+          alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
       });
   };
 
@@ -1514,6 +1722,7 @@ class IlbanWrite extends React.Component {
       multiple: true,
       includeExif: false,
     }).then((image) => {
+      console.log
       image.map((item) => this.onSelectedImage(item));
       //console.log(image);
     });
@@ -1556,7 +1765,7 @@ class IlbanWrite extends React.Component {
     //console.log(image);
     // console.log(index);
     return (
-      <View key={image.props.id}>
+      <Pressable key={image.props.id}>
         <Image
           style={styles.market_RenderImage}
           source={
@@ -1570,7 +1779,405 @@ class IlbanWrite extends React.Component {
             <Icon style={{width:20, height:20}} fill='#63579D' name='close-outline'/>
           </TouchableWithoutFeedback>
         </View>
-      </View>
+      </Pressable>
+    );
+  }
+
+  renderAsset(image) {
+    if (image.mime && image.mime.toLowerCase().indexOf('video/') !== -1) {
+      return this.renderVideo(image);
+    }
+
+    return this.renderImage(image);
+  }
+
+
+  renderSelectItems = () => (
+    <View style = {{marginLeft : 12, marginVertical : 10, alignItems:'center', justifyContent:'center'}}>
+        <TouchableOpacity style={{flexDirection:'row', borderRadius:10, backgroundColor:'#978DC7', padding:15, width:80, justifyContent:'space-between'}} onPress={()=>this.setState({popoverVisible:true})}>    
+          <Text category='h5' style={{color:'white'}}>
+            {this.categoryList[this.state.post_category]}</Text>
+          <Text style={{color:'white'}}>▼</Text>
+        </TouchableOpacity>
+    </View>
+  );
+
+  componentDidMount() {
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#F4F4F4');
+      StatusBar.setBarStyle('dark-content');
+    }
+  }
+
+  
+  componentWillUnmount(){
+    this._ismounted = false;
+    console.log('Ilban : componentwillunount')
+  }
+
+
+  modalList =[
+    {
+      text : this.props.route.params.mode == 'edit'? '게시글을 수정하시겠습니까?': '게시글을 작성하시겠습니까?',
+      func : this.submitPost
+    },
+    {
+      text : '게시글 작성을 그만하시겠습니까?',
+      func : this.gobackfunc
+    }
+  ]
+
+  //end: header
+	render() {
+		const {navigation} = this.props;
+		const {post_title, post_content, post_category, resultVisible, modalVisible, spinnerVisible, resultText} = this.state;
+		return (
+      <Root>
+        <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : ""}
+            style={{flex:1}} 
+        >          
+          <SafeAreaView  style={{flex: 1}} >
+            <Pressable
+              style={{flex: 1}}
+              onPress={()=>Keyboard.dismiss()}
+            >
+              <WriteContentToptab
+                  text="이타게시판"
+                  right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+                  func={()=>{this.filterSpamKeyword();
+                    this.setState({spinnerVisible:true});}}
+                  gbckfunc={()=>{Keyboard.dismiss();this.setState({modalType : 1, modalVisible:true})}}
+                  gbckuse={true}
+                />
+              <View style = {{flexDirection:'row'}}>
+                <Popover
+                  anchor={this.renderSelectItems}
+                  visible={this.state.popoverVisible}
+                  fullWidth={true}
+                  placement='bottom start'
+                  onBackdropPress={() => this.setState({popoverVisible:false})}>
+                    <View style={{borderRadius:10, backgroundColor:'#B09BDE'}}>
+                        {this.categoryList.map((val,index)=>(
+                          <TouchableOpacity key = {index} onPress = {()=>this.setState({post_category:index, popoverVisible:false})}>
+                            <Text category='h5' style={{color:'white', margin : 10}}>{val}</Text>
+                            {index==this.categoryList.length?null:<Divider/>}
+                          </TouchableOpacity>
+                        ))}
+                    </View>
+                </Popover>
+                <TextInput
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: 8.5,
+                    marginTop: 18,
+                    marginHorizontal: 12,
+                    marginBottom: 14,
+                    fontSize: 18,
+                    flex : 1,
+                    paddingHorizontal : 10
+                  }}
+                  placeholder="제목"
+                  onChangeText={(nextValue) => this.setState({post_title: nextValue})}
+                  placeholderTextColor="#A897C2"
+                  value={post_title}
+                />
+              </View>
+              <TextInput
+                value={post_content}
+                style={{
+                  height: '80%',
+                  maxHeight: '50%',
+                  backgroundColor: '#ffffff',
+                  borderRadius: 8.5,
+                  marginHorizontal: 12,
+                  marginBottom: 14,
+                  fontSize: 18,
+                  paddingHorizontal : 10
+                }}
+                placeholder="내용"
+                onChangeText={(nextValue) => this.setState({post_content: nextValue})}
+                multiline={true}
+                textAlignVertical="top"
+                textStyle={{minHeight: 100}}
+                placeholderTextColor="#A897C2"
+              />
+              <Layout style={{...styles.picture, flex:1}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginVertical: 10,
+                  }}>
+                  <Text category="h4" style={{color:'#63579D', fontSize:18}}> 사진</Text>
+                  <TouchableOpacity onPress={() => this.onClickAddImage()}>
+                    <Camsvg />
+                  </TouchableOpacity>
+                </View>
+                <ScrollView horizontal={true} style={{height: 150}}>
+                  {this.state.images
+                    ? this.state.images.map((item) => this.renderAsset(item))
+                    : null}
+                </ScrollView>
+              </Layout>
+            </Pressable>
+            <Modal
+              visible={modalVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+              onBackdropPress={() => this.setState({modalVisible: false})}>
+              <Confirm
+                confirmText={this.modalList[this.state.modalType].text}
+                frstText="예"
+                OnFrstPress={() => {
+                  this.setState({modalVisible: false}, this.modalList[this.state.modalType].func);
+                }}
+                scndText="아니오"
+                OnScndPress={() => this.setState({modalVisible: false})}
+              />
+            </Modal>
+            <Modal
+              visible={resultVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+              onBackdropPress={() => this.setState({resultVisible: false})}>
+              <Confirm
+                type="result"
+                confirmText={this.state.resultText}
+                OnFrstPress={() => {
+                  this.setState({resultVisible: false});
+                }}
+              />
+            </Modal>
+            <Modal
+              visible={spinnerVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
+              <Spinner size="giant" />
+            </Modal>
+          </SafeAreaView>
+        </KeyboardAvoidingView>
+      </Root>
+    );
+  }
+}
+class BugWrite extends React.Component {
+  //get : 회원정보
+  //post : 포스트 글 업로드
+  //put : ~/{게시판이름}/:{글id}/
+
+  constructor(props) {
+    super(props);
+    const {mode, post} = this.props.route.params;
+    this.state = {
+      isLoading: true,
+      brd_key: 'ilban',
+      post_title: mode == 'edit'?post.post_title:'',
+      post_content: mode == 'edit'?post.post_content:'',
+      Image_index:
+        this.props.route.params.mode == 'edit'
+          ? this.props.route.params.image.length
+          : 0,
+      images:
+        this.props.route.params.mode == 'edit'
+          ? this.props.route.params.image
+          : [],
+      post_category: mode == 'edit'?post.post_category-1:0,
+      popoverVisible : false,
+      modalVisible : false,
+      resultVisible : false,
+      resultText : '',
+      spinnerVisible : false,
+      modalType : 0,
+    };
+  }
+
+  submitPost = async () => {
+    this.setState({spinnerVisible:true});
+    
+    const {post_title, post_content, post_category, images} = this.state;
+    const url =
+      this.props.route.params.mode == 'edit'
+        ? 'https://dev.unyict.org/api/board_write/modify'
+        : 'https://dev.unyict.org/api/board_write/write/bug_report';
+
+    let formdata = new FormData();
+    formdata.append('brd_key', 'bug_report');
+    formdata.append('post_title', post_title);
+    formdata.append('post_content', post_content);
+    images.map((item) => {
+      formdata.append('post_file[]', {
+        uri: item.props.path,
+        type: item.props.mime,
+        name: pathToName(item.props.path),
+      });
+    });
+    
+    this.props.route.params.mode == 'edit'
+      ? formdata.append('post_id', this.props.route.params.post.post_id)
+      : null;
+    
+    console.log(formdata);
+
+    await axios
+      .post(url, formdata)
+      .then((response) => {
+        const {message, status} = response.data;
+        if (status == '500') {
+          this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
+        } else if (status == '200') {
+          this.gobackfunc();
+        }
+      })
+      .catch((error) => {
+        this.setState({spinnerVisible: false});
+        alert(JSON.stringify(error));
+      });
+  };
+
+  filterSpamKeyword = async () => {
+    const {post_title, post_content} = this.state;
+
+    var formdata = new FormData();
+    formdata.append('title', post_title);
+    formdata.append('content', post_content);
+    formdata.append('csrf_test_name', '');
+
+    //Keyboard
+    Keyboard.dismiss();
+
+    await axios
+      .post('https://dev.unyict.org/api/postact/filter_spam_keyword', formdata)
+      .then((response) => {
+        const {message, status} = response.data;
+        if (status == '500') {
+          alert(message);
+          this.setState({spinnerVisible:false});
+        } else if (status == '200') {
+          this.setState({spinnerVisible:false,modalVisible: true, modalType:0});
+        }
+      })
+      .catch((error) => {
+        alert(`금지단어 검사에 실패 했습니다. ${error.message}`);
+        this.setState({spinnerVisible:false});
+      });
+  };
+
+  gobackfunc = () => {
+    this.cleanupImages();
+    if(Platform.OS!=='ios'){
+      StatusBar.setBackgroundColor('#B09BDE');
+      StatusBar.setBarStyle('default');
+    }
+
+    const {navigation} = this.props;
+    navigation.goBack();
+  };
+
+  cleanupImages() {
+    ImagePicker.clean()
+      .then(() => {
+        console.log('Temporary images history cleared');
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
+  //사진버튼 클릭했을 때
+  onClickAddImage() {
+    const buttons = ['카메라 촬영', '갤러리에서 선택', '취소'];
+    ActionSheet.show(
+      {options: buttons, cancelButtonIndex: 2, title: 'Select a photo'},
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            this.takePhotoFromCamera();
+            break;
+          case 1:
+            this.choosePhotoFromGallery();
+            break;
+          default:
+            break;
+        }
+      },
+    );
+  }
+
+  //카메라로 사진 찍기
+  takePhotoFromCamera() {
+    ImagePicker.openCamera({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then((image) => {
+      this.onSelectedImage(image);
+      //  console.log(image);
+    });
+  }
+
+  //갤러리에서 사진 가져오기
+  choosePhotoFromGallery() {
+    ImagePicker.openPicker({
+      multiple: true,
+      includeExif: false,
+    }).then((image) => {
+      image.map((item) => this.onSelectedImage(item));
+      //console.log(image);
+    });
+  }
+
+  //불러온 사진의 정보를 this.state에 저장
+  onSelectedImage(image) {
+    console.log(image);
+    pathToName(image.path)
+    let newImages = this.state.images;
+    const source = {uri: image.path};
+    let item = {
+      url: source,
+      props : {
+        id: Date.now(),
+        edit : false, 
+        index: this.state.Image_index,
+        mime: image.mime,
+        path: image.path,
+        content: image.data,
+      },
+    };
+    console.log(item);
+    this.setState({Image_index: this.state.Image_index + 1});
+    newImages.push(item);
+    this.setState({images: newImages});
+  }
+  
+  deleteImage(index) {
+    const {images, Image_index} = this.state;
+    images.splice(index,1);
+    images.map(i => i.props.index>index
+      ?i.props.index--
+      :null
+    );
+    this.setState({images: images, Image_index:Image_index-1});
+  }
+  
+
+  renderImage(image) {
+    //console.log(image);
+    // console.log(index);
+    return (
+      <Pressable key={image.props.id}>
+        <Image
+          style={styles.market_RenderImage}
+          source={
+            image.props.edit
+              ? {uri: image.url}
+              : image.url
+          }
+        />
+        <View style={{position:'absolute', right:0, zIndex:2, width:20, height:20}}>
+          <TouchableWithoutFeedback onPress={()=>this.deleteImage(image.props.index)}>
+            <Icon style={{width:20, height:20}} fill='#63579D' name='close-outline'/>
+          </TouchableWithoutFeedback>
+        </View>
+      </Pressable>
     );
   }
 
@@ -1602,11 +2209,11 @@ class IlbanWrite extends React.Component {
 
   modalList =[
     {
-      text : this.props.route.params.mode == 'edit'? '게시글을 수정하시겠습니까?': '게시글을 작성하시겠습니까?',
+      text : this.props.route.params.mode == 'edit'? '버그 신고를 수정하시겠습니까?': '버그를 신고하시겠습니까?',
       func : this.submitPost
     },
     {
-      text : '게시글 작성을 그만하시겠습니까?',
+      text : '버그 신고를 그만하시겠습니까?',
       func : this.gobackfunc
     }
   ]
@@ -1617,124 +2224,110 @@ class IlbanWrite extends React.Component {
 		const {post_title, post_content, post_category, resultVisible, modalVisible, spinnerVisible, resultText} = this.state;
 		return (
       <Root>
-        <SafeAreaView  style={{flex: 1}} >
-          <Pressable
-            style={{flex: 1}}
-            onPress={()=>Keyboard.dismiss()}
-          >
-            <WriteContentToptab
-                text="이타게시판"
-                right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
-                func={this.filterSpamKeyword}
-                gbckfunc={()=>this.setState({modalType : 1, modalVisible:true})}
-                gbckuse={true}
-              />
-            <View style = {{flexDirection:'row'}}>
-              <Popover
-                anchor={this.renderSelectItems}
-                visible={this.state.popoverVisible}
-                fullWidth={true}
-                placement='bottom start'
-                onBackdropPress={() => this.setState({popoverVisible:false})}>
-                  <View style={{borderRadius:10, backgroundColor:'#B09BDE'}}>
-                      {this.categoryList.map((val,index)=>(
-                        <TouchableOpacity key = {index} onPress = {()=>this.setState({post_category:index, popoverVisible:false})}>
-                          <Text category='h5' style={{color:'white', margin : 10}}>{val}</Text>
-                          {index==this.categoryList.length?null:<Divider/>}
-                        </TouchableOpacity>
-                      ))}
-                  </View>
-              </Popover>
+        <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : ""}
+            style={{flex:1}} 
+        >          
+          <SafeAreaView  style={{flex: 1}} >
+            <Pressable
+              style={{flex: 1}}
+              onPress={()=>Keyboard.dismiss()}
+            >
+              <WriteContentToptab
+                  text="버그신고"
+                  right={this.props.route.params.mode == 'edit' ? 'edit' : 'upload'}
+                  func={()=>{this.filterSpamKeyword();
+                    this.setState({spinnerVisible:true});}}
+                  gbckfunc={()=>{Keyboard.dismiss();this.setState({modalType : 1, modalVisible:true})}}
+                  gbckuse={true}
+                />
+                <TextInput
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: 8.5,
+                    marginTop: 18,
+                    marginHorizontal: 12,
+                    marginBottom: 14,
+                    fontSize: 18,
+                    paddingHorizontal : 10
+                  }}
+                  placeholder="신고 제목을 적어주세요."
+                  onChangeText={(nextValue) => this.setState({post_title: nextValue})}
+                  placeholderTextColor="#A897C2"
+                  value={post_title}
+                />
               <TextInput
+                value={post_content}
                 style={{
+                  height: '80%',
+                  maxHeight: '50%',
                   backgroundColor: '#ffffff',
                   borderRadius: 8.5,
-                  marginTop: 18,
                   marginHorizontal: 12,
                   marginBottom: 14,
                   fontSize: 18,
-                  flex : 1,
                   paddingHorizontal : 10
                 }}
-                placeholder="제목"
-                onChangeText={(nextValue) => this.setState({post_title: nextValue})}
+                placeholder="버그 내용을 적어주세요"
+                onChangeText={(nextValue) => this.setState({post_content: nextValue})}
+                multiline={true}
+                textAlignVertical="top"
+                textStyle={{minHeight: 100}}
                 placeholderTextColor="#A897C2"
-                value={post_title}
               />
-            </View>
-            <TextInput
-              value={post_content}
-              style={{
-                height: '80%',
-                maxHeight: '50%',
-                backgroundColor: '#ffffff',
-                borderRadius: 8.5,
-                marginHorizontal: 12,
-                marginBottom: 14,
-                fontSize: 18,
-                paddingHorizontal : 10
-              }}
-              placeholder="내용"
-              onChangeText={(nextValue) => this.setState({post_content: nextValue})}
-              multiline={true}
-              textAlignVertical="top"
-              textStyle={{minHeight: 100}}
-              placeholderTextColor="#A897C2"
-            />
-            <Layout style={{...styles.picture, flex:1}}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginVertical: 10,
-                }}>
-                <Text category="h4" style={{color:'#63579D', fontSize:18}}> 사진</Text>
-                <TouchableOpacity onPress={() => this.onClickAddImage()}>
-                  <Camsvg />
-                </TouchableOpacity>
-              </View>
-              <ScrollView horizontal style={{height: 150}}>
-                {this.state.images
-                  ? this.state.images.map((item) => this.renderAsset(item))
-                  : null}
-              </ScrollView>
-            </Layout>
-          </Pressable>
-          <Modal
-            visible={modalVisible}
-            backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
-            onBackdropPress={() => this.setState({modalVisible: false})}>
-            <Confirm
-              confirmText={this.modalList[this.state.modalType].text}
-              frstText="예"
-              OnFrstPress={() => {
-                this.setState({modalVisible: false}, this.modalList[this.state.modalType].func);
-              }}
-              scndText="아니오"
-              OnScndPress={() => this.setState({modalVisible: false})}
-            />
-          </Modal>
-          <Modal
-            visible={resultVisible}
-            backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
-            onBackdropPress={() => this.setState({resultVisible: false})}>
-            <Confirm
-              type="result"
-              confirmText={this.state.resultText}
-              frstText="닫기"
-              OnFrstPress={() => {
-                this.setState({resultVisible: false});
-                this.gobackfunc();
-              }}
-            />
-          </Modal>
-          <Modal
-            visible={spinnerVisible}
-            backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
-            <Spinner size="giant" />
-          </Modal>
-        </SafeAreaView>
+              <Layout style={{...styles.picture, flex:1}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginVertical: 10,
+                  }}>
+                  <Text category="h4" style={{color:'#63579D', fontSize:18}}> 사진(오류 화면을 캡쳐해주세요.)</Text>
+                  <TouchableOpacity onPress={() => this.onClickAddImage()}>
+                    <Camsvg />
+                  </TouchableOpacity>
+                </View>
+                <ScrollView horizontal={true} style={{height: 150}}>
+                  {this.state.images
+                    ? this.state.images.map((item) => this.renderAsset(item))
+                    : null}
+                </ScrollView>
+              </Layout>
+            </Pressable>
+            <Modal
+              visible={modalVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+              onBackdropPress={() => this.setState({modalVisible: false})}>
+              <Confirm
+                confirmText={this.modalList[this.state.modalType].text}
+                frstText="예"
+                OnFrstPress={() => {
+                  this.setState({modalVisible: false}, this.modalList[this.state.modalType].func);
+                }}
+                scndText="아니오"
+                OnScndPress={() => this.setState({modalVisible: false})}
+              />
+            </Modal>
+            <Modal
+              visible={resultVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.5)'}}
+              onBackdropPress={() => this.setState({resultVisible: false})}>
+              <Confirm
+                type="result"
+                confirmText={this.state.resultText}
+                OnFrstPress={() => {
+                  this.setState({resultVisible: false});
+                }}
+              />
+            </Modal>
+            <Modal
+              visible={spinnerVisible}
+              backdropStyle={{backgroundColor: 'rgba(0,0,0,0.7)'}}>
+              <Spinner size="giant" />
+            </Modal>
+          </SafeAreaView>
+        </KeyboardAvoidingView>
       </Root>
     );
   }
@@ -1819,4 +2412,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export {defaultWrite, MarketWrite, AlbaWrite, GominWrite, IlbanWrite};
+export {defaultWrite, MarketWrite, AlbaWrite, GominWrite, IlbanWrite,BugWrite};

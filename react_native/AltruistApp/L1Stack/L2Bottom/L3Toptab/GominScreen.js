@@ -124,7 +124,15 @@ class GominScreen extends React.Component {
         const post_remove_tags = item.post_content.replace(regex, '');
         
         return(
-        <TouchableOpacity style={styles.container} onPress = {()=>{this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}}>
+        <TouchableOpacity style={styles.container} onPress = {()=>{
+                if(!global.mem_id) {
+                    this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+            
+                }else {
+                    this.props.navigation.navigate('GominContent',{OnGoback:() =>this.onRefresh(),post_id:item.post_id})}
+                    
+                }
+            }>
             <View>
                 <Text style ={styles.headtext} category="h3" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
                 <Text style={styles.subtext} category="p1" numberOfLines={1}  ellipsizeMode="tail">{post_remove_tags}</Text>
@@ -225,7 +233,7 @@ const styles = StyleSheet.create({
         display:"flex",flexDirection:"row",justifyContent:'space-around',
         borderTopLeftRadius:23,
         width:150,
-        backgroundColor:"#ffffff",
+        // backgroundColor:"#ffffff",
         position:"relative",bottom:0,right:0,
         paddingTop:5,
         paddingLeft:25,
