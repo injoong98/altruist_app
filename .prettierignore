@@ -7,3 +7,4 @@
 /views/findaccount/bootstrap/findaccount_change_pw.php
 /application/controllers/api/Postact.php
 /application/controllers/api/Board_write.php
+/application/controllers/api/Board_post.php
