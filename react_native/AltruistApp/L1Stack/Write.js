@@ -689,7 +689,6 @@ class MarketWrite extends React.Component {
               <View style={styles.container}>
                 {/* <Text>상품명</Text> */}
                 <TextInput
-<<<<<<< HEAD
                   style={
                     Platform.OS == 'ios'
                     ?
@@ -697,14 +696,6 @@ class MarketWrite extends React.Component {
                     :
                     {...styles.input, height: 60, fontSize: 20}
                   }
-=======
-                  style={ 
-                    Platform.OS == 'ios' ?
-                    {...styles.input, height: 40, fontSize: 20}   
-                     : 
-                    {...styles.input,height: 60, fontSize: 20}
-                }
->>>>>>> c8e2713344dd23ea11a582e07e41b33157cf5d01
                   onChangeText={(text) => this.setState({post_title: text})}
                   value={post_title}
                   placeholder="상품명"
@@ -715,19 +706,12 @@ class MarketWrite extends React.Component {
                   {/* <Text>판매가격</Text> */}
                   <TextInput
                     style={
-<<<<<<< HEAD
                       Platform.OS == 'ios'
                       ?
                       {...styles.input, height: 30}  
                       :
                       {...styles.input}
                     }
-=======
-                      Platform.OS == 'ios' ?
-                    {...styles.input, height: 40, fontSize: 20} 
-                  :{...styles.input}    
-                  }
->>>>>>> c8e2713344dd23ea11a582e07e41b33157cf5d01
                     keyboardType="numeric"
                     onChangeText={(text) => this.setState({deal_price: text})}
                     value={deal_price.toString()}
@@ -738,19 +722,12 @@ class MarketWrite extends React.Component {
                   {/* <Text>연락처</Text> */}
                   <TextInput
                     style={
-<<<<<<< HEAD
                       Platform.OS == 'ios'
                       ?
                       {...styles.input, height: 30}  
                       :
                       {...styles.input}
                     }
-=======
-                      Platform.OS == 'ios' ?
-                    {...styles.input, height: 40, fontSize: 20} 
-                  :{...styles.input}    
-                  }
->>>>>>> c8e2713344dd23ea11a582e07e41b33157cf5d01
                     keyboardType="numeric"
                     onChangeText={(text) => this.setState({post_hp: text})}
                     value={post_hp}
@@ -762,19 +739,12 @@ class MarketWrite extends React.Component {
                 {/* <Text>상세정보</Text> */}
                 <TextInput
                   style={
-<<<<<<< HEAD
                     Platform.OS == 'ios'
                     ?
                     {...styles.input, height: 100}  
                     :
                     {...styles.input}
                   }
-=======
-                    Platform.OS == 'ios' ?
-                  {...styles.input, height: 100, fontSize: 20} 
-                :{...styles.input}    
-                }
->>>>>>> c8e2713344dd23ea11a582e07e41b33157cf5d01
                   onChangeText={(text) => this.setState({post_content: text})}
                   value={post_content}
                   placeholder="상세정보"
@@ -787,19 +757,12 @@ class MarketWrite extends React.Component {
                 {/* <Text>거래희망지역</Text> */}
                 <TextInput
                   style={
-<<<<<<< HEAD
                     Platform.OS == 'ios'
                     ?
                     {...styles.input, height: 30}  
                     :
                     {...styles.input}
                   }
-=======
-                    Platform.OS == 'ios' ?
-                  {...styles.input, height: 40, fontSize: 20} 
-                :{...styles.input}    
-                }
->>>>>>> c8e2713344dd23ea11a582e07e41b33157cf5d01
                   onChangeText={(text) => this.setState({post_location: text})}
                   value={post_location}
                   placeholder="거래희망지역"
