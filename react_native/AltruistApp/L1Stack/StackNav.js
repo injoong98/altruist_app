@@ -69,24 +69,12 @@ class LoadingScreen extends React.Component{
     
     componentDidMount(){
         console.log('StackNav LoadingScreen ComponentDidMount')
-        
-        // // Platform.OS === 'ios' ?  
-        // // null
-        // //     // VersionCheck.setAppID(APP_ID);
-        // //     // VersionCheck.setAppName(APP_NAME);
-        // // : 
-        // //     console.log('            this.fadeIn();')
-        // //     this.fadeIn();
-        // //     VersionCheck.getLatestVersion()
-        // //     .then(latestVersion => {
-            // //       console.log('latestVersion : ', latestVersion);
-            // //       // 2.0.0
-            // //     })
             
             if(Platform.OS != 'ios'){
                 this.fadeIn(); 
-                this.VersionChkAndroid();
             }
+            //can use ios and and
+            this.VersionChkAndroid();
         }
         
     componentWillUnmount(){
