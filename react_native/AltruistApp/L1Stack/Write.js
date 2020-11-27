@@ -817,11 +817,10 @@ class MarketWrite extends React.Component {
                     style={{
                     flexDirection: 'row',
                     flex: 1,
-                    alignItems: 'center',
-                    
+                    alignItems: 'flex-start'
                   }}>
                       <Text category="h4" style={{color:'#63579D'}}> 사진 </Text> 
-                      <Text category="s2" style={{color:'#63579D'}}>(물품에 '이타주의자'와 본인아이디를 쓴 쪽지를 함께 첨부) </Text>
+                      <Text style={{color:'#63579D', fontSize:12}}>(물품에 '이타주의자'와 본인아이디를 쓴 쪽지를 함께 첨부) </Text>
                     </View>
                   
                   <TouchableOpacity onPress={() => this.onClickAddImage()}>
