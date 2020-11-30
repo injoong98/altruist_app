@@ -1,5 +1,5 @@
 import React from 'react';
-import {Platform, Dimensions,Animated,View,SafeAreaView,Alert,Image, Linking } from 'react-native';
+import {Platform, Dimensions,Animated,View,SafeAreaView,Alert,Image, Linking, AppState } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Layout,Text,TopNavigation} from '@ui-kitten/components'
@@ -121,6 +121,7 @@ export class StackNav extends React.Component{
             isSignedOut:false,
             session_mem_id:'',
             isPushNoti:false,
+            appState: AppState.currentState,
             context:{
                 signIn:(mem_userid,mem_password,autologin)=>{
                     var formdata= new FormData();
@@ -197,6 +198,17 @@ export class StackNav extends React.Component{
     }
 
     static contextType = Signing
+
+    _handleAppStateChange = (nextAppState ) => {
+        if (
+            this.state.appState.match(/inactive|background/) &&
+            nextAppState === "active"
+          ) {
+            this.session_chk();
+            console.log("App has come to the foreground!");
+          }
+          this.setState({ appState: nextAppState });
+    }
     syncPushToken = async (token,mem_id) =>{
         console.log('synchPushToken token :'+token)
         console.log('synchPushToken mem_id :'+mem_id)
@@ -308,7 +320,7 @@ export class StackNav extends React.Component{
         })
     }
     componentDidMount(){
-
+        AppState.addEventListener("change", this._handleAppStateChange);
         console.log('StackNav LoadingScreen WillUnmount')
 
         setTimeout( ()=> {// this.VersionUpdateChk(); 
@@ -332,6 +344,9 @@ export class StackNav extends React.Component{
             this.setState({isPushNoti:true})
         });
             
+    }
+    componentWillUnmount(){
+        AppState.addEventListener("change", this._handleAppStateChange);
     }
     render(){
         console.log('StackNavRendering')
