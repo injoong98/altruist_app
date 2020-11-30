@@ -57,7 +57,7 @@ class LoadingScreen extends React.Component{
     fadeOut = () =>{
         Animated.timing(this.state.opacity,{
             toValue:0, 
-            delay:100
+            delay:10000
         }).reset()
     }
 
@@ -67,21 +67,13 @@ class LoadingScreen extends React.Component{
     }
     
     
+   
     componentDidMount(){
-        console.log('StackNav LoadingScreen ComponentDidMount')
-            
-            if(Platform.OS != 'ios'){
-                this.fadeIn(); 
-            }
-            //can use ios and and
-            this.VersionChkAndroid();
-        }
-        
+        this.fadeIn(); this.VersionChkAndroid();
+    }
+
     componentWillUnmount(){
-        console.log('StackNav LoadingScreen WillUnmount')
-        if(Platform.OS != 'ios'){
-            this.fadeOut()
-        }
+        this.fadeOut()
     }
 
 
@@ -96,24 +88,19 @@ class LoadingScreen extends React.Component{
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
                     <Text category="s2" style={{backgroundColor: 'white', color: '#ffffff', textAlign:'center', includeFontPadding:true}}>CARP x UNYICT</Text>                    
                     <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'https://dev.unyict.org/uploads/main_png.png'}}/>
-                    <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`V ${this.state.yourCurrentVersion}`}</Text>
+                    <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`v ${this.state.yourCurrentVersion}`}</Text>
                 </Animated.View> 
-            : 
-            <View style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:'#FFFFFF'}}>
-                {/* <Text category="p2" style={{lineHeight:25, textAlign:'center', padding: 50}}>
-                    우리는 
-                   {`\n`} 더불어 사는 이타주의자들 
-                   {`\n`} 입니다!
-                    </Text> */}
-                <Text category="p2" style={{backgroundColor: 'white', textAlign:'center', color:'#ACACAC', includeFontPadding:true}}>{`v ${this.state.yourCurrentVersion}`}</Text>
-            </View>
-            }
+                : 
+                <View style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:'#FFFFFF'}}>
+                    <Text category="p2" style={{backgroundColor: 'white', textAlign:'center', color:'#ACACAC', includeFontPadding:true}}>{`v ${this.state.yourCurrentVersion}`}</Text>
+                </View>
+                }
             </SafeAreaView>
     )}
 }
 export class StackNav extends React.Component{
     constructor(props){
-        super(props)
+        super(props);
         this.state={
             versionOk : true,
             isLoading:true,
@@ -349,20 +336,17 @@ export class StackNav extends React.Component{
         AppState.addEventListener("change", this._handleAppStateChange);
     }
     render(){
-        console.log('StackNavRendering')
         const {context,isLoading,isSignedIn,noticeContext, versionOk} = this.state
         return(
             isLoading ?
             <LoadingScreen />
             :
-            // Platform.OS == 'ios' || !isLoading
             !versionOk ? 
             null : 
             <Signing.Provider value={context}>
                 <Notice.Provider value={noticeContext}>
                     <Navigator headerMode="none">
                         { 
-                           
                             !isSignedIn ? 
                             <>
                                 <Screen name = "Bottom" component={ComBottomNav_premembers}/>
@@ -410,5 +394,6 @@ export class StackNav extends React.Component{
                     </Navigator>
                 </Notice.Provider>
             </Signing.Provider>
-        )}
+        )
+    }
 }

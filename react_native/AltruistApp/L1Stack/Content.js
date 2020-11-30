@@ -629,7 +629,6 @@ class GominContent extends React.Component{
                     value={cmt_content}
                     placeholder={ replying?"대댓글" :"댓글"}
                     placeholderTextColor='#A897C2'
-                    plac
                     multiline={true}
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
                     onFocus={()=>{
@@ -1985,6 +1984,8 @@ class IlbanContent extends Component {
             modalType : 0,
             commentSession : 0,
             revise : false,
+            isAccessible:true,
+            isLoadingOpa : 0.2
         }
     }
 
@@ -2079,14 +2080,14 @@ class IlbanContent extends Component {
              })
              this.setState({revise:false})
             }
-
+            this.setState({isLoading:false, isLoadingOpa:1})
     }
 
     commentValid =async() =>{
         const {cmt_content} =this.state;
         var formdata = new FormData();
         formdata.append("content",cmt_content);
-        
+        this.setState({isLoading:true,isLoadingOpa:0.2});
         await Axios.post('https://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {status,message} = response.data;
@@ -2591,7 +2592,9 @@ class IlbanContent extends Component {
                     }}
 
                 />
-                <TouchableOpacity onPress={()=>{Keyboard.dismiss();this.commentValid();}} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
+                <TouchableOpacity onPress={()=>{Keyboard.dismiss();this.commentValid();}} 
+                activeOpacity = {this.state.isLoadingOpa}
+                style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                     <Image 
                         style={{width:50,height:50}}
                         source={{uri:"https://dev.unyict.org/uploads/icons/upload-circle-png.png"}}
