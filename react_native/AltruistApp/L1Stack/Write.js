@@ -2374,4 +2374,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export {defaultWrite, MarketWrite, AlbaWrite, GominWrite, IlbanWrite,BugWrite};
+export {defaultWrite, MarketWrite, AlbaWrite, GominWrite, IlbanWrite, BugWrite};

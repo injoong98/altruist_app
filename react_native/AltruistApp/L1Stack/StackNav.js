@@ -57,7 +57,7 @@ class LoadingScreen extends React.Component{
     fadeOut = () =>{
         Animated.timing(this.state.opacity,{
             toValue:0, 
-            delay:100
+            delay:10000
         }).reset()
     }
 
@@ -67,14 +67,12 @@ class LoadingScreen extends React.Component{
     }
     
     
+   
     componentDidMount(){
-        console.log('StackNav LoadingScreen ComponentDidMount')
-        this.fadeIn(); 
-        this.VersionChkAndroid();
-        }
-        
+        this.fadeIn(); this.VersionChkAndroid();
+    }
+
     componentWillUnmount(){
-        console.log('StackNav LoadingScreen WillUnmount')
         this.fadeOut()
     }
 
@@ -84,9 +82,7 @@ class LoadingScreen extends React.Component{
         
         return(
             <SafeAreaView style={{flex:1,}}>
-                {
-                Platform.OS == 'android'
-                ?  
+                {Platform.OS == 'android'?  
                 <Animated.View 
                     style={{flex:1, justifyContent:"space-between", alignItems:"center", backgroundColor:"#ffffff",opacity:this.state.opacity}}>
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
@@ -95,7 +91,7 @@ class LoadingScreen extends React.Component{
                     <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`v ${this.state.yourCurrentVersion}`}</Text>
                 </Animated.View> 
                 : 
-                <View style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:'#FFFFFF'}}>    
+                <View style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:'#FFFFFF'}}>
                     <Text category="p2" style={{backgroundColor: 'white', textAlign:'center', color:'#ACACAC', includeFontPadding:true}}>{`v ${this.state.yourCurrentVersion}`}</Text>
                 </View>
                 }
@@ -104,7 +100,7 @@ class LoadingScreen extends React.Component{
 }
 export class StackNav extends React.Component{
     constructor(props){
-        super(props)
+        super(props);
         this.state={
             versionOk : true,
             isLoading:true,
@@ -299,11 +295,8 @@ export class StackNav extends React.Component{
         })
     }
     componentDidMount(){
-
-        console.log('StackNav LoadingScreen WillUnmount')
-
-        setTimeout( ()=> {// this.VersionUpdateChk(); 
-                this.session_chk();} ,600);
+        setTimeout(
+            ()=>{this.session_chk();},600);
         messaging()
             .getInitialNotification()
             .then(async remoteMessage=>{
@@ -325,20 +318,17 @@ export class StackNav extends React.Component{
             
     }
     render(){
-        console.log('StackNavRendering')
         const {context,isLoading,isSignedIn,noticeContext, versionOk} = this.state
         return(
             isLoading ?
             <LoadingScreen />
             :
-            // Platform.OS == 'ios' || !isLoading
             !versionOk ? 
             null : 
             <Signing.Provider value={context}>
                 <Notice.Provider value={noticeContext}>
                     <Navigator headerMode="none">
                         { 
-                           
                             !isSignedIn ? 
                             <>
                                 <Screen name = "Bottom" component={ComBottomNav_premembers}/>
