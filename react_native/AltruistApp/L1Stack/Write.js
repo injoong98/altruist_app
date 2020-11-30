@@ -689,12 +689,13 @@ class MarketWrite extends React.Component {
               <View style={styles.container}>
                 {/* <Text>상품명</Text> */}
                 <TextInput
-                  style={ 
-                    Platform.OS == 'ios' ?
-                    {...styles.input, height: 40, fontSize: 20}   
-                     : 
-                    {...styles.input,height: 60, fontSize: 20}
-                }
+                  style={
+                    Platform.OS == 'ios'
+                    ?
+                    {...styles.input, height: 30}  
+                    :
+                    {...styles.input, height: 60, fontSize: 20}
+                  }
                   onChangeText={(text) => this.setState({post_title: text})}
                   value={post_title}
                   placeholder="상품명"
@@ -705,10 +706,12 @@ class MarketWrite extends React.Component {
                   {/* <Text>판매가격</Text> */}
                   <TextInput
                     style={
-                      Platform.OS == 'ios' ?
-                    {...styles.input, height: 40, fontSize: 20} 
-                  :{...styles.input}    
-                  }
+                      Platform.OS == 'ios'
+                      ?
+                      {...styles.input, height: 30}  
+                      :
+                      {...styles.input}
+                    }
                     keyboardType="numeric"
                     onChangeText={(text) => this.setState({deal_price: text})}
                     value={deal_price.toString()}
@@ -719,10 +722,12 @@ class MarketWrite extends React.Component {
                   {/* <Text>연락처</Text> */}
                   <TextInput
                     style={
-                      Platform.OS == 'ios' ?
-                    {...styles.input, height: 40, fontSize: 20} 
-                  :{...styles.input}    
-                  }
+                      Platform.OS == 'ios'
+                      ?
+                      {...styles.input, height: 30}  
+                      :
+                      {...styles.input}
+                    }
                     keyboardType="numeric"
                     onChangeText={(text) => this.setState({post_hp: text})}
                     value={post_hp}
@@ -734,10 +739,12 @@ class MarketWrite extends React.Component {
                 {/* <Text>상세정보</Text> */}
                 <TextInput
                   style={
-                    Platform.OS == 'ios' ?
-                  {...styles.input, height: 100, fontSize: 20} 
-                :{...styles.input}    
-                }
+                    Platform.OS == 'ios'
+                    ?
+                    {...styles.input, height: 100}  
+                    :
+                    {...styles.input}
+                  }
                   onChangeText={(text) => this.setState({post_content: text})}
                   value={post_content}
                   placeholder="상세정보"
@@ -750,10 +757,12 @@ class MarketWrite extends React.Component {
                 {/* <Text>거래희망지역</Text> */}
                 <TextInput
                   style={
-                    Platform.OS == 'ios' ?
-                  {...styles.input, height: 40, fontSize: 20} 
-                :{...styles.input}    
-                }
+                    Platform.OS == 'ios'
+                    ?
+                    {...styles.input, height: 30}  
+                    :
+                    {...styles.input}
+                  }
                   onChangeText={(text) => this.setState({post_location: text})}
                   value={post_location}
                   placeholder="거래희망지역"
@@ -813,17 +822,10 @@ class MarketWrite extends React.Component {
                     justifyContent: 'space-between',
                     marginVertical: 10,
                   }}>
-                    <View 
-                    style={{
-                    flexDirection: 'row',
-                    flex: 1,
-                    alignItems: 'center',
-                    
-                  }}>
-                      <Text category="h4" style={{color:'#63579D'}}> 사진 </Text> 
-                      <Text category="s2" style={{color:'#63579D'}}>(물품에 '이타주의자'와 본인아이디를 쓴 쪽지를 함께 첨부) </Text>
-                    </View>
-                  
+                  <View>
+                    <Text category="h4" style={{color:'#63579D'}}> 사진</Text>
+                    <Text style={{color:'#63579D', fontSize:10}}> (하나 이상의 사진에 '이타주의자'와 본인 아이디를 적은 쪽지가 있는 사진 첨부)</Text>  
+                  </View>    
                   <TouchableOpacity onPress={() => this.onClickAddImage()}>
                     <Camsvg />
                   </TouchableOpacity>

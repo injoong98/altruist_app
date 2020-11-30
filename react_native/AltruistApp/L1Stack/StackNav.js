@@ -354,8 +354,6 @@ export class StackNav extends React.Component{
                                 
                             </>
                             :
-                          
-                           
                             <>
                                 <Screen name = "Bottom" component={ComBottomNav}/>
                                 <Screen name = "Write" component={defaultWrite}/>
