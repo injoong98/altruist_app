@@ -1543,7 +1543,8 @@ class IlbanWrite extends React.Component {
     };
   }
 
-  categoryList = ['자유', '게임', '소식', '정보'];
+  // categoryList = ['자유', '게임', '소식', '정보'];
+  categoryList = ['자유',  '소식', '정보', '게임', '이벤트'];
 
   submitPost = async () => {
     this.setState({spinnerVisible:true});

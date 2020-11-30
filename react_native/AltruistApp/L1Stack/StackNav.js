@@ -69,19 +69,13 @@ class LoadingScreen extends React.Component{
     
     componentDidMount(){
         console.log('StackNav LoadingScreen ComponentDidMount')
-            
-            if(Platform.OS != 'ios'){
-                this.fadeIn(); 
-            }
-            //can use ios and and
-            this.VersionChkAndroid();
+        this.fadeIn(); 
+        this.VersionChkAndroid();
         }
         
     componentWillUnmount(){
         console.log('StackNav LoadingScreen WillUnmount')
-        if(Platform.OS != 'ios'){
-            this.fadeOut()
-        }
+        this.fadeOut()
     }
 
 
@@ -90,24 +84,21 @@ class LoadingScreen extends React.Component{
         
         return(
             <SafeAreaView style={{flex:1,}}>
-                {Platform.OS == 'android'?  
+                {
+                Platform.OS == 'android'
+                ?  
                 <Animated.View 
                     style={{flex:1, justifyContent:"space-between", alignItems:"center", backgroundColor:"#ffffff",opacity:this.state.opacity}}>
                     {/* <LogoSvg width={wdithLogo} height={heightLogo} style={{flex:1}}/> */}
                     <Text category="s2" style={{backgroundColor: 'white', color: '#ffffff', textAlign:'center', includeFontPadding:true}}>CARP x UNYICT</Text>                    
                     <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'https://dev.unyict.org/uploads/main_png.png'}}/>
-                    <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`V ${this.state.yourCurrentVersion}`}</Text>
+                    <Text category="s2" style={{backgroundColor: 'white', textAlign:'center', includeFontPadding:true}}>{`v ${this.state.yourCurrentVersion}`}</Text>
                 </Animated.View> 
-            : 
-            <View style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:'#FFFFFF'}}>
-                {/* <Text category="p2" style={{lineHeight:25, textAlign:'center', padding: 50}}>
-                    우리는 
-                   {`\n`} 더불어 사는 이타주의자들 
-                   {`\n`} 입니다!
-                    </Text> */}
-                <Text category="p2" style={{backgroundColor: 'white', textAlign:'center', color:'#ACACAC', includeFontPadding:true}}>{`v ${this.state.yourCurrentVersion}`}</Text>
-            </View>
-            }
+                : 
+                <View style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:'#FFFFFF'}}>    
+                    <Text category="p2" style={{backgroundColor: 'white', textAlign:'center', color:'#ACACAC', includeFontPadding:true}}>{`v ${this.state.yourCurrentVersion}`}</Text>
+                </View>
+                }
             </SafeAreaView>
     )}
 }
@@ -397,5 +388,6 @@ export class StackNav extends React.Component{
                     </Navigator>
                 </Notice.Provider>
             </Signing.Provider>
-        )}
+        )
+    }
 }
