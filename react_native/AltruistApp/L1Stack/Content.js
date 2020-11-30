@@ -394,6 +394,8 @@ class GominContent extends React.Component{
         this.getCommentData(post_id);
     } 
     async componentDidMount(){
+        this.context.session_chk()
+
         const {post_id} = this.props.route.params
         await this.getPostData(post_id)
         .then(()=>this.getCommentData(post_id))
@@ -630,6 +632,13 @@ class GominContent extends React.Component{
                     plac
                     multiline={true}
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
+                    onFocus={()=>{
+                        this.context.session_chk();
+                        if(!global.mem_id) {
+                            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                         }
+                    }}
+
                 />
                 <TouchableOpacity onPress={()=>{Keyboard.dismiss();this.commentValid()}} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                     <Image 
@@ -788,6 +797,8 @@ class MarketContent extends React.Component {
     // }
 
     async componentDidMount(){
+        this.context.session_chk()
+
         if(Platform.OS!=='ios'){
             StatusBar.setBackgroundColor('#F4F4F4');
             StatusBar.setBarStyle('dark-content');
@@ -1365,6 +1376,13 @@ class MarketContent extends React.Component {
                         placeholderTextColor='#63579D'
                         multiline={true}
                         onChangeText={nextValue => this.setState({cmt_content:nextValue})}
+                        onFocus={()=>{
+                            this.context.session_chk();
+                            if(!global.mem_id) {
+                                this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                             }
+                        }}
+    
                     />
                     <TouchableOpacity onPress={()=>{Keyboard.dismiss();this.commentValid()}} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                         <Image 
@@ -1518,6 +1536,8 @@ class AlbaContent extends React.Component {
     Alba_salary_type = ['시급', '일급', '주급', '월급'];
 
     async componentDidMount(){
+        this.context.session_chk()
+
         if(Platform.OS!=='ios'){
             StatusBar.setBackgroundColor('#F4F4F4');
             StatusBar.setBarStyle('dark-content');
@@ -2294,6 +2314,7 @@ class IlbanContent extends Component {
     } 
 
     async componentDidMount(){
+        this.context.session_chk()
         if(Platform.OS!=='ios'){
             StatusBar.setBackgroundColor('#FFFFFF');
             StatusBar.setBarStyle('dark-content');
@@ -2562,6 +2583,13 @@ class IlbanContent extends Component {
                     plac
                     multiline={true}
                     onChangeText={nextValue => this.setState({cmt_content:nextValue})}
+                    onFocus={()=>{
+                        this.context.session_chk();
+                        if(!global.mem_id) {
+                            this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+                         }
+                    }}
+
                 />
                 <TouchableOpacity onPress={()=>{Keyboard.dismiss();this.commentValid();}} style={{position:'absolute',right:10,bottom:5,width:50,height:50}}>
                     <Image 
