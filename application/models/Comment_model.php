@@ -210,6 +210,7 @@ class Comment_model extends CB_Model
 			SELECT rank() over (PARTITION BY cmt_seq.post_id ORDER BY cmt_seq.dt ASC) AS seq,
 			cmt_seq.* FROM (SELECT post_id, mem_id, MIN(cmt_datetime) dt
 			FROM cb_comment WHERE post_id = $post_id GROUP BY post_id, mem_id) cmt_seq 
+			WHERE cmt_seq.mem_id <> (SELECT abs(mem_id) from cb_post WHERE abs(post_id) =  $post_id )
 			) t 
 		WHERE t.mem_id = $mem_id
 

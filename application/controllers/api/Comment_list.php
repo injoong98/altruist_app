@@ -215,7 +215,7 @@ class Comment_list extends CB_Controller
 					if(element('post_anoymous_yn', $post)) {
 
 						$my_comment_seq_info = $this->Comment_model->get_anoymous_seq(element('mem_id', $val),$post_id);
-						$display_name_anoymous = '익명'.$my_comment_seq_info[0]['seq'];
+						$display_name_anoymous = '익명'.element('seq',$my_comment_seq_info[0]);
 						$bestresult[$key]['display_name'] = $display_name_anoymous;//'익명';
 						$bestresult[$key]['cmt_nickname'] = $display_name_anoymous;//'익명';
 						$bestresult[$key]['mem_nickname'] = $display_name_anoymous;//'익명';

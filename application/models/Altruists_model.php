@@ -73,6 +73,7 @@ class Altruists_model extends CB_Model
 	{
 		$this->db->from('cb_alt_area');
 		$this->db->where_in('act_id', $act_id);
+		$this->db->where_in('alt_status', 'Y');
 		$result = $this->db->get();
 		return $result->result_array();
 	}
@@ -97,7 +98,7 @@ class Altruists_model extends CB_Model
 		FROM cb_alt_profile p
 		LEFT JOIN cb_alt_cv c ON c.alt_id = p.alt_id
 		LEFT JOIN cb_member m ON p.mem_id = m.mem_id
-		WHERE alt_status = 'Y' and alt_content LIKE '%$keyword%' OR acv_content LIKE '%$keyword%' OR mem_username LIKE '%$keyword%'
+		WHERE alt_status = 'Y' and ( alt_content LIKE '%$keyword%' OR acv_content LIKE '%$keyword%' OR mem_username LIKE '%$keyword%' )
 EOT;
 		$query = $this->db->query($sql);
 		$target_members =   $query->result_array();
