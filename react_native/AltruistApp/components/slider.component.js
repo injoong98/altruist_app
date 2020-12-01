@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, ScrollView, Dimensions, Text, StyleSheet,Pressable} from 'react-native';
+import { View, Image, ScrollView, Dimensions, Text, StyleSheet,Pressable,Linking} from 'react-native';
 import { Layout , Spinner} from '@ui-kitten/components';
 
 
@@ -74,7 +74,23 @@ export class MainSlider extends React.Component {
             this.setState({activeDot : slide});
         }
     }
-    
+    navigateToContent= (brd_id,post_id) =>{
+        var brd = brd_id == 1 ? 'GominContent' : brd_id == 2 ? 'MarketContent': brd_id == 3 ?'AlbaContent': 'IlbanContent' 
+        this.props.navigation.navigate(brd,{post_id:post_id, OnGoback:() =>this.onRefresh()})
+    }
+    handlePress = (item) =>{
+        if(item.post_id && item.post_id!=''&&item.post_id!='0'){
+            if(item.brd_id!=null){
+                this.navigateToContent(item.brd_id,item.post_id);
+            }else{
+                this.props.navigation.navigate(item.post_id);
+            }
+        }else if (item.ban_url){
+            console.log(item.ban_url)
+            Linking.openURL(item.ban_url)
+        } 
+        console.log(JSON.stringify(item))
+    }
     
     render() {
         const height = this.props.height ?this.props.height :width
@@ -94,7 +110,7 @@ export class MainSlider extends React.Component {
                             this.props.image.map((item, index) => (
                                 <Pressable
                                     key={item.ban_id}
-                                    onPress={()=>{item.post_id && item.post_id!=''&&item.post_id!='0'? this.props.navigation.navigate('IlbanContent',{post_id:item.post_id}):null}}
+                                    onPress={()=>{this.handlePress(item);}}
                                 >
                                     <Image
                                         style={slide_style.image}
