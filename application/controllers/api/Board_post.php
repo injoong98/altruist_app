@@ -147,6 +147,7 @@ class Board_post extends CB_Controller
 		foreach ($result as $key => $val) {
 
 			$result[$key]['ban_thumb_img'] = thumb_url('banner',element('ban_image', $val),element('ban_width', $val),element('ban_height', $val));
+			$result[$key]['brd_id'] =$this->db->get_where('cb_post',array('post_id'=>$result[$key]['post_id']))->row_array()['brd_id'];
 		}
 		$view['view']['banners'] =$result;//
 		response_result($view);
