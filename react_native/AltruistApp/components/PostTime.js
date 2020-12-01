@@ -43,7 +43,11 @@ export const ExpireTime = ({category, datetime, style}) =>{
         if(timeDiff<0){
             res = '모집 마감'
         }else{
-            res = `마감일 ${(postdatetime.getMonth()+1)}/${(postdatetime.getDate()-1)}`
+            if(!isNaN(postdatetime.getMonth())){
+                res = `마감일 ${(postdatetime.getMonth()+1)}/${(postdatetime.getDate()-1)}`
+            }else{
+                res='상세참고'
+            }
         }
     
         return (<Text category={category?category:"s2"} style={style?style:{}}>{`${res}`}</Text> )
