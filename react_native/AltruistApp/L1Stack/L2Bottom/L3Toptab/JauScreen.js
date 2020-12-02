@@ -283,7 +283,13 @@ class JauScreen extends React.Component {
 				</View>
 				<TouchableOpacity
 						style={{position: 'absolute', right: 30, bottom: 14}}
-						onPress={() => {this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})}}>
+						onPress={() => {
+							if(!global.mem_id) {
+								this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+							 }else{
+								 this.props.navigation.navigate('IlbanWrite',{statefunction:this.statefunction})
+							 }
+							}}>
 						{/* <Writesvg /> */}
 						<Image source={{uri:"http://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
 				</TouchableOpacity>

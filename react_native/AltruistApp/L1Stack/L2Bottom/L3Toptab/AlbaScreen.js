@@ -192,7 +192,13 @@ class AlbaScreen extends React.Component {
         </View>
         <TouchableOpacity 
           style={styles.bottomButton}
-          onPress={()=>{this.props.navigation.navigate('AlbaWrite',{statefunction:this.statefunction});}}
+          onPress={()=>{
+            if(!global.mem_id) {
+              this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
+           }else{
+             this.props.navigation.navigate('AlbaWrite',{statefunction:this.statefunction});
+           }
+          }}
           >
           {/* <Writesvg /> */}
           <Image source={{uri:"http://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
