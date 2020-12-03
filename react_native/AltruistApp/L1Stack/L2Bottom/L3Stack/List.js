@@ -26,7 +26,6 @@ export const NoListRes = ({text,onPress}) =>{
                 <Reloadsvg height={25} width={25} fill="#A9C"/>
             </TouchableOpacity>
         </View>
-
     )
 }
 export class RenderAltList extends React.Component{
@@ -93,8 +92,8 @@ export class RenderAltList extends React.Component{
                             <View style={{justifyContent:'center'}}>
                                 <View style={{flexDirection:'row',backgroundColor:'#808080',paddingLeft:5,borderRadius:3}}>
                                 {
-                                    arg.item.alt_area.map(({act_content})=>(
-                                        <Text key={act_content} style={{color:'#ffffff',fontSize:8,fontWeight:'700',marginRight:5}}>{`#${act_content}`}</Text>
+                                    arg.item.alt_area.map(({act_content},index)=>(
+                                        <Text key={index} style={{color:'#ffffff',fontSize:8,fontWeight:'700',marginRight:5}}>{`#${act_content}`}</Text>
                                     ))
                                 }
                                 </View>
