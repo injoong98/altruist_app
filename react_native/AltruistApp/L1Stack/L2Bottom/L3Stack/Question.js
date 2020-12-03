@@ -89,7 +89,7 @@ class AltReplying extends React.Component{
         this.props.route.params.mode=='cu' ? formdata.append("mode",'cu') : null;
         this.props.route.params.comment ? formdata.append("cmt_id",this.props.route.params.comment.cmt_id) : null;
         
-        await axios.post('http://dev.unyict.org/api/comment_write/update',formdata)
+        await axios.post('https://dev.unyict.org/api/comment_write/update',formdata)
         .then(response=>{
             const {status,message}=response.data;
             if(status=='200'){
@@ -105,7 +105,7 @@ class AltReplying extends React.Component{
         var formdata = new FormData();
         formdata.append("content",comment);
         
-        await axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        await axios.post('https://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {status,message} = response.data;
             if(status=='500'){
@@ -283,7 +283,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('cmt_id',this.state.cmt_id);
 
-        axios.post('http://dev.unyict.org/api/postact/comment_blame',formdata)
+        axios.post('https://dev.unyict.org/api/postact/comment_blame',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
@@ -300,7 +300,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         formdata.append('like_type',1)
-        axios.post('http://dev.unyict.org/api/postact/post_like',formdata)
+        axios.post('https://dev.unyict.org/api/postact/post_like',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({resultModalVisible:true, resultText : response.data.message});
@@ -316,7 +316,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
 
-        await axios.post('http://dev.unyict.org/api/postact/delete',formdata)
+        await axios.post('https://dev.unyict.org/api/postact/delete',formdata)
         .then((res)=>{
             this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:res.data.message})
             this.props.navigation.goBack();
@@ -330,7 +330,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
 
-        await axios.post('http://dev.unyict.org/api/postact/post_blame',formdata)
+        await axios.post('https://dev.unyict.org/api/postact/post_blame',formdata)
         .then(response=>{
             if(response.data.status == 500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText:response.data.message})
@@ -347,7 +347,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('post_id',this.state.post.post_id)
         
-        await axios.post('http://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
+        await axios.post('https://dev.unyict.org/api/postact/post_scrap/'+this.state.post.post_id,formdata)
         .then(response=>{
             if(response.data.success)
                 this.setState({resultModalVisible:true, replying:false, resultText:response.data.success});
@@ -362,7 +362,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('adoption_type',adoption_type)
-        axios.post('http://dev.unyict.org/api/comment_write/adoption',formdata)
+        axios.post('https://dev.unyict.org/api/comment_write/adoption',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 alert(`${JSON.stringify(response.data.message)}`)
@@ -378,7 +378,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('cmt_id',cmt_id)
         formdata.append('like_type',1)
-        axios.post('http://dev.unyict.org/api/postact/comment_like',formdata)
+        axios.post('https://dev.unyict.org/api/postact/comment_like',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 alert(`${JSON.stringify(response.data.message)}`)
@@ -394,7 +394,7 @@ class AltQueContent extends React.Component{
         var formdata = new FormData();
         formdata.append('cmt_id',this.state.cmt_id)
         
-        axios.post('http://dev.unyict.org/api/postact/delete_comment',formdata)
+        axios.post('https://dev.unyict.org/api/postact/delete_comment',formdata)
         .then(response=>{
             if(response.data.status ==500){
                 this.setState({spinnerModalVisible:false, resultModalVisible:true, resultText : response.data.message});
@@ -627,7 +627,7 @@ class AltQueContent extends React.Component{
         )
     }
     getCommentData = async (post_id)=>{
-        await axios.get(`http://dev.unyict.org/api/comment_list/lists/${post_id}`)
+        await axios.get(`https://dev.unyict.org/api/comment_list/lists/${post_id}`)
         .then((response)=>{
             this.setState({comment: response.data.view.data.total_rows>0 ? response.data.view.data.list : [false]})
             
@@ -638,7 +638,7 @@ class AltQueContent extends React.Component{
         })
     }
     getPostData = async (post_id)=>{
-        await axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
+        await axios.get(`https://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             this.setState({post:response.data.view.post,brd_key:response.data.view.board_key});
             const regexf = /(<([^>]+)>)|&nbsp;/ig;
@@ -810,7 +810,7 @@ class AltQueList extends React.Component{
     }
     getQuestions = ()=>{
         const {type,scndType} = this.props
-        axios.get(`http://dev.unyict.org/api/board_post/lists/${type}?type=${scndType}`)
+        axios.get(`https://dev.unyict.org/api/board_post/lists/${type}?type=${scndType}`)
         .then(res=>{
             this.setState({list:res.data.view.list.data.list,list_showing:res.data.view.list.data.list});
         })
@@ -998,7 +998,7 @@ class AltAreaList extends React.Component{
         </TouchableOpacity>       
     )
     getAreaCategory= async()=>{
-        await axios.get('http://dev.unyict.org/api/altruists/area_category')
+        await axios.get('https://dev.unyict.org/api/altruists/area_category')
         .then(res=>{
             this.setState({act_array:res.data.data});
         })
@@ -1085,7 +1085,7 @@ class AltQuestionWrite extends React.Component
         })
         ;
         
-        axios.post('http://dev.unyict.org/api/board_write/write',formdata)
+        axios.post('https://dev.unyict.org/api/board_write/write',formdata)
         .then(response=>{
             const {message,status}=response.data
             this.setState({spinnerVisible:false,resultVisible:true,resultText:message})        
@@ -1108,7 +1108,7 @@ class AltQuestionWrite extends React.Component
         formdata.append("csrf_test_name", '');
         
     
-        await axios.post('http://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
+        await axios.post('https://dev.unyict.org/api/postact/filter_spam_keyword',formdata)
         .then(response=>{
             const {message,status}=response.data
             if(status=='500'){
@@ -1135,7 +1135,7 @@ class AltQuestionWrite extends React.Component
         }
     }
     getAreaCategory= async()=>{
-        await axios.get('http://dev.unyict.org/api/altruists/area_category')
+        await axios.get('https://dev.unyict.org/api/altruists/area_category')
         .then(res=>{
             this.setState({act_array:res.data.data});
         })

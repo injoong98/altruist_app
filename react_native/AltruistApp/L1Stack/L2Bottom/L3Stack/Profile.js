@@ -33,7 +33,7 @@ class AltProfileScreen extends React.Component {
   getAltProfile = async (alt_id) => {
     let formdata = new FormData();
     formdata.append('alt_id', alt_id);
-    await Axios.post('http://dev.unyict.org/api/altruists/profile', formdata)
+    await Axios.post('https://dev.unyict.org/api/altruists/profile', formdata)
       .then((response) => {
         this.setState({
           altruist: response.data.view.data.list[0],
@@ -88,7 +88,7 @@ class AltProfileScreen extends React.Component {
                 justifyContent: 'flex-start',
               }}>
               <Image
-                source={{uri : 'http://dev.unyict.org/'+ (altruist.alt_profile.alt_photo !=null ? altruist.alt_profile.alt_photo: 'uploads/altwink-rect.png')}}
+                source={{uri : 'https://dev.unyict.org/'+ (altruist.alt_profile.alt_photo !=null ? altruist.alt_profile.alt_photo: 'uploads/altwink-rect.png')}}
                 style={{
                   width: 150,
                   height: 150,

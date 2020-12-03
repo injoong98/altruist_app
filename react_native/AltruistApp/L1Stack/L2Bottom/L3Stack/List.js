@@ -43,7 +43,7 @@ export class RenderAltList extends React.Component{
             >
                 <View style={{flex:9,}}>
                     <Image 
-                        source = {{uri : 'http://dev.unyict.org/'+ (arg.item.alt_profile.alt_photo !=null ? arg.item.alt_profile.alt_photo: 'uploads/altwink-rect.png')}} 
+                        source = {{uri : 'https://dev.unyict.org/'+ (arg.item.alt_profile.alt_photo !=null ? arg.item.alt_profile.alt_photo: 'uploads/altwink-rect.png')}} 
                         style = {{flex : 1, width : '100%', height : '100%', resizeMode:'cover'}}
                     />
                 </View>
@@ -168,7 +168,7 @@ class AltListScreen extends React.Component{
             formdata.append('alt_keyword','')
         }
 
-        await axios.post('http://dev.unyict.org/api/altruists/lists',formdata)
+        await axios.post('https://dev.unyict.org/api/altruists/lists',formdata)
         .then(res=>{
                 this.setState({alt_list_showing:res.data.view.data.list ? res.data.view.data.list : [],isLoading:false})
                 this.setState({no_result_text: type=='keyword'? `"${keyword}" 검색 결과가 없습니다`:"검색 결과가 없습니다"})
@@ -183,7 +183,7 @@ class AltListScreen extends React.Component{
     }
     getAltruistsList = async() => {
         this.setState({isLoading:true})
-        await axios.get('http://dev.unyict.org/api/altruists/lists?rand=Y')
+        await axios.get('https://dev.unyict.org/api/altruists/lists?rand=Y')
         .then((response) => {
             this.setState({alt_list_showing:response.data.view.data.list,lists:response.data.view.data.list,})
             this.setState({isLoading:false})
@@ -197,7 +197,7 @@ class AltListScreen extends React.Component{
         })
     }
     getAreaCategory= async()=>{
-        await axios.get('http://dev.unyict.org/api/altruists/area_category')
+        await axios.get('https://dev.unyict.org/api/altruists/area_category')
         .then(res=>{
             this.setState({act_array:res.data.data});
         })
@@ -306,7 +306,7 @@ class AltListScreen extends React.Component{
                 <Tag>{item.alt_profile.alt_title}</Tag>
             </View>
             <View style={{flexDirection : 'row', alignItems : 'flex-end', justifyContent : 'flex-start'}}>
-                <Image source = {{uri : 'http://dev.unyict.org/uploads/noimage.gif'}} style = {{flex : 1, width : 100, height : 100, borderRadius : 30, resizeMode:'contain'}}/>
+                <Image source = {{uri : 'https://dev.unyict.org/uploads/noimage.gif'}} style = {{flex : 1, width : 100, height : 100, borderRadius : 30, resizeMode:'contain'}}/>
                 <View style={{marginLeft : 10, flex:3, maxHeight : 110}}>
                     <Text category = 'h1'>{item.mem_basic_info.mem_nickname}</Text>
                     <Text category = 'p2' numberOfLines={2}>{item.alt_profile.alt_aboutme}</Text>

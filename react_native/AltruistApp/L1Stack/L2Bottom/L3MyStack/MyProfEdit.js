@@ -93,7 +93,7 @@ export class MyProfEdit extends React.Component{
   }
   // 기본이미지로 변경
   chooseDefaultPhoto(){
-      this.setState({new_mem_photo:{uri:'http://dev.unyict.org/uploads/altwink-rect.png'}});
+      this.setState({new_mem_photo:{uri:'https://dev.unyict.org/uploads/altwink-rect.png'}});
       this.setState({mem_photo_del:true})
   }
   //갤러리에서 사진 가져오기
@@ -170,7 +170,7 @@ export class MyProfEdit extends React.Component{
         :
         null
     
-        await axios.post('http://dev.unyict.org/api/membermodify/modify',formdata)
+        await axios.post('https://dev.unyict.org/api/membermodify/modify',formdata)
         .then(res=>{    
             const regex = /(<([^>]+)>)|&nbsp;/ig;
             console.log('result_data : '+ JSON.stringify(res.data))
@@ -232,7 +232,7 @@ export class MyProfEdit extends React.Component{
                                     <>
                                     <View style={{borderRadius:62.5,width:125, height : 125,overflow:'hidden'}} >
                                     <Image 
-                                        source = {{uri : new_mem_photo.uri ? new_mem_photo.uri: 'http://dev.unyict.org/'+ (old_mem_photo.uri ?'uploads/member_photo/'+ old_mem_photo.uri: 'uploads/altwink-rect.png')}} 
+                                        source = {{uri : new_mem_photo.uri ? new_mem_photo.uri: 'https://dev.unyict.org/'+ (old_mem_photo.uri ?'uploads/member_photo/'+ old_mem_photo.uri: 'uploads/altwink-rect.png')}} 
                                         style = {{ width : '100%', height : '100%', resizeMode:'cover'}}
                                     />
                                     </View>

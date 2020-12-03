@@ -114,7 +114,7 @@ class MyAltProf extends React.Component{
 
         console.log(formdata)
 
-        Axios.post('http://dev.unyict.org/api/altruists/modify_general',formdata)
+        Axios.post('https://dev.unyict.org/api/altruists/modify_general',formdata)
         .then(res=>{
             console.log('modify_general success :)')
             console.log(res.data)
@@ -213,7 +213,7 @@ class MyAltProf extends React.Component{
       }
     getAreaCat = async () => {
         await Axios
-          .get('http://dev.unyict.org/api/altruists/area_category')
+          .get('https://dev.unyict.org/api/altruists/area_category')
           .then((res) => {
             this.setState({category: res.data.data});
             this.setState({isLoading:false})
@@ -227,7 +227,7 @@ class MyAltProf extends React.Component{
         this.setState({isLoading:true})
         var formdata = new FormData();
         formdata.append('alt_id',alt_id)
-        await Axios.post('http://dev.unyict.org/api/altruists/profile',formdata)
+        await Axios.post('https://dev.unyict.org/api/altruists/profile',formdata)
         .then(res=>{
             const result =res.data.view.data.list[0]
             const {alt_content,alt_aboutme,alt_honor,alt_photo,alt_answertype} =result.alt_profile;
@@ -281,7 +281,7 @@ class MyAltProf extends React.Component{
                                     <View style={{height:width*0.9*100/337}}>
                                         <Image 
                                             style={{width:width*0.9*100/337,height:'100%'}}
-                                            source={{uri: !new_alt_photo.uri? !alt_photo? 'http://dev.unyict.org/uploads/altwink.png':`http://dev.unyict.org/${alt_photo}`  : new_alt_photo.uri}}
+                                            source={{uri: !new_alt_photo.uri? !alt_photo? 'https://dev.unyict.org/uploads/altwink.png':`https://dev.unyict.org/${alt_photo}`  : new_alt_photo.uri}}
                                             resizeMode='cover'
                                         />
                                         <View style={{position:'absolute',bottom:0,right:0,backgroundColor:'#ffffff',borderRadius:15}}>

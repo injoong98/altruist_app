@@ -456,6 +456,7 @@ class MarketWrite extends React.Component {
       .then((response) => {
         const {message, status} = response.data;
         if (status == '500') {
+          console.log('response.data : 입니다', response.data);
           this.setState({spinnerVisible: false, resultVisible: true, resultText : message});
         } else if (status == '200') {
             this.gobackfunc();

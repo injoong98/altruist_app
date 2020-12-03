@@ -9,7 +9,7 @@ export class getPostList extends Component {
   //LIFECYCLE
   componentDidMount() {
     axios
-      .get(`http://dev.unyict.org/api/board_post/lists/ilban`)
+      .get(`https://dev.unyict.org/api/board_post/lists/ilban`)
       .then((response) => {
         this.setState({
           lists: response.data.view.list.data.list,

@@ -83,7 +83,7 @@ class AltMainScreen extends React.Component{
     }
     getAltruistsList = async() => {
         this.setState({isLoading:true})
-        await axios.get('http://dev.unyict.org/api/altruists/lists?rand=Y')
+        await axios.get('https://dev.unyict.org/api/altruists/lists?rand=Y')
         .then((response) => {
             this.setState({lists:response.data.view.data.list})
             this.sortAltList();
@@ -97,7 +97,7 @@ class AltMainScreen extends React.Component{
     getBanners = async() =>{
         var data = new FormData();
         data.append('postition','main_middle')
-        await axios.post("http://dev.unyict.org/api/board_post/banner",data)
+        await axios.post("https://dev.unyict.org/api/board_post/banner",data)
         .then(res=>{
             this.setState({banners:res.data.view.banners})
         }
@@ -128,7 +128,7 @@ class AltMainScreen extends React.Component{
                     <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
                         <View style={{}}>
                             {/* <MainSvg width={wdithLogo} height={heightLogo}/> */}
-                            <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'http://dev.unyict.org/uploads/main_png.png'}}/>
+                            <Image style={{width:wdithLogo,height:heightLogo}} source={{uri : 'https://dev.unyict.org/uploads/main_png.png'}}/>
                         </View>
                         
                     </View>
@@ -138,7 +138,7 @@ class AltMainScreen extends React.Component{
                                 onPress={()=>navigation.navigate('AltList',{title})} 
                                 style={styles.mainbtn}
                                 text='이타주의자 찾기'
-                                icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'http://dev.unyict.org/uploads/icons/find_altruist.png'}}/>}
+                                icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'https://dev.unyict.org/uploads/icons/find_altruist.png'}}/>}
                             />
                             <MainButton
                                 onPress={()=>{
@@ -155,7 +155,7 @@ class AltMainScreen extends React.Component{
                                 
                                 style={styles.mainbtn}
                                 text='오픈질문 하기'
-                                icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'http://dev.unyict.org/uploads/icons/open_question.png'}}/>}
+                                icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'https://dev.unyict.org/uploads/icons/open_question.png'}}/>}
                             />
                             <MainButton 
                                 style={styles.mainbtn}
@@ -168,12 +168,12 @@ class AltMainScreen extends React.Component{
                                         }
                                     }
                                 }
-                                icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'http://dev.unyict.org/uploads/icons/question_box_btn.png'}}/>}
+                                icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'https://dev.unyict.org/uploads/icons/question_box_btn.png'}}/>}
                             />
                             <MainButton 
                                 style={styles.mainbtn}
                                 text='지원하기'
-                                icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'http://dev.unyict.org/uploads/icons/apply_btn.png'}}/>}
+                                icon={()=><Image style={styles.mainbtnIcon} source={{uri : 'https://dev.unyict.org/uploads/icons/apply_btn.png'}}/>}
                                 onPress={()=>{
                                     
                                     if(!global.mem_id) {

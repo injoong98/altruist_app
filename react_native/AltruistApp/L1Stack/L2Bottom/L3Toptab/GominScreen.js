@@ -63,7 +63,7 @@ class GominScreen extends React.Component {
         )
     }
     getPostList = async() =>{
-        await axios.get(`http://dev.unyict.org/api/board_post/lists/b-a-1?page=${this.state.current_page}`)
+        await axios.get(`https://dev.unyict.org/api/board_post/lists/b-a-1?page=${this.state.current_page}`)
         .then((response)=>{
           if(response.data.view.list.data.list.length > 0){
             this.setState({
@@ -83,7 +83,7 @@ class GominScreen extends React.Component {
       }
     
     getPostFirst = async() => {
-        await axios.get('http://dev.unyict.org/api/board_post/lists/b-a-1')
+        await axios.get('https://dev.unyict.org/api/board_post/lists/b-a-1')
         .then((response)=>{
             this.setState({
                 lists:response.data.view.list.data.list,
@@ -195,7 +195,7 @@ class GominScreen extends React.Component {
                     }} 
                 >
                     {/* <Writesvg /> */}
-					<Image source={{uri:"http://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
+					<Image source={{uri:"https://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
 
                 </TouchableOpacity>
                 {/* <Button onPress={searchOpenClose ? this.searchClose : this.searchOpen}>
