@@ -173,12 +173,15 @@ export class MyProfEdit extends React.Component{
         await axios.post('http://dev.unyict.org/api/membermodify/modify',formdata)
         .then(res=>{    
             const regex = /(<([^>]+)>)|&nbsp;/ig;
-            const result_message = res.data.view.result_message.replace(regex, '\n');
+            console.log('result_data : '+ JSON.stringify(res.data))
+            var result_message='';
+                result_message = res.data.status==200? 
+                res.data.view.result_message.replace(regex, '\n') : res.data.message.replace(regex, '\n') ;
             this.setState({resultModalVisible:true,resultText:result_message});
         })
         .catch(err=>{
             console.log('err : '+err )
-            alert(JSON.stringify(err))
+            // alert(JSON.stringify(err))
         })
     }
     checkCharNum=()=>{
