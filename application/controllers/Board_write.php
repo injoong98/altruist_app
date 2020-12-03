@@ -863,6 +863,9 @@ class Board_write extends CB_Controller
 			$updatedata['deal_price'] = $this->input->post('deal_price', null, '');
 			$updatedata['deal_type'] = $this->input->post('deal_type', null, '');
 			$updatedata['deal_status'] = $this->input->post('deal_status', null, '');
+			
+			//피드 섞기 기능
+			$updatedata['post_open_feed'] = $this->input->post('post_open_feed', null, '');
 
 			//썸네일 사용여부
 			$updatedata['post_thumb_use'] = $this->input->post('post_thumb_use', null, '');
@@ -2331,6 +2334,7 @@ EOT;
 			if ($can_post_notice) {
 				$updatedata['post_notice'] = $this->input->post('post_notice', null, 0);
 			}
+			
 			if ($can_post_secret) {
 				$updatedata['post_secret'] = $this->input->post('post_secret') ? 1 : 0;
 			}
@@ -2348,6 +2352,9 @@ EOT;
 			if (element('use_category', $board)) {
 				$updatedata['post_category'] = $this->input->post('post_category', null, '');
 			}
+			//이타주의자들 
+			// 피드 섞기 여부 
+			$updatedata['post_open_feed'] = $this->input->post('post_open_feed', null, 0);
 
 			$extradata = array();
 			if ($form && is_array($form)) {
