@@ -117,6 +117,18 @@ class Mypage extends React.Component{
                       </TouchableOpacity>
                     </View> */}
                   </View>
+                  
+                  {//KTGY 홈페이지
+                  /* <View style={{ marginHorizontal:40,marginBottom:20}}>
+                    <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
+                      <Text category='h2' style={styles.menuTitle}>KTGY!</Text>
+                    </View>
+                    <View>
+                      <TouchableOpacity style={styles.menuContainer} onPress={()=>{navigate('MyWebview',{url:'https://www.ktgy.org/'})}} >
+                        <Text style={styles.menuItem}>KTGY!</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View> */}
                   <View style={{ marginHorizontal:40,marginBottom:20}}>
                     <View style={{flexDirection:'row',alignItems:'center',marginBottom:15}}>
                       <PencilSvg height={28} width={22}/>

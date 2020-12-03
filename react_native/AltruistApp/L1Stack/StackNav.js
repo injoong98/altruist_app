@@ -27,6 +27,7 @@ import MainImg from '../assets/images/main-logo-img.png'
 import VersionCheck from "react-native-version-check";
 import { version } from '../package.json';
 import CommunitySearch from './CommunitySearch'
+import MyWebview from './Webview';
 import RequireLoginScreen from '../L1Stack/L2Bottom/L3Stack/Require_Login'
 
 
@@ -388,6 +389,7 @@ export class StackNav extends React.Component{
                                 <Screen name = "ApplyFail" component={ApplyFailScreen}/>
                                 <Screen name = "StckQueContent" component={AltQueContent}/>
                                 <Screen name = "CommunitySearch" component={CommunitySearch}/>
+                                <Screen name = "MyWebview" component={MyWebview}/>
                             </>
                         }
 
