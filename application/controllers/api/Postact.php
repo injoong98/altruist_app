@@ -808,7 +808,7 @@ class Postact extends CB_Controller
 			$mem_nickname = $this->member->item('mem_nickname');
 
 			//$not_message = $this->session->userdata('mem_nickname'). '님께서 당신의 글을 좋아합니다.';
-			$not_message = $mem_nickname . '님이 당신의 글을 좋아합니다.';
+			$not_message = $mem_nickname . '님이 회원님의 글을 좋아합니다.';
 			//알림 
 			if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
 				$this->load->library('notificationlib');
@@ -1213,7 +1213,7 @@ class Postact extends CB_Controller
 		if ($like_type == 1) {
 
 			$mem_nickname = $this->member->item('mem_nickname');
-			$not_message = $mem_nickname . '님이 당신의 댓글을 좋아합니다.';
+			$not_message = $mem_nickname . '님이 회원님의 댓글을 좋아합니다.';
 			//알림 
 			if ($this->cbconfig->item('use_notification') && $this->cbconfig->item('notification_like_post')) {
 				$this->load->library('notificationlib');
