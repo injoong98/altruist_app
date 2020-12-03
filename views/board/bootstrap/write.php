@@ -109,6 +109,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							<label class="checkbox-inline" for="post_notice_2">
 								<input type="checkbox" name="post_notice" id="post_notice_2" value="2" <?php echo set_checkbox('post_notice', '2', (element('post_notice', element('post', $view)) === '2' ? true : false)); ?> onChange="if (this.checked) {$('#post_notice_1').prop('disabled', true);} else {$('#post_notice_1').prop('disabled', false);}" <?php if (element('post_notice', element('post', $view)) === '1')echo "disabled='disabled'"; ?> /> 전체공지
 							</label>
+							<label class="checkbox-inline" for="post_open_feed">
+								<input type="checkbox" name="post_open_feed" id="post_open_feed" value="1" <?php echo set_checkbox('post_open_feed', '1', (element('post_open_feed', element('post', $view)) ? true : false)); ?> /> 피드공개
+							</label>
+							
 						<?php } ?>
 						<?php if (element('can_post_secret', element('post', $view))) { ?>
 							<label class="checkbox-inline" for="post_secret">
