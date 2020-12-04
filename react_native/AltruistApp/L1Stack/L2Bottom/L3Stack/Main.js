@@ -11,6 +11,7 @@ import Reloadsvg from '../../../assets/icons/reload.svg'
 import MainSvg from '../../../assets/icons/main_logo.svg'
 import {RenderAltList} from './List'
 import {Signing} from '../../Context'
+import AsyncStorage from '@react-native-community/async-storage';
 const {width,height} = Dimensions.get('window')
 
 const AltIcon = (props) => (
@@ -107,10 +108,18 @@ class AltMainScreen extends React.Component{
         }
         )
     }
+    popUp= async ()=>{
+        var PopUpClosedTime= await AsyncStorage.getItem('popUpClosedTime');
+        var PopUpClosedTimeJSON= JSON.parse(PopUpClosedTime)
+        var now = Date.now();
+        if(now-PopUpClosedTimeJSON.time>24*60*60*1000){
+            this.props.navigation.navigate('PopUp');
+        }
+    }
     componentDidMount(){
         this.getAltruistsList();
         this.getBanners();
-        this.props.navigation.navigate('PopUp');
+        this.popUp()
     }
 
     renderHeadSection = () =>{

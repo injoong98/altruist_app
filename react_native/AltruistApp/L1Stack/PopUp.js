@@ -13,7 +13,7 @@ class PopUp extends React.Component{
             id: 'id',
         }
         AsyncStorage.setItem('popUpClosedTime',JSON.stringify(data))
-        console.log('doNotPopUp : '+JSON.stringify(data));
+
     }
     render(){
         return(
