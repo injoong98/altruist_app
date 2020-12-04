@@ -701,7 +701,7 @@ class MarketWrite extends React.Component {
               />
                 :
                 <TextInput
-                  style={{...styles.input, height: 60, fontSize: 20}}
+                  style={{...styles.input, height: 50, fontSize: 15}}
                   onChangeText={(text) => this.setState({post_title: text})}
                   value={post_title}
                   placeholder="상품명"
