@@ -829,14 +829,15 @@ class MarketContent extends React.Component {
                 :response.data.mem_photo
             });
             if (response.data.view.file_image){
+                console.log(response.data.view.file_image);
                 this.setState({image: response.data.view.file_image.map(function(item, index){
                     var image_info = {};
                     image_info['id'] = item.pfi_id;
+                    image_info['url'] = item.origin_image_url;
                     image_info['mime'] = "image/jpeg";
-                    image_info['type'] = item.pfi_type;
+                    // image_info['type'] = item.pfi_type;
                     image_info['title'] = item.pfi_originname;
                     image_info['path'] = item.origin_image_url;
-                    image_info['url'] = item.origin_image_url;
                     image_info['index'] = index;
                     image_info['edit'] = true;
                     return image_info;
@@ -2294,10 +2295,10 @@ class IlbanContent extends Component {
                     var image_info = {};
                     image_info['props'] = {};
                     image_info['url'] = item.origin_image_url;
-                    image_info['props']['path'] = item.origin_image_url;
-                    image_info['props']['mime'] = "image/jpeg";
                     image_info['props']['id'] = item.pfi_id;
+                    image_info['props']['mime'] = "image/jpeg";
                     image_info['props']['title'] = item.pfi_originname;
+                    image_info['props']['path'] = item.origin_image_url;
                     image_info['props']['index'] = index;
                     image_info['props']['edit'] = true;
                     return image_info;

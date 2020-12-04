@@ -440,11 +440,13 @@ class MarketWrite extends React.Component {
       formdata.append('post_file[]', {
         uri: item.path,
         type: item.mime,
-        name: pathToName(item.props.path),
+        name: pathToName(item.path),
       });
-    });
+      console.log('item입니다 : ',item);
+    }
+    );
     
-    console.log(formdata);
+    console.log('formdata입니다 : ',formdata);
     
     this.props.route.params.mode == 'edit'
       ? formdata.append('post_id', this.props.route.params.post.post_id)
