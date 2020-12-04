@@ -2284,10 +2284,12 @@ class Membermodify extends CB_Controller
 			);
 			return false;
 		}
+		// $countwhere = array(
+		// 	'mni_nickname' => $str,
+		// );
+		$mem_id = (int) $this->member->item('mem_id');
+		$countwhere = 'mni_nickname = "'.$str.'" AND mem_id != '. $mem_id;
 
-		$countwhere = array(
-			'mni_nickname' => $str,
-		);
 		$row = $this->Member_nickname_model->count_by($countwhere);
 
 		if ($row > 0) {
