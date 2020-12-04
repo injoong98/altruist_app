@@ -130,20 +130,20 @@ android {
     }
 
 
-    def versionPropsFile = file('version.properties')
-    def Properties versionProps = new Properties()
+    // def versionPropsFile = file('version.properties')
+    // def Properties versionProps = new Properties()
 
-    if (versionPropsFile.canRead()) {
-        versionProps.load(new FileInputStream(versionPropsFile))
-    }
-    else {
-        versionProps['VERSION_CODE']='0'
-    }
+    // if (versionPropsFile.canRead()) {
+    //     versionProps.load(new FileInputStream(versionPropsFile))
+    // }
+    // else {
+    //     versionProps['VERSION_CODE']='0'
+    // }
 
-    def code = versionProps['VERSION_CODE'].toInteger() + 1
+    // def code = versionProps['VERSION_CODE'].toInteger() + 1
 
-    versionProps['VERSION_CODE']=code.toString()
-    versionProps.store(versionPropsFile.newWriter(), null)
+    // versionProps['VERSION_CODE']=code.toString()
+    // versionProps.store(versionPropsFile.newWriter(), null)
 
 
     defaultConfig {
@@ -152,7 +152,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-        versionCode code
+        versionCode 3200109
         // Major Version.Minor Version.Build or Maintenance Version
         versionName "1.2.5"
     }
