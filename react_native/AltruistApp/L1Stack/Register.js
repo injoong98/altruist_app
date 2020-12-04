@@ -719,6 +719,10 @@ class RegisterScreen extends Component {
               )
             }
           />
+                      <Text category="s1" style={{color: '#63579D'}}>
+              {` `} *닉네임은 설정 후 30일 뒤에 변경할 수 있습니다.
+              
+            </Text>
           <this.RadioSexSelection />
           {/* validation : 사용자가 input창에서 딱 벗어났을 때 
                 1. null 값 체크 

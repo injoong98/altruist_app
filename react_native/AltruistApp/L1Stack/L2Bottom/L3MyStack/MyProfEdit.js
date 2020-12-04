@@ -278,9 +278,12 @@ export class MyProfEdit extends React.Component{
                                         />
                                 </View>
                                 <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',}}>
+                                    <Text category='s2' >*닉네임은 변경한 후 30일 동안 변경이 불가합니다.</Text>
+                                </View>
+                                <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',}}>
                                     <Text category='s2' style={{opacity: this.state.nickLengthOver ? 1:0,color:'#DB2434'}}>닉네임은 10자 이하입니다.</Text>
                                 </View>
-                                <View style={styles.inputContainer}>
+                                <View style={[styles.inputContainer,{marginTop:0}]}>
                                     <View>
                                         <Text category='h1' style={{fontSize:16,color:'#63579D'}}>이메일</Text>
                                     </View>
