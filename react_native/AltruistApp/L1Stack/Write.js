@@ -691,85 +691,110 @@ class MarketWrite extends React.Component {
             <View style={{paddingVertical: 10, backgroundColor: '#F4F4F4'}}>
               <View style={styles.container}>
                 {/* <Text>상품명</Text> */}
+                {Platform.OS == 'ios'
+                ?
                 <TextInput
-                  style={
-                    Platform.OS == 'ios'
-                    ?
-                    {...styles.input, height: 30}  
-                    :
-                    {...styles.input, height: 60, fontSize: 20}
-                  }
+                style={[styles.input, {height: 30}]}
+                onChangeText={(text) => this.setState({post_title: text})}
+                value={post_title}
+                placeholder="상품명"
+              />
+                :
+                <TextInput
+                  style={{...styles.input, height: 60, fontSize: 20}}
                   onChangeText={(text) => this.setState({post_title: text})}
                   value={post_title}
                   placeholder="상품명"
                 />
+                }
               </View>
               <View style={{...styles.container, flexDirection: 'row'}}>
                 <View style={{flex: 1}}>
                   {/* <Text>판매가격</Text> */}
-                  <TextInput
-                    style={
-                      Platform.OS == 'ios'
-                      ?
-                      {...styles.input, height: 30}  
-                      :
-                      {...styles.input}
-                    }
+                  {Platform.OS == 'ios'
+                    ?
+                    <TextInput
+                    style={[styles.input, {height: 30}]}
                     keyboardType="numeric"
                     onChangeText={(text) => this.setState({deal_price: text})}
                     value={deal_price.toString()}
                     placeholder="판매가격"
                   />
+                    :
+                    <TextInput
+                      style={styles.input}
+                      keyboardType="numeric"
+                      onChangeText={(text) => this.setState({deal_price: text})}
+                      value={deal_price.toString()}
+                      placeholder="판매가격"
+                    />
+                  }
                 </View>
                 <View style={{flex: 1}}>
                   {/* <Text>연락처</Text> */}
-                  <TextInput
-                    style={
-                      Platform.OS == 'ios'
-                      ?
-                      {...styles.input, height: 30}  
-                      :
-                      {...styles.input}
-                    }
+                  {Platform.OS == 'ios'
+                    ?
+                    <TextInput
+                    style={{...styles.input, height: 30}}
                     keyboardType="numeric"
                     onChangeText={(text) => this.setState({post_hp: text})}
                     value={post_hp}
                     placeholder="연락처"
                   />
+                    :
+                    <TextInput
+                      style={styles.input}
+                      keyboardType="numeric"
+                      onChangeText={(text) => this.setState({post_hp: text})}
+                      value={post_hp}
+                      placeholder="연락처"
+                    />
+                  }
                 </View>
               </View>
               <View style={styles.container}>
                 {/* <Text>상세정보</Text> */}
-                <TextInput
-                  style={
-                    Platform.OS == 'ios'
+                {Platform.OS == 'ios'
                     ?
-                    {...styles.input, height: 100}  
+                    <TextInput
+                    style={{...styles.input, height: 100}}
+                    onChangeText={(text) => this.setState({post_content: text})}
+                    value={post_content}
+                    placeholder="상세정보"
+                    multiline={true}
+                    numberOfLines={7}
+                    textAlignVertical="top"
+                  />
                     :
-                    {...styles.input}
+                    <TextInput
+                    style={styles.input}
+                    onChangeText={(text) => this.setState({post_content: text})}
+                    value={post_content}
+                    placeholder="상세정보"
+                    multiline={true}
+                    numberOfLines={7}
+                    textAlignVertical="top"
+                  />
                   }
-                  onChangeText={(text) => this.setState({post_content: text})}
-                  value={post_content}
-                  placeholder="상세정보"
-                  multiline={true}
-                  numberOfLines={7}
-                  textAlignVertical="top"
-                />
               </View>
               <View style={styles.container}>
                 {/* <Text>거래희망지역</Text> */}
-                <TextInput
-                  style={
-                    Platform.OS == 'ios'
+                {Platform.OS == 'ios'
                     ?
-                    {...styles.input, height: 30}  
-                    :
-                    {...styles.input}
-                  }
-                  onChangeText={(text) => this.setState({post_location: text})}
+                    <TextInput
+                    style={{...styles.input, height: 30}}
+                    onChangeText={(text) => this.setState({post_location: text})}
                   value={post_location}
                   placeholder="거래희망지역"
-                />
+                  />
+                    :
+                    <TextInput
+                    style={styles.input}
+                    onChangeText={(text) => this.setState({post_location: text})}
+                  value={post_location}
+                  placeholder="거래희망지역"
+                  />
+                  }
               </View>
               <View style={{...styles.container, flexDirection: 'row'}}>
                 <View
