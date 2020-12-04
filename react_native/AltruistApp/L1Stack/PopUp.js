@@ -1,5 +1,6 @@
 import React from 'react';
 import {SafeAreaView,View,Text,StyleSheet,Pressable,ScrollView} from 'react-native';
+import {Spinner} from '@ui-kitten/components'
 import WebView from 'react-native-webview'
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios'
@@ -34,7 +35,6 @@ class PopUp extends React.Component{
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            background-color: #B09BDE;
                         }
                         img{
                             width:100vw;
@@ -50,7 +50,7 @@ class PopUp extends React.Component{
             })
         })
         .catch(err=>{
-            console.log('err'+ err)
+            console.log('팝업 불러오기 오류 확인하세요..')
         })
     }
     componentDidMount(){
@@ -65,7 +65,9 @@ class PopUp extends React.Component{
                 <View style={{flex:1,backgroundColor:'#f0f0f0'}}>
                 {
                     isLoading ?
-                    null
+                    <View style={styles.container}>
+                        <Spinner />
+                    </View>
                             :
                     <WebView
                     source={{html:html } }
