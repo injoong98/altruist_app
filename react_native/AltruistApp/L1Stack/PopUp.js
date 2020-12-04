@@ -1,11 +1,18 @@
 import React from 'react';
-import {SafeAreaView,View,Text,StyleSheet,Pressable} from 'react-native';
+import {SafeAreaView,View,Text,StyleSheet,Pressable,ScrollView} from 'react-native';
 import WebView from 'react-native-webview'
 import AsyncStorage from '@react-native-community/async-storage';
-
+import axios from 'axios'
+import { WebViewInView } from './Webview'
+import { is } from 'core-js/fn/object';
 class PopUp extends React.Component{
     constructor(props){
         super(props)
+        this.state={
+            popups:[],
+            isLoading:true,
+            html:'',
+        }
     }
     doNotPopUp = () =>{
         var data = {
@@ -15,45 +22,80 @@ class PopUp extends React.Component{
         AsyncStorage.setItem('popUpClosedTime',JSON.stringify(data))
 
     }
+    get_popup_info= async() =>{
+        await axios.get('https://dev.unyict.org/api/popup/get_popup_list')
+        .then(res=>{
+            console.log(res.data.list[0].pop_content)
+            this.setState({popups:res.data.list,isLoading:false,
+                html:`
+                <head>
+                    <style>
+                        body{
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background-color: #B09BDE;
+                        }
+                        img{
+                            width:100vw;
+
+                        }
+                    </style>
+                <head>
+                <body>
+                ${res.data.list[0].pop_content}
+                </body>
+                
+                `
+            })
+        })
+        .catch(err=>{
+            console.log('err'+ err)
+        })
+    }
+    componentDidMount(){
+        this.get_popup_info();
+    }
     render(){
+        const {isLoading,html} = this.state;
+
         return(
+            
             <SafeAreaView style={{flex:1}}>
-                <View style={[styles.container,{flex:9}]}>
-                    <Text> pop Up Screen !! </Text>
-                    <Pressable 
-                        style={[styles.container,{width:'100%'}]}
-                        onPress={async()=>{
-                        const  test =  await AsyncStorage.getItem('popUpClosedTime')
-                            console.log(test)
-                        }}
-                    >
-                        <View style={{}}>
-                            <Text>확인</Text>
-                        </View>
-                    </Pressable>
+                <View style={{flex:1,backgroundColor:'#f0f0f0'}}>
+                {
+                    isLoading ?
+                    null
+                            :
+                    <WebView
+                    source={{html:html } }
+                    scrollEnabled={true}
+                />
+                }
                 </View>
-            <View style ={{flex:1, flexDirection:'row'}}>
-                <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                    <Pressable 
-                        style={styles.container}
-                        onPress={()=>this.props.navigation.goBack()}
-                    >
-                        <View>
-                            <Text>닫기</Text>
-                        </View>
-                    </Pressable>
+                <View style ={{flex:1, flexDirection:'row',position:'absolute',bottom:0}}>
+                    <View style={styles.btnContainer}>
+                        <Pressable 
+                            style={styles.container}
+                            onPress={()=>this.props.navigation.goBack()}
+                        >
+                            <View>
+                                <Text style={{color:'#ffffff'}}>닫기</Text>
+                            </View>
+                        </Pressable>
+                    </View>
+                    <View style={{borderWidth:0.5,borderColor:'#ffffff'}}></View>
+                    <View style={styles.btnContainer}>
+                        <Pressable 
+                            style={styles.container}
+                            onPress={()=>this.doNotPopUp()}
+                        >
+                            <View>
+                                <Text style={{color:'#ffffff'}}>24시간 동안 보지 않기</Text>
+                            </View>
+                        </Pressable>
+                    </View>
                 </View>
-                <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                    <Pressable 
-                        style={styles.container}
-                        onPress={()=>this.doNotPopUp()}
-                    >
-                        <View>
-                            <Text>24시간 동안 보지 않기</Text>
-                        </View>
-                    </Pressable>
-                </View>
-            </View>
             </SafeAreaView>
         )
     }
@@ -64,8 +106,14 @@ export default PopUp ;
 const styles =StyleSheet.create({
     container:{
         flex:1,
-        borderWidth:2,
         justifyContent:'center',
         alignItems:'center'
+    },
+    btnContainer:{
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
+        paddingVertical:15,
+        backgroundColor:'rgba(77, 77, 77, 0.7)',
     }
 })

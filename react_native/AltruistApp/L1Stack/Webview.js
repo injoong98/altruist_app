@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView,Linking,View,Text,ScrollView} from 'react-native'
+import {SafeAreaView,Linking,View,Text,ScrollView,Dimensions} from 'react-native'
 import { WebView } from 'react-native-webview';
 
 class MyWebview extends React.Component{
@@ -59,7 +59,8 @@ class WebViewInView extends React.Component{
         return(
             <View
                 style={{
-                height: webViewHeight               
+                height: this.props.height ? this.props.height: webViewHeight,
+                width: Dimensions.get('window').width,
                 }}
             >
                 <WebView
