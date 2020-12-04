@@ -52,3 +52,4 @@ application/config/database.php
 app-files
 .favorites.json
 Altruists_app.zip
+application/config/database_local.php

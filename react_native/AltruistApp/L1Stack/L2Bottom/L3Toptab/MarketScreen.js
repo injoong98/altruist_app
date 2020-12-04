@@ -25,7 +25,7 @@ class MarketScreen extends React.Component {
     }
   }
   getPostList = async() =>{
-    await axios.get(`http://dev.unyict.org/api/board_post/lists/b-a-2?page=${this.state.current_page}`)
+    await axios.get(`https://dev.unyict.org/api/board_post/lists/b-a-2?page=${this.state.current_page}`)
     .then((response)=>{
       if(response.data.view.list.data.list.length > 0){
         this.setState({
@@ -45,7 +45,7 @@ class MarketScreen extends React.Component {
   }
 
   getPostFirst = async() =>{
-    await axios.get('http://dev.unyict.org/api/board_post/lists/b-a-2')
+    await axios.get('https://dev.unyict.org/api/board_post/lists/b-a-2')
     .then((response)=>{
         this.setState({
           lists:response.data.view.list.data.list,
@@ -76,7 +76,7 @@ class MarketScreen extends React.Component {
     <TouchableOpacity style={styles.item} onPress={() => {this.props.navigation.navigate('MarketContent',{OnGoback:() =>this.onRefresh(), post_id:item.post_id})}}>
         <View style={{width:100, justifyContent:'center', alignItems:'center'}}>
             <Image 
-              source={item.thumb_url? {uri : item.thumb_url}:{uri : "http://dev.unyict.org/assets/images/noimage.png"}} 
+              source={item.thumb_url? {uri : item.thumb_url}:{uri : "https://dev.unyict.org/assets/images/noimage.png"}} 
               style={{width:90, height:90, resizeMode:'cover', borderRadius:10}}
             />
         </View>
@@ -188,7 +188,7 @@ class MarketScreen extends React.Component {
           }} 
         >
           {/* <Writesvg /> */}
-          <Image source={{uri:"http://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
+          <Image source={{uri:"https://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
 
         </TouchableOpacity>
         {/* <Button style={{position:'absolute', width:'20%', left:'40%', bottom:10}} 

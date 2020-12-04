@@ -54,7 +54,7 @@ class RenderCareerInput extends React.Component{
         formdata.append('insertdata',JSON.stringify(insertdata));
         console.log('form data : '+JSON.stringify(formdata));
         
-        Axios.post('http://dev.unyict.org/api/altruists/insert_career',formdata)
+        Axios.post('https://dev.unyict.org/api/altruists/insert_career',formdata)
         .then(res=>{
             console.log('requestInsert success! : '+JSON.stringify(res.data));
             this.props.setRes('성공적으로 추가했습니다.');
@@ -99,7 +99,7 @@ class RenderCareerInput extends React.Component{
             formdata.append('updatedata',JSON.stringify(updatedata));
             console.log('form data : '+JSON.stringify(formdata));
             
-            Axios.post('http://dev.unyict.org/api/altruists/modify_career',formdata)
+            Axios.post('https://dev.unyict.org/api/altruists/modify_career',formdata)
             .then(res=>{
                 console.log('request success! : '+JSON.stringify(res.data));
                 this.props.setRes('성공적으로 수정했습니다.');
@@ -387,7 +387,7 @@ class MyAltCareer extends React.Component{
         this.setState({isLoading:true})
     var formdata = new FormData();
     formdata.append('alt_id',this.context.alt_id)
-    Axios.post('http://dev.unyict.org/api/altruists/profile',formdata)
+    Axios.post('https://dev.unyict.org/api/altruists/profile',formdata)
     .then(res=>{
         var careers= res.data.view.data.list[0].get_alt_cv;
         this.setState({careers,isLoading:false})

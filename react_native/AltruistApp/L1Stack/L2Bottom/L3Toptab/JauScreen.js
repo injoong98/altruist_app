@@ -44,7 +44,7 @@ class JauScreen extends React.Component {
 	getPostList = async () => {
 		const{current_category, current_page} = this.state;
 		console.log(current_page);
-		await axios.get( `http://dev.unyict.org/api/board_post/lists/ilban?category_id=${current_category}&page=${current_page}`)
+		await axios.get( `https://dev.unyict.org/api/board_post/lists/ilban?category_id=${current_category}&page=${current_page}`)
 			.then((response) => {
 				if(response.data.view.list.data.list.length > 0){
 					this.setState({
@@ -64,7 +64,7 @@ class JauScreen extends React.Component {
 	};
 
 	getPostFirst = async() => {
-		await axios.get(`http://dev.unyict.org/api/board_post/lists/ilban?category_id=${this.state.current_category}`)
+		await axios.get(`https://dev.unyict.org/api/board_post/lists/ilban?category_id=${this.state.current_category}`)
 			.then((response)=>{
 				this.setState({
 				lists:response.data.view.list.data.list,
@@ -129,7 +129,7 @@ class JauScreen extends React.Component {
 	renderListImage = ({item, index}) => {
 		return(
 			<Image 
-				source={{uri : 'http://dev.unyict.org/uploads/post/2020/09/6bac647fc03c42ecf3991917072cbf17.jpg'}}
+				source={{uri : 'https://dev.unyict.org/uploads/post/2020/09/6bac647fc03c42ecf3991917072cbf17.jpg'}}
 				style={{width:'100%', height:Dimensions.get("window").width-96}}
 			/>
 		)
@@ -291,7 +291,7 @@ class JauScreen extends React.Component {
 							 }
 							}}>
 						{/* <Writesvg /> */}
-						<Image source={{uri:"http://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
+						<Image source={{uri:"https://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
 				</TouchableOpacity>
 			</View>
 		);

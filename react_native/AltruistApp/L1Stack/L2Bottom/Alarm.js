@@ -24,7 +24,7 @@ const RenderNoticeItem = ({item,index,navigation,onRefresh}) => (
     >
         <View style={{width:100, justifyContent:'center', alignItems:'center'}}>
             <Image 
-              source={item.thumb_url? {uri : item.thumb_url}:{uri : "http://dev.unyict.org/assets/images/noimage.png"}} 
+              source={item.thumb_url? {uri : item.thumb_url}:{uri : "https://dev.unyict.org/assets/images/noimage.png"}} 
               style={{width:90, height:90, resizeMode:'cover', borderRadius:10}}
             />
         </View>
@@ -111,7 +111,7 @@ export class AlarmNotices extends React.Component{
         )
     }
     getPostList = async() =>{
-        await axios.get(`http://dev.unyict.org/api/board_post/lists/${this.props.type}?page=${this.state.current_page}`)
+        await axios.get(`https://dev.unyict.org/api/board_post/lists/${this.props.type}?page=${this.state.current_page}`)
         .then((response)=>{
           if(response.data.view.list.data.list.length > 0){
             this.setState({
@@ -132,7 +132,7 @@ export class AlarmNotices extends React.Component{
     getNotiList=()=>{
         this.setState({isLoading:true});
       //console.log('run getNotiList');
-        axios.get(`http://dev.unyict.org/api/board_post/lists/${this.props.type}`)
+        axios.get(`https://dev.unyict.org/api/board_post/lists/${this.props.type}`)
         .then(res=>{
             this.setState({noti:res.data.view.list.data.list,isLoading:false})
         })
@@ -274,7 +274,7 @@ export class AlarmScreen extends React.Component{
         )
     }
     getPostList = async() =>{
-        await axios.get(`http://dev.unyict.org/api/notification?page=${this.state.current_page}`)
+        await axios.get(`https://dev.unyict.org/api/notification?page=${this.state.current_page}`)
         .then((res)=>{
           if(res.data.view.data.list.length > 0){
             this.setState({
@@ -307,7 +307,7 @@ export class AlarmScreen extends React.Component{
         this.getNotiList();
     }
     readall=async()=>{
-        await axios.get(`http://dev.unyict.org/api/notification/readall`)
+        await axios.get(`https://dev.unyict.org/api/notification/readall`)
         .then(res=>{
             this.context.reloadUnreadCount();
             this.context.getFirstNotiList();
@@ -317,7 +317,7 @@ export class AlarmScreen extends React.Component{
     }
     readNoti = (item) =>{
         console.log('item.not_id'+item.not_id)
-        axios.get(`http://dev.unyict.org/api/notification/read?not_id=${item.not_id}`)
+        axios.get(`https://dev.unyict.org/api/notification/read?not_id=${item.not_id}`)
         .then(res=>{
             console.log(item.not_type=='comment')
             if(item.not_type=='comment'||item.not_type=='comment_comment'){
@@ -364,7 +364,7 @@ export class AlarmScreen extends React.Component{
     )
     }
     notDelAll=async()=>{
-        await axios.get(`http://dev.unyict.org/api/notification/delete_all/`)
+        await axios.get(`https://dev.unyict.org/api/notification/delete_all/`)
         .then(res=>{
             res.status == 200 ?
             this.setState({resultModalVisible:true,resultText:'성공적으로 삭제했습니다.',spinnerModalVisible:false},()=>{this.getNotiList();this.context.reloadUnreadCount()},)            
@@ -379,7 +379,7 @@ export class AlarmScreen extends React.Component{
         const {noti,longPressId,longPressIndex} =this.state;
         noti.splice(longPressIndex,1);
         this.setState({noti})
-        await axios.get(`http://dev.unyict.org/api/notification/delete/${longPressId}`)
+        await axios.get(`https://dev.unyict.org/api/notification/delete/${longPressId}`)
         .then(res =>{
             console.log(JSON.stringify(res))
         })
@@ -390,7 +390,7 @@ export class AlarmScreen extends React.Component{
     }
     getNotiList=()=>{
         this.setState({isLoading:true});
-        axios.get('http://dev.unyict.org/api/notification')
+        axios.get('https://dev.unyict.org/api/notification')
         .then(res=>{
             this.setState({noti:res.data.view.data.list,isLoading:false})
         })
@@ -518,7 +518,7 @@ const TabNavigator = () => (
 export class AlarmToptab extends React.Component{
     static contextType = Notice
     readall=async()=>{
-        await axios.get(`http://dev.unyict.org/api/notification/readall`)
+        await axios.get(`https://dev.unyict.org/api/notification/readall`)
         .then(res=>{
             this.context.reloadUnreadCount();
             this.context.getFirstNotiList();

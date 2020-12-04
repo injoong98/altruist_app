@@ -426,7 +426,7 @@ class AltApplyFormScreen extends React.Component {
     console.log(formdata);
 
     await axios
-      .post('http://dev.unyict.org/api/altruists/apply', formdata)
+      .post('https://dev.unyict.org/api/altruists/apply', formdata)
       .then((response) => {
         this.setState({spinnerModalVisible:false})
         if (response.data.status == '500') {
@@ -471,7 +471,7 @@ class AltApplyFormScreen extends React.Component {
 
   getAreaCat = async () => {
     await axios
-      .get('http://dev.unyict.org/api/altruists/area_category')
+      .get('https://dev.unyict.org/api/altruists/area_category')
       .then((res) => {
         //console.log(res)
         this.setState({category: res.data.data});
@@ -482,7 +482,7 @@ class AltApplyFormScreen extends React.Component {
   };
   getUserInfo = async() =>{
     await axios
-      .get('http://dev.unyict.org/api/mypage')
+      .get('https://dev.unyict.org/api/mypage')
       .then((res) => {
         //console.log(res)
         this.setState({userinfo:res.data.myinfo});
@@ -530,7 +530,7 @@ class AltApplyFormScreen extends React.Component {
                   <View >
                     <Image 
                       style={{width:100,height:100}}
-                      source={{uri:!alt_photo.uri? 'http://dev.unyict.org/uploads/altwink.png':alt_photo.uri}}/>
+                      source={{uri:!alt_photo.uri? 'https://dev.unyict.org/uploads/altwink.png':alt_photo.uri}}/>
                     <Camsvg style={{position:'absolute',bottom:0,right:0}}/>
                   </View>
                 </TouchableHighlight>

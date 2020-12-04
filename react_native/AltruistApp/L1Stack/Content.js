@@ -2277,7 +2277,7 @@ class IlbanContent extends Component {
     getPostData = async (post_id)=>{
         console.log('getPostData respond');
 
-        await Axios.get(`http://dev.unyict.org/api/board_post/post/${post_id}`)
+        await Axios.get(`https://dev.unyict.org/api/board_post/post/${post_id}`)
         .then((response)=>{
             console.log('response.data.mem_photo : '+response.data.mem_photo)
             this.setState({

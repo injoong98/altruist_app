@@ -62,7 +62,7 @@ class LoginScreen extends React.Component{
     //     formdata.append('mem_userid',mem_userid);
     //     formdata.append('mem_password',mem_password);
     
-    //     axios.post('http://dev.unyict.org/api/login',formdata)
+    //     axios.post('https://dev.unyict.org/api/login',formdata)
     //     .then(response=>{
     //         this.setState({isLogined:true,mem_password:'',mem_userid:''})
     //         this.storeData('logininfo',JSON.stringify({mem_userid:mem_userid,mem_password:mem_password}));
@@ -74,7 +74,7 @@ class LoginScreen extends React.Component{
     //     })
     // }
     // cookie=()=>{
-    //   CookieManager.get('http://dev.unyict.org')
+    //   CookieManager.get('https://dev.unyict.org')
     //   .then((cookies) => {
     //     //console.log('CookieManager.get =>', cookies);
     //   });

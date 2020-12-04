@@ -43,7 +43,7 @@ export default class Slider extends React.Component {
                                 >
                                     <Image
                                         style={slide_style.image}
-                                        source={{uri : 'http://dev.unyict.org'+item.url}}
+                                        source={{uri : 'https://dev.unyict.org'+item.url}}
                                         style={{width, height, resizeMode: 'contain'}}
                                     />
                                 </Pressable>

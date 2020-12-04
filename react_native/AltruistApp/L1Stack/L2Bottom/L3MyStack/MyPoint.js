@@ -42,7 +42,7 @@ export class MyPoint extends React.Component{
         </View>
     )}
     getPointHistory = ()=> {
-        axios.get('http://dev.unyict.org/api/mypage/point')
+        axios.get('https://dev.unyict.org/api/mypage/point')
         .then(res=>{
             this.setState({points:res.data.view.data.list,isLoading:false})
             console.log('hi')
