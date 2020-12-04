@@ -28,6 +28,7 @@ import VersionCheck from "react-native-version-check";
 import { version } from '../package.json';
 import CommunitySearch from './CommunitySearch'
 import MyWebview from './Webview';
+import PopUp from './PopUp';
 import RequireLoginScreen from '../L1Stack/L2Bottom/L3Stack/Require_Login'
 
 
@@ -370,7 +371,7 @@ export class StackNav extends React.Component{
                                 <Screen name = "ResendAuthmailSuccessScreen" component={ResendAuthmailSuccessScreen}/>
                                 <Screen name = "QuestionScreen" component={QuestionScreen}/>
                                 <Screen name = "FinishScreen" component={FinishScreen}/>
-                                
+                                <Screen name = "PopUp" component={PopUp}/>
                             </>
                             :
                             <>
@@ -390,6 +391,7 @@ export class StackNav extends React.Component{
                                 <Screen name = "StckQueContent" component={AltQueContent}/>
                                 <Screen name = "CommunitySearch" component={CommunitySearch}/>
                                 <Screen name = "MyWebview" component={MyWebview}/>
+                                <Screen name = "PopUp" component={PopUp}/>
                             </>
                         }
 

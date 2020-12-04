@@ -109,7 +109,8 @@ class AltMainScreen extends React.Component{
     }
     componentDidMount(){
         this.getAltruistsList();
-        this.getBanners()
+        this.getBanners();
+        this.props.navigation.navigate('PopUp');
     }
 
     renderHeadSection = () =>{
