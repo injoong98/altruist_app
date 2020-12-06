@@ -2017,6 +2017,7 @@ class IlbanContent extends Component {
         console.log('res : ', res);
       return res;
     }
+    
     postDelete = async () => {
         if(!global.mem_id) {
             this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
