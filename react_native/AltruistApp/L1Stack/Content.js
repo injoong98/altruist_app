@@ -1991,7 +1991,32 @@ class IlbanContent extends Component {
     }
 
     static contextType = Signing;
-
+    youtubeLinkToiframe = (html) =>{
+        var res = html;
+        var regs = [
+            /https?:\/\/youtu.be\/([a-zA-Z0-9\-_]+)/gi, 
+            /https?:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9\-_]+)/gi
+            ];
+      
+      var youtubeIframe = '<iframe title="YouTube video player"  src="https://www.youtube.com/embed/#[CODE]" frameborder="0" allowfullscreen></iframe>';
+      for( var i in regs){
+        
+        while(true){
+          var result = regs[i].exec(html);
+          if( result == null){
+            break;
+          }
+          console.log('result : ', result);
+          var code = result[1];
+          
+          res = html+youtubeIframe.replace('#[CODE]', code);
+          console.log('html : ', html);
+        }
+        
+        }
+        console.log('res : ', res);
+      return res;
+    }
     postDelete = async () => {
         if(!global.mem_id) {
             this.props.navigation.navigate('RequireLoginScreen',{message:'Login required'});
@@ -2395,13 +2420,21 @@ class IlbanContent extends Component {
                     <HTML 
                         baseFontStyle={{ fontFamily: "Roboto" }}
                         ignoredStyles={["font-family"]}
-                        html={post.post_content}
+                        html={this.youtubeLinkToiframe(post.content)}
                         tagsStyles={{
-                            img:{maxWidth:Dimensions.get('window').width*0.8,maxHeight:Dimensions.get('window').width*0.8,resizeMode:'contain'},
+                            img:{
+                                maxWidth:Dimensions.get('window').width*0.8,
+                                maxHeight:Dimensions.get('window').width*0.8,
+                                resizeMode:'contain'
+                            },
+                            iframe:{
+                                maxWidth:Dimensions.get('window').width*0.8,
+                            }
                         }}
                         imagesMaxWidth={Dimensions.get('window').width*0.8}
                         onLinkPress={(event, href)=>{
-                            Linking.openURL(href)
+                            Linking.openURL(href);
+                            console.log('Open Link')
                         }}                        
                     />
                 </View>

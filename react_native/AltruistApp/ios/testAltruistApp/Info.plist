@@ -30,7 +30,6 @@
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<!-- 개발할때만 열어주기 http 오픈 설정 -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -44,7 +43,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<!-- 여기까지 -->
 	<key>NSCameraUsageDescription</key>
 	<string>이타주의자 앱에서 카메라를 이용하려고 합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
