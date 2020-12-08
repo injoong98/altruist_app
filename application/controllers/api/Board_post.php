@@ -1592,4 +1592,38 @@ class Board_post extends CB_Controller
 
 		}
 	}
+	public function get_post_link($brd_id = 0)
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_board_post_stat_count_board';
+		
+		$view=array();
+
+		$this->load->event($eventname);
+
+		$post_id = '';
+		$post_id = $this->input->post('post_id');
+		
+		
+		if(!$post_id||$post_id==null){
+			response_result($view, 'Err', "필수 요청값(post_id) 누락");
+		}
+
+		$this->load->model('Post_link_model');
+			$linkwhere = array(
+				'post_id' => $post_id,
+			);
+			$view['link'] = $link = $this->Post_link_model
+				->get('', '', $linkwhere, '', '', 'pln_id', 'ASC');
+			if ($link && is_array($link)) {
+				foreach ($link as $key => $value) {
+					$view['link'][$key]['link_link'] = site_url('postact/link/' . element('pln_id', $value));
+					if (element('use_autoplay', $board)) {
+						$link_player .= $this->videoplayer->
+							get_video(prep_url(element('pln_url', $value)));
+					}
+				}
+		}
+		response_result($view, 'success', "성공");
+	}
 }
