@@ -5,7 +5,9 @@ import WebView from 'react-native-webview'
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios'
 import { WebViewInView } from './Webview'
-import { is } from 'core-js/fn/object';
+// ios에서 에러 일으켜서 주석처리합니다 ㅠ
+//import { is } from 'core-js/fn/object';
+
 class PopUp extends React.Component{
     constructor(props){
         super(props)
