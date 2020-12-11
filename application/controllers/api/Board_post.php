@@ -1020,8 +1020,8 @@ class Board_post extends CB_Controller
 				->get_all_category(element('brd_id', $board));
 		}
 
-		$noticeresult = $this->Post_model
-			->get_notice_list(element('brd_id', $board), $except_all_notice, $sfield, $skeyword);
+		//공지사항 가져오기
+		$noticeresult = $this->Post_model ->get_notice_list(element('brd_id', $board), $except_all_notice, $sfield, $skeyword);
 		if ($noticeresult) {
 			foreach ($noticeresult as $key => $val) {
 
@@ -1076,6 +1076,11 @@ class Board_post extends CB_Controller
 				$noticeresult[$key]['is_mobile'] = (element('post_device', $val) === 'mobile') ? true : false;
 			}
 		}
+		//공지사항 가져오기 끝
+
+
+
+
 		/**
 		 * 게시판 목록에 필요한 정보를 가져옵니다.
 		 */
@@ -1291,6 +1296,131 @@ class Board_post extends CB_Controller
 
 		$return['data'] = $result;
 		$return['notice_list'] = $noticeresult;
+
+
+		// 광고 까워 넣기 시작 
+		// 이타게시판일 경우에 광고가 들어 간다.
+		if(element('brd_key', $board)=='ilban'){
+			//피드에 섞을 게시글 가져오기
+			$except_infeed_post = true;
+			$infeedpost = $this->Post_model ->get_infeed_post_list(element('brd_id', $board), $except_infeed_post, $sfield, $skeyword);
+			if ($infeedpost) {
+				foreach ($infeedpost as $key => $val) {
+
+					$notice_brd_key = $this->board->item_id('brd_key', element('brd_id', $val));
+					$infeedpost[$key]['post_url'] = post_url($notice_brd_key, element('post_id', $val));
+
+					$infeedpost[$key]['meta'] = $meta
+						= $this->Post_meta_model->get_all_meta(element('post_id', $val));
+
+
+					if ($this->cbconfig->get_device_view_type() === 'mobile') {
+						$infeedpost[$key]['title'] = element('mobile_subject_length', $board)
+							? cut_str(element('post_title', $val), element('mobile_subject_length', $board))
+							: element('post_title', $val);
+					} else {
+						$infeedpost[$key]['title'] = element('subject_length', $board)
+							? cut_str(element('post_title', $val), element('subject_length', $board))
+							: element('post_title', $val);
+					}
+					if (element('post_del', $val)) {
+						$infeedpost[$key]['title'] = '게시물이 삭제 되었습니다';
+					}
+
+					if (element('mem_id', $val) >= 0) {
+						$infeedpost[$key]['display_name'] = display_username(
+							element('post_userid', $val),
+							element('post_nickname', $val),
+							($use_sideview_icon ? element('mem_icon', $val) : ''),
+							($use_sideview ? 'Y' : 'N')
+						);
+					} else {
+						$infeedpost[$key]['display_name'] = '익명';
+					}
+					
+					$infeedpost[$key]['display_name'] = 'Sponsored';
+					$infeedpost[$key]['post_category'] = 4;
+
+					$infeedpost[$key]['display_datetime'] = display_datetime(element('post_datetime', $val), $list_date_style, $list_date_style_manual);
+					$infeedpost[$key]['category'] = '';
+					if (element('use_category', $board) && element('post_category', $val)) {
+							$infeedpost[$key]['category']
+								= $this->Board_category_model
+								->get_category_info(element('brd_id', $val), element('post_category', $val));
+					}
+					if ($param->output()) {
+						$infeedpost[$key]['post_url'] .= '?' . $param->output();
+					}
+					$infeedpost[$key]['title_color'] = $use_subject_style
+						? element('post_title_color', $meta) : '';
+					$infeedpost[$key]['title_font'] = $use_subject_style
+						? element('post_title_font', $meta) : '';
+					$infeedpost[$key]['title_bold'] = $use_subject_style
+						? element('post_title_bold', $meta) : '';
+					$infeedpost[$key]['is_mobile'] = (element('post_device', $val) === 'mobile') ? true : false;
+
+
+					//이미지
+					if (element('post_file', $val) OR element('post_image', $val)) {
+						$post_id = element('post_id', $val);
+						$this->load->model('Post_file_model');
+						$filewhere = array(
+							'post_id' => $post_id,
+						);
+						 $file = $this->Post_file_model->get('', '', $filewhere, '', '', 'pfi_id', 'ASC');
+	
+						if ($file && is_array($file)) {
+							foreach ($file as $key1 => $value1) {
+								//$value1['origin_image_url2'] = site_url(config_item('uploads_dir') . '/post/' . element('pfi_filename', $value1));
+								$value1['origin_image_url'] = thumb_url('post', element('pfi_filename', $value1), 0);  
+								$value1['thumb_image_url'] = thumb_url('post', element('pfi_filename', $value1), $image_width);
+								$infeedpost[$key]['file'][$key1] = $value1;
+							}
+						}
+						$infeedpost[$key]['file_count'] = count($file);
+					}
+					//링크
+					
+					if (element('post_link_count', $val)) {
+						$this->load->model('Post_link_model');
+						$linkwhere = array(
+							'post_id' => $post_id,
+						);
+						$infeedpost[$key]['link'] = $link = $this->Post_link_model
+							->get('', '', $linkwhere, '', '', 'pln_id', 'ASC');
+						if ($link && is_array($link)) {
+							foreach ($link as $key1 => $value1) {
+								$infeedpost[$key]['link'][$key1]['link_link'] = site_url('postact/link/' . element('pln_id', $value1));
+								if (element('use_autoplay', $board)) {
+									$link_player .= $this->videoplayer->
+										get_video(prep_url(element('pln_url', $value)));
+								}
+							}
+						}
+					}
+					$infeedpost[$key]['link_count'] = $link_count = count($link);
+				}
+			}
+			//피드에 섞을 게시글 가져오기 끝
+			$return['infeed_list'] = $infeedpost;
+		//	$return['data_list'] = $return['data']['list'];
+			
+			shuffle($infeedpost); // 순서를 변경
+			$ramdom['list'] = [];
+			$random_index = 0;
+			$last_number = 0;
+
+			foreach ($infeedpost as $key_feed => $value_feed) {
+				$index_number = $last_number + rand(1,7);
+				$ramdom['list'][0] = $value_feed;
+				array_splice( $return['data']['list'], $index_number+1, 0,$ramdom['list']  ); // splice in at position 3
+				$last_number = $random_index;
+			}
+		}
+		// 광고 끼워 넣기 끝 
+
+
+
 		if (empty($from_view)) {
 			$board['headercontent'] = ($this->cbconfig->get_device_view_type() === 'mobile')
 				? element('mobile_header_content', $board)
@@ -1502,5 +1632,39 @@ class Board_post extends CB_Controller
 			$this->Stat_count_board_model->add_visit_board($brd_id);
 
 		}
+	}
+	public function get_post_link($brd_id = 0)
+	{
+		// 이벤트 라이브러리를 로딩합니다
+		$eventname = 'event_board_post_stat_count_board';
+		
+		$view=array();
+
+		$this->load->event($eventname);
+
+		$post_id = '';
+		$post_id = $this->input->post('post_id');
+		
+		
+		if(!$post_id||$post_id==null){
+			response_result($view, 'Err', "필수 요청값(post_id) 누락");
+		}
+
+		$this->load->model('Post_link_model');
+			$linkwhere = array(
+				'post_id' => $post_id,
+			);
+			$view['link'] = $link = $this->Post_link_model
+				->get('', '', $linkwhere, '', '', 'pln_id', 'ASC');
+			if ($link && is_array($link)) {
+				foreach ($link as $key => $value) {
+					$view['link'][$key]['link_link'] = site_url('postact/link/' . element('pln_id', $value));
+					if (element('use_autoplay', $board)) {
+						$link_player .= $this->videoplayer->
+							get_video(prep_url(element('pln_url', $value)));
+					}
+				}
+		}
+		response_result($view, 'success', "성공");
 	}
 }

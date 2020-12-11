@@ -22,7 +22,8 @@ class PopUp extends React.Component{
             time: Date.now(),
             id: 'id',
         }
-        AsyncStorage.setItem('popUpClosedTime',JSON.stringify(data))
+        AsyncStorage.setItem('popUpClosedTime',JSON.stringify(data));
+        this.props.navigation.goBack();
 
     }
     get_popup_info= async() =>{

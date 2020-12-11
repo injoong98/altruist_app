@@ -1119,9 +1119,9 @@ class Board_post extends CB_Controller
 		if (element('use_poll', $board) OR element('use_mobile_poll', $board)) {
 			$this->load->model('Post_poll_model');
 		}
-
-		$noticeresult = $this->Post_model
-			->get_notice_list(element('brd_id', $board), $except_all_notice, $sfield, $skeyword);
+		
+		//공지사항 가져오기 시작 
+		$noticeresult = $this->Post_model->get_notice_list(element('brd_id', $board), $except_all_notice, $sfield, $skeyword);
 		if ($noticeresult) {
 			foreach ($noticeresult as $key => $val) {
 
@@ -1178,6 +1178,8 @@ class Board_post extends CB_Controller
 				$noticeresult[$key]['is_mobile'] = (element('post_device', $val) === 'mobile') ? true : false;
 			}
 		}
+		//공지사항 가져오기 끝
+
 		/**
 		 * 게시판 목록에 필요한 정보를 가져옵니다.
 		 */

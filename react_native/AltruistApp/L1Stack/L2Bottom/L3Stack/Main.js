@@ -112,7 +112,7 @@ class AltMainScreen extends React.Component{
         var PopUpClosedTime= await AsyncStorage.getItem('popUpClosedTime');
         var PopUpClosedTimeJSON= JSON.parse(PopUpClosedTime)
         var now = Date.now();
-        if(now-PopUpClosedTimeJSON.time>24*60*60*1000){
+        if(!PopUpClosedTimeJSON||now-PopUpClosedTimeJSON.time>24*60*60*1000){
             this.props.navigation.navigate('PopUp');
         }
     }

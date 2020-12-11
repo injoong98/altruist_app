@@ -274,6 +274,100 @@ class Post_model extends CB_Model
 		return $result;
 	}
 
+	public function get_infeed_post_list($brd_id = 0, $except_infeed_post = '', $sfield = '', $skeyword = '', $sop = 'OR')
+	{
+		$brd_id = (int) $brd_id;
+		if (empty($brd_id) OR $brd_id < 1) {
+			return;
+		}
+
+		$sop = (strtoupper($sop) === 'AND') ? 'AND' : 'OR';
+		if (empty($sfield)) {
+			$sfield = array('post_title', 'post_content');
+		}
+
+		$search_where = array();
+		$search_like = array();
+		$search_or_like = array();
+		if ($sfield && is_array($sfield)) {
+			foreach ($sfield as $skey => $sval) {
+				$ssf = $sval;
+				if ($skeyword && $ssf && in_array($ssf, $this->allow_search_field)) {
+					if (in_array($ssf, $this->search_field_equal)) {
+						$search_where[$ssf] = $skeyword;
+					} else {
+						$swordarray = explode(' ', $skeyword);
+						foreach ($swordarray as $str) {
+							if (empty($ssf)) {
+								continue;
+							}
+							if ($sop === 'AND') {
+								$search_like[] = array($ssf => $str);
+							} else {
+								$search_or_like[] = array($ssf => $str);
+							}
+						}
+					}
+				}
+			}
+		} else {
+			$ssf = $sfield;
+			if ($skeyword && $ssf && in_array($ssf, $this->allow_search_field)) {
+				if (in_array($ssf, $this->search_field_equal)) {
+					$search_where[$ssf] = $skeyword;
+				} else {
+					$swordarray = explode(' ', $skeyword);
+					foreach ($swordarray as $str) {
+						if (empty($ssf)) {
+							continue;
+						}
+						if ($sop === 'AND') {
+							$search_like[] = array($ssf => $str);
+						} else {
+							$search_or_like[] = array($ssf => $str);
+						}
+					}
+				}
+			}
+		}
+
+		$this->db->select('post.*, member.mem_id, member.mem_userid, member.mem_nickname, member.mem_icon, member.mem_photo, member.mem_point');
+		$this->db->from($this->_table);
+		$this->db->join('member', 'post.mem_id = member.mem_id', 'left');
+
+		if ($except_infeed_post) {
+		//	$this->db->where('brd_id', $brd_id);
+			$this->db->where('post_open_feed', 1);
+		} else {
+			$this->db->where('( brd_id = ' . $brd_id . ' AND post_open_feed  = 1) ', null, false);
+		}
+
+		$this->db->where('post_del <>', 2);
+
+		if ($search_like) {
+			foreach ($search_like as $item) {
+				foreach ($item as $skey => $sval) {
+					$this->db->like($skey, $sval);
+				}
+			}
+		}
+		if ($search_or_like) {
+			$this->db->group_start();
+			foreach ($search_or_like as $item) {
+				foreach ($item as $skey => $sval) {
+					$this->db->or_like($skey, $sval);
+				}
+			}
+			$this->db->group_end();
+		}
+		$this->db->order_by('post_num, post_reply');
+
+		$qry = $this->db->get();
+		$result = $qry->result_array();
+
+		return $result;
+	}
+
 
 	/**
 	 * List 페이지 커스테마이징 함수

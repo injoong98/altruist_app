@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {StyleSheet,  View,  Image,  TouchableOpacity,  ActivityIndicator, SafeAreaView, ScrollView, Dimensions} from 'react-native';
+import {StyleSheet,  View,  Image,  TouchableOpacity,  ActivityIndicator, SafeAreaView, ScrollView, Dimensions, Linking} from 'react-native';
 import { Button, List,  Text,  Icon, Spinner,  } from '@ui-kitten/components';
 import {PlusIcon} from '../../../assets/icons/icons';
 import {getPostList} from './extra/getPost';
@@ -40,7 +40,14 @@ class JauScreen extends React.Component {
 	// category = ['전체', '아무말있어요', '게임있어요', '소식있어요', '정보있어요'];
 	category = ['전체', '자유', '게임', '소식', '정보', '이벤트'];
 
-
+	openFeed=(post)=>{
+		const url = post.link ? post.link[0].pln_url : false;
+		if(url){
+			this.props.navigation.navigate('MyWebview',{url});
+		}else{
+			this.props.navigation.navigate('IlbanContent', {OnGoback: () => this.onRefresh(),post_id: post.post_id});
+		}
+	}
 	getPostList = async () => {
 		const{current_category, current_page} = this.state;
 		console.log(current_page);
@@ -150,7 +157,11 @@ class JauScreen extends React.Component {
 		return (
 		<TouchableOpacity
 			style={styles.itembox}
-			onPress={() => {this.props.navigation.navigate('IlbanContent', {OnGoback: () => this.onRefresh(),post_id: item.post_id});}}
+			onPress={() => {
+				item.post_open_feed==1 ? 
+				this.openFeed(item)
+				:
+				this.props.navigation.navigate('IlbanContent', {OnGoback: () => this.onRefresh(),post_id: item.post_id});}}
 			>
 			<View style={{flex:1, backgroundColor:'white', width:50, borderBottomRightRadius:15}}>
 				<Text category='s2' style={{fontSize:12, color:'#63579D', padding:5, flex:1}}>{'#'+this.category[item.post_category]}</Text>
@@ -210,6 +221,14 @@ class JauScreen extends React.Component {
 					:null
 					}
 				</View>
+				{
+					item.post_open_feed==1 ? 
+				<View style={{flexDirection:'row', flex:1, marginTop:30, justifyContent:'flex-end'}}>
+					<View style={{flex:1, flexDirection:'row',justifyContent:'center' }}> 
+						<Text category='h2' style={{fontSize:18}}>더 알아보기</Text>	
+					</View>
+				</View>
+					:
 				<View style={{flexDirection:'row', flex:1, marginTop:30, justifyContent:'flex-end'}}>
 					<View style={{flex:2, flexDirection:'row'}}> 
 						<View style={{flexDirection:'row', flex:1, alignItems:'flex-end', paddingBottom:8}}>
@@ -232,6 +251,7 @@ class JauScreen extends React.Component {
 						</View>
 					</View>
 				</View>
+				}
 			</View>
 		</TouchableOpacity>
 		);
