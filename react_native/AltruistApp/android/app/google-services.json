@@ -30,6 +30,13 @@
             {
               "client_id": "538036140176-dkjn09a546rau7jo7nn09o1eg3trbb8c.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "538036140176-4q8dknj4q2dt7mghrpsivtlj83ltah44.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.testAltruistApp"
+              }
             }
           ]
         }
