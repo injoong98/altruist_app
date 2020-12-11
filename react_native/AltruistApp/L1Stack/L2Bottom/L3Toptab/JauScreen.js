@@ -40,22 +40,13 @@ class JauScreen extends React.Component {
 	// category = ['전체', '아무말있어요', '게임있어요', '소식있어요', '정보있어요'];
 	category = ['전체', '자유', '게임', '소식', '정보', '이벤트'];
 
-	openFeed=(post_id)=>{
-		console.log("this is AD");
-		var formdata = new FormData();
-		formdata.append('post_id',post_id);
-
-		axios.post("http://dev.unyict.org/api/board_post/get_post_link",formdata)
-		.then(res=>{
-			const url = res.data.link[0].pln_url;
-			console.log(url)
-			Linking.openURL(url)
-
-		})
-		.catch(err=>{
-			console.log('JauScreen openFeed error! : '+JSON.stringify(err))
-		})
-		
+	openFeed=(post)=>{
+		const url = post.link ? post.link[0].pln_url : false;
+		if(url){
+			this.props.navigation.navigate('MyWebview',{url});
+		}else{
+			this.props.navigation.navigate('IlbanContent', {OnGoback: () => this.onRefresh(),post_id: post.post_id});
+		}
 	}
 	getPostList = async () => {
 		const{current_category, current_page} = this.state;
@@ -168,7 +159,7 @@ class JauScreen extends React.Component {
 			style={styles.itembox}
 			onPress={() => {
 				item.post_open_feed==1 ? 
-				this.openFeed(item.post_id)
+				this.openFeed(item)
 				:
 				this.props.navigation.navigate('IlbanContent', {OnGoback: () => this.onRefresh(),post_id: item.post_id});}}
 			>
