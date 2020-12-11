@@ -47,14 +47,14 @@ export class MyList extends React.Component{
         return(
         <TouchableOpacity style={styles.container} onPress = {()=>{this.navigateToContent(item.brd_id,item.post_id)}}>
             <View>
-                <Text category="s2" style={{fontWeight:'bold',marginRight:5}}>{ this.brdNm(item.brd_id)}</Text>
-                <Text style={[styles.subtext,{}]}category="s2" numberOfLines={1}>{item.cmt_content}</Text>
+                <Text category="s2" style={{marginRight:5, marginTop:5}}>{ this.brdNm(item.brd_id)}</Text>
+                <Text style={[styles.subtext,{marginTop:5}]}category="s2" numberOfLines={1}>{item.cmt_content}</Text>
             </View>
             <View style={styles.subtitle}>
                 <View style={{display:'flex',flexDirection:'row',alignItems:'flex-end',marginBottom:4}}> 
                     <PostTime datetime = {item.cmt_datetime}/>
                 </View>
-                <View style={styles.infocontainer}>
+                <View style={{display:"flex",flexDirection:"row",justifyContent:'space-evenly',width:70,}}>
                     <View style={{alignItems:'center',}}>
                         <Heartsvg />
                         <Text style={styles.infotext} category="s1">{item.cmt_like}</Text>
@@ -74,7 +74,7 @@ export class MyList extends React.Component{
                 <Text style ={styles.headtext}category="h4" numberOfLines={1} ellipsizeMode="tail">{item.post_title}</Text>
             {
                 item.post_content?
-                <Text style={styles.subtext}category="s2" numberOfLines={1}>{item.post_content.replace(regex, '')}</Text>
+                <Text style={styles.subtext} category="s2" numberOfLines={1}>{item.post_content.replace(regex, '')}</Text>
                 :
                 null    
             }
