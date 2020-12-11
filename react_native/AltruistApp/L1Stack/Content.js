@@ -1992,13 +1992,16 @@ class IlbanContent extends Component {
 
     static contextType = Signing;
     youtubeLinkToiframe = (html) =>{
+        const width = Dimensions.get('window').width*0.8;
+        const height = width*9/16
+
         var res = html;
         var regs = [
             /https?:\/\/youtu.be\/([a-zA-Z0-9\-_]+)/gi, 
             /https?:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9\-_]+)/gi
             ];
-      
-      var youtubeIframe = '<iframe title="YouTube video player"  src="https://www.youtube.com/embed/#[CODE]" frameborder="0" allowfullscreen></iframe>';
+        
+      var youtubeIframe = `<iframe title="YouTube video player" width="${width}" height="${height}" src="https://www.youtube.com/embed/#[CODE]" frameborder="0" allowfullscreen></iframe>`;
       for( var i in regs){
         
         while(true){
@@ -2429,7 +2432,7 @@ class IlbanContent extends Component {
                                 resizeMode:'contain'
                             },
                             iframe:{
-                                maxWidth:Dimensions.get('window').width*0.8,
+                                width:Dimensions.get('window').width*0.8,
                             }
                         }}
                         imagesMaxWidth={Dimensions.get('window').width*0.8}
