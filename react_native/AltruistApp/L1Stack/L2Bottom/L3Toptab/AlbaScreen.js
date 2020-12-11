@@ -150,8 +150,8 @@ class AlbaScreen extends React.Component {
                       </Text>
                     </View>
                     <View style={{flexDirection : 'row', alignItems : 'center', flex:1}}>
-                      <Text style={{color:'#7370DD', fontWeight:'bold'}} category='c1'>{item.alba_type == 0?'단기':'장기'}</Text>
-                      <Text category='c1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
+                      <Text style={{flex:2 ,color:'#7370DD', fontWeight:'bold'}} category='c1'>{item.alba_type == 0?'단기':'장기'}</Text>
+                      <Text style ={{flex:9 ,}}category='c1' numberOfLines={1} ellipsizeMode='tail'> {item.post_location} </Text>
                     </View>
                   </View>
                 </View>
