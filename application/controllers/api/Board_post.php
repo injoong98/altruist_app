@@ -1411,10 +1411,11 @@ class Board_post extends CB_Controller
 			$last_number = 0;
 
 			foreach ($infeedpost as $key_feed => $value_feed) {
-				$index_number = $last_number + rand(1,7);
+				$ramdom_num = rand(3,10);
+				$index_number = $last_number + $ramdom_num;
 				$ramdom['list'][0] = $value_feed;
-				array_splice( $return['data']['list'], $index_number+1, 0,$ramdom['list']  ); // splice in at position 3
-				$last_number = $random_index;
+				array_splice( $return['data']['list'], $index_number, 0,$ramdom['list']  ); // splice in at position 3
+				$last_number = $index_number;
 			}
 		}
 		// 광고 끼워 넣기 끝 
