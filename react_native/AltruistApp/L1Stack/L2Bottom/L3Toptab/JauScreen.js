@@ -30,7 +30,7 @@ class JauScreen extends React.Component {
 			current_page:1,
 			isListLoading : false,
 			isNoMoreData : false,
-			current_category:0,
+			current_category:1,
 			total_rows:0,
 		};
 	}
@@ -143,6 +143,14 @@ class JauScreen extends React.Component {
 	}
 
   	renderItem = ({item, index}) => {
+		  
+		  console.log('item', item)
+		  console.log('item.brd_key', item.brd_key)
+		  console.log('item.post_category', item.post_category)
+		  console.log('this.category', this.category)
+		  console.log('this.category[]', this.category[item.post_category])
+		  console.log('5', this.category[5])
+		  
 		const regex = /(<([^>]+)>)|&nbsp;/gi;
 		const post_remove_tags = item.post_content.replace(regex, '');
 		const imageData = item.file
@@ -163,8 +171,15 @@ class JauScreen extends React.Component {
 				:
 				this.props.navigation.navigate('IlbanContent', {OnGoback: () => this.onRefresh(),post_id: item.post_id});}}
 			>
-			<View style={{flex:1, backgroundColor:'white', width:50, borderBottomRightRadius:15}}>
-				<Text category='s2' style={{fontSize:12, color:'#63579D', padding:5, flex:1}}>{'#'+this.category[item.post_category]}</Text>
+			<View style={{flex:1, backgroundColor:'white', width:62, borderBottomRightRadius:15}}>
+				
+				<Text category='s2' style={{fontSize:12, color:'#63579D', padding:5, flex:1}}>{
+				item.display_name == 'Sponsored'
+				?
+				'#'+this.category[5]
+				:
+				'#'+this.category[item.post_category]
+				}</Text>
 			</View>
 			<View style={{marginHorizontal:20, marginTop:5}}>
 				<View style={{paddingVertical:4, paddingLeft:5}}>
