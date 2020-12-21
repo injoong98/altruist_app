@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import {StyleSheet,  View,  Image,  TouchableOpacity,  ActivityIndicator, SafeAreaView, ScrollView, Dimensions, Linking} from 'react-native';
-import { Button, List,  Text,  Icon, Spinner,  } from '@ui-kitten/components';
+import { Button, List,  Text,  Icon, Spinner,  Modal} from '@ui-kitten/components';
 import {PlusIcon} from '../../../assets/icons/icons';
 import {getPostList} from './extra/getPost';
 import axios from 'axios';
@@ -19,6 +19,7 @@ import Writesvg from '../../../assets/icons/write.svg';
 import Sharesvg from '../../../assets/icons/share.svg';
 import Thumbsvg from '../../../assets/icons/thumb-up.svg';
 import Thumbfillsvg from '../../../assets/icons/thumb-up-filled.svg';
+import Confirm from '../../../components/confirm.component'
 
 class JauScreen extends React.Component {
 	constructor(props) {
@@ -32,6 +33,8 @@ class JauScreen extends React.Component {
 			isNoMoreData : false,
 			current_category:0,
 			total_rows:0,
+			resultModalVisible:false,
+			resultText:'',
 		};
 	}
 
@@ -52,10 +55,10 @@ class JauScreen extends React.Component {
 		const{current_category, current_page} = this.state;
 		console.log(current_page);
 		await axios.get( `https://dev.unyict.org/api/board_post/lists/ilban?category_id=${current_category}&page=${current_page}`)
-			.then((response) => {
-				if(response.data.view.list.data.list.length > 0){
+			.then((res) => {
+				if(res.data.view.list.data.list.length > 0){
 					this.setState({
-						lists:this.state.lists.concat(response.data.view.list.data.list),
+						lists:this.state.lists.concat(res.data.view.list.data.list),
 						isLoading:false,
 						isListLoading:false,
 					})
@@ -65,20 +68,32 @@ class JauScreen extends React.Component {
 					this.setState({isListLoading:false, isNoMoreData : true});
 				}
 			})
-			.catch((error) => {
-				alert(error);
+			.catch((err) => {
+				if(!err.response){
+					this.setState({
+						resultText:'일시적인 네트워크 오류입니다. 인터넷 연결을 확인하고 잠시후 다시 시도해주세요.',
+						resultModalVisible:true,
+					})
+
+				}else{
+					this.setState({
+						resultText:`서버에 오류가 발생했습니다. 잠시후 다시 시도해주세요. \n 오류 코드 : ${err.response.status}`,
+						resultModalVisible:true,
+					})
+				console.log(err)
+				}
 			});
 	};
 
 	getPostFirst = async() => {
 		await axios.get(`https://dev.unyict.org/api/board_post/lists/ilban?category_id=${this.state.current_category}`)
-			.then((response)=>{
+			.then((res)=>{
 				this.setState({
-				lists:response.data.view.list.data.list,
+				lists:res.data.view.list.data.list,
 				isLoading:false,
 				isListLoading:false,
 				refreshing:false,
-				total_rows:response.data.view.list.data.total_rows,
+				total_rows:res.data.view.list.data.total_rows,
 				})
 				// if (response.data.view.file_image){
 				// 	this.setState({image: response.data.view.file_image.map(function(item, index){
@@ -92,8 +107,20 @@ class JauScreen extends React.Component {
 				// 	})});
 				// }
 			})
-			.catch((error)=>{
-				alert('error'+error);
+			.catch((err)=>{
+				if(!err.response){
+					this.setState({
+						resultText:'일시적인 네트워크 오류입니다. 인터넷 연결을 확인하고 잠시후 다시 시도해주세요.',
+						resultModalVisible:true,
+					})
+
+				}else{
+					this.setState({
+						resultText:`서버에 오류가 발생했습니다. 잠시후 다시 시도해주세요. \n 오류 코드 : ${err.response.status}`,
+						resultModalVisible:true,
+					})
+				console.log(err)
+				}
 			})
 	}
 
@@ -268,9 +295,10 @@ class JauScreen extends React.Component {
 
 
 	render() {
-		const {current_category} = this.state
+		const {current_category,resultModalVisible,resultText,} = this.state
     	return (
-			this.state.isLoading ? 
+			<>	
+			{this.state.isLoading ? 
 			<View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
 				<Text>
 					<Spinner size="giant" />
@@ -313,7 +341,23 @@ class JauScreen extends React.Component {
 						{/* <Writesvg /> */}
 						<Image source={{uri:"https://dev.unyict.org/uploads/icons/write-pink.png"}} style={{width:50,height:50}}/>
 				</TouchableOpacity>
-			</View>
+			</View>}
+			<Modal
+			visible={resultModalVisible}
+			backdropStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+			onBackdropPress={() => this.setState({resultModalVisible:false})}
+			>
+				<Confirm 
+					type = 'result'
+					confirmText={resultText}
+					frstText="닫기"
+					OnFrstPress={() =>{    
+						this.setState({resultModalVisible:false})
+						resultText.includes('존재') ? this.props.navigation.goBack() : null
+					}}
+				/>
+			</Modal>
+			</>
 		);
   	}
 }

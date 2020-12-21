@@ -396,6 +396,7 @@ export class StackNav extends React.Component{
                         }
 
                     </Navigator>
+                    
                 </Notice.Provider>
             </Signing.Provider>
         )
