@@ -92,6 +92,9 @@ class CB_Controller extends CI_Controller
 		if (config_item('enable_profiler') === true) {
 			$this->output->enable_profiler(TRUE);
 		}
+
+		header('Access-Control-Allow-Origin: *');
+		header("Access-Control-Allow-Methods: GET, OPTIONS");
 	}
 
 	/* --------------------------------------------------------------
