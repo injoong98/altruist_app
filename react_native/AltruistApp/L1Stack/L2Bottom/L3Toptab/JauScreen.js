@@ -20,6 +20,8 @@ import Sharesvg from '../../../assets/icons/share.svg';
 import Thumbsvg from '../../../assets/icons/thumb-up.svg';
 import Thumbfillsvg from '../../../assets/icons/thumb-up-filled.svg';
 import Confirm from '../../../components/confirm.component'
+//context
+import {Signing} from '../../Context';
 
 class JauScreen extends React.Component {
 	constructor(props) {
@@ -37,6 +39,7 @@ class JauScreen extends React.Component {
 			resultText:'',
 		};
 	}
+	static contextType = Signing;
 
 	ignoredTags = [...IGNORED_TAGS, 'img'];
 
@@ -109,16 +112,24 @@ class JauScreen extends React.Component {
 			})
 			.catch((err)=>{
 				if(!err.response){
-					this.setState({
-						resultText:'일시적인 네트워크 오류입니다. 인터넷 연결을 확인하고 잠시후 다시 시도해주세요.',
-						resultModalVisible:true,
-					})
+					this.context.modalPopUp(
+						{
+							modalText:'일시적인 네트워크 오류입니다. 인터넷 연결을 확인하고 잠시후 다시 시도해주세요.',
+							modalButtons:[
+								{text:'닫기',onPress:()=>{this.context.modalPopUpClose();}},
+							],
+						}
+					)
 
 				}else{
-					this.setState({
-						resultText:`서버에 오류가 발생했습니다. 잠시후 다시 시도해주세요. \n 오류 코드 : ${err.response.status}`,
-						resultModalVisible:true,
-					})
+					this.context.modalPopUp(
+						{
+							modalText:`서버에 오류가 발생했습니다. 잠시후 다시 시도해주세요. \n 오류 코드 : ${err.response.status}`,
+							modalButtons:[
+								{text:'닫기',onPress:()=>{this.context.modalPopUpClose();}},
+							],
+						}
+					)
 				console.log(err)
 				}
 			})
@@ -171,12 +182,12 @@ class JauScreen extends React.Component {
 
   	renderItem = ({item, index}) => {
 		  
-		  console.log('item', item)
-		  console.log('item.brd_key', item.brd_key)
-		  console.log('item.post_category', item.post_category)
-		  console.log('this.category', this.category)
-		  console.log('this.category[]', this.category[item.post_category])
-		  console.log('5', this.category[5])
+		//   console.log('item', item)
+		//   console.log('item.brd_key', item.brd_key)
+		//   console.log('item.post_category', item.post_category)
+		//   console.log('this.category', this.category)
+		//   console.log('this.category[]', this.category[item.post_category])
+		//   console.log('5', this.category[5])
 		  
 		const regex = /(<([^>]+)>)|&nbsp;/gi;
 		const post_remove_tags = item.post_content.replace(regex, '');

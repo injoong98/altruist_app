@@ -2,7 +2,7 @@ import React from 'react';
 import {Platform, Dimensions,Animated,View,SafeAreaView,Alert,Image, Linking, AppState } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
-import {Layout,Text,TopNavigation} from '@ui-kitten/components'
+import {Layout,Text,TopNavigation,Modal,Spinner} from '@ui-kitten/components'
 import messaging from '@react-native-firebase/messaging'
 import {ComBottomNav,ComBottomNav_premembers} from './L2Bottom/ComBottomNav'
 import {defaultContent, IlbanContent, GominContent, MarketContent, AlbaContent} from './Content'
@@ -29,7 +29,8 @@ import { version } from '../package.json';
 import CommunitySearch from './CommunitySearch'
 import MyWebview from './Webview';
 import PopUp from './PopUp';
-import RequireLoginScreen from '../L1Stack/L2Bottom/L3Stack/Require_Login'
+import RequireLoginScreen from '../L1Stack/L2Bottom/L3Stack/Require_Login';
+import Confirm,{ResultModal} from '../components/confirm.component';
 
 
 const {width} = Dimensions.get('window')
@@ -108,8 +109,13 @@ export class StackNav extends React.Component{
             isLoading:true,
             isSignedIn:false,
             isSignedOut:false,
-            session_mem_id:'',
             isPushNoti:false,
+            session_mem_id:'',
+            resultModalVisible:false,
+            spinnerModalVisible:false,
+            modalText:'',
+            modalButtons:[ ],
+
             appState: AppState.currentState,
             context:{
                 signIn:(mem_userid,mem_password,autologin)=>{
@@ -167,6 +173,12 @@ export class StackNav extends React.Component{
                 session_mem_id:'',
                 is_altruist:false,
                 alt_id:'',
+                modalPopUp:({modalType,modalText,modalButtons})=>{
+                    this.modalPopUp({modalType,modalText,modalButtons});
+                },
+                modalPopUpClose:()=>{
+                    this.setState({resultModalVisible:false,spinnerModalVisible:false});
+                },
             },
             noticeContext:{
                 noti:[],
@@ -187,7 +199,14 @@ export class StackNav extends React.Component{
     }
 
     static contextType = Signing
-
+    modalPopUp=({modalType,modalText,modalButtons})=>{
+        if(modalType=='spinner'){
+            this.setState({spinnerModalVisible:true});
+        }
+        else{
+            this.setState({resultModalVisible:true,modalText,modalButtons});
+        }
+    }
     _handleAppStateChange = (nextAppState ) => {
         if (
             this.state.appState.match(/inactive|background/) &&
@@ -396,7 +415,19 @@ export class StackNav extends React.Component{
                         }
 
                     </Navigator>
+                    <ResultModal
+                        modalVisible={this.state.resultModalVisible}
+                        modalText={this.state.modalText}
+                        buttons={this.state.modalButtons}
+                        onBackdropPress={() => this.setState({resultModalVisible:false})}
+                    />
                     
+                    <Modal
+                        visible={this.state.spinnerModalVisible}
+                        backdropStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
+                    >
+                        <Spinner size='giant'/>
+                    </Modal>
                 </Notice.Provider>
             </Signing.Provider>
         )
