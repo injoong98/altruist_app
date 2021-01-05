@@ -1411,7 +1411,7 @@ class Board_post extends CB_Controller
 			$last_number = 0;
 
 			foreach ($infeedpost as $key_feed => $value_feed) {
-				$ramdom_num = rand(3,10);
+				$ramdom_num = rand(1,5);
 				$index_number = $last_number + $ramdom_num;
 				$ramdom['list'][0] = $value_feed;
 				array_splice( $return['data']['list'], $index_number, 0,$ramdom['list']  ); // splice in at position 3
