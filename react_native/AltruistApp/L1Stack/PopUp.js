@@ -26,38 +26,29 @@ class PopUp extends React.Component{
         this.props.navigation.goBack();
 
     }
-    get_popup_info= async() =>{
-        await axios.get('https://dev.unyict.org/api/popup/get_popup_list')
-        .then(res=>{
-            console.log(res.data.list[0].pop_content)
-            this.setState({popups:res.data.list,isLoading:false,
-                html:`
-                <head>
-                    <style>
-                        body{
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                        }
-                        img{
-                            width:100vw;
-
-                        }
-                    </style>
-                <head>
-                <body>
-                ${res.data.list[0].pop_content}
-                </body>
-                
-                `
-            })
-        })
-        .catch(err=>{
-            console.log('팝업 불러오기 오류 확인하세요..')
-        })
-    }
+    
     componentDidMount(){
-        this.get_popup_info();
+        this.setState({isLoading:false,
+            html:`
+            <head>
+                <style>
+                    body{
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    img{
+                        width:100vw;
+
+                    }
+                </style>
+            <head>
+            <body>
+            ${this.props.route.params.popup ? this.props.route.params.popup : null} 
+            </body>
+            
+            `
+        })
     }
     render(){
         const {isLoading,html} = this.state;

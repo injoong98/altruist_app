@@ -108,12 +108,23 @@ class AltMainScreen extends React.Component{
         }
         )
     }
+    chk_popup_info= async() =>{
+        await axios.get('https://dev.unyict.org/api/popup/get_popup_list')
+        .then(res=>{
+            if(res.data.list.length>0){
+                this.props.navigation.navigate('PopUp',{popup:res.data.list[0].pop_content});
+            }
+        })
+        .catch(err=>{
+            console.log('팝업 확인 오류 \n 오류 내용:'+err)
+        })
+    }
     popUp= async ()=>{
         var PopUpClosedTime= await AsyncStorage.getItem('popUpClosedTime');
         var PopUpClosedTimeJSON= JSON.parse(PopUpClosedTime)
         var now = Date.now();
         if(!PopUpClosedTimeJSON||now-PopUpClosedTimeJSON.time>24*60*60*1000){
-            this.props.navigation.navigate('PopUp');
+            this.chk_popup_info() 
         }
     }
     componentDidMount(){
