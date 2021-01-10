@@ -2,7 +2,6 @@ import React, {Fragment} from 'react';
 import {StyleSheet,  View,  Image,  TouchableOpacity,  ActivityIndicator, SafeAreaView, ScrollView, Dimensions, Linking} from 'react-native';
 import { Button, List,  Text,  Icon, Spinner,  Modal} from '@ui-kitten/components';
 import {PlusIcon} from '../../../assets/icons/icons';
-import {getPostList} from './extra/getPost';
 import axios from 'axios';
 import {HTML} from 'react-native-render-html';
 import {IGNORED_TAGS} from 'react-native-render-html/src/HTMLUtils';
