@@ -836,7 +836,7 @@ class RegisterScreen extends Component {
                     color: 'red',
                     paddingLeft: 10,
                     fontSize: 10,
-                    paddingTop: 13,
+                    paddingBottom: 13
                   }}>
                   {this.state.captionCheck}
                 </Text>
